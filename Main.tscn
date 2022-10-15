@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://art/general/arrow_right.png" type="Texture" id=1]
+[ext_resource path="res://Main.gd" type="Script" id=3]
+[ext_resource path="res://System/MainScreen.gd" type="Script" id=4]
+
+[node name="Main" type="Node2D" groups=["Main"]]
+script = ExtResource( 3 )
+
+[node name="MainScreen" type="Node2D" parent="." groups=["MainScreen"]]
+script = ExtResource( 4 )
+
+[node name="Sprite" type="Sprite" parent="MainScreen"]
+position = Vector2( 132, 94 )
+texture = ExtResource( 1 )

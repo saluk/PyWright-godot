@@ -1,0 +1,2 @@
+"{center}centered{center}{n}new line, not centered"
+"{c900}red{c} not red"

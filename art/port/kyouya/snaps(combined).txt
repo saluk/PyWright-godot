@@ -1,0 +1,7 @@
+horizontal 2
+vertical 4
+length 8
+loops 1
+framecompress 0,0,4,1
+blinksplit 4
+offsetx 101

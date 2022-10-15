@@ -1,0 +1,21 @@
+# Godot-specific ignores
+.import/
+export.cfg
+export_presets.cfg
+*.apk
+*.apk.*
+*.import
+
+# GDUnit
+reports/
+
+# Imported translations (automatically generated from CSV files)
+*.translation
+
+export/*
+
+
+#PyWright specific
+PyWright/*
+games/*
+pywright-gpu-master/*

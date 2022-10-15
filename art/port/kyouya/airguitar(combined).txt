@@ -1,0 +1,7 @@
+horizontal 6
+vertical 8
+length 48
+loops 1
+blinkmode stop
+offsetx 49
+offsety 4

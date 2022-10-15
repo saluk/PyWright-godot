@@ -1,0 +1,7 @@
+horizontal 2
+vertical 3
+length 6
+loops 1
+blinksplit 4
+offsetx 100
+offsety -15

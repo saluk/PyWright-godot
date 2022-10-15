@@ -1,0 +1,93 @@
+# TODO implement damage amount, threat, flash, and timing
+extends Node2D
+class_name Penalty
+
+var script_name
+var z
+var wait_signal = "animation_done"
+
+var variable
+var threat_amount
+var delay
+
+var start_value
+var end_value
+
+var left
+var right
+var good
+var bad
+var threat_section
+var threat_timer = 0.0
+
+signal animation_done
+
+func _ready():
+	var atlas = Filesystem.load_atlas_specific(
+		"art/general/healthbar.png",
+		[
+			Rect2(0, 0, 3, 14),
+			Rect2(82, 0, 2, 14),
+			Rect2(3, 0, 1, 14),
+			Rect2(68, 0, 1, 14)
+		]
+	)
+	left = PWSprite.new()
+	left.from_frame(atlas[0])
+	right = PWSprite.new()
+	right.from_frame(atlas[1])
+	good = PWSprite.new()
+	good.from_frame(atlas[2])
+	bad = PWSprite.new()
+	bad.from_frame(atlas[3])
+	add_child(left)
+	add_child(right)
+	add_child(good)
+	add_child(bad)
+	
+	threat_section = PWSprite.new()
+	threat_section.from_frame(atlas[2])
+	add_child(threat_section)
+	
+func begin():
+	start_value = clamp(start_value, 0, 100)
+	end_value = clamp(end_value, 0, 100)
+	if not threat_amount:
+		threat_section.visible = false
+	
+func get_value():
+	return Commands.main.stack.variables.get_float(variable, 100)
+	
+func set_value(value):
+	Commands.main.stack.variables.set_val(variable, value)
+
+# TODO get sizes pixel perfect
+func _process(dt):
+	var value = get_value()
+	var ivalue = int(value)
+	position = Vector2(256-110+left.width/2, 2+left.height/2)
+	right.position = Vector2(101, 0)
+	good.position = Vector2(ivalue/2, 0)
+	good.scale = Vector2(ivalue+0.1, 1)
+	bad.position = Vector2(100-float((100-ivalue))/2.0, 0)
+	bad.scale = Vector2((100-ivalue), 1)
+	print(ivalue)
+	if threat_amount:
+		threat_section.position = Vector2(100-threat_amount/2, 0)
+		threat_section.scale = Vector2(threat_amount, 1)
+		threat_timer += dt*8
+		threat_section.material.set_shader_param("to_color_amount", (1.0+(sin(threat_timer)*0.5))/2.0)
+	if start_value != end_value:
+		if value < end_value:
+			value += min(30*dt, end_value-value)   # TODO - conver to pywright speed
+		elif value > end_value:
+			value -= min(30*dt, value-end_value)
+		else:
+			emit_signal("animation_done")
+		set_value(value)
+		print("set value:", value)
+	elif delay:
+		delay -= WrightScript.one_frame(dt)
+		if delay <= 0:
+			emit_signal("animation_done")
+			queue_free()

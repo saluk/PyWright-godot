@@ -1,0 +1,12 @@
+[gd_resource type="SpatialMaterial" load_steps=2 format=2]
+
+[sub_resource type="StreamTexture" id=1]
+flags = 23
+load_path = "res://.import/gem.png-9ca59eb61c0d7f00b2ffdc5a6c0c29f5.s3tc.stex"
+
+[resource]
+resource_name = "Material.009"
+params_cull_mode = 2
+albedo_color = Color( 0.8, 0.8, 0.8, 1 )
+albedo_texture = SubResource( 1 )
+metallic = 0.5

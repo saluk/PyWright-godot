@@ -1,0 +1,139 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Reference",
+"class": "Colors",
+"language": "GDScript",
+"path": "res://System/Colors.gd"
+}, {
+"base": "Node",
+"class": "DirectoryIndex",
+"language": "GDScript",
+"path": "res://System/DirectoryIndex.gd"
+}, {
+"base": "Reference",
+"class": "Filesystem",
+"language": "GDScript",
+"path": "res://System/Filesystem.gd"
+}, {
+"base": "Node2D",
+"class": "IButton",
+"language": "GDScript",
+"path": "res://UI/IButton.gd"
+}, {
+"base": "Node2D",
+"class": "MainScene",
+"language": "GDScript",
+"path": "res://Main.gd"
+}, {
+"base": "Node2D",
+"class": "PWChar",
+"language": "GDScript",
+"path": "res://Graphics/PWChar.gd"
+}, {
+"base": "Node2D",
+"class": "PWEvidence",
+"language": "GDScript",
+"path": "res://Graphics/PWEvidence.gd"
+}, {
+"base": "Node2D",
+"class": "PWSprite",
+"language": "GDScript",
+"path": "res://Graphics/PWSprite.gd"
+}, {
+"base": "Node2D",
+"class": "Penalty",
+"language": "GDScript",
+"path": "res://UI/Penalty.gd"
+}, {
+"base": "Reference",
+"class": "Variables",
+"language": "GDScript",
+"path": "res://System/Variables.gd"
+}, {
+"base": "Reference",
+"class": "WrightScript",
+"language": "GDScript",
+"path": "res://WrightScript/WrightScript.gd"
+}, {
+"base": "Reference",
+"class": "WrightScriptStack",
+"language": "GDScript",
+"path": "res://WrightScript/WrightScriptStack.gd"
+} ]
+_global_script_class_icons={
+"Colors": "",
+"DirectoryIndex": "",
+"Filesystem": "",
+"IButton": "",
+"MainScene": "",
+"PWChar": "",
+"PWEvidence": "",
+"PWSprite": "",
+"Penalty": "",
+"Variables": "",
+"WrightScript": "",
+"WrightScriptStack": ""
+}
+
+[application]
+
+config/name="GodotWright"
+run/main_scene="res://Main.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+Commands="*res://WrightScript/Commands.gd"
+ZLayers="*res://System/ZLayers.gd"
+MusicPlayer="*res://System/MusicPlayer.gd"
+SoundPlayer="*res://System/SoundPlayer.gd"
+WSExpression="*res://WrightScript/WSExpression.gd"
+
+[debug]
+
+gdscript/warnings/unused_variable=false
+gdscript/warnings/shadowed_variable=false
+gdscript/warnings/unused_argument=false
+gdscript/warnings/return_value_discarded=false
+gdscript/warnings/integer_division=false
+
+[display]
+
+window/size/width=256
+window/size/height=384
+window/size/test_width=512
+window/size/test_height=768
+window/handheld/orientation="sensor"
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
+
+[input]
+
+quickload={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":76,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+
+[network]
+
+limits/debugger_stdout/max_chars_per_second=4048
+limits/debugger_stdout/max_messages_per_frame=1000
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+environment/default_clear_color=Color( 0, 0, 0, 1 )
+environment/default_environment="res://default_env.tres"

@@ -1,0 +1,3 @@
+horizontal 12
+loops 0
+framecompress 1
