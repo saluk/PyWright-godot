@@ -3,7 +3,6 @@ class_name WrightScriptStack
 
 var main
 var scripts := []
-var directory
 
 var variables:Variables
 var evidence_pages := {
@@ -21,7 +20,6 @@ func _init(main):
 	assert(main)
 	self.main = main
 	variables = Variables.new()
-	directory = DirectoryIndex.new()
 
 signal stack_empty
 	

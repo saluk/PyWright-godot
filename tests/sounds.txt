@@ -1,0 +1,4 @@
+sfx sfx-thunder2.wav
+"thunder"
+sfx sfx-clang.wav
+"clang"

@@ -19,35 +19,13 @@ static func file_exists(path):
 		return curdir+path
 	# DONT correct case
 	return null
-	# This will correct the case, but we should probably index beforehand instead
-#	for i in range(directories.size()):
-#		# Get next directory to correct
-#		var nextdir = directories.pop_front()
-#		var listing = Directory.new()
-#		if listing.open(curdir) != OK:
-#			return null
-#		listing.list_dir_begin()
-#		var found = false
-#		var next_file_name = listing.get_next()
-#		while next_file_name != "":
-#			if next_file_name.to_lower() == nextdir.to_lower():
-#				nextdir = next_file_name
-#				found = true
-#				break
-#			next_file_name = listing.get_next()
-#		if not found:
-#			return null
-#		if curdir == "res://":
-#			curdir += nextdir
-#		else:
-#			curdir = curdir + "/" + nextdir
-#	return curdir
-	# Path doesn't exist, find each directory from the root
 	
 static func path_join(a, b):
-	if not a.ends_with("/"):
-		return a+"/"+b
-	return a+b
+	if a.ends_with("/"):
+		a = a.substr(0, a.length()-1)
+	if b.begins_with("/"):
+		b = b.substr(1, b.length()-1)
+	return a+"/"+b
 	
 static func lookup_file(sub_path, current_path):
 	sub_path = sub_path.to_lower()

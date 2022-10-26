@@ -216,14 +216,20 @@ func call_nt(script, arguments):
 	main.stack.variables.set_val("_speaking_name", nametag)   # Next character will have this name
 	
 func call_mus(script, arguments):
-	MusicPlayer.play_music("music/"+PoolStringArray(arguments).join(" "), script.root_path)
+	MusicPlayer.play_music(
+		Filesystem.path_join("music",PoolStringArray(arguments).join(" ")), 
+		script.root_path
+	)
 	
 func call_fade(script, arguments):
 	# TODO IMPLEMENT
 	pass
 	
 func call_sfx(script, arguments):
-	SoundPlayer.play_sound("sfx/"+PoolStringArray(arguments).join(" "), script.root_path)
+	SoundPlayer.play_sound(
+		Filesystem.path_join("sfx", PoolStringArray(arguments).join(" ")), 
+		script.directory_stack
+	)
 
 func call_set(script, arguments):
 	var key = arguments.pop_front()
