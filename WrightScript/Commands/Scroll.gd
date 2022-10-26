@@ -18,10 +18,14 @@ class Scroller extends Node:
 		if wait:
 			wait_signal = "tree_exited"
 	func control(script_name):
-		objects = [Commands.get_objects(script_name)[-1]]
+		objects = Commands.get_objects(script_name)
+		if objects:
+			objects = [objects[-1]]
 		pass
 	func control_last():
-		objects = [Commands.get_objects(null, true)[0]]
+		objects = [Commands.get_objects(null, true)]
+		if objects:
+			objects = [objects[0]]
 	func control_filter(screen):
 		var new_objects = []
 		for o in objects:

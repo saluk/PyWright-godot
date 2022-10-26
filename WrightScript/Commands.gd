@@ -34,6 +34,8 @@ var external_commands = {}
 # Helper functions
 		
 func get_objects(script_name, last=null, group=SPRITE_GROUP):
+	if not get_tree():
+		return []
 	if last:
 		return [last_object]
 	var objects = []
@@ -208,7 +210,8 @@ func call_clear(script, arguments):
 	
 func call_pause(script, arguments):
 	# Need to add priority
-	return get_tree().create_timer(int(arguments[0])/60.0 * PAUSE_MULTIPLIER)
+	if get_tree():
+		return get_tree().create_timer(int(arguments[0])/60.0 * PAUSE_MULTIPLIER)
 	
 func call_nt(script, arguments):
 	var nametag = PoolStringArray(arguments).join(" ")
@@ -247,14 +250,20 @@ func call_delete(script, arguments):
 				children[-i].name = "DELETED_"+children[-1].name
 	
 func call_bg(script, arguments):
+	if not get_tree():
+		return
 	if not "stack" in arguments:
 		get_tree().call_group(CLEAR_GROUP, "queue_free")
 	var bg:Node = create_object(script, "bg", "res://Graphics/PWSprite.gd", [SPRITE_GROUP, BG_GROUP, CLEAR_GROUP], arguments)
 	
 func call_fg(script, arguments):
+	if not get_tree():
+		return
 	var fg:Node = create_object(script, "fg", "res://Graphics/PWSprite.gd", [SPRITE_GROUP, FG_GROUP, CLEAR_GROUP], arguments)
 
 func call_char(script, arguments):
+	if not get_tree():
+		return
 	# If we don't "stack" then delete existing character
 	if not "stack" in arguments and not "hide" in arguments:
 		get_tree().call_group(CHAR_GROUP, "queue_free")
