@@ -40,6 +40,8 @@ func get_objects(script_name, last=null, group=SPRITE_GROUP):
 		return [last_object]
 	var objects = []
 	for object in get_tree().get_nodes_in_group(group):
+		if object.is_queued_for_deletion():
+			continue
 		if not script_name or object.script_name == script_name:
 			objects.append(object)
 	return objects
@@ -93,7 +95,7 @@ func create_object(script, command, class_path, groups, arguments=[]):
 		object.load_character(
 			arguments[0], 
 			keywords(arguments).get("e", "normal"),
-			script.root_path
+			script.directory_stack
 		)
 	elif "PWEvidence" in class_path:
 		object.load_art(script.root_path, arguments[0])
@@ -127,10 +129,11 @@ func refresh_arrows(script):
 	)
 	
 func get_speaking_char():
-	for character in get_tree().get_nodes_in_group(CHAR_GROUP):
+	var characters = get_objects(null, null, CHAR_GROUP)
+	for character in characters:
 		if character.script_name == main.stack.variables.get_string("_speaking", null):
 			return [character]
-	for character in get_tree().get_nodes_in_group(CHAR_GROUP):
+	for character in characters:
 		return [character]
 	return []
 	
@@ -596,4 +599,10 @@ func call_draw_off(script, arguments):
 	pass # No op, old pywright needed the user to determine when to pause to load many graphics
 	
 func call_draw_on(script, arguments):
+	pass
+
+# Godot specific control commands
+
+func call_godotdebug(script, arguments):
+	# You can use this command to enter the godot debugger
 	pass

@@ -23,7 +23,8 @@ func index_file(path:String, file_name:String):
 	var full_path = Filesystem.path_join(path, file_name)
 	files[make_key(full_path)] = full_path
 
-func index_dir(path, ignore_paths = []):
+func index_dir(path, ignore_paths = [], check_directories=[]):
+	print("INDEX_DIR "+path+" "+str(ignore_paths)+", "+str(check_directories))
 	if path.ends_with("/") and path != "res://":
 		path = path.substr(0, path.length()-1)
 	var dir = Directory.new()
@@ -37,10 +38,13 @@ func index_dir(path, ignore_paths = []):
 			if file_name == "." or file_name == "..":
 				pass
 			elif dir.current_is_dir():
-				if not file_name in ignore_paths and file_name in check_directories:
-					index_dir(Filesystem.path_join(path, file_name))
+				if file_name in ignore_paths:
+					continue
+				if check_directories.size() > 0 and not file_name in check_directories:
+					continue
+				index_dir(Filesystem.path_join(path, file_name), ignore_paths)
 			else:
-				#print("indexing file")
+				print("indexing file "+file_name)
 				index_file(path, file_name)
 	else:
 		print("error opening directory "+path)
@@ -48,7 +52,7 @@ func index_dir(path, ignore_paths = []):
 func start_index_at(root_path:String, ignore_paths = []):
 	self.root_path = root_path
 	var current_dir = root_path
-	index_dir(current_dir)
+	index_dir(current_dir, ignore_paths, self.check_directories)
 	pass
 
 func _lookup(path):

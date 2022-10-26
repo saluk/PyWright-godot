@@ -51,6 +51,10 @@ func update_nametag():
 	else:
 		$NametagBackdrop/Label.text = nametag
 		$NametagBackdrop.visible = true
+		
+func update_emotion(emotion):
+	for character in Commands.get_speaking_char():
+		character.load_emotion(emotion)
 
 func _on_Area2D_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton and event.is_pressed():
@@ -116,6 +120,8 @@ func execute_markup(pack:Pack):
 			else:
 				$Backdrop/Label.bbcode_text += "[color=#"+Colors.string_to_hex(args[0])+"]"
 				diffcolor = true
+		"e":
+			update_emotion(args[0])
 		"sfx":
 			pass
 		"sound":

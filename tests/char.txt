@@ -1,0 +1,9 @@
+char maya e=none name=m1
+"should be blank"
+char maya name=m2
+"{ebench}I'm on the bench."
+"{echeerful}I'm cheerful."
+char maya
+"I'm normal"
+char maya stack e=bench
+"I'm in front"
