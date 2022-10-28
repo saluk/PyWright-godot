@@ -40,8 +40,8 @@ func index_dir(path, ignore_paths = [], check_directories=[]):
 			elif dir.current_is_dir():
 				if file_name in ignore_paths:
 					continue
-				if check_directories.size() > 0 and not file_name in check_directories:
-					continue
+				#if check_directories.size() > 0 and not file_name in check_directories:
+				#	continue
 				index_dir(Filesystem.path_join(path, file_name), ignore_paths)
 			else:
 				print("indexing file "+file_name)

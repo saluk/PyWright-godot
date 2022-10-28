@@ -28,9 +28,9 @@ func _load_audio_stream(path):
 		next_player.name = path
 		players.append(next_player)
 	
-func play_sound(path, directory_index:DirectoryIndexStack):
+func play_sound(path, current_path):
 	#path = Filesystem.lookup_file(path, root_path)
-	path = directory_index.lookup_path(path, ["oggi", "ogg", "mp3", "wav"])
+	path = Filesystem.lookup_file(path, current_path, ["oggi", "ogg", "mp3", "wav"])
 	if not path:
 		print("couldn't find path ", path)
 		return

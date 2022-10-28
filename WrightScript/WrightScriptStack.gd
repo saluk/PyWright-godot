@@ -53,4 +53,4 @@ func process():
 		state = STACK_PROCESSING
 	var current_script = scripts[-1]
 	current_script.process_wrightscript()
-	
+

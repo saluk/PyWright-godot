@@ -10,7 +10,8 @@ var current_sprite
 var char_name:String   # What this character is called for nametag purposes
 var script_name:String # How to identify the character
 var z:int
-var directory_index
+
+var root_path:String  # Save root path for art lookups in case we change emotion
 
 func queue_free():
 	print("queuing "+name)
@@ -25,20 +26,20 @@ func set_grey(value):
 	for sprite in sprites.values():
 		sprite.set_grey(value)
 
-func load_character(character_name, emotion, di:DirectoryIndexStack):
+func load_character(character_name, emotion, root_path):
+	self.root_path = root_path
 	char_name = character_name
 	script_name = character_name
-	directory_index = di
 	char_path = "art/port/"+character_name.to_lower()+"/"+emotion
 	# No blinking or talking
-	var defaultpath = di.lookup_path(
-		char_path+".png"
+	var defaultpath = Filesystem.lookup_file(
+		char_path+".png", root_path
 	)
-	var blinkpath = di.lookup_path(
-		char_path+"(blink).png"
+	var blinkpath = Filesystem.lookup_file(
+		char_path+"(blink).png", root_path
 	)
-	var talkpath = di.lookup_path(
-		char_path+"(talk).png"
+	var talkpath = Filesystem.lookup_file(
+		char_path+"(talk).png", root_path
 	)
 		
 	# Load normal poses for modes we missed
@@ -68,7 +69,7 @@ func load_emotion(emotion):
 	state = ""
 	sprites = {}
 	print("loading emotion:" + emotion)
-	load_character(char_name, emotion, directory_index)
+	load_character(char_name, emotion, root_path)
 	
 func play_state(new_state):
 	if state != new_state:

@@ -8,7 +8,6 @@ var lines := []
 var labels := {}  # each label will have a list of line numbers
 var line_num := 0
 var line:String
-var directory_stack:DirectoryIndexStack
 
 var processing
 
@@ -19,10 +18,10 @@ static func one_frame(dt:float) -> float:
 func _init(main):
 	assert(main)
 	self.main = main
-	self.directory_stack = DirectoryIndexStack.new()
 		
 func has_script(scene_name) -> String:
 	for name in [scene_name+".script.txt", scene_name+".txt"]:
+		print(root_path+"; "+name)
 		var found = Filesystem.lookup_file(name, root_path)
 		if found:
 			return found
@@ -31,7 +30,6 @@ func has_script(scene_name) -> String:
 func load_txt_file(path:String):
 	lines = []
 	root_path = path.get_base_dir()+"/"
-	self.directory_stack.build_stack(root_path)
 	filename = path.get_file()
 	var f = File.new()
 	var err = f.open(path, File.READ)

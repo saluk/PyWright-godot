@@ -1,8 +1,8 @@
 extends Node
 class_name DirectoryIndexStack
 
-var write_cache = true
-var read_cache = false
+var write_cache = false
+var read_cache = true
 
 var stack
 func _init():

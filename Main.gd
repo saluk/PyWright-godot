@@ -126,3 +126,8 @@ func log_error(msg):
 	get_node("MainScreen").add_child(txt)
 	yield(txt, "tree_exited")
 	blockers.erase(txt)
+
+func top_script():
+	if stack.scripts.size() > 0:
+		return stack.scripts[-1]
+	return null

@@ -121,7 +121,8 @@ func execute_markup(pack:Pack):
 				$Backdrop/Label.bbcode_text += "[color=#"+Colors.string_to_hex(args[0])+"]"
 				diffcolor = true
 		"e":
-			update_emotion(args[0])
+			Commands.call_command("emo", main.top_script(), args)
+			#update_emotion(args[0])
 		"sfx":
 			pass
 		"sound":

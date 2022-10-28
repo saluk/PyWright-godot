@@ -95,7 +95,7 @@ func create_object(script, command, class_path, groups, arguments=[]):
 		object.load_character(
 			arguments[0], 
 			keywords(arguments).get("e", "normal"),
-			script.directory_stack
+			script.root_path
 		)
 	elif "PWEvidence" in class_path:
 		object.load_art(script.root_path, arguments[0])
@@ -234,7 +234,7 @@ func call_fade(script, arguments):
 func call_sfx(script, arguments):
 	SoundPlayer.play_sound(
 		Filesystem.path_join("sfx", PoolStringArray(arguments).join(" ")), 
-		script.directory_stack
+		script.root_path
 	)
 
 func call_set(script, arguments):
@@ -283,6 +283,25 @@ func call_char(script, arguments):
 		character.add_to_group(HIDDEN_CHAR_GROUP)
 	main.stack.variables.set_val("_speaking", character.char_name)
 	
+func call_emo(script, arguments):
+	var kw = keywords(arguments, true)
+	arguments = kw[1]
+	kw = kw[0]
+	var name = kw.get("name", null)
+	var mode = kw.get("mode", null)
+	var emotion = ""
+	if arguments.size() > 0:
+		emotion = arguments[0]
+	var characters
+	if not name:
+		characters = get_speaking_char()
+	else:
+		characters = get_objects(name, false, CHAR_GROUP)
+	if characters:
+		characters[0].load_emotion(emotion)
+		if mode:
+			characters[0].play_state(mode)
+
 func call_ev(script, arguments):
 	var ev = create_object(
 		script,
@@ -316,6 +335,7 @@ func call_delev(script, arguments):
 
 func call_script(script, arguments, script_text=null):
 	if keywords(arguments).get("label",null):
+		# TODO jump to label when loading script
 		print("DO SOMETHING WITH SCRIPTS LOADING A LABEL")
 	if not "noclear" in arguments:
 		clear_main_screen()
@@ -575,7 +595,7 @@ func call_casemenu(script, arguments):
 	var case_num = 1
 	var case = main.stack.variables.get_string("_case_"+str(case_num), null)
 	while case:
-		cases.append(script.root_path + "/" + case)
+		cases.append(case)
 		case_num += 1
 		case = main.stack.variables.get_string("_case_"+str(case_num), null)
 	if not cases:
@@ -586,7 +606,7 @@ func call_casemenu(script, arguments):
 		var next_file_name = case_listing.get_next()
 		while next_file_name != "":
 			if not next_file_name in [".", ".."]:
-				cases.append(script.root_path + "/" + next_file_name)
+				cases.append(next_file_name)
 			next_file_name = case_listing.get_next()
 	var casemenu = load("res://UI/CaseMenu.tscn").instance()
 	casemenu.cases = cases
