@@ -83,8 +83,8 @@ func _on_click_area_input_event(viewport, event, shape_idx):
 		if Input.get_mouse_button_mask() & BUTTON_LEFT:
 			crosshair.crosshair_position = event.position-position
 			update()
-		if event is InputEventMouseButton and event.pressed == false:
-			click_option("region")
+		#if event is InputEventMouseButton and event.pressed == false:
+		#	click_option("region")
 			
 class Region extends Area2D:
 	var label

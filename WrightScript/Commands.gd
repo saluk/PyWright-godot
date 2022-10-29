@@ -393,12 +393,12 @@ func call_examine(script, arguments):
 	var offset = 0
 	while 1:
 		var line = script.get_next_line(offset)
-		offset += 1
 		if line.begins_with("region"):
 			examine_menu.add_region_text(line)
 		else:
 			script.goto_line_number(offset, true)
 			break
+		offset += 1
 	return examine_menu
 	
 func call_debug(script, arguments):

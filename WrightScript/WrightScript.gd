@@ -55,6 +55,10 @@ func add_label(label, line_num):
 		labels[label].append(line_num)
 	labels[label].sort()
 	
+var label_statements = [
+	"label", "list", "statement", "result", "cross"
+]
+	
 func preprocess_lines():
 	var line:String
 	var segments:Array
@@ -70,8 +74,10 @@ func preprocess_lines():
 		line = line.strip_edges(true, true)
 		lines[i] = line
 		segments = line.split(" ", true, 1)
-		if segments and segments[0] == "label":
-			add_label(segments[1].strip_edges(), i)
+		if segments and segments[0] in label_statements:
+			var tag = segments[1].strip_edges()
+			if tag:
+				add_label(tag, i)
 			i += 1
 			continue
 		elif segments and segments[0] == "include":
