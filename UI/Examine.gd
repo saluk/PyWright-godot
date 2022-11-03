@@ -81,7 +81,8 @@ func setup_crosshair():
 func _on_click_area_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton or event is InputEventMouseMotion:
 		if Input.get_mouse_button_mask() & BUTTON_LEFT:
-			crosshair.crosshair_position = event.position-position
+			var pos = event.position-position
+			crosshair.crosshair_position = Vector2(int(pos.x), int(pos.y))
 			update()
 		#if event is InputEventMouseButton and event.pressed == false:
 		#	click_option("region")
@@ -110,6 +111,8 @@ func add_region_text(text):
 	add_child(region)
 
 func click_option(option):
+	print("CLICK OPTION "+option)
+	print(current_region)
 	queue_free()
 	if option == "_^BACK^_":
 		pass
@@ -127,17 +130,21 @@ func click_option(option):
 func update():
 	examine_button.visible = false
 	current_region = null
-	if reveal_regions:
-		for child in get_children():
-			var region = child as Region
-			if region and region.is_point_inside(crosshair.crosshair_position):
+	print("CLEAR CURRENT REGION")
+	if not reveal_regions:
+		examine_button.visible = true
+	for child in get_children():
+		var region = child as Region
+		if region and region.is_point_inside(crosshair.crosshair_position):
+			if reveal_regions:
 				examine_button.visible = true
-				current_region = region
+			current_region = region
+			print("SET CURRENT REGION")
 	.update()
 	crosshair.update()
 
 class Crosshair extends Node2D:
-	var crosshair_position = Vector2(256/2, 192/2)
+	var crosshair_position = Vector2(int(256/2), int(192/2))
 	func _draw():
 		draw_line(
 			Vector2(0, crosshair_position.y),

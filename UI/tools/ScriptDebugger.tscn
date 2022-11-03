@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://UI/tools/ScriptDebugger.gd" type="Script" id=1]
+[ext_resource path="res://UI/Fonts/Hack-Regular.ttf" type="DynamicFontData" id=2]
+
+[sub_resource type="DynamicFont" id=1]
+size = 11
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 2 )
+
+[sub_resource type="Theme" id=2]
+default_font = SubResource( 1 )
+
+[node name="ScriptDebugger" type="Control" groups=["ScriptDebugger"]]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -262.0
+theme = SubResource( 2 )
+script = ExtResource( 1 )
+
+[node name="Scripts" type="TabContainer" parent="."]
+margin_left = 1.0
+margin_top = 4.0
+margin_right = 248.0
+margin_bottom = 383.0
+
+[node name="CurrentScript" type="TextEdit" parent="Scripts"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+text = "line 1
+line 2
+line 3"
+readonly = true
+highlight_current_line = true
+syntax_highlighting = true
+show_line_numbers = true
+draw_tabs = true
+bookmark_gutter = true
+smooth_scrolling = true
+wrap_enabled = true

@@ -32,6 +32,8 @@ func load_art(root_path):
 		sprites_high[order[i]] = frames2[i]
 
 func add_option(option):
+	if not IButtonS:
+		return
 	var width = sprites[option].region.size.x
 	var height = sprites[option].region.size.y
 	var button = IButtonS.new(

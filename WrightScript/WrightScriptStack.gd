@@ -42,6 +42,13 @@ func clear_scripts():
 	for script in scripts:
 		script.end()
 		scripts.erase(script)
+		
+func show_in_debugger():
+	if not main or not main.get_tree():
+		return
+	var debugger = main.get_tree().get_nodes_in_group("ScriptDebugger")
+	if debugger:
+		debugger[0].update_current_stack(self)
 
 func process():
 	if not scripts:
@@ -53,4 +60,4 @@ func process():
 		state = STACK_PROCESSING
 	var current_script = scripts[-1]
 	current_script.process_wrightscript()
-
+	show_in_debugger()

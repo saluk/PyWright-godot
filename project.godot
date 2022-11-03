@@ -120,9 +120,9 @@ gdscript/warnings/integer_division=false
 
 [display]
 
-window/size/width=256
+window/size/width=512
 window/size/height=384
-window/size/test_width=512
+window/size/test_width=1024
 window/size/test_height=768
 window/handheld/orientation="sensor"
 window/stretch/mode="viewport"

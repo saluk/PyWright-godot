@@ -7,6 +7,7 @@ var filename := ""
 var lines := []
 var labels := {}  # each label will have a list of line numbers
 var line_num := 0
+var executed_line_num := 0  #Indicates the line number that was last executed
 var line:String
 
 var processing
@@ -156,6 +157,7 @@ func execution_loop():
 			line = "text "+line
 		var split = line.split(" ") as Array
 		var call_command = split[0]
+		executed_line_num = line_num
 		line_num += 1
 		var sig = Commands.call_command(
 			call_command, self, split.slice(1, split.size())
@@ -183,5 +185,5 @@ func execution_loop():
 #Force script to end
 func end():
 	#processing = null
-	line_num = 0
-	lines = []
+	lines.append("")
+	line_num = len(lines)

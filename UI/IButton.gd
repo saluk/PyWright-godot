@@ -3,7 +3,7 @@ class_name IButton
 
 var frame
 var active_frame
-var area:Area2D
+var area:Control
 var menu
 var button_name
 
@@ -33,6 +33,7 @@ func build_sprite(frame):
 	return sprite
 
 func _init(frame, active_frame, pos=Vector2(0,0), size=null):
+	print("NEW IFRAME ", frame, active_frame, pos, size)
 	self.frame = build_sprite(frame)
 	self.active_frame = build_sprite(active_frame)
 	self.position = pos
@@ -45,19 +46,23 @@ func _init(frame, active_frame, pos=Vector2(0,0), size=null):
 		size = get_size(frame)
 	width = size.x
 	height = size.y
+	print(" BUTTON WIDTH, HEIGHT", width, ",", height)
 	
 	#self.frame.position = Vector2(width/2, height/2)
 	#self.active_frame.position = Vector2(width/2, height/2)
 	
-	self.area = Area2D.new()
-	var shape := CollisionShape2D.new()
-	shape.shape = RectangleShape2D.new()
-	shape.shape.extents = Vector2(width, height)/2
-	area.add_child(shape)
+	area = Control.new()
+	#var shape := CollisionShape2D.new()
+	#shape.shape = RectangleShape2D.new()
+	#shape.shape.extents = Vector2(width, height)/2
+	#area.add_child(shape)
+	#area.rect_position = Vector2(0, 0)
+	area.rect_position = Vector2(-width/2, -height/2)
+	area.rect_size = Vector2(width, height)
 	add_child(area)
-	area.connect("input_event", self, "_on_Area2D_input_event")
+	area.connect("gui_input", self, "_on_Area2D_input_event")
 	
 	
-func _on_Area2D_input_event(viewport, event, shape_idx):
+func _on_Area2D_input_event(event):
 	if event is InputEventMouseButton and event.is_pressed():
 		menu.click_option(button_name)

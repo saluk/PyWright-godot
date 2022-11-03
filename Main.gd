@@ -118,6 +118,7 @@ func _process(_delta):
 		stack.process()
 
 func log_error(msg):
+	stack.show_in_debugger()
 	print(msg)
 	var txt = load("res://UI/Textbox.tscn").instance()
 	txt.text_to_print = msg

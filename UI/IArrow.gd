@@ -29,7 +29,7 @@ func load_art(root_path):
 		arrowbg, arrowbg_high,
 		Vector2(256/2-arrowbg.width/2, 192/2-arrowbg.height/2)
 	)
-	button.area.position = Vector2(arrowbg.width/2, arrowbg.height/2)
+	button.area.rect_position = Vector2(0, 0)
 	add_child(button)
 	button.menu = self
 	
