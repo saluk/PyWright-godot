@@ -9,6 +9,8 @@ var evidence_pages := {
 	
 }
 
+var macros := {}
+
 enum {
 	STACK_READY,
 	STACK_PROCESSING,
@@ -22,16 +24,45 @@ func _init(main):
 	variables = Variables.new()
 
 signal stack_empty
+
+func load_macros_from_path(path):
+	var dir = Directory.new()
+	if dir.open(path) == OK:
+		dir.list_dir_begin()
+		while true:
+			var file_name = dir.get_next()
+			if file_name == "":
+				break
+			if file_name == "." or file_name == "..":
+				pass
+			elif dir.current_is_dir():
+				continue
+			elif file_name == "macros.txt" or file_name.ends_with(".mcro"):
+				var script = WrightScript.new(main)
+				script.load_txt_file("macros/"+file_name)
+				scripts.append(script)		
+
+func init_game(path):
+	load_script(path+"/intro.txt")
+	if not scripts[-1].lines.size():
+		add_script("casemenu")
+		scripts[-1].root_path = path
+	# Reverse order load the macro scripts so they run first
+	load_macros_from_path("macros")
 	
 func add_script(script_text):
 	var new_script = WrightScript.new(main)
 	new_script.load_string(script_text)
 	scripts.append(new_script)
+	return new_script
 	
 func load_script(script_path):
 	var new_script = WrightScript.new(main)
 	new_script.load_txt_file(script_path)
 	scripts.append(new_script)
+	# TODO - pretty sure we dont want to reload the macros on every script change, but only when starting a game or case
+	load_macros_from_path(script_path.split("/", true, 1)[0])
+	return new_script
 	
 func remove_script(script):
 	if script in scripts:
@@ -59,5 +90,5 @@ func process():
 	if state == STACK_READY:
 		state = STACK_PROCESSING
 	var current_script = scripts[-1]
-	current_script.process_wrightscript()
+	current_script.process_wrightscript(self)
 	show_in_debugger()

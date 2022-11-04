@@ -1,0 +1,548 @@
+//Psyche Lock Setup 
+
+macro psyche1
+{psyche_init}
+bg chains/1lockback name=1b stack 
+fg chains/1lockfront name=1f stack nowait
+sfx One Lock Psyche Lock
+shake 72 10 nowait
+pause 72 script
+{psyche_center_lock}
+{f}
+pause 150
+endmacro
+
+macro psyche2
+{psyche_init}
+bg chains/2lockback name=2b stack
+fg chains/2lockfront name=2f stack nowait
+sfx Two Lock Psyche Locks
+shake 90 10 nowait
+pause 90 script
+{psyche_left_center_lock}
+pause 12 script
+{psyche_right_center_lock nowait}
+{f}
+pause 150
+endmacro
+
+macro psyche3
+{psyche_init}
+bg chains/3lockback name=3b stack 
+fg chains/3lockfront name=3f stack nowait
+sfx Three Lock Psyche Locks
+shake 102 10 nowait
+pause 102 script
+{psyche_center_lock}
+pause 12 script
+{psyche_left_lower_lock}
+pause 12 script
+{psyche_right_lower_lock nowait}
+{f}
+pause 150
+endmacro
+
+macro psyche3upper
+{psyche_init}
+bg chains/3lockback name=3b stack
+fg chains/3lockfrontshort name=3f loops=0 stack nowait
+sfx Three Lock Psyche Locks
+shake 102 10 nowait
+pause 102 script
+{psyche_center_upper_lock}
+pause 12 script
+{psyche_left_lower_lock}
+pause 12 script
+{psyche_right_lower_lock nowait}
+{f}
+pause 30
+endmacro
+
+macro psyche4
+{psyche_init}
+bg chains/4lockback name=4b stack
+fg chains/4lockfront name=4f stack nowait
+sfx Four Lock Psyche Locks
+shake 112 10 nowait
+pause 112 script
+{psyche_left_lower_lock nowait}
+pause 12 script
+{psyche_right_lower_lock nowait}
+pause 12 script
+{psyche_left_upper_lock nowait}
+pause 12 script
+{psyche_right_upper_lock nowait}
+{f}
+pause 30
+endmacro
+
+macro psyche5
+{psyche_init}
+bg chains/5lockback name=5b stack
+fg chains/5lockfront name=5f stack nowait
+sfx Five Lock Psyche Locks
+shake 132 10 nowait
+pause 132 script
+{psyche_center_lock nowait}
+pause 8 script
+{psyche_left_lower_lock nowait}
+pause 8 script
+{psyche_right_lower_lock nowait}
+pause 8 script
+{psyche_left_upper_lock nowait}
+pause 8 script
+{psyche_right_upper_lock}
+{f}
+pause 45
+endmacro
+
+macro psyche5upper
+{psyche_init}
+bg chains/5lockback name=5b stack
+fg chains/5lockfrontshort name=5f stack nowait
+sfx Five Lock Psyche Locks
+shake 120 10 nowait
+pause 120 script
+sfx Five Lock Psyche Lock
+{psyche_center_upper_lock nowait}
+pause 8 script
+{psyche_left_lower_lock nowait}
+pause 8 script
+{psyche_right_lower_lock nowait}
+pause 8 script
+{psyche_left_upper_lock nowait}
+pause 8 script
+{psyche_right_upper_lock}
+{f}
+pause 45
+endmacro
+
+macro psyche5black
+{psyche_init}
+setflag black_locks
+bg chains/5lockback name=5b stack
+fg chains/5lockfront name=5f stack nowait
+sfx Five Lock Psyche Locks
+shake 120 10 nowait
+pause 120 script
+sfx Five Lock Psyche Lock
+{psyche_center_lock_black nowait}
+pause 8 script
+{psyche_left_lower_lock_black nowait}
+pause 8 script
+{psyche_right_lower_lock_black nowait}
+pause 8 script
+{psyche_left_upper_lock_black nowait}
+pause 8 script
+{psyche_right_upper_lock_black nowait}
+{f}
+pause 45
+endmacro
+
+macro psyche5blackupper
+{psyche_init}
+setflag black_upper_locks
+bg chains/5lockback name=5b stack
+fg chains/5lockfrontshort name=5f stack nowait
+sfx Five Lock Psyche Locks
+shake 120 10 nowait
+pause 120 script
+sfx Five Lock Psyche Lock
+{psyche_center_upper_lock_black nowait}
+pause 8 script
+{psyche_left_lower_lock_black nowait}
+pause 8 script
+{psyche_right_lower_lock_black nowait}
+pause 8 script
+{psyche_left_upper_lock_black nowait}
+pause 8 script
+{psyche_right_upper_lock_black nowait}
+{f}
+pause 45
+endmacro
+
+// Psyche Lock Clear 
+// Must call this after the last lock
+
+macro psyche1clear
+delete name=1b
+delete name=1f
+bg chains/1lockbackpixel name=1bp stack
+fg chains/1lockfrontpixel name=1fp stack
+pause 75
+delete name=1bp
+delete name=1fp
+bg chains/1lockbackwin name=1bw stack
+fg chains/1lockfrontwin name=1fw stack nowait
+sfx One Lock Psyche Lock Success
+pause 72 script
+delete name=1bw
+delete name=1fw
+endmacro
+
+macro psyche2clear
+delete name=2b
+delete name=2f
+bg chains/2lockbackpixel name=2bp stack
+fg chains/2lockfrontpixel name=2fp stack
+pause 75
+delete name=2bp
+delete name=2fp
+bg chains/2lockbackwin name=2bw stack
+fg chains/2lockfrontwin name=2fw stack nowait
+sfx Two Lock Psyche Lock Success
+pause 90 script
+delete name=2bw
+delete name=2fw
+endmacro
+
+macro psyche3clear
+delete name=3b
+delete name=3f
+bg chains/3lockbackpixel name=3bp stack
+fg chains/3lockfrontpixel name=3fp stack nowait
+pause 75
+delete name=3bp
+delete name=3fp
+bg chains/3lockbackwin name=3bw stack
+fg chains/3lockfrontwin name=3fw stack nowait
+sfx Three Lock Psyche Lock Success
+pause 102 script
+delete name=3bw
+delete name=3fw
+endmacro
+
+macro psyche3upperclear
+delete name=3b
+delete name=3f
+bg chains/3lockbackpixel name=3bp stack
+fg chains/3lockfrontshortpixel name=3fp stack nowait
+pause 75
+delete name=3bp
+delete name=3fp
+bg chains/3lockbackwin name=3bw stack
+fg chains/3lockfrontshortwin name=3fw stack nowait
+sfx Three Lock Psyche Lock Success
+pause 102 script
+delete name=3bw
+delete name=3fw
+endmacro
+
+macro psyche4clear
+delete name=4b
+delete name=4f
+bg chains/4lockbackpixel name=4bp stack
+fg chains/4lockfrontpixel name=4fp stack
+pause 75
+delete name=4bp
+delete name=4fp
+bg chains/4lockbackwin name=4bw stack
+fg chains/4lockfrontwin name=4fw stack nowait
+sfx Four Lock Psyche Lock Success
+pause 112 script
+delete name=4bw
+delete name=4fw
+endmacro
+
+macro psyche5clear
+delete name=5b
+delete name=5f
+bg chains/5lockbackpixel name=5bp stack
+fg chains/5lockfrontpixel name=5fp stack nowait
+pause 75
+delete name=5bp
+delete name=5fp
+bg chains/5lockbackwin name=5bw stack
+fg chains/5lockfrontwin name=5fw stack nowait
+sfx Five Lock Psyche Lock Success
+pause 132 script
+delete name=5bw
+delete name=5fw
+endmacro
+
+macro psyche5upperclear
+delete name=5b
+delete name=5f
+bg chains/5lockbackpixel name=5bp stack
+fg chains/5lockfrontshortpixel name=5fp stack nowait
+pause 75
+delete name=5bp
+delete name=5fp
+bg chains/5lockbackwin name=5bw stack
+fg chains/5lockfrontshortwin name=5fw stack nowait
+sfx Five Lock Psyche Lock Success
+pause 132 script
+delete name=5bw
+delete name=5fw
+endmacro
+
+
+// Regular Psyche Lock appearance. 
+// Positions only
+
+macro psyche_center_lock
+obj general/red-lock-appears x=79 y=90 $1 name=cl
+setflag center_locked
+endmacro
+
+macro psyche_center_upper_lock
+obj general/red-lock-appears x=79 y=-10 $1 name=chl
+setflag center_upper_locked
+endmacro
+
+macro psyche_left_lower_lock
+obj general/red-lock-appears x=0 y=74 $1 name=lll
+setflag left_lower_locked
+endmacro
+
+macro psyche_left_center_lock
+obj general/red-lock-appears x=14 y=64 $1 name=lcl
+setflag left_center_locked
+endmacro
+
+macro psyche_left_upper_lock
+obj general/red-lock-appears x=32 y=26 $1 name=lhl
+setflag left_upper_locked
+endmacro
+
+macro psyche_right_lower_lock
+obj general/red-lock-appears $1 x=159 y=74 name=rll
+setflag right_lower_locked
+endmacro
+
+macro psyche_right_center_lock
+obj general/red-lock-appears $1 x=144 y=64 name=rcl
+setflag right_center_locked
+endmacro
+
+macro psyche_right_upper_lock
+obj general/red-lock-appears $1 x=127 y=26 name=rhl
+setflag right_upper_locked
+endmacro
+
+//Black Psyche Lock Appearance
+//This set of psyche locks will have regular 
+//Psyche Locks underneath it.
+
+macro psyche_center_lock_black
+obj general/red-lock-appears x=79 y=90 $1 name=cl nowait
+obj general/black-lock-appears x=79 y=90 name=clb 
+setflag center_locked
+endmacro
+
+macro psyche_center_upper_lock_black
+obj general/red-lock-appears x=79 y=-10 $1 name=chl nowait
+obj general/black-lock-appears x=79 y=-10 name=chlb 
+setflag center_upper_locked
+endmacro
+
+macro psyche_left_lower_lock_black
+obj general/red-lock-appears x=0 y=74 $1 name=lll nowait
+obj general/black-lock-appears x=0 y=74 name=lllb
+setflag left_lower_locked
+endmacro
+
+macro psyche_left_upper_lock_black
+obj general/red-lock-appears x=32 y=26 $1 name=lhl nowait
+obj general/black-lock-appears x=32 y=26 name=lhlb
+setflag left_upper_locked
+endmacro
+
+macro psyche_right_lower_lock_black
+obj general/red-lock-appears $1 x=159 y=74 name=rll nowait
+obj general/black-lock-appears x=159 y=74 name=rllb
+setflag right_lower_locked
+endmacro
+
+macro psyche_right_upper_lock_black
+obj general/red-lock-appears $1 x=127 y=26 name=rhl nowait
+obj general/black-lock-appears x=127 y=26 name=rhlb
+setflag right_upper_locked
+endmacro
+
+//Psyche Lock Broken
+//Uses the macro {psyche_unlock}
+
+macro psyche_unlock_center
+sfx lockbreaks.ogg
+delete name=cl
+obj general/1-lock-breaks x=-1 y=84 name=cul
+pause 40
+delete name=cul
+endmacro
+
+macro psyche_unlock_upper_center
+sfx lockbreaks.ogg
+delete name=chl
+obj general/1-lock-breaks x=-1 y=-16 name=chul
+pause 40
+delete name=chul
+endmacro
+
+macro psyche_unlock_lower_left
+sfx lockbreaks.ogg
+delete name=lll
+obj general/1-lock-breaks x=-80 y=68 name=lul
+pause 40 script
+delete name=lul
+endmacro
+
+macro psyche_unlock_center_left
+sfx lockbreaks.ogg
+delete name=lcl
+obj general/1-lock-breaks x=-66 y=58 name=lcul
+pause 40 script
+delete name=lcul
+endmacro
+
+macro psyche_unlock_upper_left
+sfx lockbreaks.ogg
+delete name=lhl
+obj general/1-lock-breaks x=-48 y=20 name=lhul
+pause 40
+delete name=lul
+endmacro
+
+macro psyche_unlock_lower_right
+sfx lockbreaks.ogg
+delete name=rll
+obj general/1-lock-breaks x=78 y=68 name=rlul
+pause 40
+delete name=rlul
+endmacro
+
+macro psyche_unlock_center_right
+sfx lockbreaks.ogg
+delete name=rcl
+obj general/1-lock-breaks x=64 y=58 name=rcul
+pause 40 script
+delete name=rcul
+endmacro
+
+macro psyche_unlock_upper_right
+sfx lockbreaks.ogg
+delete name=rhl
+obj general/1-lock-breaks x=47 y=20 name=rhul
+pause 40
+delete name=rhul
+endmacro
+
+macro destroy_black
+sfx lockbreaks.ogg
+delete name=clb
+delete name=lllb
+delete name=lhlb
+delete name=rllb
+delete name=rhlb
+obj general/1-lock-breaks-black x=-1 y=84 name=culb nowait
+obj general/1-lock-breaks-black x=-80 y=68 name=llulb nowait
+obj general/1-lock-breaks-black x=-48 y=20 name=lhulb nowait
+obj general/1-lock-breaks-black x=78 y=68 name=rlulb nowait
+obj general/1-lock-breaks-black x=47 y=20 name=rhulb nowait
+pause 40
+delete name=culb
+delete name=llulb
+delete name=lhulb
+delete name=rlulb
+delete name=rhulb
+endmacro
+
+macro destroy_black_upper
+sfx lockbreaks.ogg
+delete name=chlb
+delete name=lllb
+delete name=lhlb
+delete name=rllb
+delete name=rhlb
+obj general/1-lock-breaks-black x=-1 y=-16 name=chulb nowait
+obj general/1-lock-breaks-black x=-80 y=68 name=llulb nowait
+obj general/1-lock-breaks-black x=-48 y=20 name=lhulb nowait
+obj general/1-lock-breaks-black x=78 y=68 name=rlulb nowait
+obj general/1-lock-breaks-black x=47 y=20 name=rhulb nowait
+pause 40
+delete name=chulb
+delete name=llulb
+delete name=lhulb
+delete name=rlulb
+delete name=rhulb
+endmacro
+
+macro psyche_init
+delflag center_locked
+delflag center_upper_locked
+delflag left_lower_locked
+delflag right_lower_locked
+delflag left_center_locked
+delflag right_center_locked
+delflag left_upper_locked
+delflag right_upper_locked
+delflag black_locks
+delflag black_upper_locks
+endmacro
+
+
+macro psyche_unlock
+flag black_locks $0_u4a_
+flag black_upper_locks $0_u4b_
+flag left_lower_locked $0_u2a_
+flag right_lower_locked $0_u3a_
+flag left_center_locked $0_u2b_
+flag right_center_locked $0_u3b_
+flag left_upper_locked $0_u2c_
+flag right_upper_locked $0_u3c_
+flag center_locked $0_u1_
+flag center_upper_locked $0_u1a_
+goto $0_u5_
+
+label $0_u1_
+delflag center_locked
+{psyche_unlock_center}
+goto $0_u5_
+
+label $0_u1a_
+delflag center_locked
+{psyche_unlock_upper_center}
+goto $0_u5_
+
+label $0_u2a_
+delflag left_lower_locked
+{psyche_unlock_lower_left}
+goto $0_u5_
+
+label $0_u2b_
+delflag left_center_locked
+{psyche_unlock_center_left}
+goto $0_u5_
+
+label $0_u2c_
+delflag left_upper_locked
+{psyche_unlock_upper_left}
+goto $0_u5_
+
+label $0_u3a_
+delflag right_lower_locked
+{psyche_unlock_lower_right}
+goto $0_u5_
+
+label $0_u3b_
+delflag right_center_locked
+{psyche_unlock_center_right}
+goto $0_u5_
+
+label $0_u3c_
+delflag right_upper_locked
+{psyche_unlock_upper_right}
+goto $0_u5_
+
+label $0_u4a_
+delflag black_locks
+{destroy_black}
+goto $0_u5_
+
+label $0_u4b_
+delflag black_upper_locks
+{destroy_black_upper}
+goto $0_u5_
+
+label $0_u5_
+endmacro

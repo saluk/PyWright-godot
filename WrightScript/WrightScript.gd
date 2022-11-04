@@ -92,9 +92,9 @@ func preprocess_lines():
 			continue
 		i += 1
 
-func process_wrightscript():
+func process_wrightscript(stack):
 	if not processing:
-		processing = execution_loop()
+		processing = execution_loop(stack)
 		
 func get_next_line(offset:int):
 	if line_num+offset >= lines.size():
@@ -140,7 +140,28 @@ func fail(label, dest=null):
 	elif dest:
 		goto_label(dest)
 		
-func execution_loop():
+func read_macro():
+	if not lines[line_num].begins_with("macro "):
+		return
+	# Start macro
+	var macro_name = lines[line_num].split(" ", true, 1)[1]
+	if macro_name.length() <= 0:
+		main.log_error("Macro has no name")
+		return
+	var macro_lines = []
+	line_num += 1
+	while line_num < lines.size():
+		var line = lines[line_num]
+		if line.strip_edges() == "endmacro":
+			line_num += 1
+			break
+		macro_lines.append(line)
+		line_num += 1
+	main.stack.macros[macro_name] = macro_lines
+	if line_num >= lines.size():
+		end()
+		
+func execution_loop(stack):
 	while 1:
 		if not main or main.blockers:
 			yield(main.get_tree(), "idle_frame")
@@ -148,6 +169,7 @@ func execution_loop():
 		if line_num >= lines.size():
 			main.stack.remove_script(self)
 			return
+		read_macro()
 		line = lines[line_num]
 		#print(line_num, ":", line)
 		if not line.strip_edges():
@@ -169,6 +191,8 @@ func execution_loop():
 			elif sig == Commands.UNDEFINED:
 				main.log_error("No command for "+split[0])
 			elif sig == Commands.DEBUG:
+				stack.show_in_debugger()
+				yield(main.get_tree(), "idle_frame")
 				print(" - debug - ")
 			else:
 				print("undefined return")
@@ -186,4 +210,4 @@ func execution_loop():
 func end():
 	#processing = null
 	lines.append("")
-	line_num = len(lines)
+	line_num = len(lines)-1

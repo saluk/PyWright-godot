@@ -37,10 +37,7 @@ func load_game_from_pack(path):
 		assert(false)
 		
 func load_game(path):
-	stack.load_script(path+"/intro.txt")
-	if not stack.scripts[-1].lines.size():
-		stack.add_script("casemenu")
-		stack.scripts[-1].root_path = path
+	stack.init_game(path)
 	stack.connect("stack_empty", get_tree(), "quit")
 	emit_signal("stack_initialized")
 		

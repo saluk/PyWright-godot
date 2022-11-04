@@ -16,6 +16,7 @@ default_font = SubResource( 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = -262.0
+margin_bottom = -40.0
 theme = SubResource( 2 )
 script = ExtResource( 1 )
 
@@ -23,7 +24,8 @@ script = ExtResource( 1 )
 margin_left = 1.0
 margin_top = 4.0
 margin_right = 248.0
-margin_bottom = 383.0
+margin_bottom = 342.0
+tab_align = 0
 
 [node name="CurrentScript" type="TextEdit" parent="Scripts"]
 anchor_right = 1.0
@@ -43,3 +45,10 @@ draw_tabs = true
 bookmark_gutter = true
 smooth_scrolling = true
 wrap_enabled = true
+
+[node name="Reload" type="Button" parent="."]
+margin_left = 6.0
+margin_top = 353.0
+margin_right = 60.0
+margin_bottom = 373.0
+text = "Reload"

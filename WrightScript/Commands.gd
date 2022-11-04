@@ -55,13 +55,21 @@ func load_command_engine():
 	main_screen = get_tree().get_nodes_in_group("MainScreen")[0]
 	index_commands()
 	
+func value_replace(value):
+	# Replace from variables if starts with $
+	# TODO move to stack
+	if value.begins_with("$"):
+		return main.stack.variables.get_string(value.substr(1))
+	return value
+	
 func keywords(arguments, remove=false):
+	# TODO determine if we actually ALWAYS want to replace $ variables here
 	var newargs = []
 	var d = {}
 	for arg in arguments:
 		if "=" in arg:
 			var split = arg.split("=", true, 1)
-			d[split[0]] = split[1]
+			d[split[0]] = value_replace(split[1])
 		else:
 			newargs.append(arg)
 	if remove:
@@ -82,7 +90,7 @@ func create_object(script, command, class_path, groups, arguments=[]):
 	var x=int(keywords(arguments).get("x", 0))
 	var y=int(keywords(arguments).get("y", 0))
 	object.position = Vector2(x, y)
-	if "PWSprite" in class_path:
+	if command in ["bg", "fg"]:
 		var filename = Filesystem.lookup_file(
 			"art/"+command+"/"+arguments[0]+".png",
 			script.root_path
@@ -99,6 +107,13 @@ func create_object(script, command, class_path, groups, arguments=[]):
 		)
 	elif "PWEvidence" in class_path:
 		object.load_art(script.root_path, arguments[0])
+	elif object.has_method("load_animation"):
+		object.load_animation(
+			Filesystem.lookup_file(
+				"art/"+arguments[0]+".png",
+				script.root_path
+			)
+		)
 	elif object.has_method("load_art"):
 		object.load_art(script.root_path)
 	var center = Vector2()
@@ -141,6 +156,7 @@ func get_speaking_char():
 func save_scripts():
 	var data = {
 		"variables": main.stack.variables.store,
+		"macros": main.stack.macros,
 		"evidence_pages": main.stack.evidence_pages,
 		"stack": []
 	}
@@ -175,6 +191,7 @@ func load_scripts():
 	main.blockers = []
 	main.stack.variables.store = data["variables"]
 	main.stack.evidence_pages = data["evidence_pages"]
+	main.stack.macros = data["macros"]
 	
 	for script_data in data["stack"]:
 		main.stack.load_script(script_data["root_path"]+"/"+script_data["filename"])
@@ -195,11 +212,33 @@ func index_commands():
 	external_commands["scroll.gd"] = load("res://WrightScript/Commands/Scroll.gd")
 
 func call_command(command, script, arguments):
+	command = value_replace(command)
+	
+	var args = []
+	for arg in arguments:
+		args.append(value_replace(arg))
+	arguments = args
+
 	if has_method("call_"+command):
 		return call("call_"+command, script, arguments)
+
 	if command+".gd" in external_commands:
 		return external_commands[command+".gd"].call_func(script, arguments)
+		
+	if main.stack.macros.has(command):
+		return call_macro(command, script, arguments)
 	return UNDEFINED
+	
+func call_macro(command, script, arguments):
+	var i = 1
+	for arg in arguments:
+		main.stack.variables.set_val(str(i), arg)
+		i += 1
+	var script_lines = main.stack.macros[command]
+	var new_script = main.stack.add_script(PoolStringArray(script_lines).join("\n"))
+	new_script.root_path = script.root_path
+	new_script.filename = "{"+command+"}"
+	return YIELD
 	
 # Script commands
 
@@ -251,6 +290,17 @@ func call_delete(script, arguments):
 			if children[-i].script_name == name:
 				children[-i].queue_free()
 				children[-i].name = "DELETED_"+children[-1].name
+				
+func call_obj(script, arguments):
+	if not get_tree():
+		return
+	var obj:Node = create_object(
+		script,
+		"graphic",
+		"res://Graphics/PWSprite.gd",
+		[SPRITE_GROUP],
+		arguments
+	)
 	
 func call_bg(script, arguments):
 	if not get_tree():

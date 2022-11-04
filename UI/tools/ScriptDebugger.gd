@@ -5,6 +5,7 @@ var current_stack
 var look_at   # Set to a script if we are looking at something other than the current script
 
 var script_tab
+var popup_menu
 
 var scripts = []
 
@@ -30,13 +31,12 @@ func rebuild():
 			"editor": script_tab.duplicate(),
 			"highlighted_line": null,
 			"bookmark_line": null}
-		d["editor"].name = script.filename
-		$Scripts.set_tab_title(i, script.filename)
+		d["editor"].name = "x"
 		$Scripts.add_child(d["editor"])
+		$Scripts.set_tab_title(i, script.filename)
 		d["editor"].text = PoolStringArray(d["script"].lines).join("\n")
 		scripts.append(d)
 		i += 1
-	pass
 
 func update_current_stack(stack):
 	current_stack = stack
