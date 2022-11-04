@@ -44,7 +44,7 @@ func load_art(root_path):
 
 func click_option(option):
 	for obj in Commands.get_objects(null, null, Commands.TEXTBOX_GROUP):
-		obj.click_next()
+		obj.click_continue()
 		return
 
 func _process(dt):

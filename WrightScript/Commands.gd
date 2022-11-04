@@ -135,13 +135,20 @@ func create_object(script, command, class_path, groups, arguments=[]):
 	
 func refresh_arrows(script):
 	get_tree().call_group(ARROW_GROUP, "queue_free")
+	var arrow_class = "res://UI/IArrow.gd"
+	if script.is_inside_cross():
+		arrow_class = "res://UI/IArrowCross.gd"
 	var arrow = create_object(
 		script,
 		"uglyarrow",
-		"res://UI/IArrow.gd",
+		arrow_class,
 		[ARROW_GROUP, SPRITE_GROUP],
 		[]
 	)
+	print(script.get_prev_statement())
+	if script.get_prev_statement() == null and "left" in arrow:
+		arrow.left.get_children()[1].visible = false
+		arrow.left.get_children()[2].visible = false
 	
 func get_speaking_char():
 	var characters = get_objects(null, null, CHAR_GROUP)
@@ -246,6 +253,20 @@ func call_text(script, arguments):
 	var text = PoolStringArray(arguments).join(" ")
 	text = text.substr(1,text.length()-2)
 	return Commands.create_textbox(text)
+	
+func call_cross(script, arguments):
+	main.stack.variables.set_val("_statement", "")
+	main.stack.variables.set_val("_statement_line_num", "")
+	main.stack.variables.set_val("_cross_line_num", script.executed_line_num)
+	
+func call_endcross(script, arguments):
+	main.stack.variables.set_val("_statement", "")
+	main.stack.variables.set_val("_statement_line_num", "")
+	main.stack.variables.set_val("_cross_line_num", "")
+	
+func call_statement(script, arguments):
+	main.stack.variables.set_val("_statement", arguments[0])
+	main.stack.variables.set_val("_statement_line_num", script.executed_line_num)
 
 func call_clear(script, arguments):
 	clear_main_screen()

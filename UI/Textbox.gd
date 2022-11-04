@@ -58,14 +58,22 @@ func update_emotion(emotion):
 
 func _on_Area2D_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton and event.is_pressed():
-		click_next()
+		click_continue()
 			
-func click_next():
-	if text_to_print or packs:
+func click_continue(immediate_skip=false):
+	if not immediate_skip and (text_to_print or packs):
 		while text_to_print or packs:
 			_process(1)
 	else:
 		queue_free()
+		
+func click_next():
+	main.stack.scripts[-1].next_statement()
+	click_continue(true)
+
+func click_prev():
+	main.stack.scripts[-1].prev_statement()
+	click_continue(true)
 		
 func get_next_pack():
 	var i = 0
@@ -87,7 +95,9 @@ func get_next_pack():
 		i += 1
 	text_to_print = ""
 	return Pack.new(TEXT_PACK, pack)
-	
+
+# TODO finish execute markup base commands
+# TODO execute macros
 func execute_markup(pack:Pack):
 	var args = []
 	for command in [

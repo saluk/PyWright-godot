@@ -140,6 +140,66 @@ func fail(label, dest=null):
 	elif dest:
 		goto_label(dest)
 		
+func is_statement(line):
+	return line.begins_with("statement ") or line.strip_edges() == "statement"
+	
+func is_cross(line):
+	return line.begins_with("cross ") or line.strip_edges() == "cross"
+	
+func is_endcross(line):
+	return line.begins_with("endcross ") or line.strip_edges() == "endcross"
+		
+func is_inside_cross():
+	var crosses = []
+	var endcrosses = []
+	var i
+	i = 0
+	for line in lines:
+		if is_cross(line):
+			crosses.append(i)
+		i += 1
+	i = 0
+	for line in lines:
+		if is_endcross(line):
+			endcrosses.append(i)
+		i += 1
+	if not crosses or not endcrosses:
+		return false
+	for c in crosses:
+		if c < line_num:
+			for ec in endcrosses:
+				if ec > line_num:
+					return true
+	return false
+
+func next_statement():
+	if not is_inside_cross():
+		return
+	var si = line_num+1
+	while si < lines.size():
+		if is_statement(lines[si]):
+			return goto_line_number(si)
+		if is_endcross(lines[si]):
+			return goto_line_number(si)
+		si += 1
+		
+func get_prev_statement():
+	if not is_inside_cross():
+		return
+	var si = line_num-1
+	while si > -1:
+		if is_cross(lines[si]):
+			return null
+		if is_statement(lines[si]) and si != main.stack.variables.get_int("_statement_line_num"):
+			return si
+		si -= 1
+	return null
+		
+func prev_statement():
+	var si = get_prev_statement()
+	if si != null:
+		return goto_line_number(si)
+		
 func read_macro():
 	if not lines[line_num].begins_with("macro "):
 		return
