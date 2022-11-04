@@ -15,7 +15,7 @@ var relative_positions = {
 
 var sprites = {}
 var sprites_high = {}
-onready var IButtonS = load("res://UI/IButton.gd")
+onready var IButtonS = load("res://System/UI/IButton.gd")
 	
 func load_art(root_path):
 	var path = Filesystem.lookup_file("art/general/talkbuttons.png", root_path)

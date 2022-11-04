@@ -6,7 +6,7 @@ var scene_name:String
 var root_path
 var z
 
-var IButtonS = preload("res://UI/IButton.gd")
+var IButtonS = preload("res://System/UI/IButton.gd")
 var back_button
 var choice_art
 var choice_high_art

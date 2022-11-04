@@ -32,7 +32,7 @@ func build_sprite(frame):
 	var sprite = Sprite.new()
 	sprite.texture = frame
 	sprite.material = ShaderMaterial.new()
-	sprite.material.shader = load("res://Graphics/clear_pink.shader")
+	sprite.material.shader = load("res://System/Graphics/clear_pink.shader")
 	return sprite
 	
 func load_art(frame_path, active_frame_path=null):

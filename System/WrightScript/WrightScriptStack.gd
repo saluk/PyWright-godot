@@ -11,6 +11,8 @@ var evidence_pages := {
 
 var macros := {}
 
+var filesystem
+
 enum {
 	STACK_READY,
 	STACK_PROCESSING,
@@ -22,6 +24,7 @@ func _init(main):
 	assert(main)
 	self.main = main
 	variables = Variables.new()
+	filesystem = load("res://System/Files/Filesystem.gd").new()
 
 signal stack_empty
 
@@ -51,6 +54,8 @@ func load_macros_from_path(path):
 		print("COULDN'T OPEN DIRECTORY")
 
 func init_game(path):
+	# Used to load a game and then a case inside the game
+	filesystem = load("res://System/Files/Filesystem.gd").new()
 	load_script(path+"/intro.txt")
 	if not scripts[-1].lines.size():
 		add_script("casemenu")

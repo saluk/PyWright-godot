@@ -4,7 +4,7 @@ var main:Node
 var main_screen:Node
 var z:int
 
-var textboxScene = preload("res://UI/Textbox.tscn")
+var textboxScene = preload("res://System/UI/Textbox.tscn")
 
 var last_object
 
@@ -86,6 +86,7 @@ func create_textbox(line) -> Node:
 func create_object(script, command, class_path, groups, arguments=[]):
 	var object:Node
 	object = load(class_path).new()
+	main_screen.add_child(object)
 	if "main" in object:
 		object.main = main
 	var x=int(keywords(arguments).get("x", 0))
@@ -142,15 +143,14 @@ func create_object(script, command, class_path, groups, arguments=[]):
 		object.z = ZLayers.z_sort[command]
 	for group in groups:
 		object.add_to_group(group)
-	main_screen.add_child(object)
 	object.name = object.script_name
 	return object
 	
 func refresh_arrows(script):
 	get_tree().call_group(ARROW_GROUP, "queue_free")
-	var arrow_class = "res://UI/IArrow.gd"
+	var arrow_class = "res://System/UI/IArrow.gd"
 	if script.is_inside_cross():
-		arrow_class = "res://UI/IArrowCross.gd"
+		arrow_class = "res://System/UI/IArrowCross.gd"
 	var arrow = create_object(
 		script,
 		"uglyarrow",
@@ -234,7 +234,7 @@ func load_scripts():
 # Call interface
 
 func index_commands():
-	external_commands["scroll.gd"] = load("res://WrightScript/Commands/Scroll.gd")
+	external_commands["scroll.gd"] = load("res://System/WrightScript/Commands/Scroll.gd")
 
 func call_command(command, script, arguments):
 	command = value_replace(command)
@@ -375,7 +375,7 @@ func call_obj(script, arguments):
 	var obj:Node = create_object(
 		script,
 		"graphic",
-		"res://Graphics/PWSprite.gd",
+		"res://System/Graphics/PWSprite.gd",
 		[SPRITE_GROUP],
 		arguments
 	)
@@ -393,7 +393,7 @@ func call_gui(script, arguments):
 		var button = create_object(
 			script, 
 			"gui", 
-			"res://UI/IButton.gd", 
+			"res://System/UI/IButton.gd", 
 			[SPRITE_GROUP],
 			arguments
 		)
@@ -407,12 +407,12 @@ func call_bg(script, arguments):
 		return
 	if not "stack" in arguments:
 		get_tree().call_group(CLEAR_GROUP, "queue_free")
-	var bg:Node = create_object(script, "bg", "res://Graphics/PWSprite.gd", [SPRITE_GROUP, BG_GROUP, CLEAR_GROUP], arguments)
+	var bg:Node = create_object(script, "bg", "res://System/Graphics/PWSprite.gd", [SPRITE_GROUP, BG_GROUP, CLEAR_GROUP], arguments)
 	
 func call_fg(script, arguments):
 	if not get_tree():
 		return
-	var fg:Node = create_object(script, "fg", "res://Graphics/PWSprite.gd", [SPRITE_GROUP, FG_GROUP, CLEAR_GROUP], arguments)
+	var fg:Node = create_object(script, "fg", "res://System/Graphics/PWSprite.gd", [SPRITE_GROUP, FG_GROUP, CLEAR_GROUP], arguments)
 
 func call_char(script, arguments):
 	if not get_tree():
@@ -423,7 +423,7 @@ func call_char(script, arguments):
 	var character = create_object(
 		script,
 		"portrait", 
-		"res://Graphics/PWChar.gd",
+		"res://System/Graphics/PWChar.gd",
 		[CHAR_GROUP, SPRITE_GROUP, CLEAR_GROUP],
 		arguments
 	)
@@ -456,7 +456,7 @@ func call_ev(script, arguments):
 	var ev = create_object(
 		script,
 		"evidence",
-		"res://Graphics/PWEvidence.gd",
+		"res://System/Graphics/PWEvidence.gd",
 		[SPRITE_GROUP, CLEAR_GROUP],
 		arguments
 	)
@@ -511,7 +511,7 @@ func call_menu(script, arguments):
 	var menu = create_object(
 		script,
 		"menu",
-		"res://UI/Investigate.gd",
+		"res://System/UI/Investigate.gd",
 		[SPRITE_GROUP],
 		["name=invest_menu"])
 	menu.scene_name = menu_name
@@ -532,7 +532,7 @@ func call_examine(script, arguments):
 	var examine_menu = create_object(
 		script,
 		"examine_menu",
-		"res://UI/Examine.gd",
+		"res://System/UI/Examine.gd",
 		[SPRITE_GROUP],
 		arguments
 	)
@@ -565,7 +565,7 @@ func call_list(script, arguments):
 	var list_menu = create_object(
 		script,
 		"listmenu",
-		"res://UI/PWList.gd",
+		"res://System/UI/PWList.gd",
 		[SPRITE_GROUP, LIST_GROUP],
 		arguments
 	)
@@ -645,7 +645,7 @@ func call_present(script, arguments):
 	var cr = create_object(
 		script, 
 		"evidence_menu",
-		"res://UI/CourtRecord.gd",
+		"res://System/UI/CourtRecord.gd",
 		[SPRITE_GROUP],
 		arguments
 	)
@@ -679,7 +679,7 @@ func call_penalty(script, arguments):
 		if not (damage_amount or threat):
 			delay = 0
 	get_tree().call_group(PENALTY_GROUP, "queue_free")
-	var penalty = create_object(script, "penalty", "res://UI/Penalty.gd", 
+	var penalty = create_object(script, "penalty", "res://System/UI/Penalty.gd", 
 		[SPRITE_GROUP, PENALTY_GROUP], ["name=penalty"])
 	penalty.variable = variable
 	if threat:
@@ -761,7 +761,7 @@ func call_casemenu(script, arguments):
 			if not next_file_name in [".", ".."]:
 				cases.append(next_file_name)
 			next_file_name = case_listing.get_next()
-	var casemenu = load("res://UI/CaseMenu.tscn").instance()
+	var casemenu = load("res://System/UI/CaseMenu.tscn").instance()
 	casemenu.cases = cases
 	casemenu.wrightscript = script
 	clear_main_screen()

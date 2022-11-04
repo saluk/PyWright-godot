@@ -12,7 +12,7 @@ var offset = 0
 
 var sprites = {}
 var sprites_high = {}
-onready var IButtonS = load("res://UI/IButton.gd")
+onready var IButtonS = load("res://System/UI/IButton.gd")
 
 func reset():
 	for child in get_children():

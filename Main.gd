@@ -53,7 +53,7 @@ func _ready():
 	# TODO move tests for this elsewhere
 	test_eval()
 	
-	var loader = load("res://UI/GamesMenu.tscn").instance()
+	var loader = load("res://System/UI/GamesMenu.tscn").instance()
 	main_screen().add_child(loader)
 	var path = yield(loader, "game_loaded")
 	if path.ends_with(".pck"):
@@ -117,7 +117,7 @@ func _process(_delta):
 func log_error(msg):
 	stack.show_in_debugger()
 	print("ERROR:", msg)
-	var txt = load("res://UI/Textbox.tscn").instance()
+	var txt = load("res://System/UI/Textbox.tscn").instance()
 	txt.text_to_print = msg
 	txt.main = self
 	blockers.append(txt)

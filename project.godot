@@ -12,7 +12,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "AudioLoader",
 "language": "GDScript",
-"path": "res://System/GDScriptAudioImport.gd"
+"path": "res://System/Files/GDScriptAudioImport.gd"
 }, {
 "base": "Reference",
 "class": "Colors",
@@ -22,22 +22,22 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "DirectoryIndex",
 "language": "GDScript",
-"path": "res://System/DirectoryIndex.gd"
+"path": "res://System/Files/DirectoryIndex.gd"
 }, {
 "base": "Node",
 "class": "DirectoryIndexStack",
 "language": "GDScript",
-"path": "res://System/DirectoryIndexStack.gd"
+"path": "res://System/Files/DirectoryIndexStack.gd"
 }, {
 "base": "Reference",
 "class": "Filesystem",
 "language": "GDScript",
-"path": "res://System/Filesystem.gd"
+"path": "res://System/Files/Filesystem.gd"
 }, {
 "base": "Node2D",
 "class": "IButton",
 "language": "GDScript",
-"path": "res://UI/IButton.gd"
+"path": "res://System/UI/IButton.gd"
 }, {
 "base": "Node2D",
 "class": "MainScene",
@@ -47,22 +47,22 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "PWChar",
 "language": "GDScript",
-"path": "res://Graphics/PWChar.gd"
+"path": "res://System/Graphics/PWChar.gd"
 }, {
 "base": "Node2D",
 "class": "PWEvidence",
 "language": "GDScript",
-"path": "res://Graphics/PWEvidence.gd"
+"path": "res://System/Graphics/PWEvidence.gd"
 }, {
 "base": "Node2D",
 "class": "PWSprite",
 "language": "GDScript",
-"path": "res://Graphics/PWSprite.gd"
+"path": "res://System/Graphics/PWSprite.gd"
 }, {
 "base": "Node2D",
 "class": "Penalty",
 "language": "GDScript",
-"path": "res://UI/Penalty.gd"
+"path": "res://System/UI/Penalty.gd"
 }, {
 "base": "Reference",
 "class": "Variables",
@@ -72,12 +72,12 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "WrightScript",
 "language": "GDScript",
-"path": "res://WrightScript/WrightScript.gd"
+"path": "res://System/WrightScript/WrightScript.gd"
 }, {
 "base": "Reference",
 "class": "WrightScriptStack",
 "language": "GDScript",
-"path": "res://WrightScript/WrightScriptStack.gd"
+"path": "res://System/WrightScript/WrightScriptStack.gd"
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
@@ -104,11 +104,11 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Commands="*res://WrightScript/Commands.gd"
-ZLayers="*res://System/ZLayers.gd"
-MusicPlayer="*res://System/MusicPlayer.gd"
-SoundPlayer="*res://System/SoundPlayer.gd"
-WSExpression="*res://WrightScript/WSExpression.gd"
+Commands="*res://System/WrightScript/Commands.gd"
+ZLayers="*res://System/Scene/ZLayers.gd"
+MusicPlayer="*res://System/Audio/MusicPlayer.gd"
+SoundPlayer="*res://System/Audio/SoundPlayer.gd"
+WSExpression="*res://System/WrightScript/WSExpression.gd"
 
 [debug]
 
@@ -120,9 +120,9 @@ gdscript/warnings/integer_division=false
 
 [display]
 
-window/size/width=512
+window/size/width=256
 window/size/height=384
-window/size/test_width=1024
+window/size/test_width=512
 window/size/test_height=768
 window/handheld/orientation="sensor"
 window/stretch/mode="viewport"

@@ -86,7 +86,7 @@ func preprocess_lines():
 			i += 1
 			continue
 		elif segments and segments[0] == "include":
-			var include_scr = load("res://WrightScript/WrightScript.gd").new(main)
+			var include_scr = load("res://System/WrightScript/WrightScript.gd").new(main)
 			include_scr.load_txt_file(root_path+segments[1]+".txt")
 			var off = 1
 			for include_line in include_scr.lines:

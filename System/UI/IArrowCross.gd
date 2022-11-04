@@ -5,7 +5,7 @@ var z:int
 
 var sprites = {}
 var sprites_high = {}
-onready var IButtonS = load("res://UI/IButton.gd")
+onready var IButtonS = load("res://System/UI/IButton.gd")
 
 var bg
 var left

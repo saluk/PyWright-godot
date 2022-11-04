@@ -66,7 +66,7 @@ func load_animation(path:String, info=null):
 	rescale(width, height)
 	
 	material = ShaderMaterial.new()
-	material.shader = load("res://Graphics/clear_pink.shader")
+	material.shader = load("res://System/Graphics/clear_pink.shader")
 		
 func from_frame(frame):
 	width = frame.region.size.x
@@ -77,7 +77,7 @@ func from_frame(frame):
 	animated_sprite.frames = SpriteFrames.new()
 	animated_sprite.frames.add_frame("default", frame)
 	material = ShaderMaterial.new()
-	material.shader = load("res://Graphics/clear_pink.shader")
+	material.shader = load("res://System/Graphics/clear_pink.shader")
 	
 func rescale(size_x, size_y):
 	var sc_w = float(size_x)/float(width)

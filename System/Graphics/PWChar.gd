@@ -13,12 +13,14 @@ var z:int
 
 var root_path:String  # Save root path for art lookups in case we change emotion
 
+onready var FilesystemS = load("res://System/Files/Filesystem.gd")
+
 func queue_free():
 	print("queuing "+name)
 	return .queue_free()
 	
 func load_sprite(path):
-	var sprite = load("res://Graphics/PWSprite.gd").new()
+	var sprite = load("res://System/Graphics/PWSprite.gd").new()
 	sprite.load_animation(path)
 	return sprite
 	
@@ -32,13 +34,13 @@ func load_character(character_name, emotion, root_path):
 	script_name = character_name
 	char_path = "art/port/"+character_name.to_lower()+"/"+emotion
 	# No blinking or talking
-	var defaultpath = Filesystem.lookup_file(
+	var defaultpath = FilesystemS.lookup_file(
 		char_path+".png", root_path
 	)
-	var blinkpath = Filesystem.lookup_file(
+	var blinkpath = FilesystemS.lookup_file(
 		char_path+"(blink).png", root_path
 	)
-	var talkpath = Filesystem.lookup_file(
+	var talkpath = FilesystemS.lookup_file(
 		char_path+"(talk).png", root_path
 	)
 		
