@@ -32,6 +32,8 @@ func has_script(scene_name) -> String:
 
 func load_txt_file(path:String):
 	lines = []
+	if not "res://" in path:
+		path = "res://" + path
 	root_path = path.get_base_dir()+"/"
 	filename = path.get_file()
 	var f = File.new()
@@ -42,7 +44,7 @@ func load_txt_file(path:String):
 		f.close()
 		preprocess_lines()
 	else:
-		print("Error loading file ", path)
+		print("Error loading wrightscript file ", path)
 	
 func load_string(string:String):
 	lines = []

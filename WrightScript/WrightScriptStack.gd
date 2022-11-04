@@ -25,7 +25,12 @@ func _init(main):
 
 signal stack_empty
 
+var macro_scripts_found = 0
+
 func load_macros_from_path(path):
+	if not "res://" in path:
+		path = "res://" + path 
+	print("SCANNING ", path)
 	var dir = Directory.new()
 	if dir.open(path) == OK:
 		dir.list_dir_begin()
@@ -40,7 +45,10 @@ func load_macros_from_path(path):
 			elif file_name == "macros.txt" or file_name.ends_with(".mcro"):
 				var script = WrightScript.new(main)
 				script.load_txt_file("macros/"+file_name)
-				scripts.append(script)		
+				scripts.append(script)
+				macro_scripts_found += 1
+	else:
+		print("COULDN'T OPEN DIRECTORY")
 
 func init_game(path):
 	load_script(path+"/intro.txt")
@@ -49,6 +57,8 @@ func init_game(path):
 		scripts[-1].root_path = path
 	# Reverse order load the macro scripts so they run first
 	load_macros_from_path("macros")
+	if not macro_scripts_found:
+		print("MACRO ERROR")
 	
 func add_script(script_text):
 	var new_script = WrightScript.new(main)

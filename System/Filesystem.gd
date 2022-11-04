@@ -49,6 +49,10 @@ static func insensitive_find_file_in_path(file:String, path:String):
 			break
 		if file_name == "." or file_name == "..":
 			pass
+		# TODO - need to check .import for file names in exported resources
+		# We really need a better abstracted file search class that works in each context
+		if file_name.ends_with(".import"):
+			file_name = file_name.replace(".import", "")
 		if file_name.to_lower() == file.to_lower():
 			return path_join(path, file_name)
 	return null
