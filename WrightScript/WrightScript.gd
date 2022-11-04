@@ -10,6 +10,8 @@ var line_num := 0
 var executed_line_num := 0  #Indicates the line number that was last executed
 var line:String
 
+var allow_goto := true
+
 var processing
 
 static func one_frame(dt:float) -> float:
@@ -111,6 +113,10 @@ func goto_line_number(offset:int, relative:bool=false):
 
 # TODO we can have multiple labels with the same name in a file, and we should go to the nearest one
 func goto_label(label, fail=null):
+	if not allow_goto:
+		end()
+		main.stack.scripts.pop_back()
+		return main.stack.scripts[-1].goto_label(label, fail)
 	var line_nums
 	if label in labels:
 		line_nums = labels[label]
@@ -254,6 +260,9 @@ func execution_loop(stack):
 				stack.show_in_debugger()
 				yield(main.get_tree(), "idle_frame")
 				print(" - debug - ")
+			elif sig == Commands.END:
+				end()
+				main.reload()
 			else:
 				print("undefined return")
 		elif sig is SceneTreeTimer:

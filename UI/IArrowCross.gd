@@ -20,12 +20,12 @@ func load_art(root_path):
 
 	path = Filesystem.lookup_file("art/general/cross_exam_buttons.png", root_path)
 
-	var width = 100
-	var height = 111
+	var width = 106
+	var height = 79
 
 	var buttons = Filesystem.load_atlas_specific(path, [
 		Rect2(Vector2(0,0), Vector2(width, height)),
-		Rect2(Vector2(123, 0), Vector2(width, height))
+		Rect2(Vector2(117, 0), Vector2(width, height))
 	])
 	
 	left = IButton.new(

@@ -84,7 +84,8 @@ func create_textbox(line) -> Node:
 	return l
 	
 func create_object(script, command, class_path, groups, arguments=[]):
-	var object:Node = load(class_path).new()
+	var object:Node
+	object = load(class_path).new()
 	if "main" in object:
 		object.main = main
 	var x=int(keywords(arguments).get("x", 0))
@@ -99,6 +100,18 @@ func create_object(script, command, class_path, groups, arguments=[]):
 			main.log_error("No file found for "+arguments[0]+" tried: "+"art/"+command+"/"+arguments[0]+".png")
 			return null
 		object.load_animation(filename)
+	elif command in ["gui"]:
+		var frame = Filesystem.lookup_file(
+			"art/"+keywords(arguments).get("graphic", "")+".png",
+			script.root_path
+		)
+		var frameactive = Filesystem.lookup_file(
+			"art/"+keywords(arguments).get("graphichigh", "")+".png",
+			script.root_path
+		)
+		if frame:
+			object.load_art(frame, frameactive)
+			object.area.rect_position = Vector2(0, 0)
 	elif "PWChar" in class_path:
 		object.load_character(
 			arguments[0], 
@@ -145,10 +158,15 @@ func refresh_arrows(script):
 		[ARROW_GROUP, SPRITE_GROUP],
 		[]
 	)
-	print(script.get_prev_statement())
 	if script.get_prev_statement() == null and "left" in arrow:
 		arrow.left.get_children()[1].visible = false
 		arrow.left.get_children()[2].visible = false
+	if script.is_inside_cross():
+		call_macro("show_present_button", script, [])
+		call_macro("show_press_button", script, [])
+	else:
+		call_macro("hide_present_button", script, [])
+		call_macro("hide_press_button", script, [])
 	
 func get_speaking_char():
 	var characters = get_objects(null, null, CHAR_GROUP)
@@ -231,10 +249,20 @@ func call_command(command, script, arguments):
 
 	if command+".gd" in external_commands:
 		return external_commands[command+".gd"].call_func(script, arguments)
-		
-	if main.stack.macros.has(command):
-		return call_macro(command, script, arguments)
+	
+	if command.begins_with("{") and command.ends_with("}"):
+		return call_macro(command.substr(1,command.length()-2), script, arguments)
+	
+	if is_macro(command):
+		return call_macro(is_macro(command), script, arguments)
 	return UNDEFINED
+	
+func is_macro(command):
+	if command.begins_with("{") and command.ends_with("}"):
+		return command.substr(1,command.length()-2)
+	if main.stack.macros.has(command):
+		return command
+	return null
 	
 func call_macro(command, script, arguments):
 	var i = 1
@@ -245,6 +273,8 @@ func call_macro(command, script, arguments):
 	var new_script = main.stack.add_script(PoolStringArray(script_lines).join("\n"))
 	new_script.root_path = script.root_path
 	new_script.filename = "{"+command+"}"
+	# TODO not sure if this is how to handle macros that try to goto
+	new_script.allow_goto = false
 	return YIELD
 	
 # Script commands
@@ -267,6 +297,31 @@ func call_endcross(script, arguments):
 func call_statement(script, arguments):
 	main.stack.variables.set_val("_statement", arguments[0])
 	main.stack.variables.set_val("_statement_line_num", script.executed_line_num)
+
+func call_resume(script, arguments):
+	script.goto_line_number(main.stack.variables.get_int("_statement_line_num"))
+	script.next_statement()
+	
+func call_callpress(script, arguments):
+	get_tree().call_group(TEXTBOX_GROUP, "queue_free")
+	script.goto_label(
+		"press "+main.stack.variables.get_string("_statement"),
+		"none"
+	)
+	
+func call_showpresent(script, arguments):
+	call_present(script, arguments)
+
+func call_callpresent(script, arguments):
+	get_tree().call_group(TEXTBOX_GROUP, "queue_free")
+	var ev = main.stack.variables.get_string("_selected")
+	var statement = main.stack.variables.get_string("_statement")
+	if statement:
+		ev = ev + " " + statement
+	Commands.call_goto(
+		main.stack.scripts[-1],
+		[ev, "fail=none"]
+	)
 
 func call_clear(script, arguments):
 	clear_main_screen()
@@ -308,6 +363,8 @@ func call_delete(script, arguments):
 		main_screen.sort_children()
 		var children = main_screen.get_children()
 		for i in range(children.size()):
+			if not "script_name" in children[-i]:
+				continue
 			if children[-i].script_name == name:
 				children[-i].queue_free()
 				children[-i].name = "DELETED_"+children[-1].name
@@ -322,6 +379,28 @@ func call_obj(script, arguments):
 		[SPRITE_GROUP],
 		arguments
 	)
+	
+func call_gui(script, arguments):
+	if not get_tree():
+		return
+	var guitype = arguments.pop_front()
+	if guitype.to_lower() == "button":
+		var macroname = arguments.pop_front()
+		var spl = keywords(arguments, true)
+		var kw = spl[0]
+		var args = spl[1]
+		var text = PoolStringArray(args).join(" ")
+		var button = create_object(
+			script, 
+			"gui", 
+			"res://UI/IButton.gd", 
+			[SPRITE_GROUP],
+			arguments
+		)
+		button.menu = self
+		button.button_name = macroname
+func click_option(option):
+	call_macro(is_macro(option), main.stack.scripts[-1], [])
 	
 func call_bg(script, arguments):
 	if not get_tree():
@@ -618,6 +697,9 @@ func call_penalty(script, arguments):
 	penalty.begin()
 	if penalty.delay > 0:
 		return penalty
+		
+func call_exit(script, arguments):
+	return END
 
 # NOTE:
 # If you use ? AND fail, a success will send the script to the next line, 

@@ -1,6 +1,9 @@
 extends Node2D
 class_name IButton
 
+var script_name = "gui"
+var z:int
+
 var frame
 var active_frame
 var area:Control
@@ -31,9 +34,22 @@ func build_sprite(frame):
 	sprite.material = ShaderMaterial.new()
 	sprite.material.shader = load("res://Graphics/clear_pink.shader")
 	return sprite
+	
+func load_art(frame_path, active_frame_path=null):
+	var frame = PWSprite.new()
+	frame.load_animation(frame_path)
+	var active_frame = PWSprite.new()
+	active_frame.load_animation(active_frame_path)
+	# TODO bad hack
+	var pos = Vector2(position.x, position.y)
+	load_final_art(frame, active_frame)
+	position = pos
 
-func _init(frame, active_frame, pos=Vector2(0,0), size=null):
-	print("NEW IFRAME ", frame, active_frame, pos, size)
+func _init(frame=null, active_frame=null, pos=Vector2(0,0), size=null):
+	if frame != null:
+		load_final_art(frame, active_frame, pos, size)
+		
+func load_final_art(frame, active_frame=null, pos=Vector2(0,0), size=null):
 	self.frame = build_sprite(frame)
 	self.active_frame = build_sprite(active_frame)
 	self.position = pos
@@ -46,17 +62,8 @@ func _init(frame, active_frame, pos=Vector2(0,0), size=null):
 		size = get_size(frame)
 	width = size.x
 	height = size.y
-	print(" BUTTON WIDTH, HEIGHT", width, ",", height)
-	
-	#self.frame.position = Vector2(width/2, height/2)
-	#self.active_frame.position = Vector2(width/2, height/2)
 	
 	area = Control.new()
-	#var shape := CollisionShape2D.new()
-	#shape.shape = RectangleShape2D.new()
-	#shape.shape.extents = Vector2(width, height)/2
-	#area.add_child(shape)
-	#area.rect_position = Vector2(0, 0)
 	area.rect_position = Vector2(-width/2, -height/2)
 	area.rect_size = Vector2(width, height)
 	add_child(area)

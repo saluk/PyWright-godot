@@ -29,6 +29,13 @@ func load_art(root_path):
 	)
 	bg.load_animation(evbg_path)
 	add_child(bg)
+	
+	# TODO - it's weird to have to make guis to block things off, should be
+	# built into PWSprite
+	var blocker = Control.new()
+	blocker.rect_size = Vector2(bg.width, bg.height)
+	add_child(blocker)
+	
 	position = Vector2(0, 192)
 	z = ZLayers.z_sort[script_name]
 	load_page()
@@ -124,8 +131,9 @@ func click_option(option):
 	if option == "_^BACK^_":
 		queue_free()
 		return
-	Commands.call_goto(
+	main.stack.variables.set_val("_selected", option)
+	Commands.call_callpresent(
 		main.stack.scripts[-1],
-		[option, "fail=none"]
+		[option]
 	)
 	queue_free()

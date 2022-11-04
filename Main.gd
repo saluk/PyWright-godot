@@ -116,7 +116,7 @@ func _process(_delta):
 
 func log_error(msg):
 	stack.show_in_debugger()
-	print(msg)
+	print("ERROR:", msg)
 	var txt = load("res://UI/Textbox.tscn").instance()
 	txt.text_to_print = msg
 	txt.main = self
@@ -129,3 +129,8 @@ func top_script():
 	if stack.scripts.size() > 0:
 		return stack.scripts[-1]
 	return null
+
+func reload():
+	MusicPlayer.stop_music()
+	# TODO stop running sounds
+	get_tree().reload_current_scene()
