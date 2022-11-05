@@ -235,6 +235,7 @@ func load_scripts():
 
 func index_commands():
 	external_commands["scroll.gd"] = load("res://System/WrightScript/Commands/Scroll.gd")
+	external_commands["fade.gd"] = load("res://System/WrightScript/Commands/Fade.gd")
 
 func call_command(command, script, arguments):
 	command = value_replace(command)
@@ -254,7 +255,7 @@ func call_command(command, script, arguments):
 		return call_macro(command.substr(1,command.length()-2), script, arguments)
 	
 	if is_macro(command):
-		return call_macro(is_macro(command), script, arguments)
+		return call_macro(command, script, arguments)
 	return UNDEFINED
 	
 func is_macro(command):
@@ -265,6 +266,9 @@ func is_macro(command):
 	return null
 	
 func call_macro(command, script, arguments):
+	command = is_macro(command)
+	if not command:
+		return
 	var i = 1
 	for arg in arguments:
 		main.stack.variables.set_val(str(i), arg)
@@ -341,10 +345,6 @@ func call_mus(script, arguments):
 		Filesystem.path_join("music",PoolStringArray(arguments).join(" ")), 
 		script.root_path
 	)
-	
-func call_fade(script, arguments):
-	# TODO IMPLEMENT
-	pass
 	
 func call_sfx(script, arguments):
 	SoundPlayer.play_sound(

@@ -1,0 +1,22 @@
+macro goto_in_macro
+goto x
+"Don't print this"
+label x
+endmacro
+
+macro goto_in_parent
+goto x
+endmacro
+
+
+"Next line should be A"
+{goto_in_macro}
+"A"
+
+"Next line should be at label x"
+{goto_in_parent}
+"B"
+
+
+label x
+"Jumped to label x in main script"

@@ -101,7 +101,6 @@ render_target_update_mode = 3
 [node name="gembig" type="MeshInstance" parent="ViewportContainer/Viewport/Spatial"]
 material_override = ExtResource( 5 )
 mesh = ExtResource( 4 )
-material/0 = null
 script = ExtResource( 3 )
 
 [node name="Camera" type="Camera" parent="ViewportContainer/Viewport/Spatial"]

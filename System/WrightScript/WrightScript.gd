@@ -113,20 +113,21 @@ func goto_line_number(offset:int, relative:bool=false):
 	if line_num < 0:
 		line_num = 0
 
-# TODO we can have multiple labels with the same name in a file, and we should go to the nearest one
+# TODO add test for we can have multiple labels with the same name in a file, and we should go to the nearest one
 func goto_label(label, fail=null):
-	if not allow_goto:
-		end()
-		main.stack.scripts.pop_back()
-		return main.stack.scripts[-1].goto_label(label, fail)
 	var line_nums
 	if label in labels:
 		line_nums = labels[label]
 	elif fail in labels:
 		line_nums = labels[fail]
 	else:
-		print("Tried to go somewhere non existent")
-		assert(false)
+		# TODO maybe guard against macros full of labels where the developer mistyped and it jumps to a label in the previous script
+		if not allow_goto:
+			end()
+			main.stack.scripts.pop_back()
+			return main.stack.scripts[-1].goto_label(label, fail)
+		main.log_error("Tried to go somewhere non existent "+label)
+		return
 	# Try to go to next line number
 	for possible_line_num in line_nums:
 		if possible_line_num > line_num:
@@ -149,12 +150,15 @@ func fail(label, dest=null):
 		goto_label(dest)
 		
 func is_statement(line):
+	line = line.to_lower()
 	return line.begins_with("statement ") or line.strip_edges() == "statement"
 	
 func is_cross(line):
+	line = line.to_lower()
 	return line.begins_with("cross ") or line.strip_edges() == "cross"
 	
 func is_endcross(line):
+	line = line.to_lower()
 	return line.begins_with("endcross ") or line.strip_edges() == "endcross"
 		
 func is_inside_cross():
@@ -209,7 +213,7 @@ func prev_statement():
 		return goto_line_number(si)
 		
 func read_macro():
-	if not lines[line_num].begins_with("macro "):
+	if not lines[line_num].to_lower().begins_with("macro "):
 		return
 	# Start macro
 	var macro_name = lines[line_num].split(" ", true, 1)[1]
@@ -246,7 +250,7 @@ func execution_loop(stack):
 		if line[0] == '"' or line[0] == "'":
 			line = "text "+line
 		var split = line.split(" ") as Array
-		var call_command = split[0]
+		var call_command = split[0].to_lower()
 		executed_line_num = line_num
 		line_num += 1
 		var sig = Commands.call_command(
