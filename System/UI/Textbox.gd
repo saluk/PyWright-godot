@@ -103,7 +103,7 @@ func execute_markup(pack:Pack):
 	for command in [
 		"sfx", "sound", "delay", "spd", "_fullspeed", "_endfullspeed",
 		"wait", "center", "type", "next", "tbon", "tboff", 
-		"e", "f", "s", "p", "c"
+		"e", "f", "s", "p", "c", "$"
 	]:
 		if pack.text.begins_with(command):
 			args = pack.text.substr(command.length()).strip_edges()
@@ -133,6 +133,8 @@ func execute_markup(pack:Pack):
 		"e":
 			Commands.call_command("emo", main.top_script(), args)
 			#update_emotion(args[0])
+		"$":
+			return main.stack.variables.get_string(args[0])
 		"sfx":
 			pass
 		"sound":
@@ -182,7 +184,9 @@ func _process(dt):
 			else:
 				packs.remove(0)
 		elif packs[0].type == COMMAND_PACK:
-			execute_markup(packs[0])
+			var t = execute_markup(packs[0])
+			if t:
+				$Backdrop/Label.bbcode_text += t
 			packs.remove(0)
 	else:
 		for character in Commands.get_speaking_char():

@@ -212,7 +212,7 @@ func prev_statement():
 	var si = get_prev_statement()
 	if si != null:
 		return goto_line_number(si)
-		
+
 func read_macro():
 	if not lines[line_num].to_lower().begins_with("macro "):
 		return
@@ -266,6 +266,8 @@ func execution_loop(stack):
 				break
 			elif sig == Commands.UNDEFINED:
 				main.log_error("No command for "+split[0])
+			elif sig == Commands.NOTIMPLEMENTED:
+				print("not implemented command "+split[0])
 			elif sig == Commands.DEBUG:
 				stack.show_in_debugger()
 				yield(main.get_tree(), "idle_frame")

@@ -1,11 +1,9 @@
 extends Reference
 
 var main
-var command
 
 func _init(commands):
 	main = commands.main
-	command = commands
 
 func ws_clear(script, arguments):
 	Commands.clear_main_screen()
@@ -32,28 +30,6 @@ func ws_obj(script, arguments):
 		arguments
 	)
 	
-func ws_gui(script, arguments):
-	if not main.get_tree():
-		return
-	var guitype = arguments.pop_front()
-	if guitype.to_lower() == "button":
-		var macroname = arguments.pop_front()
-		var spl = Commands.keywords(arguments, true)
-		var kw = spl[0]
-		var args = spl[1]
-		var text = PoolStringArray(args).join(" ")
-		var button = Commands.create_object(
-			script, 
-			"gui", 
-			"res://System/UI/IButton.gd", 
-			[Commands.SPRITE_GROUP],
-			arguments
-		)
-		button.menu = self
-		button.button_name = macroname
-func click_option(option):
-	Commands.call_macro(Commands.is_macro(option), main.stack.scripts[-1], [])
-	
 func ws_bg(script, arguments):
 	if not main.get_tree():
 		return
@@ -68,6 +44,8 @@ func ws_fg(script, arguments):
 	var fg:Node = Commands.create_object(script, "fg", "res://System/Graphics/PWSprite.gd", 
 	[Commands.SPRITE_GROUP, Commands.FG_GROUP, Commands.CLEAR_GROUP], arguments)
 
+# TODO support more commands
+# e=, be=, priority=, nametag=, noauto
 func ws_char(script, arguments):
 	if not main.get_tree():
 		return
@@ -105,6 +83,11 @@ func ws_emo(script, arguments):
 		characters[0].load_emotion(emotion)
 		if mode:
 			characters[0].play_state(mode)
+			
+# TODO test
+func ws_bemo(script, arguments):
+	arguments.append("mode=blink")
+	return ws_emo(script, arguments)
 
 func ws_ev(script, arguments):
 	var ev = Commands.create_object(
@@ -170,3 +153,10 @@ func ws_penalty(script, arguments):
 	penalty.begin()
 	if penalty.delay > 0:
 		return penalty
+
+func ws_surf3d(script, arguments):
+	return Commands.NOTIMPLEMENTED
+	
+func ws_mesh(script, arguments):
+	return Commands.NOTIMPLEMENTED
+	

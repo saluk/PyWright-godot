@@ -1,0 +1,20 @@
+set k hello
+joinvar k world is on fire
+"{$k}=helloworld"
+
+setvar i -5
+absvar i
+"{$i}!=-5"
+"{$i}=5"
+addvar i 0.33
+"{$i}=5.33"
+
+setvar i -5.2
+absvar i
+"{$i}=5.2"
+divvar i 2
+"{$i}=2.6"
+mulvar i 3
+"{$i}=7.8"
+subvar i 0.6
+"{$i}=7.2"

@@ -11,10 +11,11 @@ var last_object
 export var PAUSE_MULTIPLIER = 0.10
 
 enum {
-	YIELD,
-	END,
-	UNDEFINED,
-	DEBUG
+	YIELD,              # Pause wrightscript for user input or animation
+	END,                # End script
+	UNDEFINED,          # Command we don't know about
+	DEBUG,              # launch godot debugger
+	NOTIMPLEMENTED      # Command we don't care about
 }
 
 var SPRITE_GROUP = "PWSprites"   # Every wrightscript object should be in this
@@ -75,6 +76,9 @@ func keywords(arguments, remove=false):
 	if remove:
 		return [d, newargs]
 	return d
+	
+func join(l, sep=" "):
+	return PoolStringArray(l).join(sep)
 
 func create_textbox(line) -> Node:
 	var l = textboxScene.instance()
@@ -82,7 +86,14 @@ func create_textbox(line) -> Node:
 	l.text_to_print = line
 	main_screen.add_child(l)
 	return l
-	
+
+# TODO implement:
+# loops
+# flipx
+# rotx, roty, rotz
+# wait/nowait
+# stack
+# fade
 func create_object(script, command, class_path, groups, arguments=[]):
 	var object:Node
 	object = load(class_path).new()
@@ -246,7 +257,8 @@ var external_command_files = [
 	"Audio",
 	"Scripting",
 	"Timing",
-	"Interface"
+	"Interface",
+	"Gui"
 ]
 
 func get_call_methods(object):
@@ -293,13 +305,21 @@ func is_macro(command):
 		return command
 	return ""
 	
+# TODO - may need to support actually replacing macro text with the arguments passed, 
+# but wont implement till we actually need to
 func call_macro(command, script, arguments):
 	command = is_macro(command)
 	if not command:
 		return
 	var i = 1
 	for arg in arguments:
-		main.stack.variables.set_val(str(i), arg)
+		if "=" in arg:
+			var spl = arg.split("=")
+			main.stack.variables.set_val(
+				spl[0].strip_edges(),
+				spl[1].strip_edges())
+		else:
+			main.stack.variables.set_val(str(i), arg)
 		i += 1
 	var script_lines = main.stack.macros[command]
 	var new_script = main.stack.add_script(PoolStringArray(script_lines).join("\n"))

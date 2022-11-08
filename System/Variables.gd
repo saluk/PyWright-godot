@@ -29,6 +29,16 @@ func get_int(key, default=0):
 	
 func get_float(key, default=0.0):
 	return float(store.get(key, default))
+	
+func to_num(v):
+	if v is float:
+		return v
+	if v is String and "." in v:
+		return float(v)
+	return int(v)
+	
+func get_num(key, default=0.0):
+	return to_num(store.get(key, default))
 
 func get_truth(key, default="false"):
 	return WSExpression.string_to_bool(get_string(key, default))
