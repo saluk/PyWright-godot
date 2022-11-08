@@ -37,7 +37,7 @@ func GV(v:String):
 	if v.begins_with("'") and v.ends_with("'"):
 		return v.substr(1, v.length()-2)
 	var val = Commands.main.stack.variables.get_string(v)
-	if val[0].is_valid_integer():
+	if val and val[0].is_valid_integer():
 		return NUM(val)
 	return val
 	

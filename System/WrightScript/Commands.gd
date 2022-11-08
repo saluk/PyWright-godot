@@ -219,7 +219,9 @@ func load_scripts():
 	main.stack.macros = data["macros"]
 	
 	for script_data in data["stack"]:
-		main.stack.load_script(script_data["root_path"]+"/"+script_data["filename"])
+		main.stack.load_script(
+			Filesystem.path_join(script_data["root_path"], script_data["filename"])
+		)
 		var script = main.stack.scripts[-1]
 		#var script = load("WrightScript/WrightScript.gd").new()
 		#script.main = main
@@ -263,7 +265,7 @@ func is_macro(command):
 		return command.substr(1,command.length()-2)
 	if main.stack.macros.has(command):
 		return command
-	return null
+	return ""
 	
 func call_macro(command, script, arguments):
 	command = is_macro(command)
@@ -356,6 +358,9 @@ func call_set(script, arguments):
 	var key = arguments.pop_front()
 	var value = PoolStringArray(arguments).join(" ")
 	main.stack.variables.set_val(key, value)
+	
+func call_setvar(script, arguments):
+	return call_set(script, arguments)
 	
 func call_delete(script, arguments):
 	var name = keywords(arguments).get("name", null)
@@ -624,9 +629,9 @@ func call_flag(script, arguments:Array, return_true=true):
 	expression.parse(line)
 	var result = expression.execute()
 	if result == return_true:
-		call_goto(script, [label])
+		script.succeed(label)
 	if fail:
-		call_goto(script, [fail])
+		script.fail(label, fail)
 
 func call_setflag(script, arguments):
 	main.stack.variables.set_val(arguments[0], "true")
@@ -738,6 +743,42 @@ func call_isnot(script, arguments):
 		)
 	)
 	if not WSExpression.string_to_bool(truth):
+		script.succeed(label)
+	else:
+		script.fail(label, fail)
+		
+func call_isempty(script, arguments):
+	var removed = keywords(arguments, true)
+	var keywords = removed[0]
+	var fail = keywords.get("fail", null)
+	arguments = removed[1]
+	var label
+	if arguments[-1].ends_with("?"):
+		arguments[-1] = arguments[-1].substr(0, arguments[-1].length()-1)
+		label = "?"
+	else:
+		label = arguments.pop_back()
+	var truth = WSExpression.GV(arguments[0])
+	if not truth:
+		script.succeed(label)
+	else:
+		script.fail(label, fail)
+		
+func call_is_ex(script, arguments):
+	var removed = keywords(arguments, true)
+	var keywords = removed[0]
+	var fail = keywords.get("fail", null)
+	arguments = removed[1]
+	var label
+	if arguments[-1].ends_with("?"):
+		arguments[-1] = arguments[-1].substr(0, arguments[-1].length()-1)
+		label = "?"
+	else:
+		label = arguments.pop_back()
+	var truth = WSExpression.EVAL_STR(
+		PoolStringArray(arguments).join(" ")
+	)
+	if not truth:
 		script.succeed(label)
 	else:
 		script.fail(label, fail)

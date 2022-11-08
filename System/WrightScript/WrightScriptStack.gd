@@ -47,8 +47,10 @@ func load_macros_from_path(path):
 				continue
 			elif file_name == "macros.txt" or file_name.ends_with(".mcro"):
 				var script = WrightScript.new(main)
-				script.load_txt_file("macros/"+file_name)
+				print("MACRO LOADED: ", path, "/", file_name)
+				script.load_txt_file(Filesystem.path_join(path, file_name))
 				scripts.append(script)
+				script.allowed_commands = ["macro", "endmacro"]
 				macro_scripts_found += 1
 	else:
 		print("COULDN'T OPEN DIRECTORY")
@@ -76,7 +78,7 @@ func load_script(script_path):
 	new_script.load_txt_file(script_path)
 	scripts.append(new_script)
 	# TODO - pretty sure we dont want to reload the macros on every script change, but only when starting a game or case
-	load_macros_from_path(script_path.split("/", true, 1)[0])
+	load_macros_from_path(script_path.rsplit("/", true, 1)[0])
 	return new_script
 	
 func remove_script(script):

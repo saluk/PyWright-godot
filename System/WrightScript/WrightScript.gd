@@ -11,6 +11,7 @@ var executed_line_num := 0  #Indicates the line number that was last executed
 var line:String
 
 var allow_goto := true
+var allowed_commands := []  #If any commands are in this list, only process those commands
 
 var processing
 
@@ -245,6 +246,9 @@ func execution_loop(stack):
 		line = lines[line_num]
 		#print(line_num, ":", line)
 		if not line.strip_edges():
+			line_num += 1
+			continue
+		if allowed_commands.size() > 0 and not line.split(" ")[0] in allowed_commands:
 			line_num += 1
 			continue
 		if line[0] == '"' or line[0] == "'":
