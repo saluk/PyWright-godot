@@ -132,7 +132,8 @@ func click_option(option):
 		queue_free()
 		return
 	main.stack.variables.set_val("_selected", option)
-	Commands.call_callpresent(
+	Commands.call_command(
+		"callpresent",
 		main.stack.scripts[-1],
 		[option]
 	)

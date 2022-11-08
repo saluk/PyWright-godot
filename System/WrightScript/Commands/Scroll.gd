@@ -1,5 +1,8 @@
 extends Reference
 
+func _init(commands):
+	pass
+
 class Scroller extends Node:
 	var objects = []
 	var wait_signal = ""
@@ -44,7 +47,7 @@ class Scroller extends Node:
 		if time_left <= 0:
 			queue_free()
 	
-static func call_func(script, arguments):
+static func ws_scroll(script, arguments):
 	var kw = Commands.keywords(arguments)
 	var x = int(kw.get("x", 0))
 	var y = int(kw.get("y", 0))

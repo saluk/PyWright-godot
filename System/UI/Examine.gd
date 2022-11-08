@@ -120,7 +120,8 @@ func click_option(option):
 		var label = fail
 		if current_region:
 			label = current_region.label
-		Commands.call_goto(
+		Commands.call_command(
+			"goto",
 			Commands.main.stack.scripts[-1],
 			[
 				label

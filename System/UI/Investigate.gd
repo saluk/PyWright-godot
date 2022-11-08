@@ -48,7 +48,8 @@ func add_option(option):
 	add_child(button)
 
 func click_option(option):
-	Commands.call_script(
+	Commands.call_command(
+		"script",
 		Commands.main.stack.scripts[-1],
 		[
 			scene_name+"."+option

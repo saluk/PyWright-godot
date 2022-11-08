@@ -1,5 +1,8 @@
 extends Reference
 
+func _init(commands):
+	pass
+
 class Fader extends Node:
 	var objects = []
 	var wait_signal = ""
@@ -45,7 +48,7 @@ class Fader extends Node:
 				set_fade()
 				queue_free()
 	
-static func call_func(script, arguments):
+static func ws_fade(script, arguments):
 	var kw = Commands.keywords(arguments)
 	var fade_in = "in" in arguments
 	var fade_out = "out" in arguments

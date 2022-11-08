@@ -72,7 +72,8 @@ func click_option(option):
 	if option == "_^BACK^_":
 		queue_free()
 	else:
-		Commands.call_goto(
+		Commands.call_command(
+			"goto",
 			Commands.main.stack.scripts[-1],
 			[
 				option

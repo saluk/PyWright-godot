@@ -19,7 +19,9 @@ func _ready():
 
 func launch_game(path):
 	print("launching case ", path)
-	Commands.call_script(wrightscript, [
+	Commands.call_command(
+		"script",
+		wrightscript, [
 		path+"/intro"
 	])
 	queue_free()
