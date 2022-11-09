@@ -36,12 +36,12 @@ func load_game_from_pack(path):
 		
 func load_game(path):
 	stack.init_game(path)
-	stack.connect("stack_empty", get_tree(), "quit")
+	stack.connect("stack_empty", self, "reload")
 	emit_signal("stack_initialized")
 		
 func load_script_from_path(path):
 	stack.load_script("res://tests/"+path)
-	stack.connect("stack_empty", get_tree(), "quit")
+	stack.connect("stack_empty", self, "reload")
 	emit_signal("stack_initialized")
 
 func _ready():
@@ -110,7 +110,8 @@ func test_eval():
 
 func _process(_delta):
 	if stack:
-		stack.process()
+		if stack.state in [stack.STACK_READY, stack.STACK_YIELD]:
+			stack.process()
 
 func log_error(msg):
 	stack.show_in_debugger()

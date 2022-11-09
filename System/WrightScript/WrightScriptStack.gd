@@ -14,12 +14,19 @@ var macros := {}
 var filesystem
 
 enum {
+	STACK_READY,
 	STACK_PROCESSING,
 	STACK_COMPLETE,
 	STACK_YIELD,
 	STACK_DEBUG
 }
-var state = STACK_PROCESSING
+var state = STACK_READY
+
+var blockers = []
+var blocked_scripts = []
+
+var REPEAT_MAX = 6  #If nonzero, and the same line is attempted to execute more than this value, drop to the debugger
+var repeated = {"line":null, "line_num": -1, "amount": 0}
 
 func _init(main):
 	assert(main)
@@ -99,66 +106,106 @@ func show_in_debugger():
 	var debugger = main.get_tree().get_nodes_in_group("ScriptDebugger")
 	if debugger:
 		debugger[0].update_current_stack(self)
+		
+func clean_scripts():
+	"""Remove any scripts that should be ended"""
+	var newscripts = []
+	for scr in scripts:
+		if scr.line_num >= scr.lines.size():
+			print("remove script ", scr.filename)
+		else:
+			newscripts.append(scr)
+	scripts = newscripts
+	
+func new_state(state):
+	self.state = state
 
-# TODO rewrite core loop to happen here instead of in the script
-# 1. execute next line from top script
-# 2. if that line adds a new script to the stack, next time through the loop will hit the top script
-# 3. update debuggers/logging etc
-# 4. keep doing this until we yield to godot, which we do if there are:
-#    - any blockers within the world
-#    - any commands execute that require the screen to be updated
+func blocked(scr):
+	if scr in blocked_scripts:
+		return true
+
+func remove_blocker(frame):
+	if frame.sig in blockers:
+		blockers.erase(frame.sig)
+		if not blockers and frame.scr in blocked_scripts:
+			# Goto next line after blockage
+			frame.scr.next_line()
+			blocked_scripts.erase(frame.scr)
+
 func process():
+	print("PROCESS BEGINS")
 	if not scripts:
-		if state == STACK_PROCESSING:
+		if state == STACK_PROCESSING or state == STACK_YIELD:
 			emit_signal("stack_empty")
-			#state = STACK_COMPLETE
-		return
+			state = STACK_COMPLETE
+		return new_state(state)
+	if state == STACK_READY:
+		# Any additional setup we might need could go here
+		state = STACK_PROCESSING
+	if state == STACK_YIELD:
+		# Resume processing
+		state = STACK_PROCESSING
 	while scripts and state == STACK_PROCESSING:
+		clean_scripts()
+		if not scripts:
+			return new_state(STACK_YIELD)
+		if blocked(scripts[-1]) and blockers:
+			yield(main.get_tree(), "idle_frame")
+			continue
 		var frame = scripts[-1].process_wrightscript()
 		show_in_debugger()
-		print(frame)
+		print("FRAME:", frame, ",", frame.line_num, ",<<", frame.line, ">>,", frame.sig)
+		if REPEAT_MAX > 0:
+			if (repeated["line"] == null or (repeated["line"] != frame.line or repeated["line_num"] != frame.line_num)):
+				repeated["line"] = frame.line
+				repeated["line_num"] = frame.line_num
+				repeated["amount"] = 0
+			else:
+				repeated["amount"] += 1
+				if repeated["amount"] > REPEAT_MAX:
+					print("ERROR: tried to execute a line more than "+str(REPEAT_MAX)+" times.")
+					print(frame.line)
+					pass
 		if frame.sig is int:
+			# TODO might not need this yield
 			if frame.sig == Commands.YIELD:
 				#yield(main.get_tree(), "idle_frame")
 				frame.scr.next_line()
-				return
+				return new_state(STACK_YIELD)
 			elif frame.sig == Commands.UNDEFINED:
 				main.log_error("No command for "+frame.command)
 				frame.scr.next_line()
-				return
+				return new_state(STACK_YIELD)
 			elif frame.sig == Commands.NOTIMPLEMENTED:
 				print("not implemented command "+frame.command)
 				frame.scr.next_line()
-				return
+				return new_state(STACK_YIELD)
 			elif frame.sig == Commands.DEBUG:
 				show_in_debugger()
 				yield(main.get_tree(), "idle_frame")
 				print(" - debug - ")
 				frame.scr.next_line()
-				return
+				return new_state(STACK_YIELD)
 			elif frame.sig == Commands.END:
 				if frame.scr in scripts:
 					scripts.erase(frame.scr)
-				return
+				return new_state(STACK_YIELD)
 			elif frame.sig == Commands.NEXTLINE:
 				frame.scr.next_line()
 				continue
 			else:
 				print("undefined return")
 				frame.scr.next_line()
-				return
-		elif frame.sig is SceneTreeTimer:
-			#yield(main.get_tree(), "idle_frame")
-			yield(frame.sig, "timeout")
-			print("timer:", frame.sig)
+				return new_state(STACK_YIELD)
+		elif frame.sig is SceneTreeTimer or (frame.sig and frame.sig.get("wait_signal")):
+			blockers.append(frame.sig)
+			blocked_scripts.append(frame.scr)
+			var sig = "timeout"
+			if frame.sig.get("wait_signal"):
+				sig = frame.sig.get("wait_signal")
+			frame.sig.connect(sig, self, "remove_blocker", [frame], CONNECT_ONESHOT)
+			show_in_debugger()
+			return new_state(STACK_YIELD)
+		else:
 			frame.scr.next_line()
-			return
-			#continue
-		elif frame.sig and frame.sig.get("wait_signal"):
-			print("start wait")
-			state = STACK_YIELD
-			yield(frame.sig, frame.sig.get("wait_signal"))
-			print("stop wait")
-			state = STACK_PROCESSING
-			frame.scr.next_line()
-			return
+			return new_state(STACK_YIELD)
