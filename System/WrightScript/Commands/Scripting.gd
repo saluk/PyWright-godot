@@ -17,7 +17,7 @@ func ws_debug(script, arguments):
 	return Commands.DEBUG
 	
 func ws_print(script, arguments):
-	print(Commands.join(arguments))
+	print("output: ", Commands.join(arguments))
 	
 # TODO IMPLEMENT
 # Steps through pywright debugger

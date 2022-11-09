@@ -16,8 +16,6 @@ char phoenix
 
 signal stack_initialized
 
-var blockers = []
-
 func main_screen():
 	return get_tree().get_nodes_in_group("MainScreen")[0]
 
@@ -111,7 +109,7 @@ func test_eval():
 		WSExpression.SIMPLE_TO_EXPR("$is_true == false")) == "false")
 
 func _process(_delta):
-	if stack and not blockers:
+	if stack:
 		stack.process()
 
 func log_error(msg):
@@ -120,10 +118,6 @@ func log_error(msg):
 	var txt = load("res://System/UI/Textbox.tscn").instance()
 	txt.text_to_print = msg
 	txt.main = self
-	#blockers.append(txt)
-	#get_node("MainScreen").add_child(txt)
-	#yield(txt, "tree_exited")
-	#blockers.erase(txt)
 
 func top_script():
 	if stack.scripts.size() > 0:

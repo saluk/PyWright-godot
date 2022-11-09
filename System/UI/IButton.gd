@@ -35,7 +35,22 @@ func build_sprite(frame):
 	sprite.material.shader = load("res://System/Graphics/clear_pink.shader")
 	return sprite
 	
-func load_art(frame_path, active_frame_path=null):
+func load_art(frame_path, active_frame_path=null, text=""):
+	if text:
+		# TODO clean this up
+		var label = Label.new()
+		label.theme = load("res://System/UI/ScriptDebugger.tres")
+		label.text = text
+		var label_size = label.get_theme_default_font().get_string_size(text)
+		width = label_size.x
+		height = label_size.y
+		area = Control.new()
+		area.rect_position = Vector2(-width/2, -height/2)
+		area.rect_size = Vector2(width, height)
+		add_child(area)
+		area.connect("gui_input", self, "_on_Area2D_input_event")
+		area.add_child(label)
+		return
 	var frame = PWSprite.new()
 	frame.load_animation(frame_path)
 	var active_frame = PWSprite.new()

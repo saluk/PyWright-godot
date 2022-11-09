@@ -9,11 +9,36 @@ var popup_menu
 
 var scripts = []
 
+var in_debugger = false
+var debug_last_state = null
+
 # {"script": WrightScript, "editor": TextEdit, "highlighted_line":int, "bookmark_line": int}
 
 func _ready():
 	script_tab = get_node("Scripts/CurrentScript")
 	$Scripts.remove_child(script_tab)
+	$Step.connect("button_up", self, "step")
+	$Pause.connect("button_up", self, "start_debugger")
+	
+func start_debugger():
+	if in_debugger:
+		in_debugger = false
+		$Pause.text = "Pause"
+		current_stack.disconnect("line_executed", self, "debug_line")
+	else:
+		in_debugger = true
+		$Pause.text = "Resume"
+		current_stack.connect("line_executed", self, "debug_line")
+	
+func debug_line(line):
+	print("watching line", line)
+	debug_last_state = current_stack.state
+	current_stack.state = current_stack.STACK_DEBUG
+	
+func step():
+	if in_debugger and debug_last_state:
+		current_stack.state = debug_last_state
+		debug_last_state = null
 	
 func change_script(script:WrightScript):
 	if script != current_script:
@@ -46,10 +71,11 @@ func update_current_stack(stack):
 	for i in range(len(scripts)):
 		if scripts[i]["script"] != stack.scripts[i]:
 			rebuild()
+			$Scripts.current_tab = len(scripts)
 			break
 	# Update each editor
 	for i in range(len(scripts)):
-		var to_line = scripts[i]["script"].executed_line_num
+		var to_line = scripts[i]["script"].line_num
 		var at_line = scripts[i]["editor"].cursor_get_line()
 		if scripts[i]["highlighted_line"] != to_line:
 			scripts[i]["highlighted_line"] = to_line

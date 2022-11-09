@@ -8,7 +8,7 @@ func _init(commands):
 func ws_cross(script, arguments):
 	main.stack.variables.set_val("_statement", "")
 	main.stack.variables.set_val("_statement_line_num", "")
-	main.stack.variables.set_val("_cross_line_num", script.executed_line_num)
+	main.stack.variables.set_val("_cross_line_num", script.line_num)
 	
 func ws_endcross(script, arguments):
 	main.stack.variables.set_val("_statement", "")
@@ -44,8 +44,13 @@ func ws_prev_statement(script, arguments):
 	script.prev_statement()
 	
 func ws_statement(script, arguments):
+	var test = Commands.keywords(arguments).get("test", "")
+	if test:
+		if not main.stack.variables.get_truth(test):
+			script.next_statement()
+			return
 	main.stack.variables.set_val("_statement", arguments[0])
-	main.stack.variables.set_val("_statement_line_num", script.executed_line_num)
+	main.stack.variables.set_val("_statement_line_num", script.line_num)
 
 func ws_resume(script, arguments):
 	script.goto_line_number(main.stack.variables.get_int("_statement_line_num"))

@@ -2,12 +2,12 @@ extends Reference
 class_name WrightScript
 
 var main:Node
+var stack
 var root_path := ""
 var filename := ""
 var lines := []
 var labels := {}  # each label will have a list of line numbers
 var line_num := 0
-var executed_line_num := 0  #Indicates the line number that was last executed
 var line:String
 
 var allow_goto := true
@@ -15,13 +15,17 @@ var allowed_commands := []  #If any commands are in this list, only process thos
 
 var processing
 
+signal GOTO_RESULT
+
 static func one_frame(dt:float) -> float:
 	#  Determine how many frames, at 60 frames per second, have passed over dt
 	return dt * 60.0
 
-func _init(main):
+func _init(main, stack):
 	assert(main)
+	assert(stack)
 	self.main = main
+	self.stack = stack
 		
 func has_script(scene_name) -> String:
 	for name in [scene_name+".script.txt", scene_name+".txt"]:
@@ -87,7 +91,7 @@ func preprocess_lines():
 			i += 1
 			continue
 		elif segments and segments[0] == "include":
-			var include_scr = load("res://System/WrightScript/WrightScript.gd").new(main)
+			var include_scr = load("res://System/WrightScript/WrightScript.gd").new(main, self.stack)
 			include_scr.load_txt_file(root_path+segments[1]+".txt")
 			var off = 1
 			for include_line in include_scr.lines:
@@ -96,10 +100,7 @@ func preprocess_lines():
 			lines.remove(i)
 			continue
 		i += 1
-
-func process_wrightscript(stack):
-	if not processing:
-		processing = execution_loop(stack)
+	print("SCRIPT STARTING:", to_string())
 		
 func get_next_line(offset:int):
 	if line_num+offset >= lines.size():
@@ -113,6 +114,9 @@ func goto_line_number(offset:int, relative:bool=false):
 		line_num = offset
 	if line_num < 0:
 		line_num = 0
+		
+func next_line():
+	line_num += 1
 
 # TODO add test for we can have multiple labels with the same name in a file, and we should go to the nearest one
 func goto_label(label, fail=null):
@@ -126,6 +130,7 @@ func goto_label(label, fail=null):
 		if not allow_goto:
 			end()
 			main.stack.scripts.pop_back()
+			emit_signal("GOTO_RESULT")
 			return main.stack.scripts[-1].goto_label(label, fail)
 		main.log_error("Tried to go somewhere non existent "+label)
 		return
@@ -133,9 +138,11 @@ func goto_label(label, fail=null):
 	for possible_line_num in line_nums:
 		if possible_line_num > line_num:
 			line_num = possible_line_num
+			emit_signal("GOTO_RESULT")
 			return
 	# We couldn't find it, go to the first match
 	line_num = line_nums[0]
+	emit_signal("GOTO_RESULT")
 
 # Go to the label, unless label is ? in which case we execute the next line
 func succeed(label):
@@ -177,12 +184,15 @@ func is_inside_cross():
 			endcrosses.append(i)
 		i += 1
 	if not crosses or not endcrosses:
+		main.stack.variables.set_val("_is_cross", "nocrosses")
 		return false
 	for c in crosses:
 		if c < line_num:
 			for ec in endcrosses:
 				if ec > line_num:
+					main.stack.variables.set_val("_is_cross","true")
 					return true
+	main.stack.variables.set_val("_is_cross", "notbetween")
 	return false
 
 func next_statement():
@@ -234,58 +244,55 @@ func read_macro():
 	if line_num >= lines.size():
 		end()
 		
-func execution_loop(stack):
-	while 1:
-		if not main or main.blockers:
-			yield(main.get_tree(), "idle_frame")
-			continue
-		if line_num >= lines.size():
-			main.stack.remove_script(self)
-			return
-		read_macro()
-		line = lines[line_num]
-		#print(line_num, ":", line)
-		if not line.strip_edges():
-			line_num += 1
-			continue
-		if allowed_commands.size() > 0 and not line.split(" ")[0] in allowed_commands:
-			line_num += 1
-			continue
-		if line[0] == '"' or line[0] == "'":
-			line = "text "+line
-		var split = line.split(" ") as Array
-		var call_command = split[0].to_lower()
-		executed_line_num = line_num
-		line_num += 1
-		var sig = Commands.call_command(
-			call_command, self, split.slice(1, split.size())
-		)
-		if sig is int:
-			if sig == Commands.YIELD:
-				yield(main.get_tree(), "idle_frame")
-				break
-			elif sig == Commands.UNDEFINED:
-				main.log_error("No command for "+split[0])
-			elif sig == Commands.NOTIMPLEMENTED:
-				print("not implemented command "+split[0])
-			elif sig == Commands.DEBUG:
-				stack.show_in_debugger()
-				yield(main.get_tree(), "idle_frame")
-				print(" - debug - ")
-			elif sig == Commands.END:
-				end()
-				main.reload()
-			else:
-				print("undefined return")
-		elif sig is SceneTreeTimer:
-			#yield(main.get_tree(), "idle_frame")
-			yield(sig, "timeout")
-			print(sig)
-			#continue
-		elif sig and sig.get("wait_signal"):
-			yield(sig, sig.get("wait_signal"))
-			print("done waiting")
-	processing = null
+class Frame:
+	var scr
+	var line_num
+	var line
+	var sig
+	var command
+	var args
+	func _init(scr, line_num, line, sig):
+		self.scr = scr
+		self.line_num = line_num
+		self.line = line
+		self.sig = sig
+		if " " in line:
+			var spl = Array(line.split(" "))
+			command = spl.pop_front()
+			args = spl
+		
+func process_wrightscript() -> Frame:
+	if not main:
+		return Frame.new(self, -1, "", Commands.YIELD)
+	if line_num >= lines.size():
+		print("SCRIPT REMOVAL:", to_string())
+		return Frame.new(self, line_num, "", Commands.END)
+	print("SCRIPT EXECUTION:", to_string())
+	self.stack.emit_signal("line_executed", lines[line_num])
+	read_macro()
+	line = lines[line_num]
+	#print(line_num, ":", line)
+	if not line.strip_edges():
+		return Frame.new(self, line_num, line, Commands.NEXTLINE)
+	if allowed_commands.size() > 0 and not line.split(" ")[0] in allowed_commands:
+		return Frame.new(self, line_num, line, Commands.NEXTLINE)
+	if line[0] == '"' or line[0] == "'":
+		line = "text "+line
+	var split = line.split(" ") as Array
+	var call_command = split[0].to_lower()
+	var sig = Commands.call_command(
+		call_command, self, split.slice(1, split.size())
+	)
+	if sig == null:
+		sig = Commands.NEXTLINE
+	return Frame.new(self, line_num, line, sig)
+	
+func to_string():
+	var l = ""
+	if line_num < lines.size():
+		l = lines[line_num]
+	var stack_index = main.stack.scripts.find(self)
+	return "SCRIPT("+"si:"+str(stack_index)+" "+filename+":"+str(line_num)+") - "+l
 
 #Force script to end
 func end():

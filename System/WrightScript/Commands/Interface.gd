@@ -68,7 +68,7 @@ func ws_examine(script, arguments):
 		examine_menu.reveal_regions = false
 		examine_menu.allow_back_button = false
 	examine_menu.fail = fail
-	var offset = 0
+	var offset = 1
 	while 1:
 		var line = script.get_next_line(offset)
 		if line.begins_with("region"):

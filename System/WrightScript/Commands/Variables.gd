@@ -310,7 +310,8 @@ func ws_is_ex(script, arguments):
 	var truth = WSExpression.EVAL_STR(
 		Commands.join(arguments)
 	)
-	if not truth:
+	truth = WSExpression.string_to_bool(truth)
+	if truth:
 		script.succeed(label)
 	else:
 		script.fail(label, fail)

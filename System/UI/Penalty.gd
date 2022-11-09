@@ -71,7 +71,6 @@ func _process(dt):
 	good.scale = Vector2(ivalue+0.1, 1)
 	bad.position = Vector2(100-float((100-ivalue))/2.0, 0)
 	bad.scale = Vector2((100-ivalue), 1)
-	print(ivalue)
 	if threat_amount:
 		threat_section.position = Vector2(100-threat_amount/2, 0)
 		threat_section.scale = Vector2(threat_amount, 1)

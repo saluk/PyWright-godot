@@ -14,11 +14,12 @@ var macros := {}
 var filesystem
 
 enum {
-	STACK_READY,
 	STACK_PROCESSING,
-	STACK_COMPLETE
+	STACK_COMPLETE,
+	STACK_YIELD,
+	STACK_DEBUG
 }
-var state = STACK_READY
+var state = STACK_PROCESSING
 
 func _init(main):
 	assert(main)
@@ -27,6 +28,7 @@ func _init(main):
 	filesystem = load("res://System/Files/Filesystem.gd").new()
 
 signal stack_empty
+signal line_executed   # emit when any script executes a line
 
 var macro_scripts_found = 0
 
@@ -46,7 +48,7 @@ func load_macros_from_path(path):
 			elif dir.current_is_dir():
 				continue
 			elif file_name == "macros.txt" or file_name.ends_with(".mcro"):
-				var script = WrightScript.new(main)
+				var script = WrightScript.new(main, self)
 				print("MACRO LOADED: ", path, "/", file_name)
 				script.load_txt_file(Filesystem.path_join(path, file_name))
 				scripts.append(script)
@@ -68,13 +70,13 @@ func init_game(path):
 		print("MACRO ERROR")
 	
 func add_script(script_text):
-	var new_script = WrightScript.new(main)
+	var new_script = WrightScript.new(main, self)
 	new_script.load_string(script_text)
 	scripts.append(new_script)
 	return new_script
 	
 func load_script(script_path):
-	var new_script = WrightScript.new(main)
+	var new_script = WrightScript.new(main, self)
 	new_script.load_txt_file(script_path)
 	scripts.append(new_script)
 	# TODO - pretty sure we dont want to reload the macros on every script change, but only when starting a game or case
@@ -98,14 +100,65 @@ func show_in_debugger():
 	if debugger:
 		debugger[0].update_current_stack(self)
 
+# TODO rewrite core loop to happen here instead of in the script
+# 1. execute next line from top script
+# 2. if that line adds a new script to the stack, next time through the loop will hit the top script
+# 3. update debuggers/logging etc
+# 4. keep doing this until we yield to godot, which we do if there are:
+#    - any blockers within the world
+#    - any commands execute that require the screen to be updated
 func process():
 	if not scripts:
 		if state == STACK_PROCESSING:
 			emit_signal("stack_empty")
-			state = STACK_COMPLETE
+			#state = STACK_COMPLETE
 		return
-	if state == STACK_READY:
-		state = STACK_PROCESSING
-	var current_script = scripts[-1]
-	current_script.process_wrightscript(self)
-	show_in_debugger()
+	while scripts and state == STACK_PROCESSING:
+		var frame = scripts[-1].process_wrightscript()
+		show_in_debugger()
+		print(frame)
+		if frame.sig is int:
+			if frame.sig == Commands.YIELD:
+				#yield(main.get_tree(), "idle_frame")
+				frame.scr.next_line()
+				return
+			elif frame.sig == Commands.UNDEFINED:
+				main.log_error("No command for "+frame.command)
+				frame.scr.next_line()
+				return
+			elif frame.sig == Commands.NOTIMPLEMENTED:
+				print("not implemented command "+frame.command)
+				frame.scr.next_line()
+				return
+			elif frame.sig == Commands.DEBUG:
+				show_in_debugger()
+				yield(main.get_tree(), "idle_frame")
+				print(" - debug - ")
+				frame.scr.next_line()
+				return
+			elif frame.sig == Commands.END:
+				if frame.scr in scripts:
+					scripts.erase(frame.scr)
+				return
+			elif frame.sig == Commands.NEXTLINE:
+				frame.scr.next_line()
+				continue
+			else:
+				print("undefined return")
+				frame.scr.next_line()
+				return
+		elif frame.sig is SceneTreeTimer:
+			#yield(main.get_tree(), "idle_frame")
+			yield(frame.sig, "timeout")
+			print("timer:", frame.sig)
+			frame.scr.next_line()
+			return
+			#continue
+		elif frame.sig and frame.sig.get("wait_signal"):
+			print("start wait")
+			state = STACK_YIELD
+			yield(frame.sig, frame.sig.get("wait_signal"))
+			print("stop wait")
+			state = STACK_PROCESSING
+			frame.scr.next_line()
+			return

@@ -15,7 +15,8 @@ enum {
 	END,                # End script
 	UNDEFINED,          # Command we don't know about
 	DEBUG,              # launch godot debugger
-	NOTIMPLEMENTED      # Command we don't care about
+	NOTIMPLEMENTED,     # Command we don't care about
+	NEXTLINE            # Run next execution frame
 }
 
 var SPRITE_GROUP = "PWSprites"   # Every wrightscript object should be in this
@@ -121,9 +122,8 @@ func create_object(script, command, class_path, groups, arguments=[]):
 			"art/"+keywords(arguments).get("graphichigh", "")+".png",
 			script.root_path
 		)
-		if frame:
-			object.load_art(frame, frameactive)
-			object.area.rect_position = Vector2(0, 0)
+		object.load_art(frame, frameactive, keywords(arguments).get("button_text", ""))
+		object.area.rect_position = Vector2(0, 0)
 	elif "PWChar" in class_path:
 		object.load_character(
 			arguments[0], 
@@ -224,7 +224,6 @@ func load_scripts():
 	
 	clear_main_screen()
 	main.stack.clear_scripts()
-	main.blockers = []
 	main.stack.variables.store = data["variables"]
 	main.stack.evidence_pages = data["evidence_pages"]
 	main.stack.macros = data["macros"]
@@ -328,6 +327,12 @@ func call_macro(command, script, arguments):
 	# TODO not sure if this is how to handle macros that try to goto
 	new_script.allow_goto = false
 	return YIELD
+	
+func macro_or_label(key, script, arguments):
+	var is_macro = is_macro(key)
+	if is_macro:
+		return call_macro(is_macro, script, [])
+	return script.goto_label(key)
 	
 # Script commands
 
