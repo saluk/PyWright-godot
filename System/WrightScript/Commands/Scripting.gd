@@ -107,34 +107,12 @@ func ws_script(script, arguments, script_text=null):
 func ws_game(script, arguments):
 	pass
 	
-# TODO IMPLEMENT
-#        """Ends the currently running script and pops it off the stack. Multiple scripts
-#        may be running in PyWright, in which case the next script on the stack will
-#        resume running."""
-#        print "ending script",self
-#        if self in assets.stack:
-#            assets.stack.remove(self)
-#            if "enter" in self.held: self.held.remove("enter")
-#            if self.parent:
-#                self.parent.held = []
-#                self.parent.world = self.world
-#        if not assets.stack:
-#            assets.variables.clear()
-#            assets.stop_music()
-#            assets.stack[:] = []
-#            assets.make_start_script(False)
-#        return
 func ws_endscript(script, arguments):
-	pass
+	script.end()
+	return Commands.NEXTLINE
 
-# TODO IMPLEMENT (not sure how this is different from endscript
-#    @category([],type="gameflow")
-#    def _exit(self,command):
-#        """Deletes the currently running scene/script from execution. If there are any scenes underneath, they will
-#        resume."""
-#        del assets.stack[-1]
 func ws_exit(script, arguments):
-	pass
+	return ws_endscript(script, arguments)
 	
 # TODO IMPLEMENT
 func ws_waitenter(script, arguments):

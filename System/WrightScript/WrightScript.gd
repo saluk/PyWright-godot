@@ -255,8 +255,8 @@ class Frame:
 	var line_num
 	var line
 	var sig
-	var command
-	var args
+	var command = ""
+	var args = []
 	func _init(scr, line_num, line, sig):
 		self.scr = scr
 		self.line_num = line_num
@@ -268,6 +268,7 @@ class Frame:
 			args = spl
 		
 func process_wrightscript() -> Frame:
+	allow_next_line = true
 	if not main:
 		return Frame.new(self, -1, "", Commands.YIELD)
 	if line_num >= lines.size():
@@ -291,7 +292,6 @@ func process_wrightscript() -> Frame:
 	)
 	if sig == null:
 		sig = Commands.NEXTLINE
-	allow_next_line = true
 	return Frame.new(self, line_num, line, sig)
 	
 func to_string():
