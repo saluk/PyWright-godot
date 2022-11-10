@@ -69,8 +69,8 @@ func load_final_art(frame, active_frame=null, pos=Vector2(0,0), size=null):
 	self.active_frame = build_sprite(active_frame)
 	self.position = pos
 	self.add_child(self.frame)
-	self.add_child(self.active_frame)
 	if self.active_frame:
+		self.add_child(self.active_frame)
 		self.active_frame.visible = false
 	
 	if not size:

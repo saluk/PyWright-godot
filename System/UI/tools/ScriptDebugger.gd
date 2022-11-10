@@ -62,21 +62,27 @@ func rebuild():
 		d["editor"].text = PoolStringArray(d["script"].lines).join("\n")
 		scripts.append(d)
 		i += 1
+	while scripts.size() > current_stack.scripts.size():
+		var last = scripts.pop_back()
+		$Scripts.remove_child(last["editor"])
 
 func update_current_stack(stack):
 	current_stack = stack
 	# Detect if scripts changed
 	if len(scripts) != len(stack.scripts):
 		rebuild()
-	for i in range(len(scripts)):
-		if scripts[i]["script"] != stack.scripts[i]:
-			rebuild()
-			$Scripts.current_tab = len(scripts)
-			break
+	else:
+		for i in range(len(scripts)):
+			if scripts[i]["script"] != stack.scripts[i]:
+				rebuild()
+				$Scripts.current_tab = len(scripts)-1
+				break
 	# Update each editor
 	for i in range(len(scripts)):
 		var to_line = scripts[i]["script"].line_num
 		var at_line = scripts[i]["editor"].cursor_get_line()
+		if to_line >= scripts[i]["editor"].get_line_count():
+			to_line = at_line
 		if scripts[i]["highlighted_line"] != to_line:
 			scripts[i]["highlighted_line"] = to_line
 			scripts[i]["editor"].cursor_set_line(to_line)

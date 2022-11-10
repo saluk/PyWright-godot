@@ -107,6 +107,13 @@ func show_in_debugger():
 	if debugger:
 		debugger[0].update_current_stack(self)
 		
+func show_frame(frame):
+	if not main or not main.get_tree():
+		return
+	var framelog = main.get_tree().get_nodes_in_group("FrameLog")
+	if framelog:
+		framelog[0].add_frame(frame)
+		
 func clean_scripts():
 	"""Remove any scripts that should be ended"""
 	var newscripts = []
@@ -116,6 +123,7 @@ func clean_scripts():
 		else:
 			newscripts.append(scr)
 	scripts = newscripts
+	show_in_debugger()
 	
 func new_state(state):
 	self.state = state
@@ -128,7 +136,6 @@ func remove_blocker(frame):
 	if frame.sig in blockers:
 		blockers.erase(frame.sig)
 		if not blockers and frame.scr in blocked_scripts:
-			# Goto next line after blockage
 			frame.scr.next_line()
 			blocked_scripts.erase(frame.scr)
 
@@ -153,6 +160,7 @@ func process():
 			yield(main.get_tree(), "idle_frame")
 			continue
 		var frame = scripts[-1].process_wrightscript()
+		show_frame(frame)
 		show_in_debugger()
 		print("FRAME:", frame, ",", frame.line_num, ",<<", frame.line, ">>,", frame.sig)
 		if REPEAT_MAX > 0:
@@ -204,7 +212,6 @@ func process():
 			if frame.sig.get("wait_signal"):
 				sig = frame.sig.get("wait_signal")
 			frame.sig.connect(sig, self, "remove_blocker", [frame], CONNECT_ONESHOT)
-			show_in_debugger()
 			return new_state(STACK_YIELD)
 		else:
 			frame.scr.next_line()

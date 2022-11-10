@@ -13,6 +13,8 @@ var line:String
 var allow_goto := true
 var allowed_commands := []  #If any commands are in this list, only process those commands
 
+var allow_next_line = true
+
 var processing
 
 signal GOTO_RESULT
@@ -108,6 +110,7 @@ func get_next_line(offset:int):
 	return lines[line_num+offset]
 	
 func goto_line_number(offset:int, relative:bool=false):
+	allow_next_line = false
 	if relative:
 		line_num = line_num+offset
 	else:
@@ -116,10 +119,13 @@ func goto_line_number(offset:int, relative:bool=false):
 		line_num = 0
 		
 func next_line():
-	line_num += 1
+	# Goto the next line - unless we have used goto recently
+	if allow_next_line:
+		line_num += 1
 
 # TODO add test for we can have multiple labels with the same name in a file, and we should go to the nearest one
 func goto_label(label, fail=null):
+	allow_next_line = false
 	var line_nums
 	if label in labels:
 		line_nums = labels[label]
@@ -285,6 +291,7 @@ func process_wrightscript() -> Frame:
 	)
 	if sig == null:
 		sig = Commands.NEXTLINE
+	allow_next_line = true
 	return Frame.new(self, line_num, line, sig)
 	
 func to_string():
