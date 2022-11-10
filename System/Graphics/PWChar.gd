@@ -43,6 +43,10 @@ func load_character(character_name, emotion, root_path):
 	var talkpath = FilesystemS.lookup_file(
 		char_path+"(talk).png", root_path
 	)
+	
+	var combinedpath = FilesystemS.lookup_file(
+		char_path+"(combined).png", root_path
+	)
 		
 	# Load normal poses for modes we missed
 	# TODO - probably not wanted
@@ -65,6 +69,15 @@ func load_character(character_name, emotion, root_path):
 		sprites["blink"] = load_sprite(blinkpath)
 	if talkpath:
 		sprites["talk"] = load_sprite(talkpath)
+	if combinedpath:
+		sprites["talk"] = load_sprite(combinedpath)
+		sprites["blink"] = load_sprite(combinedpath)
+		var count = sprites["talk"].animated_sprite.frames.get_frame_count("default")
+		while sprites["talk"].animated_sprite.frames.get_frame_count("default") > count/2:
+			sprites["talk"].animated_sprite.frames.remove_frame("default", count/2)
+		while sprites["blink"].animated_sprite.frames.get_frame_count("default") > count/2:
+			sprites["blink"].animated_sprite.frames.remove_frame("default", 0)
+		
 	play_state("blink")
 	
 func load_emotion(emotion):
