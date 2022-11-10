@@ -242,7 +242,10 @@ func read_macro():
 	while line_num < lines.size():
 		var line = lines[line_num]
 		if line.strip_edges() == "endmacro":
-			line_num += 1
+			# TODO
+			# FOR some reason if we do this we will end up skipping a macro
+			# that immediately follows an endmacro
+			#line_num += 1
 			break
 		macro_lines.append(line)
 		line_num += 1

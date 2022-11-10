@@ -283,8 +283,8 @@ func call_command(command, script, arguments):
 		args.append(value_replace(arg))
 	arguments = args
 
-	if has_method("call_"+command):
-		return call("call_"+command, script, arguments)
+	if has_method("ws_"+command):
+		return call("ws_"+command, script, arguments)
 
 	if "ws_"+command in external_commands:
 		var extern = external_commands["ws_"+command]
@@ -336,14 +336,14 @@ func macro_or_label(key, script, arguments):
 	
 # Script commands
 
-func call_draw_off(script, arguments):
+func ws_draw_off(script, arguments):
 	pass # No op, old pywright needed the user to determine when to pause to load many graphics
 	
-func call_draw_on(script, arguments):
+func ws_draw_on(script, arguments):
 	pass
 
 # Godot specific control commands
 
-func call_godotdebug(script, arguments):
+func ws_godotdebug(script, arguments):
 	# You can use this command to enter the godot debugger
 	pass

@@ -54,7 +54,8 @@ func load_art(frame_path, active_frame_path=null, text=""):
 	var frame = PWSprite.new()
 	frame.load_animation(frame_path)
 	var active_frame = PWSprite.new()
-	active_frame.load_animation(active_frame_path)
+	if active_frame_path:
+		active_frame.load_animation(active_frame_path)
 	# TODO bad hack
 	var pos = Vector2(position.x, position.y)
 	load_final_art(frame, active_frame)
