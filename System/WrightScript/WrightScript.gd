@@ -75,6 +75,7 @@ func preprocess_lines():
 	var line:String
 	var segments:Array
 	var i = 0
+	var macro = {}
 	while 1:
 		if i >= lines.size():
 			return
@@ -86,7 +87,22 @@ func preprocess_lines():
 		line = line.strip_edges(true, true)
 		lines[i] = line
 		segments = line.split(" ", true, 1)
-		if segments and segments[0] in label_statements:
+		# TODO still kind of don't like doing this
+		if macro:
+			if segments and segments[0] == "endmacro":
+				main.stack.macros[macro["name"]] = macro["lines"]
+				macro = {}
+			else:
+				macro["lines"].append(line)
+			lines[i] = ""
+			i += 1
+			continue
+		elif segments[0] == "macro":
+			macro = {"name": line.split(" ")[1].strip_edges(), "lines": []}
+			lines[i] = ""
+			i += 1
+			continue
+		elif segments and segments[0] in label_statements:
 			var tag = segments[1].strip_edges()
 			if tag:
 				add_label(tag, i)
@@ -245,7 +261,7 @@ func read_macro():
 			# TODO
 			# FOR some reason if we do this we will end up skipping a macro
 			# that immediately follows an endmacro
-			#line_num += 1
+			line_num += 1
 			break
 		macro_lines.append(line)
 		line_num += 1
@@ -279,7 +295,7 @@ func process_wrightscript() -> Frame:
 		return Frame.new(self, line_num, "", Commands.END)
 	print("SCRIPT EXECUTION:", to_string())
 	self.stack.emit_signal("line_executed", lines[line_num])
-	read_macro()
+	#read_macro()
 	line = lines[line_num]
 	#print(line_num, ":", line)
 	if not line.strip_edges():
