@@ -32,10 +32,12 @@ func ws_setvar_ex(script, arguments):
 #        value = u"".join(args)
 #        assets.variables[variable]=assets.variables.get(value,"")
 func ws_getvar(script, arguments):
-	pass
+	var save_to = arguments.pop_front()
+	var get_from = Commands.join(arguments, "")
+	main.stack.variables.set_val(save_to, main.stack.variables.get_string(get_from))
 	
 func ws_get(script, arguments):
-	return ws_get(script, arguments)
+	return ws_getvar(script, arguments)
 	
 # TODO IMPLEMENT
 #    @category([VALUE("variable","The variable to save the value into"),KEYWORD("name","The object to get the property from"),KEYWORD("prop","The property to get from the object")],type="logic")
