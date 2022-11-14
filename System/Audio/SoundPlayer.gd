@@ -5,6 +5,8 @@ var playing = false
 var loop = true
 var playing_path
 
+var SOUND_VOLUME = 0.1
+
 func _ready():
 	for i in range(1):
 		var audio_player = AudioStreamPlayer.new()
@@ -22,10 +24,11 @@ func _load_audio_stream(path):
 		pass
 	if stream:
 		# Somewhere determine whether or not to loop the sound
-		var next_player = players.pop_front()
+		var next_player:AudioStreamPlayer = players.pop_front()
 		next_player.stream = stream
 		next_player.play(0)
 		next_player.name = path
+		next_player.volume_db = SOUND_VOLUME
 		players.append(next_player)
 	
 func play_sound(path, current_path):

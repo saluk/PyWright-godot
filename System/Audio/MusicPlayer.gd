@@ -5,6 +5,8 @@ var playing = false
 var loop = true
 var playing_path
 
+var MUSIC_VOLUME = 0.1
+
 func _ready():
 	audio_player = AudioStreamPlayer.new()
 	add_child(audio_player)
@@ -32,6 +34,7 @@ func _load_audio_stream(path):
 		audio_player.stream = stream
 		audio_player.connect("finished", self, "_player_finished")
 		audio_player.play(0)
+		audio_player.volume_db = MUSIC_VOLUME
 
 func stop_music():
 	playing = false
