@@ -205,7 +205,7 @@ func process():
 				print("undefined return")
 				frame.scr.next_line()
 				return new_state(STACK_YIELD)
-		elif frame.sig is SceneTreeTimer or (frame.sig and frame.sig.get("wait_signal")):
+		elif frame.sig is SceneTreeTimer or (frame.sig and frame.sig.get("wait_signal") and frame.sig.get("wait") in [null, true]):
 			blockers.append(frame.sig)
 			blocked_scripts.append(frame.scr)
 			var sig = "timeout"

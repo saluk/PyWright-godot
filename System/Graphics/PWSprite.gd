@@ -9,6 +9,10 @@ var z:int
 var width:int = 1
 var height:int = 1
 
+var wait = false   # Pause script until animation has finished playing
+var wait_signal = "finished_playing"
+signal finished_playing
+
 func load_info(path:String):
 	print("load info:", path)
 	var data = {
@@ -67,6 +71,8 @@ func load_animation(path:String, info=null):
 	
 	material = ShaderMaterial.new()
 	material.shader = load("res://System/Graphics/clear_pink.shader")
+	
+	animated_sprite.connect("animation_finished", self, "emit_signal", ["finished_playing"])
 		
 func from_frame(frame):
 	width = frame.region.size.x

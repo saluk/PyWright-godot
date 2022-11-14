@@ -92,9 +92,9 @@ func create_textbox(line) -> Node:
 # loops
 # flipx
 # rotx, roty, rotz
-# wait/nowait
 # stack
 # fade
+var WAITERS = ["fg"]
 func create_object(script, command, class_path, groups, arguments=[]):
 	var object:Node
 	object = load(class_path).new()
@@ -155,6 +155,14 @@ func create_object(script, command, class_path, groups, arguments=[]):
 	for group in groups:
 		object.add_to_group(group)
 	object.name = object.script_name
+	#Set object to wait mode if possible and directed to
+	if "wait" in object:
+		object.wait = command in WAITERS
+		# If we say to wait or nowait, apply it
+		if "wait" in arguments:
+			object.wait = true
+		if "nowait" in arguments:
+			object.wait = false
 	return object
 	
 func refresh_arrows(script):

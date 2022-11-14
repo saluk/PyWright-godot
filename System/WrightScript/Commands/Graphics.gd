@@ -29,6 +29,7 @@ func ws_obj(script, arguments):
 		[Commands.SPRITE_GROUP],
 		arguments
 	)
+	return obj
 	
 func ws_bg(script, arguments):
 	if not main.get_tree():
@@ -37,12 +38,14 @@ func ws_bg(script, arguments):
 		main.get_tree().call_group(Commands.CLEAR_GROUP, "queue_free")
 	var bg:Node = Commands.create_object(script, "bg", "res://System/Graphics/PWSprite.gd", 
 	[Commands.SPRITE_GROUP, Commands.BG_GROUP, Commands.CLEAR_GROUP], arguments)
+	return bg
 	
 func ws_fg(script, arguments):
 	if not main.get_tree():
 		return
 	var fg:Node = Commands.create_object(script, "fg", "res://System/Graphics/PWSprite.gd", 
 	[Commands.SPRITE_GROUP, Commands.FG_GROUP, Commands.CLEAR_GROUP], arguments)
+	return fg
 
 # TODO support more commands
 # e=, be=, priority=, nametag=, noauto
@@ -64,6 +67,7 @@ func ws_char(script, arguments):
 		main.get_tree().call_group(Commands.HIDDEN_CHAR_GROUP, "queue_free")
 		character.add_to_group(Commands.HIDDEN_CHAR_GROUP)
 	main.stack.variables.set_val("_speaking", character.char_name)
+	return character
 	
 func ws_emo(script, arguments):
 	var kw = Commands.keywords(arguments, true)
@@ -97,6 +101,7 @@ func ws_ev(script, arguments):
 		[Commands.SPRITE_GROUP, Commands.CLEAR_GROUP],
 		arguments
 	)
+	return ev
 
 func ws_addev(script, arguments):
 	#tag, [page]
