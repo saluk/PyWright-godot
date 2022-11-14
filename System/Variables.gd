@@ -1,7 +1,7 @@
 extends Reference
 class_name Variables
 
-var store = {
+var DEFAULTS := {
 	"ev_mode_bg_evidence": "general/evidence",
 	"ev_items_x": "38",
 	"ev_items_y": "63",
@@ -14,11 +14,22 @@ var store = {
 	"ev_modebutton_x": "196",
 	"ev_modebutton_y": "7"
 }
+var store := {}
+
+func _init():
+	reset()
+	
+func reset():
+	self.store = {}
+	for k in DEFAULTS.keys():
+		self.store[k] = DEFAULTS[k]
 
 func keys():
 	return store.keys()
 
 func set_val(key, value):
+	if key == "_diamond_count_internal":
+		pass
 	store[key] = str(value)
 
 func get_string(key, default=""):

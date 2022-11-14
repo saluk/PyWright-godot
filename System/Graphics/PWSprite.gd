@@ -72,7 +72,10 @@ func load_animation(path:String, info=null):
 	material = ShaderMaterial.new()
 	material.shader = load("res://System/Graphics/clear_pink.shader")
 	
-	animated_sprite.connect("animation_finished", self, "emit_signal", ["finished_playing"])
+	animated_sprite.connect("animation_finished", self, "finish_playing")
+	
+func finish_playing():
+	self.emit_signal("finished_playing")
 		
 func from_frame(frame):
 	width = frame.region.size.x

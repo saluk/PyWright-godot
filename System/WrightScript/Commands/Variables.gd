@@ -25,12 +25,6 @@ func ws_set_ex(script, arguments):
 func ws_setvar_ex(script, arguments):
 	return ws_set_ex(script, arguments)
 
-# TODO IMPLEMENT
-#    @category([VALUE("variable","The variable to save the value into"),COMBINED("source variable","The variable to get the value from. Can use $x to use another variable to point to which variable to copy from, like a signpost.")],type="logic")
-#    def _getvar(self,command,variable,*args):
-#        """Copies the value of one variable into another."""
-#        value = u"".join(args)
-#        assets.variables[variable]=assets.variables.get(value,"")
 func ws_getvar(script, arguments):
 	var save_to = arguments.pop_front()
 	var get_from = Commands.join(arguments, "")
@@ -275,8 +269,8 @@ func ws_isempty(script, arguments):
 		label = "?"
 	else:
 		label = arguments.pop_back()
-	var truth = WSExpression.GV(arguments[0])
-	if not truth:
+	var truth = main.stack.variables.get_string(arguments[0])
+	if truth == "":
 		script.succeed(label)
 	else:
 		script.fail(label, fail)
@@ -292,11 +286,11 @@ func ws_isnotempty(script, arguments):
 		label = "?"
 	else:
 		label = arguments.pop_back()
-	var truth = WSExpression.GV(arguments[0])
-	if truth:
-		script.succeed(label)
-	else:
+	var truth = main.stack.variables.get_string(arguments[0])
+	if truth == "":
 		script.fail(label, fail)
+	else:
+		script.succeed(label)
 		
 func ws_is_ex(script, arguments):
 	var removed = Commands.keywords(arguments, true)
@@ -310,7 +304,7 @@ func ws_is_ex(script, arguments):
 	else:
 		label = arguments.pop_back()
 	var truth = WSExpression.EVAL_STR(
-		Commands.join(arguments)
+		Commands.join(arguments, " ")
 	)
 	truth = WSExpression.string_to_bool(truth)
 	if truth:

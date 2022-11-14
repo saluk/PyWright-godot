@@ -50,6 +50,7 @@ func _ready():
 	
 	# TODO move tests for this elsewhere
 	test_eval()
+	stack.variables.reset()
 	
 	var loader = load("res://System/UI/GamesMenu.tscn").instance()
 	main_screen().add_child(loader)
@@ -107,6 +108,9 @@ func test_eval():
 		WSExpression.SIMPLE_TO_EXPR("$is_true == true")) == "true")
 	assert(WSExpression.EVAL_STR(
 		WSExpression.SIMPLE_TO_EXPR("$is_true == false")) == "false")
+	stack.variables.set_val("_diamond_count_internal", "0")
+	assert(WSExpression.EVAL_STR(
+		WSExpression.SIMPLE_TO_EXPR("$_diamond_count_internal < 1")) == "true")
 
 func _process(_delta):
 	if stack:
