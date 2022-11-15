@@ -17,7 +17,8 @@ func load_info(path:String):
 	print("load info:", path)
 	var data = {
 		'horizontal': '1',
-		'vertical': '1'
+		'vertical': '1',
+		'delays': {}
 	}
 	var f = File.new()
 	var err = f.open(path, File.READ)
@@ -28,7 +29,10 @@ func load_info(path:String):
 				print("next line info")
 				continue
 			var key_value = line.split(" ")
-			data[key_value[0]] = key_value[1]
+			if key_value.size() == 2:
+				data[key_value[0]] = key_value[1]
+			elif key_value[0] == "framedelay":
+				data["delays"][int(key_value[1])] = int(key_value[2])
 		f.close()
 	if data.get('length', null)==null:
 		data['length'] = int(data['horizontal']) * int(data['vertical'])
@@ -59,8 +63,12 @@ func load_animation(path:String, info=null):
 	animated_sprite.use_parent_material = true
 	add_child(animated_sprite)
 	animated_sprite.frames = SpriteFrames.new()
+	var frame_i = 0
 	for frame in frames:
-		animated_sprite.frames.add_frame("default", frame)
+		for delay in info["delays"].get(frame_i, 6.0):
+			animated_sprite.frames.add_frame("default", frame)
+		frame_i += 1
+	animated_sprite.frames.set_animation_speed("default", 60.0)
 	animated_sprite.play("default")
 	print("good")
 	if info.get('loops') != "1" and info.get('loops') != "yes" and info.get('loops') != "true":
