@@ -28,8 +28,6 @@ func keys():
 	return store.keys()
 
 func set_val(key, value):
-	if key == "_diamond_count_internal":
-		pass
 	store[key] = str(value)
 
 func get_string(key, default=""):
