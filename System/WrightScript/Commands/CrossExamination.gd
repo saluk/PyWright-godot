@@ -8,21 +8,17 @@ func _init(commands):
 func ws_cross(script, arguments):
 	main.stack.variables.set_val("_statement", "")
 	main.stack.variables.set_val("_statement_line_num", "")
-	main.stack.variables.set_val("_cross_line_num", script.line_num)
+	main.stack.variables.set_val("currentcross", script.line_num)
 	
 func ws_endcross(script, arguments):
 	main.stack.variables.set_val("_statement", "")
 	main.stack.variables.set_val("_statement_line_num", "")
-	main.stack.variables.set_val("_cross_line_num", "")
 
-# TODO IMPLEMENT
-#    @category([],type="crossexam")
-#    def _cross_restart(self,command,*args):
-#        """Go to the first line in the current cross examination"""
-#        if assets.variables.get("currentcross",None) is not None:
-#            self.si = assets.variables.get("currentcross",None)
+# TODO Maybe deprecate this command
 func ws_cross_restart(script, arguments):
-	pass
+	var li = main.stack.variables.get_int("currentcross", null)
+	if li != null:
+		script.goto_line_number(li)
 	
 # TODO IMPLEMENT
 #    def _clearcross(self,command):

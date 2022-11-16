@@ -1,0 +1,15 @@
+"start"
+cross top
+statement a
+"statement a"
+statement b
+"statement b"
+endcross
+"back to start: {$currentcross}"
+cross_restart
+label press a
+"press a"
+resume
+label press b
+"press b"
+resume

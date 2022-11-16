@@ -112,7 +112,7 @@ func preprocess_lines():
 			var include_scr = load("res://System/WrightScript/WrightScript.gd").new(main, self.stack)
 			include_scr.load_txt_file(root_path+segments[1]+".txt")
 			var off = 1
-			lines.insert(i+off, "#> " + line)
+			lines.insert(i+off, "#i- " + line)
 			off += 1
 			for include_line in include_scr.lines:
 				lines.insert(i+off, include_line)
@@ -300,7 +300,7 @@ func process_wrightscript() -> Frame:
 	line = lines[line_num]
 	if not line.strip_edges():
 		return Frame.new(self, line_num, line, Commands.NEXTLINE)
-	if line.strip_edges().begins_with("#"):
+	if line.strip_edges().begins_with("#") or line.strip_edges().begins_with("//"):
 		return Frame.new(self, line_num, line, Commands.NEXTLINE)
 	if allowed_commands.size() > 0 and not line.split(" ")[0] in allowed_commands:
 		return Frame.new(self, line_num, line, Commands.NEXTLINE)
