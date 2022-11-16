@@ -81,10 +81,11 @@ func test_eval():
 	assert(WSExpression.OR(["is_true", "is_false"]) == true)
 	assert(WSExpression.OR2(["false", "true"]) == "true")
 	assert(WSExpression.OR2(["true", "false"]) == "true")
-	assert(WSExpression.EVAL_STR("is_int == 1010") == "true")
+	var x = WSExpression.EVAL_STR("is_int == 1010")
+	assert(x == "true")
 	assert(WSExpression.EVAL_STR("is_int 1010") == "true")
 	assert(WSExpression.EVAL_STR("(5 == 4 OR 5 == 5)") == "true")
-	var x = WSExpression.EVAL_STR("(5 == 4 OR 5 == 5) AND (1 + 3 == 4) OR ('funny' == 'not funny')")
+	x = WSExpression.EVAL_STR("(5 == 4 OR 5 == 5) AND (1 + 3 == 4) OR ('funny' == 'not funny')")
 	assert(WSExpression.EVAL_STR("(5 == 4 OR 5 == 5) AND (1 + 3 == 4) OR ('funny' == 'not funny')") == "true")
 	assert(WSExpression.EVAL_STR("2 * (5 + 1) == (5 + 1) * 2") == "true")
 	assert(WSExpression.EVAL_STR("2 * (5 + 1)") == "12")
@@ -112,6 +113,9 @@ func test_eval():
 	stack.variables.set_val("_diamond_count_internal", "0")
 	assert(WSExpression.EVAL_STR(
 		WSExpression.SIMPLE_TO_EXPR("$_diamond_count_internal < 1")) == "true")
+	stack.variables.set_val("_cr_button", "true")
+	x = WSExpression.EVAL_SIMPLE("_cr_button")
+	assert(x == true)
 
 func _process(_delta):
 	if stack:

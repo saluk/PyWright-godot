@@ -102,11 +102,12 @@ func load_page():
 			"art/ev/"+key_pic+".png",
 			self.root_path
 		)
-		pic.load_animation(ev_path)
-		pic.rescale(
-			main.stack.variables.get_int("ev_small_width"),
-			main.stack.variables.get_int("ev_small_height")
-		)
+		if ev_path:
+			pic.load_animation(ev_path)
+			pic.rescale(
+				main.stack.variables.get_int("ev_small_width"),
+				main.stack.variables.get_int("ev_small_height")
+			)
 		# IButton are positioned at center TODO we shouldn't do that
 		pic.position = Vector2(-pic.width/2, -pic.height/2)
 		

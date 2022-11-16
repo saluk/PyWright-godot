@@ -248,12 +248,7 @@ func ws_isnot(script, arguments):
 		label = "?"
 	else:
 		label = arguments.pop_back()
-	var truth = WSExpression.EVAL_EXPR(
-		WSExpression.SIMPLE_TO_EXPR(
-			Commands.join(arguments)
-		)
-	)
-	if not WSExpression.string_to_bool(truth):
+	if not WSExpression.EVAL_SIMPLE(Commands.join(arguments)):
 		script.succeed(label)
 	else:
 		script.fail(label, fail)
