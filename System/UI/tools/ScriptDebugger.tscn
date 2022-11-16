@@ -22,14 +22,13 @@ tab_align = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
-margin_top = 28.0
+margin_top = 30.0
 margin_right = -4.0
 margin_bottom = -4.0
 size_flags_stretch_ratio = 0.75
 text = "line 1 this is a really long line that may wrap an arbitrary number of 
 line 2
 line 3"
-readonly = true
 highlight_current_line = true
 syntax_highlighting = true
 show_line_numbers = true

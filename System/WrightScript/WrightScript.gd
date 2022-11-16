@@ -55,7 +55,8 @@ func load_txt_file(path:String):
 	
 func load_string(string:String):
 	lines = []
-	root_path = "res://"
+	if not root_path:
+		root_path = "res://"
 	for line in string.split("\n"):
 		lines.append(line)
 	preprocess_lines()
@@ -80,11 +81,10 @@ func preprocess_lines():
 		if i >= lines.size():
 			return
 		line = lines[i]
-		if line.begins_with("#") or line.begins_with("//"):
-			lines[i] = ""
-			i += 1
-			continue
 		line = line.strip_edges(true, true)
+		# TODO terrible hack for live editing
+		if line.begins_with("#> "):
+			line = line.substr(3)
 		lines[i] = line
 		segments = line.split(" ", true, 1)
 		# TODO still kind of don't like doing this
@@ -94,12 +94,12 @@ func preprocess_lines():
 				macro = {}
 			else:
 				macro["lines"].append(line)
-			lines[i] = ""
+			lines[i] = "#> "+lines[i]
 			i += 1
 			continue
 		elif segments[0] == "macro":
 			macro = {"name": line.split(" ")[1].strip_edges(), "lines": []}
-			lines[i] = ""
+			lines[i] = "#> "+lines[i]
 			i += 1
 			continue
 		elif segments and segments[0] in label_statements:
@@ -112,6 +112,8 @@ func preprocess_lines():
 			var include_scr = load("res://System/WrightScript/WrightScript.gd").new(main, self.stack)
 			include_scr.load_txt_file(root_path+segments[1]+".txt")
 			var off = 1
+			lines.insert(i+off, "#> " + line)
+			off += 1
 			for include_line in include_scr.lines:
 				lines.insert(i+off, include_line)
 				off += 1
@@ -295,10 +297,10 @@ func process_wrightscript() -> Frame:
 		return Frame.new(self, line_num, "", Commands.END)
 	print("SCRIPT EXECUTION:", to_string())
 	self.stack.emit_signal("line_executed", lines[line_num])
-	#read_macro()
 	line = lines[line_num]
-	#print(line_num, ":", line)
 	if not line.strip_edges():
+		return Frame.new(self, line_num, line, Commands.NEXTLINE)
+	if line.strip_edges().begins_with("#"):
 		return Frame.new(self, line_num, line, Commands.NEXTLINE)
 	if allowed_commands.size() > 0 and not line.split(" ")[0] in allowed_commands:
 		return Frame.new(self, line_num, line, Commands.NEXTLINE)

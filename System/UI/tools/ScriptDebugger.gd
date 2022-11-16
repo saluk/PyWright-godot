@@ -50,7 +50,8 @@ func rebuild():
 		$Scripts.remove_child(child)
 	scripts = []
 	var i = 0
-	for script in current_stack.scripts:
+	for ii in range(len(current_stack.scripts)):
+		var script = current_stack.scripts[current_stack.scripts.size()-1-ii]
 		var d = {
 			"script": script, 
 			"editor": script_tab.duplicate(),
@@ -60,11 +61,18 @@ func rebuild():
 		$Scripts.add_child(d["editor"])
 		$Scripts.set_tab_title(i, script.filename)
 		d["editor"].text = PoolStringArray(d["script"].lines).join("\n")
+		d["editor"].connect("text_changed", self, "edit_script", [i])
 		scripts.append(d)
 		i += 1
 	while scripts.size() > current_stack.scripts.size():
 		var last = scripts.pop_back()
 		$Scripts.remove_child(last["editor"])
+	$Scripts.current_tab = 0
+	
+func edit_script(script_index):
+	var d = scripts[script_index]
+	d["script"].load_string(d["editor"].text)
+	d["script"].stack.show_in_debugger()
 
 func update_current_stack(stack):
 	current_stack = stack
@@ -73,9 +81,8 @@ func update_current_stack(stack):
 		rebuild()
 	else:
 		for i in range(len(scripts)):
-			if scripts[i]["script"] != stack.scripts[i]:
+			if scripts[i]["script"] != stack.scripts[stack.scripts.size()-1-i]:
 				rebuild()
-				$Scripts.current_tab = len(scripts)-1
 				break
 	# Update each editor
 	for i in range(len(scripts)):
