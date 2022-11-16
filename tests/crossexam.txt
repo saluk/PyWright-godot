@@ -4,12 +4,24 @@ statement a
 "statement a"
 statement b
 "statement b"
+statement c
+"statement c"
 endcross
 "back to start: {$currentcross}"
 cross_restart
+
 label press a
-"press a"
+"press a, resume"
 resume
+
 label press b
-"press b"
-resume
+"press b, clearing crossexam"
+clearcross
+goto next
+
+label press c
+"press c, dont clear crossexam"
+goto next
+
+label next
+"Current cross should be empty: {$currentcross}"

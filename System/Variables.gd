@@ -29,6 +29,9 @@ func keys():
 
 func set_val(key, value):
 	store[key] = str(value)
+	
+func del_val(key):
+	store.erase(key)
 
 func get_string(key, default=""):
 	return store.get(key, default)

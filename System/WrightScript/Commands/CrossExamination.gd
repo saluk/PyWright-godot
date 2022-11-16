@@ -19,18 +19,11 @@ func ws_cross_restart(script, arguments):
 	var li = main.stack.variables.get_int("currentcross", null)
 	if li != null:
 		script.goto_line_number(li)
-	
-# TODO IMPLEMENT
-#    def _clearcross(self,command):
-#        """Clears all cross exam related variables. A good idea to call this after a testimony
-#        is officially over, to ensure that 'resumes' don't mistakenly go back to the cross exam, 
-#        and prevent other bugs from occuring."""
-#        self.cross = None
-#        self.lastline = 0
-#        self.statement = ""
-#        self.instatement = False
+
 func ws_clearcross(script, arguments):
-	pass
+	main.stack.variables.del_val("_statement")
+	main.stack.variables.del_val("_statement_line_num")
+	main.stack.variables.del_val("currentcross")
 
 # TODO test these
 func ws_next_statement(script, arguments):
