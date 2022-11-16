@@ -80,24 +80,27 @@ func ws_label(script, arguments):
 #        print "SCRIPT DEFAULTS"
 #        self.execute_macro("defaults")
 func ws_script(script, arguments, script_text=null):
-	if Commands.keywords(arguments).get("label",null):
-		# TODO jump to label when loading script
-		print("DO SOMETHING WITH SCRIPTS LOADING A LABEL")
+	var args = Commands.keywords(arguments, true)
+	var label = args[0].get("label",null)
+	arguments = args[1]
+	if not "stack" in arguments:
+		main.stack.clear_scripts()
 	if not "noclear" in arguments:
 		Commands.clear_main_screen()
 		pass
 	else:
 		arguments.erase("noclear")
 	var path = Commands.join(arguments)
+	var scr
 	if script_text:
-		main.stack.add_script(script_text)
+		scr = main.stack.add_script(script_text)
 	else:
 		path = script.has_script(path)
 		if path:
 			print("loading path:", path)
-			main.stack.load_script(path)
-	if not "stack" in arguments:
-		main.stack.remove_script(script)
+			scr = main.stack.load_script(path)
+	if scr and label:
+		scr.goto_label(label)
 	Commands.save_scripts()
 	return Commands.YIELD
 	

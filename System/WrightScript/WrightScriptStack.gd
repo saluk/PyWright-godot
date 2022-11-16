@@ -96,9 +96,9 @@ func remove_script(script):
 		script.end()
 		
 func clear_scripts():
-	for script in scripts:
-		script.end()
-		scripts.erase(script)
+	while scripts:
+		scripts[0].end()
+		scripts.erase(scripts[0])
 		
 func show_in_debugger():
 	if not main or not main.get_tree():
