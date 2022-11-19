@@ -137,7 +137,7 @@ func blocked(scr):
 func remove_blocker(frame):
 	if frame.sig in blockers:
 		blockers.erase(frame.sig)
-		if not blockers and frame.scr in blocked_scripts:
+		if frame.scr in blocked_scripts:
 			frame.scr.next_line()
 			blocked_scripts.erase(frame.scr)
 
