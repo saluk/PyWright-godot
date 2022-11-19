@@ -106,16 +106,6 @@ func rescale(size_x, size_y):
 	animated_sprite.position = Vector2(width/2, height/2)
 	animated_sprite.position = Vector2(width/2, height/2)
 
-func _ready():
-	if not animated_sprite:
-		animated_sprite = AnimatedSprite.new()
-		if sprite_path:
-			print("loading...")
-			load_animation(sprite_path)
-		else:
-			print("dont load")
-		add_child(animated_sprite)
-
 func set_grey(value):
 	if material:
 		material.set_shader_param("greyscale_amt", float(value))
