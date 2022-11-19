@@ -26,7 +26,7 @@ func ws_step(script, arguments):
 	
 func ws_goto(script, arguments):
 	var fail = Commands.keywords(arguments).get("fail", null)
-	script.goto_label(arguments[0], fail)
+	return script.goto_label(arguments[0], fail)
 	
 func ws_top(script, arguments):
 	script.goto_line_number(0)

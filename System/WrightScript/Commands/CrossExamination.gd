@@ -48,7 +48,7 @@ func ws_resume(script, arguments):
 # Press the current statement
 func ws_callpress(script, arguments):
 	main.get_tree().call_group(Commands.TEXTBOX_GROUP, "queue_free")
-	script.goto_label(
+	return script.goto_label(
 		"press "+main.stack.variables.get_string("_statement"),
 		"none"
 	)

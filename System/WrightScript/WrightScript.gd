@@ -157,6 +157,7 @@ func goto_label(label, fail=null):
 			emit_signal("GOTO_RESULT")
 			return main.stack.scripts[-1].goto_label(label, fail)
 		main.log_error("Tried to go somewhere non existent "+label)
+		allow_next_line = true
 		return
 	# Try to go to next line number
 	for possible_line_num in line_nums:
@@ -311,6 +312,7 @@ func process_wrightscript() -> Frame:
 	var sig = Commands.call_command(
 		call_command, self, split.slice(1, split.size())
 	)
+	print("SIGNAL:", sig)
 	if sig == null:
 		sig = Commands.NEXTLINE
 	return Frame.new(self, line_num, line, sig)
