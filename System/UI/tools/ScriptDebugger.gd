@@ -20,15 +20,18 @@ func _ready():
 	$Step.connect("button_up", self, "step")
 	$Pause.connect("button_up", self, "start_debugger")
 	
-func start_debugger():
+func start_debugger(force=false):
 	if in_debugger:
-		in_debugger = false
-		$Pause.text = "Pause"
-		current_stack.disconnect("line_executed", self, "debug_line")
+		if force == false:
+			in_debugger = false
+			$Pause.text = "Pause"
+			current_stack.disconnect("line_executed", self, "debug_line")
+			current_stack.state = current_stack.STACK_READY
 	else:
 		in_debugger = true
 		$Pause.text = "Resume"
 		current_stack.connect("line_executed", self, "debug_line")
+		current_stack.state = current_stack.STACK_DEBUG
 	
 func debug_line(line):
 	print("watching line", line)
@@ -36,9 +39,8 @@ func debug_line(line):
 	current_stack.state = current_stack.STACK_DEBUG
 	
 func step():
-	if in_debugger and debug_last_state:
-		current_stack.state = debug_last_state
-		debug_last_state = null
+	if in_debugger:
+		current_stack.state = current_stack.STACK_READY
 	
 func change_script(script:WrightScript):
 	if script != current_script:
@@ -75,7 +77,9 @@ func edit_script(script_index):
 	d["script"].stack.show_in_debugger()
 
 func update_current_stack(stack):
-	current_stack = stack
+	if current_stack != stack:
+		current_stack = stack
+		current_stack.connect("enter_debugger", self, "start_debugger", [true])
 	# Detect if scripts changed
 	if len(scripts) != len(stack.scripts):
 		rebuild()

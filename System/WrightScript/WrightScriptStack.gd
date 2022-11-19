@@ -36,6 +36,7 @@ func _init(main):
 	filesystem = load("res://System/Files/Filesystem.gd").new()
 
 signal stack_empty
+signal enter_debugger
 signal line_executed   # emit when any script executes a line
 
 var macro_scripts_found = 0
@@ -205,10 +206,10 @@ func process():
 				return new_state(STACK_YIELD)
 			elif frame.sig == Commands.DEBUG:
 				show_in_debugger()
-				yield(main.get_tree(), "idle_frame")
 				print(" - debug - ")
 				frame.scr.next_line()
-				return new_state(STACK_YIELD)
+				emit_signal("enter_debugger")
+				return new_state(STACK_DEBUG)
 			elif frame.sig == Commands.END:
 				if frame.scr in scripts:
 					scripts.erase(frame.scr)
