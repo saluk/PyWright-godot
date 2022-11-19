@@ -70,13 +70,7 @@ func ws_present(script, arguments):
 # while present can be used outside of cross examinations
 func ws_showpresent(script, arguments):
 	Commands.call_command("present", script, arguments)
-	
-# TODO IMPLEMENT
-#    @category([],type="interface")
-#    def _showrecord(self,command,*args):
-#        print "show ev menu"
-#        assets.addevmenu()
-#        return True
+
 func ws_showrecord(script, arguments):
 	return ws_present(script, arguments)
 
