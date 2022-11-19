@@ -5,6 +5,13 @@ var main
 func _init(commands):
 	main = commands.main
 
+# Add script to execute
+# TODO add pausing everything or just the script, along with the priority
+#    @category([VALUE('ticks','How many ticks (1/60 of a second) to wait'),
+#TOKEN('all','Pause EVERYTHING','default behavior pauses script execution but lets animation continue'),
+#TOKEN('script','Pause only the script','this is the default behavior'),
+#KEYWORD('priority','Fine tune what gets paused and what doesnt.','10000 (such a high number for priority means that most objects will not be paused')
+#],type="animation")
 func ws_pause(script, arguments):
 	# Need to add priority
 	if main.get_tree():
