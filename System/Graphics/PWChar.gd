@@ -15,9 +15,20 @@ var root_path:String  # Save root path for art lookups in case we change emotion
 
 onready var FilesystemS = load("res://System/Files/Filesystem.gd")
 
+func free_members():
+	for sprite in sprites.values():
+		sprite.queue_free()
+	sprites.clear()
+
 func queue_free():
-	print("queuing "+name)
+	print("queuing pwchar "+name)
+	free_members()
 	return .queue_free()
+	
+func free():
+	print("freeing pwchar "+name)
+	free_members()
+	return .free()
 	
 func load_sprite(path):
 	var sprite = load("res://System/Graphics/PWSprite.gd").new()
@@ -81,6 +92,7 @@ func load_character(character_name, emotion, root_path):
 	play_state("blink")
 	
 func load_emotion(emotion):
+	free_members()
 	state = ""
 	sprites = {}
 	print("loading emotion:" + emotion)

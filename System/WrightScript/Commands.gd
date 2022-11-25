@@ -51,6 +51,7 @@ func get_objects(script_name, last=null, group=SPRITE_GROUP):
 func clear_main_screen():
 	for child in main_screen.get_children():
 		main_screen.remove_child(child)
+		child.queue_free()
 		
 func load_command_engine():
 	main = get_tree().get_nodes_in_group("Main")[0]

@@ -29,6 +29,9 @@ class PWTimer extends Node:
 		self.macro = macro
 		self.timeleft = timeleft
 	func execute():
+		print("timer executing")
+		print("stray nodes")
+		print_stray_nodes()
 		Commands.call_macro(macro, scr, [])
 	func _process(dt):
 		timeleft -= dt
@@ -41,4 +44,5 @@ func ws_timer(script, arguments):
 	var seconds = WSExpression.GV(arguments[0]) / 60.0
 	var macro = arguments[1]
 	var pwt = PWTimer.new(script, macro, seconds)
+	pwt.name = "PWTimer"
 	main.add_child(pwt)

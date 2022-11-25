@@ -80,6 +80,8 @@ func ws_label(script, arguments):
 #        print "SCRIPT DEFAULTS"
 #        self.execute_macro("defaults")
 func ws_script(script, arguments, script_text=null):
+	print("STRAY NODES")
+	main.print_stray_nodes()
 	var args = Commands.keywords(arguments, true)
 	var label = args[0].get("label",null)
 	arguments = args[1]
