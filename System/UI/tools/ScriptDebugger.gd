@@ -50,6 +50,7 @@ func change_script(script:WrightScript):
 func rebuild():
 	for child in $Scripts.get_children():
 		$Scripts.remove_child(child)
+		child.queue_free()
 	scripts = []
 	var i = 0
 	for ii in range(len(current_stack.scripts)):
@@ -69,6 +70,7 @@ func rebuild():
 	while scripts.size() > current_stack.scripts.size():
 		var last = scripts.pop_back()
 		$Scripts.remove_child(last["editor"])
+		last["editor"].queue_free()
 	$Scripts.current_tab = 0
 	
 func edit_script(script_index):
