@@ -104,6 +104,7 @@ func ws_script(script, arguments, script_text=null):
 	if scr and label:
 		scr.goto_label(label)
 	Commands.save_scripts()
+	Commands.call_macro("defaults", script, arguments)
 	return Commands.YIELD
 	
 # TODO IMPLEMENT

@@ -187,6 +187,7 @@ func refresh_arrows(script):
 	else:
 		call_macro("hide_present_button", script, [])
 		call_macro("hide_press_button", script, [])
+		call_macro("show_court_record_button", script, [])
 	
 func get_speaking_char():
 	var characters = get_objects(null, null, CHAR_GROUP)
