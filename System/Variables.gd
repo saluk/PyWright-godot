@@ -59,3 +59,10 @@ func get_truth_string(key, default="false"):
 	if get_truth(key, default):
 		return 'true'
 	return 'false'
+
+func evidence_keys():
+	var ev_keys = {}
+	for key in store.keys():
+		if key.ends_with("_name") or key.ends_with("_pic") or key.ends_with("_desc"):
+			ev_keys[key.split("_")[0]] = 1
+	return ev_keys.keys()

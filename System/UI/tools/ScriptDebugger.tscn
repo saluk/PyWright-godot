@@ -45,6 +45,13 @@ margin_right = 51.0
 margin_bottom = 339.0
 text = "Reload"
 
+[node name="AllEv" type="Button" parent="."]
+margin_left = 3.0
+margin_top = 339.0
+margin_right = 51.0
+margin_bottom = 359.0
+text = "AllEv"
+
 [node name="Pause" type="Button" parent="."]
 margin_left = 66.0
 margin_top = 316.0

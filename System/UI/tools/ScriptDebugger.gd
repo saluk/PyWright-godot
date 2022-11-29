@@ -18,6 +18,7 @@ func _ready():
 	$Scripts.remove_child(script_tab)
 	$Step.connect("button_up", self, "step")
 	$Pause.connect("button_up", self, "start_debugger")
+	$AllEv.connect("button_up", self, "all_ev")
 	
 func start_debugger(force=false):
 	if in_debugger:
@@ -37,6 +38,10 @@ func goto_line(row, scripti):
 		current_stack.scripts[scripti].goto_line_number(row)
 		current_stack.force_clear_blockers()
 	scripts[scripti]["editor"].set_line_as_breakpoint(row, false)
+	
+func all_ev():
+	for var_key in current_stack.variables.evidence_keys():
+		Commands.call_command("addev", current_stack.scripts[-1], [var_key])
 	
 func debug_line(line):
 	print("watching line", line)
