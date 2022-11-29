@@ -140,6 +140,14 @@ func remove_blocker(frame):
 		if frame.scr in blocked_scripts:
 			frame.scr.next_line()
 			blocked_scripts.erase(frame.scr)
+			
+func force_clear_blockers():
+	for obj in blockers:
+		obj.queue_free()
+	blockers = []
+	for scr in blocked_scripts:
+		scr.next_line()
+	blocked_scripts = []
 
 # TODO simplify process, we have more states than we need now that we almost never yield or return from the while loop
 func process():
@@ -179,8 +187,6 @@ func process():
 			continue
 		# We may have a paused frame from before to keep processing
 		frame = scripts[-1].process_wrightscript()
-		if frame.line.begins_with("fg"):
-			pass
 		show_frame(frame)
 		show_in_debugger()
 		print("FRAME:", frame, ",", frame.line_num, ",<<", frame.line, ">>,", frame.sig)

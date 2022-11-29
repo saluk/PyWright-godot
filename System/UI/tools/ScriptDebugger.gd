@@ -1,6 +1,5 @@
 extends Control
 
-var current_script
 var current_stack
 var look_at   # Set to a script if we are looking at something other than the current script
 
@@ -32,6 +31,12 @@ func start_debugger(force=false):
 		$Pause.text = "Resume"
 		current_stack.connect("line_executed", self, "debug_line")
 		current_stack.state = current_stack.STACK_DEBUG
+		
+func goto_line(row, scripti):
+	if current_stack.scripts:
+		current_stack.scripts[scripti].goto_line_number(row)
+		current_stack.force_clear_blockers()
+	scripts[scripti]["editor"].set_line_as_breakpoint(row, false)
 	
 func debug_line(line):
 	print("watching line", line)
@@ -41,11 +46,6 @@ func debug_line(line):
 func step():
 	if in_debugger:
 		current_stack.state = current_stack.STACK_READY
-	
-func change_script(script:WrightScript):
-	if script != current_script:
-		current_script = script
-		$CurrentScript.text = PoolStringArray(script.lines).join("\n")
 		
 func rebuild():
 	for child in $Scripts.get_children():
@@ -65,6 +65,8 @@ func rebuild():
 		$Scripts.set_tab_title(i, script.filename)
 		d["editor"].text = PoolStringArray(d["script"].lines).join("\n")
 		d["editor"].connect("text_changed", self, "edit_script", [i])
+		d["editor"].connect("breakpoint_toggled", self, "goto_line", [i])
+		d["editor"].connect("info_clicked", self, "goto_line", [i])
 		scripts.append(d)
 		i += 1
 	while scripts.size() > current_stack.scripts.size():
@@ -103,3 +105,17 @@ func update_current_stack(stack):
 			scripts[i]["editor"].set_line_as_bookmark(scripts[i]["bookmark_line"], false)
 		scripts[i]["editor"].set_line_as_bookmark(to_line, true)
 		scripts[i]["bookmark_line"] = to_line
+
+
+# TODO Whoops, I'm hooking up an event to control rather than to the script editor
+var COPY = 0
+func _input(evt:InputEvent):
+	if evt is InputEventMouseButton:
+		if evt.button_index == 2:
+			var popup_menu = PopupMenu.new()
+			popup_menu.add_item("Copy", COPY)
+			popup_menu.connect("id_pressed", self, "menu_id_pressed")
+			
+func menu_id_pressed(id):
+	if id == COPY:
+		pass

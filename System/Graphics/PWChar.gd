@@ -88,6 +88,8 @@ func load_character(character_name, emotion, root_path):
 			sprites["talk"].animated_sprite.frames.remove_frame("default", count/2)
 		while sprites["blink"].animated_sprite.frames.get_frame_count("default") > count/2:
 			sprites["blink"].animated_sprite.frames.remove_frame("default", 0)
+			
+	# TODO if we dont have a talking sprite but we have a blinking one, make the talking sprite the blinking one? maybe?
 		
 	play_state("blink")
 	
