@@ -158,12 +158,12 @@ func create_object(script, command, class_path, groups, arguments=[]):
 	object.name = object.script_name
 	#Set object to wait mode if possible and directed to
 	if "wait" in object:
-		object.wait = command in WAITERS
+		object.set_wait(command in WAITERS)
 		# If we say to wait or nowait, apply it
 		if "wait" in arguments:
-			object.wait = true
+			object.set_wait(true)    #Try to make the object wait, if it is a single play animation that has more than one frame
 		if "nowait" in arguments:
-			object.wait = false
+			object.set_wait(false)
 	return object
 	
 func refresh_arrows(script):
@@ -188,6 +188,11 @@ func refresh_arrows(script):
 		call_macro("hide_present_button", script, [])
 		call_macro("hide_press_button", script, [])
 		call_macro("show_court_record_button", script, [])
+		
+func hide_arrows(script):
+	call_macro("hide_court_record_button", script, [])
+	call_macro("hide_present_button", script, [])
+	call_macro("hide_press_button", script, [])
 	
 func get_speaking_char():
 	var characters = get_objects(null, null, CHAR_GROUP)

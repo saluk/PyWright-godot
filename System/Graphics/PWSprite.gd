@@ -26,6 +26,14 @@ func queue_free():
 	print("queuing pwsprite "+name)
 	free_members()
 	return .queue_free()
+	
+func set_wait(b):
+	print(animated_sprite.frames.get_frame_count("default"))
+	print(animated_sprite.frames.get_animation_loop("default"))
+	if animated_sprite.frames.get_frame_count("default") > 1 and not animated_sprite.frames.get_animation_loop("default"):
+		wait = b
+		return
+	wait = false
 
 func load_info(path:String):
 	print("load info:", path)
@@ -77,11 +85,16 @@ func load_animation(path:String, info=null):
 	animated_sprite.use_parent_material = true
 	add_child(animated_sprite)
 	animated_sprite.frames = SpriteFrames.new()
-	var frame_i = 0
-	for frame in frames:
-		for delay in info["delays"].get(frame_i, 6.0):
-			animated_sprite.frames.add_frame("default", frame)
-		frame_i += 1
+	# TODO this is a hack, we are adding frames to slow the animation down when we should use an animationplayer to interpolate instead
+	# Also, avoid doing this if there is only one frame. it's not an animation at that point
+	if frames.size() > 1:
+		var frame_i = 0
+		for frame in frames:
+			for delay in info["delays"].get(frame_i, 6.0):
+				animated_sprite.frames.add_frame("default", frame)
+			frame_i += 1
+	else:
+		animated_sprite.frames.add_frame("default", frames[0])
 	animated_sprite.frames.set_animation_speed("default", 60.0)
 	animated_sprite.play("default")
 	print("good")
@@ -95,6 +108,8 @@ func load_animation(path:String, info=null):
 	material.shader = load("res://System/Graphics/clear_pink.shader")
 	
 	animated_sprite.connect("animation_finished", self, "finish_playing")
+	if "wbench" in sprite_path:
+		pass
 	
 func finish_playing():
 	self.emit_signal("finished_playing")

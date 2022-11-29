@@ -141,6 +141,7 @@ func remove_blocker(frame):
 			frame.scr.next_line()
 			blocked_scripts.erase(frame.scr)
 
+# TODO simplify process, we have more states than we need now that we almost never yield or return from the while loop
 func process():
 	var frame
 	print("PROCESS BEGINS")
@@ -167,7 +168,9 @@ func process():
 				break
 		yield(main.get_tree(), "idle_frame")
 		continue
-	while scripts and state == STACK_PROCESSING:
+	while scripts:
+		if state != STACK_PROCESSING:
+			return
 		clean_scripts()
 		if not scripts:
 			return new_state(STACK_YIELD)
@@ -176,6 +179,8 @@ func process():
 			continue
 		# We may have a paused frame from before to keep processing
 		frame = scripts[-1].process_wrightscript()
+		if frame.line.begins_with("fg"):
+			pass
 		show_frame(frame)
 		show_in_debugger()
 		print("FRAME:", frame, ",", frame.line_num, ",<<", frame.line, ">>,", frame.sig)
@@ -195,15 +200,15 @@ func process():
 			if frame.sig == Commands.YIELD:
 				#yield(main.get_tree(), "idle_frame")
 				frame.scr.next_line()
-				return new_state(STACK_YIELD)
+				#return new_state(STACK_YIELD)
 			elif frame.sig == Commands.UNDEFINED:
 				main.log_error("No command for "+frame.command)
 				frame.scr.next_line()
-				return new_state(STACK_YIELD)
+				#return new_state(STACK_YIELD)
 			elif frame.sig == Commands.NOTIMPLEMENTED:
 				print("not implemented command "+frame.command)
 				frame.scr.next_line()
-				return new_state(STACK_YIELD)
+				#return new_state(STACK_YIELD)
 			elif frame.sig == Commands.DEBUG:
 				show_in_debugger()
 				print(" - debug - ")
@@ -220,7 +225,7 @@ func process():
 			else:
 				print("undefined return")
 				frame.scr.next_line()
-				return new_state(STACK_YIELD)
+				#return new_state(STACK_YIELD)
 		elif frame.sig is SceneTreeTimer or (frame.sig and frame.sig.get("wait_signal") and frame.sig.get("wait") in [null, true]):
 			blockers.append(frame.sig)
 			blocked_scripts.append(frame.scr)
@@ -228,11 +233,11 @@ func process():
 			if frame.sig.get("wait_signal"):
 				sig = frame.sig.get("wait_signal")
 			frame.sig.connect(sig, self, "remove_blocker", [frame], CONNECT_ONESHOT)
-			return new_state(STACK_YIELD)
+			#return new_state(STACK_YIELD)
 		elif frame.sig is GDScriptFunctionState:
 			show_in_debugger()
 			yields.append(frame)
-			return new_state(STACK_YIELD)
+			#return new_state(STACK_YIELD)
 		else:
 			frame.scr.next_line()
-			return new_state(STACK_YIELD)
+			#return new_state(STACK_YIELD)
