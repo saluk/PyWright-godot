@@ -1,4 +1,25 @@
-addev test
+addev evidence1
+set evidence1_desc This is a piece of evidence
+addev evidence2
+set evidence2_desc THE SECOND PIECE OF EVIDENCE
+addev evidence3
+addev evidence4
+addev evidence5
+addev evidence6
+addev evidence7
+addev evidence8
+addev evidence9
+set evidence9_desc this is number nine
+addev evidence10
+addev profile1$
+addev profile2$
+addev profile3$
+addev profile4$
+addev profile5$
+addev profile6$
+addev profile7$
+addev profile8$
+addev profile9$
 showpresent
 enable_court_record_button
 "{$_cr_button}"

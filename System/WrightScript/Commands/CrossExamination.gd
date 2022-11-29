@@ -55,6 +55,8 @@ func ws_callpress(script, arguments):
 
 # Show the court record to allow an evidence to be selected to present
 func ws_present(script, arguments):
+	var present = not "nopresent" in arguments
+	arguments.erase("nopresent")
 	var cr = Commands.create_object(
 		script, 
 		"evidence_menu",
@@ -62,6 +64,10 @@ func ws_present(script, arguments):
 		[Commands.SPRITE_GROUP],
 		arguments
 	)
+	if not present:
+		cr.in_presentation_context = false
+	else:
+		cr.in_presentation_context = true
 	return cr
 
 # Show the court record to allow an evidence to be selected to present
@@ -71,7 +77,9 @@ func ws_present(script, arguments):
 func ws_showpresent(script, arguments):
 	Commands.call_command("present", script, arguments)
 
+# Show court record but dont allow evidence to be presented
 func ws_showrecord(script, arguments):
+	arguments.append("nopresent")
 	return ws_present(script, arguments)
 
 # Actually do the presenting of evidence after it's selected from

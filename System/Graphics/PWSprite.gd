@@ -110,6 +110,7 @@ func load_animation(path:String, info=null):
 	animated_sprite.connect("animation_finished", self, "finish_playing")
 	if "wbench" in sprite_path:
 		pass
+	return self
 	
 func finish_playing():
 	self.emit_signal("finished_playing")

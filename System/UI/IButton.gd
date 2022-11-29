@@ -61,29 +61,31 @@ func load_art(frame_path, active_frame_path=null, text=""):
 	load_final_art(frame, active_frame)
 	position = pos
 
-func _init(frame=null, active_frame=null, pos=Vector2(0,0), size=null):
-	if frame != null:
-		load_final_art(frame, active_frame, pos, size)
+func _init(frame=null, active_frame=null, pos=Vector2(0,0), size=null, centered=true):
+	load_final_art(frame, active_frame, pos, size, centered)
 		
-func load_final_art(frame, active_frame=null, pos=Vector2(0,0), size=null):
+func load_final_art(frame, active_frame=null, pos=Vector2(0,0), size=null, centered=true):
 	self.frame = build_sprite(frame)
 	self.active_frame = build_sprite(active_frame)
 	self.position = pos
-	self.add_child(self.frame)
+	if self.frame:
+		self.add_child(self.frame)
 	if self.active_frame:
 		self.add_child(self.active_frame)
 		self.active_frame.visible = false
 	
-	if not size:
+	if not size and frame:
 		size = get_size(frame)
-	width = size.x
-	height = size.y
+	if size:
+		width = size.x
+		height = size.y
 	
-	area = Control.new()
-	area.rect_position = Vector2(-width/2, -height/2)
-	area.rect_size = Vector2(width, height)
-	add_child(area)
-	area.connect("gui_input", self, "_on_Area2D_input_event")
+		area = Control.new()
+		if centered:
+			area.rect_position = Vector2(-width/2, -height/2)
+		area.rect_size = Vector2(width, height)
+		add_child(area)
+		area.connect("gui_input", self, "_on_Area2D_input_event")
 	
 	
 func _on_Area2D_input_event(event):
