@@ -33,6 +33,7 @@ func free():
 func load_sprite(path):
 	var sprite = load("res://System/Graphics/PWSprite.gd").new()
 	sprite.load_animation(path)
+	sprite.position = Vector2(256/2-sprite.width/2, 192-sprite.height)
 	return sprite
 	
 func set_grey(value):
