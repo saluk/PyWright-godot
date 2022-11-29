@@ -102,7 +102,7 @@ func preprocess_lines():
 			lines[i] = "#> "+lines[i]
 			i += 1
 			continue
-		elif segments and segments[0] in label_statements:
+		elif segments and segments[0] in label_statements and segments.size()>1:
 			var tag = segments[1].strip_edges()
 			if tag:
 				add_label(tag, i)
