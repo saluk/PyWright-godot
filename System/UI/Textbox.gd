@@ -59,6 +59,10 @@ func update_emotion(emotion):
 func _on_Area2D_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton and event.is_pressed():
 		click_continue()
+		
+func queue_free():
+	Commands.hide_arrows(main.stack.scripts[-1])
+	.queue_free()
 			
 func click_continue(immediate_skip=false):
 	if not immediate_skip and (text_to_print or packs):
