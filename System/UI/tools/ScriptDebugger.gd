@@ -7,6 +7,11 @@ var script_tab
 var popup_menu
 
 var scripts = []
+export(NodePath) var step
+export(NodePath) var allev
+export(NodePath) var pause
+export(NodePath) var node_scripts
+export(NodePath) var current_script
 
 var in_debugger = false
 var debug_last_state = null
@@ -14,22 +19,28 @@ var debug_last_state = null
 # {"script": WrightScript, "editor": TextEdit, "highlighted_line":int, "bookmark_line": int}
 
 func _ready():
-	script_tab = get_node("Scripts/CurrentScript")
-	$Scripts.remove_child(script_tab)
-	$Step.connect("button_up", self, "step")
-	$Pause.connect("button_up", self, "start_debugger")
-	$AllEv.connect("button_up", self, "all_ev")
+	script_tab = get_node(current_script)
+	step = get_node(step)
+	allev = get_node(allev)
+	pause = get_node(pause)
+	node_scripts= get_node(node_scripts)
+	
+	node_scripts.remove_child(script_tab)
+	# TODO conceal buttons if game is not playing to prevent error
+	step.connect("button_up", self, "step")
+	pause.connect("button_up", self, "start_debugger")
+	allev.connect("button_up", self, "all_ev")
 	
 func start_debugger(force=false):
 	if in_debugger:
 		if force == false:
 			in_debugger = false
-			$Pause.text = "Pause"
+			pause.text = "Pause"
 			current_stack.disconnect("line_executed", self, "debug_line")
 			current_stack.state = current_stack.STACK_READY
 	else:
 		in_debugger = true
-		$Pause.text = "Resume"
+		pause.text = "Resume"
 		current_stack.connect("line_executed", self, "debug_line")
 		current_stack.state = current_stack.STACK_DEBUG
 		
@@ -53,8 +64,8 @@ func step():
 		current_stack.state = current_stack.STACK_READY
 		
 func rebuild():
-	for child in $Scripts.get_children():
-		$Scripts.remove_child(child)
+	for child in node_scripts.get_children():
+		node_scripts.remove_child(child)
 		child.queue_free()
 	scripts = []
 	var i = 0
@@ -66,8 +77,8 @@ func rebuild():
 			"highlighted_line": null,
 			"bookmark_line": null}
 		d["editor"].name = "x"
-		$Scripts.add_child(d["editor"])
-		$Scripts.set_tab_title(i, script.filename)
+		node_scripts.add_child(d["editor"])
+		node_scripts.set_tab_title(i, script.filename)
 		d["editor"].text = PoolStringArray(d["script"].lines).join("\n")
 		d["editor"].connect("text_changed", self, "edit_script", [i])
 		d["editor"].connect("breakpoint_toggled", self, "goto_line", [i])
@@ -76,9 +87,9 @@ func rebuild():
 		i += 1
 	while scripts.size() > current_stack.scripts.size():
 		var last = scripts.pop_back()
-		$Scripts.remove_child(last["editor"])
+		node_scripts.remove_child(last["editor"])
 		last["editor"].queue_free()
-	$Scripts.current_tab = 0
+	node_scripts.current_tab = 0
 	
 func edit_script(script_index):
 	var d = scripts[script_index]
