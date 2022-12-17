@@ -6,10 +6,13 @@ func _init(commands):
 	main = commands.main
 
 func ws_mus(script, arguments):
-	MusicPlayer.play_music(
-		Filesystem.path_join("music",Commands.join(arguments)), 
-		script.root_path
-	)
+	if not len(arguments):
+		MusicPlayer.stop_music()
+	else:
+		MusicPlayer.play_music(
+			Filesystem.path_join("music",Commands.join(arguments)), 
+			script.root_path
+		)
 
 # TODO add arguments:
 # after=, volumee=
