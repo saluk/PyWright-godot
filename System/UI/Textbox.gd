@@ -181,25 +181,27 @@ func tokenize_text(text_to_print):
 	packs.append(next_pack)
 	return packs
 
+func process_packs():
+	for character in Commands.get_speaking_char():
+		character.play_state("talk")
+	if packs[0].type == TEXT_PACK and packs[0].text.length()>0:
+		$Backdrop/Label.bbcode_text += packs[0].text.substr(0,1)
+		packs[0].text = packs[0].text.substr(1)
+	elif packs[0].type == TEXT_PACK and packs[0].text.length()==0:
+		packs.remove(0)
+	elif packs[0].type == COMMAND_PACK:
+		var t = execute_markup(packs[0])
+		if t:
+			$Backdrop/Label.bbcode_text += t
+		packs.remove(0)
+
 func _process(dt):
 	update_nametag()
 	if text_to_print and not packs:
 		packs = tokenize_text(text_to_print)
 		text_to_print = ""
 	if packs:
-		for character in Commands.get_speaking_char():
-			character.play_state("talk")
-		if packs[0].type == TEXT_PACK:
-			if packs[0].text.length()>0:
-				$Backdrop/Label.bbcode_text += packs[0].text.substr(0,1)
-				packs[0].text = packs[0].text.substr(1)
-			else:
-				packs.remove(0)
-		elif packs[0].type == COMMAND_PACK:
-			var t = execute_markup(packs[0])
-			if t:
-				$Backdrop/Label.bbcode_text += t
-			packs.remove(0)
+		process_packs()
 	else:
 		for character in Commands.get_speaking_char():
 			character.play_state("blink")
