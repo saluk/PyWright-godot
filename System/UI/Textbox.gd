@@ -170,6 +170,7 @@ func execute_markup(pack:Pack):
 func tokenize_text(text_to_print):
 	var next_pack
 	var v = get_next_pack(text_to_print)
+	var packs = []
 	next_pack = v[0]
 	text_to_print = v[1]
 	while text_to_print:
@@ -178,11 +179,12 @@ func tokenize_text(text_to_print):
 		next_pack = v[0]
 		text_to_print = v[1]
 	packs.append(next_pack)
+	return packs
 
 func _process(dt):
 	update_nametag()
 	if text_to_print and not packs:
-		tokenize_text(text_to_print)
+		packs = tokenize_text(text_to_print)
 		text_to_print = ""
 	if packs:
 		for character in Commands.get_speaking_char():
