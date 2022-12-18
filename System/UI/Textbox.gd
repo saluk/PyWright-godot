@@ -166,20 +166,24 @@ func execute_markup(pack:Pack):
 			pass
 		"p":
 			pass
+			
+func tokenize_text(text_to_print):
+	var next_pack
+	var v = get_next_pack(text_to_print)
+	next_pack = v[0]
+	text_to_print = v[1]
+	while text_to_print:
+		packs.append(next_pack)
+		v = get_next_pack(text_to_print)
+		next_pack = v[0]
+		text_to_print = v[1]
+	packs.append(next_pack)
 
 func _process(dt):
 	update_nametag()
-	var next_pack
 	if text_to_print and not packs:
-		var v = get_next_pack(text_to_print)
-		next_pack = v[0]
-		text_to_print = v[1]
-		while text_to_print:
-			packs.append(next_pack)
-			v = get_next_pack(text_to_print)
-			next_pack = v[0]
-			text_to_print = v[1]
-		packs.append(next_pack)
+		tokenize_text(text_to_print)
+		text_to_print = ""
 	if packs:
 		for character in Commands.get_speaking_char():
 			character.play_state("talk")
