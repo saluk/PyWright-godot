@@ -182,8 +182,6 @@ func tokenize_text(text_to_print):
 	return packs
 
 func process_packs():
-	for character in Commands.get_speaking_char():
-		character.play_state("talk")
 	if packs[0].type == TEXT_PACK and packs[0].text.length()>0:
 		$Backdrop/Label.bbcode_text += packs[0].text.substr(0,1)
 		packs[0].text = packs[0].text.substr(1)
@@ -194,6 +192,10 @@ func process_packs():
 		if t:
 			$Backdrop/Label.bbcode_text += t
 		packs.remove(0)
+		
+func _set_speaking_animation(name):
+	for character in Commands.get_speaking_char():
+		character.play_state("talk")
 
 func _process(dt):
 	update_nametag()
@@ -201,7 +203,7 @@ func _process(dt):
 		packs = tokenize_text(text_to_print)
 		text_to_print = ""
 	if packs:
+		_set_speaking_animation("talk")
 		process_packs()
 	else:
-		for character in Commands.get_speaking_char():
-			character.play_state("blink")
+		_set_speaking_animation("blink")
