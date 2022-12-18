@@ -20,6 +20,7 @@ enum {
 class Pack:
 	var type = TEXT_PACK
 	var text := ""
+	var args = []
 	func _init(type, text):
 		self.type = type
 		self.text = text
@@ -96,11 +97,10 @@ func get_next_pack(text_to_print):
 			return [Pack.new(TEXT_PACK, pack.left(pack.length()-1)),text_to_print.substr(i)]
 		i += 1
 	return [Pack.new(TEXT_PACK, pack), ""]
-
-# TODO finish execute markup base commands
-# TODO execute macros
-func execute_markup(pack:Pack):
-	var args = []
+	
+func parse_command(pack):
+	# parse pack text
+	var args
 	for command in [
 		"sfx", "sound", "delay", "spd", "_fullspeed", "_endfullspeed",
 		"wait", "center", "type", "next", "tbon", "tboff", 
@@ -113,7 +113,17 @@ func execute_markup(pack:Pack):
 			else:
 				args = []
 			pack.text = command
-			break
+			pack.args = args
+			return pack
+	print("command not found:", pack.text)
+	return pack
+
+# TODO finish execute markup base commands
+# TODO execute macros
+func execute_markup(pack:Pack):
+	# parse pack text
+	pack = parse_command(pack)
+	var args = pack.args
 	match pack.text:
 		"n":
 			$Backdrop/Label.bbcode_text += "\n"
