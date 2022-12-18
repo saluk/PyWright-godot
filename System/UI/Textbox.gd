@@ -79,7 +79,7 @@ func click_prev():
 	main.stack.scripts[-1].prev_statement()
 	click_continue(true)
 		
-func get_next_pack():
+func get_next_pack(text_to_print):
 	var i = 0
 	var pack = ""
 	var found_bracket = false
@@ -91,14 +91,11 @@ func get_next_pack():
 			i += 1
 			continue
 		if found_bracket and i != 0 and c == '}':
-			text_to_print = text_to_print.substr(i+1)
-			return Pack.new(COMMAND_PACK, pack.substr(1, pack.length()-2))
+			return [Pack.new(COMMAND_PACK, pack.substr(1, pack.length()-2)),text_to_print.substr(i+1)]
 		if not found_bracket and i > 0 and c == '{':
-			text_to_print = text_to_print.substr(i)
-			return Pack.new(TEXT_PACK, pack.left(pack.length()-1))
+			return [Pack.new(TEXT_PACK, pack.left(pack.length()-1)),text_to_print.substr(i)]
 		i += 1
-	text_to_print = ""
-	return Pack.new(TEXT_PACK, pack)
+	return [Pack.new(TEXT_PACK, pack), ""]
 
 # TODO finish execute markup base commands
 # TODO execute macros
@@ -172,11 +169,16 @@ func execute_markup(pack:Pack):
 
 func _process(dt):
 	update_nametag()
+	var next_pack
 	if text_to_print and not packs:
-		var next_pack = get_next_pack()
+		var v = get_next_pack(text_to_print)
+		next_pack = v[0]
+		text_to_print = v[1]
 		while text_to_print:
 			packs.append(next_pack)
-			next_pack = get_next_pack()
+			v = get_next_pack(text_to_print)
+			next_pack = v[0]
+			text_to_print = v[1]
 		packs.append(next_pack)
 	if packs:
 		for character in Commands.get_speaking_char():
