@@ -6,6 +6,7 @@ var text_to_print := ""
 var packs := []
 var printed := ""
 var wait_signal := "tree_exited"
+export(NodePath) var tb_timer
 var z:int
 
 # states while printing
@@ -58,12 +59,11 @@ class Pack:
 		self.cache = _to_text(self.textbox)
 	func consume():
 		self.run()
-		self.delete = true
 		if  self.to_text():
 			# text is already in Label, we just need to display the characters
 			var visible = self.textbox.strip_bbcode(self.to_text()).length()
 			self.textbox.get_node("Backdrop/Label").visible_characters += visible
-			
+			visible	
 	func to_text():
 		return self.cache
 	# text-only changes. Resolved before typing: variables, bbcode
@@ -91,6 +91,7 @@ class Pack:
 		return ret
 	# executed during typing: speed change, animations, sounds, etc
 	func run():
+		self.delete = true
 		var args = self.args
 		match self.text:
 			"e":
@@ -125,9 +126,14 @@ class Pack:
 			"s":
 				pass
 			"p":
-				pass
+				self.textbox.pause(args, self)
+				self.delete = false
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	tb_timer = get_node(tb_timer)
+	tb_timer.one_shot = true
 	if not main:
 		return
 	$NametagBackdrop/Label.text = ""
@@ -157,6 +163,14 @@ func update_nametag():
 func update_emotion(emotion):
 	for character in Commands.get_speaking_char():
 		character.load_emotion(emotion)
+		
+func stop_timer(pack):
+	packs.remove(0)
+		
+func pause(args, pack):
+	if tb_timer.is_stopped():
+		tb_timer.connect("timeout", self, "stop_timer", [pack])
+		tb_timer.start()
 
 func _on_Area2D_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton and event.is_pressed():
@@ -240,7 +254,11 @@ func _set_speaking_animation(name):
 func strip_bbcode(source:String) -> String:
 	var regex = RegEx.new()
 	regex.compile("\\[.+?\\]")
-	return regex.sub(source, "", true)
+	var ret = regex.sub(source, "", true)
+	regex = RegEx.new()
+	regex.compile("[\n\t]")
+	ret = regex.sub(ret, "", true)
+	return ret
 
 func get_all_text(packs):
 	var buffer = ""

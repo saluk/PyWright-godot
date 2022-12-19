@@ -11,6 +11,7 @@ extents = Vector2( 127, 31 )
 
 [node name="Textbox" type="Node2D"]
 script = ExtResource( 4 )
+tb_timer = NodePath("Timer")
 
 [node name="Backdrop" type="Node2D" parent="."]
 position = Vector2( 128, 160 )
@@ -56,5 +57,7 @@ margin_right = 196.0
 margin_bottom = 8.0
 text = "Somebody"
 align = 1
+
+[node name="Timer" type="Timer" parent="."]
 
 [connection signal="input_event" from="Backdrop/Area2D" to="." method="_on_Area2D_input_event"]
