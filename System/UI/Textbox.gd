@@ -126,20 +126,20 @@ func execute_markup(pack:Pack):
 	var args = pack.args
 	match pack.text:
 		"n":
-			$Backdrop/Label.bbcode_text += "\n"
+			return "\n"
 		"center":
 			if not center:
-				$Backdrop/Label.bbcode_text += "[center]"
+				return "[center]"
 			else:
-				$Backdrop/Label.bbcode_text += "[/center]"
+				return "[/center]"
 			center = not center
 		"c":
 			if diffcolor:
-				$Backdrop/Label.bbcode_text += "[/color]"
+				return "[/color]"
 			if not args:
 				diffcolor = false
 			else:
-				$Backdrop/Label.bbcode_text += "[color=#"+Colors.string_to_hex(args[0])+"]"
+				return "[color=#"+Colors.string_to_hex(args[0])+"]"
 				diffcolor = true
 		"e":
 			Commands.call_command("emo", main.top_script(), args)
