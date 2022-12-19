@@ -19,6 +19,12 @@ func _ready():
 	$Step.connect("button_up", self, "step")
 	$Pause.connect("button_up", self, "start_debugger")
 	$AllEv.connect("button_up", self, "all_ev")
+	$Reload.connect("button_up", self, "reload")
+	
+func reload():
+	current_stack.clear_scripts()
+	current_stack.blockers = []
+	get_tree().change_scene("res://Main.tscn")
 	
 func start_debugger(force=false):
 	if in_debugger:

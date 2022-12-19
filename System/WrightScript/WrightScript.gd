@@ -150,8 +150,7 @@ func goto_label(label, fail=null):
 	elif fail in labels:
 		line_nums = labels[fail]
 	else:
-		# TODO maybe guard against macros full of labels where the developer mistyped and it jumps to a label in the previous script
-		if not allow_goto:
+		if allow_goto:
 			end()
 			main.stack.scripts.pop_back()
 			emit_signal("GOTO_RESULT")

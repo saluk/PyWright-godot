@@ -43,6 +43,7 @@ margin_left = 3.0
 margin_top = 319.0
 margin_right = 51.0
 margin_bottom = 339.0
+hint_tooltip = "Return to GodotWright menu"
 text = "Reload"
 
 [node name="AllEv" type="Button" parent="."]
@@ -50,6 +51,7 @@ margin_left = 3.0
 margin_top = 339.0
 margin_right = 51.0
 margin_bottom = 359.0
+hint_tooltip = "Add all evidence and profiles to the court record"
 text = "AllEv"
 
 [node name="Pause" type="Button" parent="."]
@@ -57,6 +59,7 @@ margin_left = 66.0
 margin_top = 316.0
 margin_right = 108.0
 margin_bottom = 336.0
+hint_tooltip = "Pause script execution"
 text = "Pause"
 
 [node name="Step" type="Button" parent="."]
@@ -64,6 +67,7 @@ margin_left = 113.0
 margin_top = 316.0
 margin_right = 149.0
 margin_bottom = 336.0
+hint_tooltip = "While paused, execute next script line"
 text = "Step"
 
 [node name="MousePos" type="Label" parent="."]
