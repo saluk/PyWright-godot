@@ -33,29 +33,30 @@ class Pack:
 	func to_text():
 		return self.cache
 	func _to_text():
+		var ret = ""
 		if self.type == TEXT_PACK:
-			return self.text
+			ret = self.text
 		elif self.type == COMMAND_PACK:
 			match self.text:
 				"n":
-					return "\n"
+					ret = "\n"
 				"center":
 					if not self.textbox.center:
-						return "[center]"
+						ret = "[center]"
 					else:
-						return "[/center]"
+						ret = "[/center]"
 					self.textbox.center = not self.textbox.center
 				"c":
 					if self.textbox.diffcolor:
-						return "[/color]"
+						ret = "[/color]"
 					if not args:
 						self.textbox.diffcolor = false
 					else:
-						return "[color=#"+Colors.string_to_hex(args[0])+"]"
+						ret = "[color=#"+Colors.string_to_hex(args[0])+"]"
 						self.textbox.diffcolor = true
 				"$":
-					return self.textbox.main.stack.variables.get_string(args[0])
-		return ""
+					ret = self.textbox.main.stack.variables.get_string(args[0])
+		return ret
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
