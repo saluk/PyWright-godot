@@ -157,26 +157,16 @@ func execute_markup(pack:Pack):
 	var args = pack.args
 	match pack.text:
 		"n":
-			return "\n"
+			pass
 		"center":
-			if not center:
-				return "[center]"
-			else:
-				return "[/center]"
-			center = not center
+			pass
 		"c":
-			if diffcolor:
-				return "[/color]"
-			if not args:
-				diffcolor = false
-			else:
-				return "[color=#"+Colors.string_to_hex(args[0])+"]"
-				diffcolor = true
+			pass
 		"e":
 			Commands.call_command("emo", main.top_script(), args)
 			#update_emotion(args[0])
 		"$":
-			return main.stack.variables.get_string(args[0])
+			pass
 		"sfx":
 			pass
 		"sound":
@@ -240,7 +230,7 @@ func strip_bbcode(source:String) -> String:
 func consume_pack(pack):
 	# if type = TEXT_PACK, reveal text
 	# if type is COMMAND_PACK, execute the markup, then
-	# print the output of pack.to_text()
+	# show the output of pack.to_text()
 	var text_to_type = ""
 	var consume = false
 	if pack.type == TEXT_PACK:
@@ -252,6 +242,7 @@ func consume_pack(pack):
 		text_to_type = pack.to_text()
 		consume = true
 	if text_to_type:
+		# text is already in Label, we just need to display the characters
 		$Backdrop/Label.visible_characters += strip_bbcode(text_to_type).length()
 	return consume
 	
@@ -265,6 +256,8 @@ func _process(dt):
 	update_nametag()
 	if not packs and text_to_print:
 		packs = tokenize_text(text_to_print)
+		# resolve the text to be printed right away 
+		# to allow predictive text wrap
 		$Backdrop/Label.visible_characters = 0
 		$Backdrop/Label.bbcode_text = get_all_text(packs)
 		text_to_print = ""
