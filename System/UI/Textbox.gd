@@ -21,9 +21,13 @@ class Pack:
 	var type = TEXT_PACK
 	var text := ""
 	var args = []
-	func _init(type, text):
+	var textbox
+	func _init(type, text, textbox):
 		self.type = type
 		self.text = text
+		self.textbox = textbox
+		if type == COMMAND_PACK:
+			self.textbox.parse_command(self)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -92,11 +96,11 @@ func get_next_pack(text_to_print):
 			i += 1
 			continue
 		if found_bracket and i != 0 and c == '}':
-			return [Pack.new(COMMAND_PACK, pack.substr(1, pack.length()-2)),text_to_print.substr(i+1)]
+			return [Pack.new(COMMAND_PACK, pack.substr(1, pack.length()-2), self),text_to_print.substr(i+1)]
 		if not found_bracket and i > 0 and c == '{':
-			return [Pack.new(TEXT_PACK, pack.left(pack.length()-1)),text_to_print.substr(i)]
+			return [Pack.new(TEXT_PACK, pack.left(pack.length()-1), self),text_to_print.substr(i)]
 		i += 1
-	return [Pack.new(TEXT_PACK, pack), ""]
+	return [Pack.new(TEXT_PACK, pack, self), ""]
 	
 func parse_command(pack):
 	# parse pack text
@@ -121,8 +125,6 @@ func parse_command(pack):
 # TODO finish execute markup base commands
 # TODO execute macros
 func execute_markup(pack:Pack):
-	# parse pack text
-	pack = parse_command(pack)
 	var args = pack.args
 	match pack.text:
 		"n":
