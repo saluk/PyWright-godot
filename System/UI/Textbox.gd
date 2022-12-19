@@ -21,19 +21,28 @@ class TextPack:
 	var type
 	var text
 	var textbox
+	var delete = false
 	func _init(text, textbox):
 		self.type = TEXT_PACK
 		self.text = text
 		self.textbox = textbox
+
+	func consume():
+		var text_to_type = ""
+		if self.text.length()>0:
+			text_to_type = self.text.substr(0,1)
+			self.text = self.text.substr(1)
+			
+		if text_to_type:
+			# text is already in Label, we just need to display the characters
+			var visible = self.textbox.strip_bbcode(text_to_type).length()
+			self.textbox.get_node("Backdrop/Label").visible_characters += visible
+		else:
+			self.delete = true
 	func to_text():
 		return self.text
 	func run():
 		pass
-	func consume():
-		if self.text.length()>0:
-			var text_to_type = self.text.substr(0,1)
-			self.text = self.text.substr(1)
-			return text_to_type
 
 class Pack:
 	var type = COMMAND_PACK
@@ -41,11 +50,20 @@ class Pack:
 	var args = []
 	var textbox
 	var cache
+	var delete = false
 	func _init(text, textbox):
 		self.text = text
 		self.textbox = textbox
 		self.textbox.parse_command(self)
 		self.cache = _to_text(self.textbox)
+	func consume():
+		self.run()
+		self.delete = true
+		if  self.to_text():
+			# text is already in Label, we just need to display the characters
+			var visible = self.textbox.strip_bbcode(self.to_text()).length()
+			self.textbox.get_node("Backdrop/Label").visible_characters += visible
+			
 	func to_text():
 		return self.cache
 	# text-only changes. Resolved before typing: variables, bbcode
@@ -215,7 +233,6 @@ func tokenize_text(text_to_print):
 	packs.append(next_pack)
 	return packs
 
-		
 func _set_speaking_animation(name):
 	for character in Commands.get_speaking_char():
 		character.play_state("talk")
@@ -224,26 +241,7 @@ func strip_bbcode(source:String) -> String:
 	var regex = RegEx.new()
 	regex.compile("\\[.+?\\]")
 	return regex.sub(source, "", true)
-		
-func consume_pack(pack):
-	# if type = TEXT_PACK, reveal text
-	# if type is COMMAND_PACK, execute the markup, then
-	# show the output of pack.to_text()
-	var text_to_type = ""
-	var consume = false
-	if pack.type == TEXT_PACK:
-		text_to_type = pack.consume()
-		if not text_to_type:
-			consume = true
-	elif pack.type == COMMAND_PACK:
-		pack.run()
-		text_to_type = pack.to_text()
-		consume = true
-	if text_to_type:
-		# text is already in Label, we just need to display the characters
-		$Backdrop/Label.visible_characters += strip_bbcode(text_to_type).length()
-	return consume
-	
+
 func get_all_text(packs):
 	var buffer = ""
 	for pack in packs:
@@ -261,7 +259,8 @@ func _process(dt):
 		text_to_print = ""
 	if packs:
 		_set_speaking_animation("talk")
-		if consume_pack(packs[0]):
+		packs[0].consume()
+		if packs[0].delete:
 			packs.remove(0)
 	else:
 		_set_speaking_animation("blink")
