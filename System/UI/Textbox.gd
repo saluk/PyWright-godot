@@ -200,6 +200,20 @@ func process_text_pack(pack):
 func _set_speaking_animation(name):
 	for character in Commands.get_speaking_char():
 		character.play_state("talk")
+		
+func consume_pack(pack):
+	var text_to_type = ""
+	var consume = false
+	if packs[0].type == TEXT_PACK:
+		text_to_type = process_text_pack(packs[0])
+		if not text_to_type:
+			consume = true
+	elif packs[0].type == COMMAND_PACK:
+		text_to_type = execute_markup(packs[0])
+		consume = true
+	if text_to_type:
+		$Backdrop/Label.bbcode_text += text_to_type
+	return consume
 
 func _process(dt):
 	update_nametag()
@@ -208,15 +222,7 @@ func _process(dt):
 		text_to_print = ""
 	if packs:
 		_set_speaking_animation("talk")
-		var text_to_type = ""
-		if packs[0].type == TEXT_PACK:
-			text_to_type = process_text_pack(packs[0])
-			if not text_to_type:
-				packs.remove(0)
-		elif packs[0].type == COMMAND_PACK:
-			text_to_type = execute_markup(packs[0])
+		if consume_pack(packs[0]):
 			packs.remove(0)
-		if text_to_type:
-			$Backdrop/Label.bbcode_text += text_to_type
 	else:
 		_set_speaking_animation("blink")
