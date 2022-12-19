@@ -41,32 +41,31 @@ class Pack:
 		self.text = text
 		self.textbox = textbox
 		self.textbox.parse_command(self)
-		self.cache = _to_text()
+		self.cache = _to_text(self.textbox)
 	func to_text():
 		return self.cache
 	# text-only changes. Resolved before typing: variables, bbcode
-	func _to_text():
+	func _to_text(tb):
 		var ret = ""
-		if self.type == COMMAND_PACK:
-			match self.text:
-				"n":
-					ret = "\n"
-				"center":
-					if not self.textbox.center:
-						ret = "[center]"
-					else:
-						ret = "[/center]"
-					self.textbox.center = not self.textbox.center
-				"c":
-					if self.textbox.diffcolor:
-						ret = "[/color]"
-					if not args:
-						self.textbox.diffcolor = false
-					else:
-						ret = "[color=#"+Colors.string_to_hex(args[0])+"]"
-						self.textbox.diffcolor = true
-				"$":
-					ret = self.textbox.main.stack.variables.get_string(args[0])
+		match self.text:
+			"n":
+				ret = "\n"
+			"center":
+				if not tb.center:
+					ret = "[center]"
+				else:
+					ret = "[/center]"
+				self.textbox.center = not tb.center
+			"c":
+				if tb.diffcolor:
+					ret = "[/color]"
+				if not args:
+					tb.diffcolor = false
+				else:
+					ret = "[color=#"+Colors.string_to_hex(args[0])+"]"
+					tb.diffcolor = true
+			"$":
+				ret = tb.main.stack.variables.get_string(args[0])
 		return ret
 	# executed during typing: speed change, animations, sounds, etc
 	func run():
