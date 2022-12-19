@@ -28,7 +28,7 @@ class TextPack:
 		self.text = text
 		self.textbox = textbox
 
-	func consume():
+	func consume(force = false):
 		var text_to_type = ""
 		if self.text.length()>0:
 			text_to_type = self.text.substr(0,1)
@@ -57,8 +57,8 @@ class Pack:
 		self.textbox = textbox
 		self.textbox.parse_command(self)
 		self.cache = _to_text(self.textbox)
-	func consume():
-		self.run()
+	func consume(force = false):
+		self.run(force)
 		if  self.to_text():
 			# text is already in Label, we just need to display the characters
 			var visible = self.textbox.strip_bbcode(self.to_text()).length()
@@ -90,7 +90,7 @@ class Pack:
 				ret = tb.main.stack.variables.get_string(args[0])
 		return ret
 	# executed during typing: speed change, animations, sounds, etc
-	func run():
+	func run(force = false):
 		self.delete = true
 		var args = self.args
 		match self.text:
@@ -126,8 +126,9 @@ class Pack:
 			"s":
 				pass
 			"p":
-				self.textbox.pause(args, self)
-				self.delete = false
+				if not force:
+					self.textbox.pause(args, self)
+					self.delete = false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -183,7 +184,7 @@ func queue_free():
 func click_continue(immediate_skip=false):
 	if not immediate_skip and (text_to_print or packs):
 		while text_to_print or packs:
-			_process(1)
+			force_process()
 	else:
 		queue_free()
 		
@@ -266,7 +267,11 @@ func get_all_text(packs):
 		buffer += pack.to_text()
 	return buffer
 
+func force_process():
+	update_textbox(true)
 func _process(dt):
+	update_textbox()
+func update_textbox(force = false):
 	update_nametag()
 	if not packs and text_to_print:
 		packs = tokenize_text(text_to_print)
@@ -277,7 +282,7 @@ func _process(dt):
 		text_to_print = ""
 	if packs:
 		_set_speaking_animation("talk")
-		packs[0].consume()
+		packs[0].consume(force)
 		if packs[0].delete:
 			packs.remove(0)
 	else:
