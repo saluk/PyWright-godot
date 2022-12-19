@@ -22,13 +22,17 @@ class Pack:
 	var text := ""
 	var args = []
 	var textbox
+	var cache
 	func _init(type, text, textbox):
 		self.type = type
 		self.text = text
 		self.textbox = textbox
 		if type == COMMAND_PACK:
 			self.textbox.parse_command(self)
+		self.cache = _to_text()
 	func to_text():
+		return self.cache
+	func _to_text():
 		if self.type == TEXT_PACK:
 			return self.text
 		elif self.type == COMMAND_PACK:
