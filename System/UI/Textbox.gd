@@ -28,6 +28,29 @@ class Pack:
 		self.textbox = textbox
 		if type == COMMAND_PACK:
 			self.textbox.parse_command(self)
+	func to_text():
+		if self.type == TEXT_PACK:
+			return self.text
+		elif self.type == COMMAND_PACK:
+			match self.text:
+				"n":
+					return "\n"
+				"center":
+					if not self.textbox.center:
+						return "[center]"
+					else:
+						return "[/center]"
+					self.textbox.center = not self.textbox.center
+				"c":
+					if self.textbox.diffcolor:
+						return "[/color]"
+					if not args:
+						self.textbox.diffcolor = false
+					else:
+						return "[color=#"+Colors.string_to_hex(args[0])+"]"
+						self.textbox.diffcolor = true
+				"$":
+					return self.textbox.main.stack.variables.get_string(args[0])
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -211,7 +234,8 @@ func consume_pack(pack):
 		if not text_to_type:
 			consume = true
 	elif packs[0].type == COMMAND_PACK:
-		text_to_type = execute_markup(packs[0])
+		execute_markup(packs[0])
+		text_to_type = packs[0].to_text()
 		consume = true
 	if text_to_type:
 		$Backdrop/Label.bbcode_text += text_to_type
