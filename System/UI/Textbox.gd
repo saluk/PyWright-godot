@@ -17,27 +17,37 @@ enum {
 	COMMAND_PACK
 }
 
+class TextPack:
+	var type
+	var text
+	var textbox
+	func _init(text, textbox):
+		self.type = TEXT_PACK
+		self.text = text
+		self.textbox = textbox
+	func to_text():
+		return self.text
+	func run():
+		pass
+	
+
 class Pack:
-	var type = TEXT_PACK
+	var type = COMMAND_PACK
 	var text := ""
 	var args = []
 	var textbox
 	var cache
-	func _init(type, text, textbox):
-		self.type = type
+	func _init(text, textbox):
 		self.text = text
 		self.textbox = textbox
-		if type == COMMAND_PACK:
-			self.textbox.parse_command(self)
+		self.textbox.parse_command(self)
 		self.cache = _to_text()
 	func to_text():
 		return self.cache
 	# text-only changes. Resolved before typing: variables, bbcode
 	func _to_text():
 		var ret = ""
-		if self.type == TEXT_PACK:
-			ret = self.text
-		elif self.type == COMMAND_PACK:
+		if self.type == COMMAND_PACK:
 			match self.text:
 				"n":
 					ret = "\n"
@@ -162,11 +172,11 @@ func get_next_pack(text_to_print):
 			i += 1
 			continue
 		if found_bracket and i != 0 and c == '}':
-			return [Pack.new(COMMAND_PACK, pack.substr(1, pack.length()-2), self),text_to_print.substr(i+1)]
+			return [Pack.new(pack.substr(1, pack.length()-2), self),text_to_print.substr(i+1)]
 		if not found_bracket and i > 0 and c == '{':
-			return [Pack.new(TEXT_PACK, pack.left(pack.length()-1), self),text_to_print.substr(i)]
+			return [TextPack.new(pack.left(pack.length()-1), self),text_to_print.substr(i)]
 		i += 1
-	return [Pack.new(TEXT_PACK, pack, self), ""]
+	return [TextPack.new(pack, self), ""]
 	
 func parse_command(pack):
 	# parse pack text
