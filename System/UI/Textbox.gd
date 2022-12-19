@@ -184,7 +184,7 @@ func queue_free():
 func click_continue(immediate_skip=false):
 	if not immediate_skip and (text_to_print or packs):
 		while text_to_print or packs:
-			force_process()
+			update_textbox(true)
 	else:
 		queue_free()
 		
@@ -267,8 +267,6 @@ func get_all_text(packs):
 		buffer += pack.to_text()
 	return buffer
 
-func force_process():
-	update_textbox(true)
 func _process(dt):
 	update_textbox()
 func update_textbox(force = false):
