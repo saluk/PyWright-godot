@@ -55,6 +55,7 @@ class Pack:
 						self.textbox.diffcolor = true
 				"$":
 					return self.textbox.main.stack.variables.get_string(args[0])
+		return ""
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -208,8 +209,8 @@ func execute_markup(pack:Pack):
 			
 func tokenize_text(text_to_print):
 	var next_pack
-	var v = get_next_pack(text_to_print)
 	var packs = []
+	var v = get_next_pack(text_to_print)
 	next_pack = v[0]
 	text_to_print = v[1]
 	while text_to_print:
@@ -242,13 +243,21 @@ func consume_pack(pack):
 		text_to_type = packs[0].to_text()
 		consume = true
 	if text_to_type:
-		$Backdrop/Label.bbcode_text += text_to_type
+		$Backdrop/Label.visible_characters += text_to_type.length()
 	return consume
+	
+func get_all_text(packs):
+	var buffer = ""
+	for pack in packs:
+		buffer += pack.to_text()
+	return buffer
 
 func _process(dt):
 	update_nametag()
 	if not packs and text_to_print:
 		packs = tokenize_text(text_to_print)
+		$Backdrop/Label.visible_characters = 0
+		$Backdrop/Label.bbcode_text = get_all_text(packs)
 		text_to_print = ""
 	if packs:
 		_set_speaking_animation("talk")
