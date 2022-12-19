@@ -29,7 +29,11 @@ class TextPack:
 		return self.text
 	func run():
 		pass
-	
+	func consume():
+		if self.text.length()>0:
+			var text_to_type = self.text.substr(0,1)
+			self.text = self.text.substr(1)
+			return text_to_type
 
 class Pack:
 	var type = COMMAND_PACK
@@ -210,12 +214,7 @@ func tokenize_text(text_to_print):
 		text_to_print = v[1]
 	packs.append(next_pack)
 	return packs
-	
-func process_text_pack(pack):
-	if pack.text.length()>0:
-		var text_to_type = pack.text.substr(0,1)
-		pack.text = pack.text.substr(1)
-		return text_to_type
+
 		
 func _set_speaking_animation(name):
 	for character in Commands.get_speaking_char():
@@ -233,7 +232,7 @@ func consume_pack(pack):
 	var text_to_type = ""
 	var consume = false
 	if pack.type == TEXT_PACK:
-		text_to_type = process_text_pack(pack)
+		text_to_type = pack.consume()
 		if not text_to_type:
 			consume = true
 	elif pack.type == COMMAND_PACK:
