@@ -238,15 +238,18 @@ func strip_bbcode(source:String) -> String:
 	return regex.sub(source, "", true)
 		
 func consume_pack(pack):
+	# if type = TEXT_PACK, reveal text
+	# if type is COMMAND_PACK, execute the markup, then
+	# print the output of pack.to_text()
 	var text_to_type = ""
 	var consume = false
-	if packs[0].type == TEXT_PACK:
-		text_to_type = process_text_pack(packs[0])
+	if pack.type == TEXT_PACK:
+		text_to_type = process_text_pack(pack)
 		if not text_to_type:
 			consume = true
-	elif packs[0].type == COMMAND_PACK:
-		execute_markup(packs[0])
-		text_to_type = packs[0].to_text()
+	elif pack.type == COMMAND_PACK:
+		execute_markup(pack)
+		text_to_type = pack.to_text()
 		consume = true
 	if text_to_type:
 		$Backdrop/Label.visible_characters += strip_bbcode(text_to_type).length()
