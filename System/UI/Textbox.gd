@@ -192,17 +192,19 @@ func tokenize_text(text_to_print):
 	return packs
 
 func process_packs(packs):
-	if packs[0].type == TEXT_PACK and packs[0].text.length()>0:
-		$Backdrop/Label.bbcode_text += packs[0].text.substr(0,1)
-		packs[0].text = packs[0].text.substr(1)
-	elif packs[0].type == TEXT_PACK and packs[0].text.length()==0:
-		packs.remove(0)
+	var text_to_type = ""
+	if packs[0].type == TEXT_PACK:
+		if packs[0].text.length()>0:
+			text_to_type = packs[0].text.substr(0,1)
+			packs[0].text = packs[0].text.substr(1)
+		else:
+			packs.remove(0)
 	elif packs[0].type == COMMAND_PACK:
 		var t = execute_markup(packs[0])
 		if t:
-			$Backdrop/Label.bbcode_text += t
+			text_to_type = t
 		packs.remove(0)
-	return packs
+	return [packs, text_to_type]
 		
 func _set_speaking_animation(name):
 	for character in Commands.get_speaking_char():
@@ -210,11 +212,13 @@ func _set_speaking_animation(name):
 
 func _process(dt):
 	update_nametag()
-	if text_to_print and not packs:
+	if not packs and text_to_print:
 		packs = tokenize_text(text_to_print)
 		text_to_print = ""
 	if packs:
 		_set_speaking_animation("talk")
-		packs = process_packs(packs)
+		var packs_text = process_packs(packs)
+		packs = packs_text[0]
+		$Backdrop/Label.bbcode_text += packs_text[1]
 	else:
 		_set_speaking_animation("blink")
