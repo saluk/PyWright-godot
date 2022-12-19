@@ -232,6 +232,11 @@ func _set_speaking_animation(name):
 	for character in Commands.get_speaking_char():
 		character.play_state("talk")
 		
+func strip_bbcode(source:String) -> String:
+	var regex = RegEx.new()
+	regex.compile("\\[.+?\\]")
+	return regex.sub(source, "", true)
+		
 func consume_pack(pack):
 	var text_to_type = ""
 	var consume = false
@@ -244,7 +249,7 @@ func consume_pack(pack):
 		text_to_type = packs[0].to_text()
 		consume = true
 	if text_to_type:
-		$Backdrop/Label.visible_characters += text_to_type.length()
+		$Backdrop/Label.visible_characters += strip_bbcode(text_to_type).length()
 	return consume
 	
 func get_all_text(packs):
