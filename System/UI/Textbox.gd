@@ -32,6 +32,7 @@ class Pack:
 		self.cache = _to_text()
 	func to_text():
 		return self.cache
+	# text-only changes. Resolved before typing: variables, bbcode
 	func _to_text():
 		var ret = ""
 		if self.type == TEXT_PACK:
@@ -57,7 +58,43 @@ class Pack:
 				"$":
 					ret = self.textbox.main.stack.variables.get_string(args[0])
 		return ret
-
+	# executed during typing: speed change, animations, sounds, etc
+	func run():
+		var args = self.args
+		match self.text:
+			"e":
+				Commands.call_command("emo", self.textbox.main.top_script(), args)
+				#update_emotion(args[0])
+			"sfx":
+				pass
+			"sound":
+				pass
+			"delay":   # delay character printing for a time
+				pass
+			"spd":
+				pass
+			"_fullspeed":
+				pass
+			"_endfullspeed":
+				pass
+			"wait":  # set wait mode to auto or manual
+				pass
+			"type":
+				pass
+			"next":
+				self.textbox.queue_free()
+			"tbon":
+				pass
+			"tboff":
+				pass
+			"e":
+				pass
+			"f":
+				pass
+			"s":
+				pass
+			"p":
+				pass
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	if not main:
@@ -151,53 +188,6 @@ func parse_command(pack):
 	print("command not found:", pack.text)
 	return pack
 
-# TODO finish execute markup base commands
-# TODO execute macros
-func execute_markup(pack:Pack):
-	var args = pack.args
-	match pack.text:
-		"n":
-			pass
-		"center":
-			pass
-		"c":
-			pass
-		"e":
-			Commands.call_command("emo", main.top_script(), args)
-			#update_emotion(args[0])
-		"$":
-			pass
-		"sfx":
-			pass
-		"sound":
-			pass
-		"delay":   # delay character printing for a time
-			pass
-		"spd":
-			pass
-		"_fullspeed":
-			pass
-		"_endfullspeed":
-			pass
-		"wait":  # set wait mode to auto or manual
-			pass
-		"type":
-			pass
-		"next":
-			queue_free()
-		"tbon":
-			pass
-		"tboff":
-			pass
-		"e":
-			pass
-		"f":
-			pass
-		"s":
-			pass
-		"p":
-			pass
-			
 func tokenize_text(text_to_print):
 	var next_pack
 	var packs = []
@@ -238,7 +228,7 @@ func consume_pack(pack):
 		if not text_to_type:
 			consume = true
 	elif pack.type == COMMAND_PACK:
-		execute_markup(pack)
+		pack.run()
 		text_to_type = pack.to_text()
 		consume = true
 	if text_to_type:
