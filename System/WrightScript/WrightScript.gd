@@ -10,7 +10,7 @@ var labels := {}  # each label will have a list of line numbers
 var line_num := 0
 var line:String
 
-var allow_goto := true
+var allow_goto_parent_script := false
 var allowed_commands := []  #If any commands are in this list, only process those commands
 
 var allow_next_line = true
@@ -150,7 +150,7 @@ func goto_label(label, fail=null):
 	elif fail in labels:
 		line_nums = labels[fail]
 	else:
-		if allow_goto:
+		if allow_goto_parent_script:
 			end()
 			main.stack.scripts.pop_back()
 			emit_signal("GOTO_RESULT")
