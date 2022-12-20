@@ -90,6 +90,8 @@ class Pack:
 				ret = tb.main.stack.variables.get_string(args[0])
 		return ret
 	# executed during typing: speed change, animations, sounds, etc
+	# TODO finish execute markup base commands
+	# TODO execute macros
 	func run(force = false):
 		self.delete = true
 		var args = self.args
