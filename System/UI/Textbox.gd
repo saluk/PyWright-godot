@@ -22,50 +22,38 @@ class TextPack:
 	var type
 	var text
 	var textbox
+	var characters_per_frame = 1
+	var leftover
 	var delete = false
 	func _init(text, textbox):
 		self.type = TEXT_PACK
 		self.text = text
 		self.textbox = textbox
 
-	func consume(force = false):
-		var text_to_type = ""
-		if self.text.length()>0:
-			text_to_type = self.text.substr(0,1)
-			self.text = self.text.substr(1)
-			
-		if text_to_type:
-			# text is already in Label, we just need to display the characters
-			var visible = self.textbox.strip_bbcode(text_to_type).length()
-			self.textbox.get_node("Backdrop/Label").visible_characters += visible
-		else:
+	# add all text to label, then increase visible characters each frame
+	func consume(rich_text_label, force = false):
+		if leftover == null:
+			rich_text_label.bbcode_text += self.text
+			leftover =  self.textbox.strip_bbcode(self.text).length()
+		var delta = min(characters_per_frame, leftover)
+		rich_text_label.visible_characters += delta
+		leftover -= delta
+		if leftover == 0:
 			self.delete = true
-	func to_text():
-		return self.text
-	func run():
-		pass
 
 class Pack:
 	var type = COMMAND_PACK
 	var text := ""
 	var args = []
 	var textbox
-	var cache
+	var cache = ""
 	var delete = false
 	func _init(text, textbox):
 		self.text = text
 		self.textbox = textbox
 		self.textbox.parse_command(self)
 		self.cache = _to_text(self.textbox)
-	func consume(force = false):
-		self.run(force)
-		if  self.to_text():
-			# text is already in Label, we just need to display the characters
-			var visible = self.textbox.strip_bbcode(self.to_text()).length()
-			self.textbox.get_node("Backdrop/Label").visible_characters += visible
-			visible	
-	func to_text():
-		return self.cache
+		
 	# text-only changes. Resolved before typing: variables, bbcode
 	func _to_text(tb):
 		var ret = ""
@@ -89,6 +77,20 @@ class Pack:
 			"$":
 				ret = tb.main.stack.variables.get_string(args[0])
 		return ret
+	
+	# override to do arbitrary things to rich_text_label at runtime. 
+	# by default, we append the cached output of _to_text
+	func print_text(rich_text_label):
+		rich_text_label.bbcode_text += self.cache
+		var visible = self.textbox.strip_bbcode(self.cache).length()
+		rich_text_label.visible_characters += visible
+		
+	# execute pack command and change the provided textbox accordingly
+	func consume(rich_text_label, force = false):
+		self.run(force)
+		print_text(rich_text_label)
+		
+	
 	# executed during typing: speed change, animations, sounds, etc
 	# TODO finish execute markup base commands
 	# TODO execute macros
@@ -263,27 +265,19 @@ func strip_bbcode(source:String) -> String:
 	ret = regex.sub(ret, "", true)
 	return ret
 
-func get_all_text(packs):
-	var buffer = ""
-	for pack in packs:
-		buffer += pack.to_text()
-	return buffer
-
-func _process(dt):
-	update_textbox()
 func update_textbox(force = false):
 	update_nametag()
 	if not packs and text_to_print:
 		packs = tokenize_text(text_to_print)
-		# resolve the text to be printed right away 
-		# to allow predictive text wrap
 		$Backdrop/Label.visible_characters = 0
-		$Backdrop/Label.bbcode_text = get_all_text(packs)
 		text_to_print = ""
 	if packs:
 		_set_speaking_animation("talk")
-		packs[0].consume(force)
+		packs[0].consume($Backdrop/Label, force)
 		if packs[0].delete:
 			packs.remove(0)
 	else:
 		_set_speaking_animation("blink")
+		
+func _process(dt):
+	update_textbox()

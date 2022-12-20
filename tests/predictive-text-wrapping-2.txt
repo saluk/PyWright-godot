@@ -1,0 +1,2 @@
+"The following word should wrap correctly despite being intercut with commands"
+"Nice to meet you! I am s{p1}upercali{p1}fragilistic{p1}espiali{p1}docious"
