@@ -5,7 +5,7 @@ extends Node
 var indexes = {}
 
 func _ready():
-	if OS.has_feature("standalone"):
+	if OS.has_feature("standalone") or OS.has_feature("HTML5"):
 		if not load_game_file_index("res://"):
 			print("WARNING: could not load file index res://")
 			return
@@ -14,7 +14,7 @@ func _ready():
 		save_game_file_index("res://")
 	
 func init_game(game_path):
-	if OS.has_feature("standalone"):
+	if OS.has_feature("standalone") or OS.has_feature("HTML5"):
 		if not load_game_file_index(game_path):
 			print("WARNING: could not load file index ", game_path)
 			return
@@ -25,10 +25,11 @@ func init_game(game_path):
 # When loading a game, we can cache load its file index from a file, or create the file index
 func load_game_file_index(game_path):
 	var game_file_index = File.new()
-	if not game_file_index.file_exists(game_path+"/files.index"):
-		print("CANNOT FIND: ", game_path+"/files.index")
+	var file_path = Filesystem.path_join(game_path, "files.index")
+	if not game_file_index.file_exists(file_path):
+		print("CANNOT FIND: ", file_path)
 		return false
-	game_file_index.open(game_path+"/files.index", File.READ)
+	game_file_index.open(file_path, File.READ)
 	indexes[game_path] = parse_json(game_file_index.get_line())
 	game_file_index.close()
 	return true
@@ -67,7 +68,7 @@ func create_game_cache(game_path, paths=[]):
 	
 func save_game_file_index(game_path):
 	var game_file_index = File.new()
-	game_file_index.open(game_path+"/files.index", File.WRITE)
+	game_file_index.open(Filesystem.path_join(game_path,"files.index"), File.WRITE)
 	game_file_index.store_line(to_json(indexes[game_path]))
 	game_file_index.close()
 

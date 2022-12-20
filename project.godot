@@ -115,7 +115,6 @@ window/size/test_width=1024
 window/size/test_height=768
 window/handheld/orientation="sensor"
 window/stretch/mode="viewport"
-window/stretch/aspect="keep"
 
 [global]
 

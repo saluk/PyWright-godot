@@ -44,8 +44,21 @@ func load_script_from_path(path):
 	stack.load_macros_from_path("macros")
 	stack.connect("stack_empty", self, "reload")
 	emit_signal("stack_initialized")
+	
+func set_resolution(res:Vector2, scale:float, show_debugger:bool=false):
+	var w = res.x
+	if show_debugger:
+		w *= 2
+	var h = res.y
+	OS.set_window_size(Vector2(w*scale, h*scale))
+	get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_VIEWPORT, SceneTree.STRETCH_ASPECT_KEEP, Vector2(w, h), 1)
 
 func _ready():
+	if OS.has_feature("standalone") or OS.has_feature("HTML5"):
+		set_resolution(Vector2(256,384), 2.0, false)
+	else:
+		set_resolution(Vector2(256,384), 2.0, true)
+	
 	stack = WrightScriptStack.new(self)
 	Commands.load_command_engine()
 	
