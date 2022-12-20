@@ -12,7 +12,7 @@ timer 60 timeup2
 "value of timer 1 is {$_timer_value_timeup}{n}restart timer2"
 endmacro
 
-timer 180 timeup
+timer 500 timeup
 timer 60 timeup2
 
 list x

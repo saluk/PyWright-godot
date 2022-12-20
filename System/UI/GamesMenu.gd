@@ -34,24 +34,22 @@ func _ready():
 		next_file_name = listing.get_next()
 		
 	var game_listing = Directory.new()
-	if game_listing.open("res://games/") != OK:
-		return null
-	game_listing.list_dir_begin()
-	next_file_name = game_listing.get_next()
-	while next_file_name != "":
-		if not next_file_name in [".", ".."]:
-			add_game_button(next_file_name)
+	if game_listing.open("res://games/") == OK:
+		game_listing.list_dir_begin()
 		next_file_name = game_listing.get_next()
+		while next_file_name != "":
+			if not next_file_name in [".", ".."]:
+				add_game_button(next_file_name)
+			next_file_name = game_listing.get_next()
 
 	var test_listing = Directory.new()
-	if test_listing.open("res://tests/") != OK:
-		return null
-	test_listing.list_dir_begin()
-	next_file_name = test_listing.get_next()
-	while next_file_name != "":
-		if next_file_name.ends_with(".txt"):
-			add_test_button(next_file_name)
+	if test_listing.open("res://tests/") == OK:
+		test_listing.list_dir_begin()
 		next_file_name = test_listing.get_next()
+		while next_file_name != "":
+			if next_file_name.ends_with(".txt"):
+				add_test_button(next_file_name)
+			next_file_name = test_listing.get_next()
 
 func launch_game(path):
 	print("launching game ", path)
