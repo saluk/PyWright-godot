@@ -19,16 +19,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://System/Colors.gd"
 }, {
-"base": "Node",
-"class": "DirectoryIndex",
-"language": "GDScript",
-"path": "res://System/Files/DirectoryIndex.gd"
-}, {
-"base": "Node",
-"class": "DirectoryIndexStack",
-"language": "GDScript",
-"path": "res://System/Files/DirectoryIndexStack.gd"
-}, {
 "base": "Reference",
 "class": "Filesystem",
 "language": "GDScript",
@@ -82,8 +72,6 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "AudioLoader": "",
 "Colors": "",
-"DirectoryIndex": "",
-"DirectoryIndexStack": "",
 "Filesystem": "",
 "IButton": "",
 "MainScene": "",
@@ -109,6 +97,7 @@ ZLayers="*res://System/Scene/ZLayers.gd"
 MusicPlayer="*res://System/Audio/MusicPlayer.gd"
 SoundPlayer="*res://System/Audio/SoundPlayer.gd"
 WSExpression="*res://System/WrightScript/WSExpression.gd"
+DirectoryCache="*res://System/Files/DirectoryCache.gd"
 
 [debug]
 
