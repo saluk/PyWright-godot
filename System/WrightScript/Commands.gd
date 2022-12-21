@@ -57,6 +57,8 @@ func load_command_engine(version="1"):
 	main = get_tree().get_nodes_in_group("Main")[0]
 	main_screen = get_tree().get_nodes_in_group("MainScreen")[0]
 	index_commands(version)
+	# Depending on version, we might reset some of the objects on main or main.stack
+	# for example loading a different Variable class instance
 	
 func value_replace(value):
 	# Replace from variables if starts with $
@@ -292,7 +294,6 @@ func index_commands(version="1"):
 		var extern = load(command_file).new(self)
 		for command in get_call_methods(extern):
 			external_commands[command] = extern
-	pass
 
 func call_command(command, script, arguments):
 	command = value_replace(command)

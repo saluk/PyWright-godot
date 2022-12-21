@@ -70,6 +70,7 @@ func init_game(path):
 	DirectoryCache.init_game("res://"+path)
 	# Used to load a game and then a case inside the game
 	filesystem = load("res://System/Files/Filesystem.gd").new()
+	load_config(path+"/wrightscript.config")
 	load_script(path+"/intro.txt")
 	if not scripts[-1].lines.size():
 		add_script("casemenu")
@@ -92,6 +93,16 @@ func load_script(script_path):
 	# TODO - pretty sure we dont want to reload the macros on every script change, but only when starting a game or case
 	load_macros_from_path(script_path.rsplit("/", true, 1)[0])
 	return new_script
+	
+func load_config(config_path):
+	var file = File.new()
+	if file.open(config_path, File.READ) != OK:
+		return
+	while not file.eof_reached():
+		var l = file.get_line().strip_edges()
+		if l.begins_with("version "):
+			variables.set_val("wrightscript_version", l.split(" ")[1])
+	file.close()
 	
 func remove_script(script):
 	if script in scripts:
