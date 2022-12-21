@@ -18,46 +18,79 @@ enum {
 	COMMAND_PACK
 }
 
-class TextPack:
-	var type
-	var text
-	var textbox
-	var characters_per_frame = 1
+class _Pack:
 	var leftover
+	var characters_per_frame = 1
+	var pending = true
 	var delete = false
-	func _init(text, textbox):
-		self.type = TEXT_PACK
-		self.text = text
-		self.textbox = textbox
-
+	func _init():
+		pass
+		
+	func _run(force = false): 
+		return false
+		
 	# add all text to label, then increase visible characters each frame
-	func consume(rich_text_label, force = false):
+	# if characters per frame is INF, will print text immediately
+	func _print_text(rich_text_label):
 		if leftover == null:
 			rich_text_label.bbcode_text += self.text
 			leftover =  self.textbox.strip_bbcode(self.text).length()
 		var delta = min(characters_per_frame, leftover)
 		rich_text_label.visible_characters += delta
 		leftover -= delta
-		if leftover == 0:
-			self.delete = true
+			
+	# execute pack command and change the provided textbox accordingly
+	func consume(rich_text_label, force = false):
+		pending = self._run(force)
+		_print_text(rich_text_label)
+		if not pending and not leftover: self.delete = true
 
-class Pack:
-	var type = COMMAND_PACK
-	var text := ""
-	var args = []
+class TextPack extends _Pack:
+	var text
 	var textbox
-	var cache = ""
-	var delete = false
+	
 	func _init(text, textbox):
 		self.text = text
 		self.textbox = textbox
-		self.textbox.parse_command(self)
-		self.cache = _to_text(self.textbox)
+
+class CommandPack extends _Pack:
+	var command_args := ""
+	var command
+	var args = []
+	var textbox
+	var text = ""
+	
+	func _init(line, textbox):
+		self.command_args = line
+		self.textbox = textbox
+		self.parse_command()
+		self.text = _to_text(self.textbox)
+		self.characters_per_frame = INF
+		
+	func parse_command():
+		# parse pack text
+		var args
+		for command in [
+			"sfx", "sound", "delay", "spd", "_fullspeed", "_endfullspeed",
+			"wait", "center", "type", "next", "tbon", "tboff", 
+			"e", "f", "s", "p", "c", "$"
+		]:
+			if self.command_args.begins_with(command):
+				args = self.command_args.substr(command.length()).strip_edges()
+				if args:
+					args = args.split(" ")
+				else:
+					args = []
+				self.command = command
+				self.args = args
+				return
+		print("command not found:", self.command_args)
+		command = command_args
 		
 	# text-only changes. Resolved before typing: variables, bbcode
 	func _to_text(tb):
 		var ret = ""
-		match self.text:
+		match self.command:
 			"n":
 				ret = "\n"
 			"center":
@@ -77,27 +110,14 @@ class Pack:
 			"$":
 				ret = tb.main.stack.variables.get_string(args[0])
 		return ret
-	
-	# override to do arbitrary things to rich_text_label at runtime. 
-	# by default, we append the cached output of _to_text
-	func print_text(rich_text_label):
-		rich_text_label.bbcode_text += self.cache
-		var visible = self.textbox.strip_bbcode(self.cache).length()
-		rich_text_label.visible_characters += visible
-		
-	# execute pack command and change the provided textbox accordingly
-	func consume(rich_text_label, force = false):
-		self.run(force)
-		print_text(rich_text_label)
 		
 	
 	# executed during typing: speed change, animations, sounds, etc
 	# TODO finish execute markup base commands
 	# TODO execute macros
-	func run(force = false):
-		self.delete = true
+	func _run(force = false):
 		var args = self.args
-		match self.text:
+		match self.command:
 			"e":
 				Commands.call_command("emo", self.textbox.main.top_script(), args)
 				#update_emotion(args[0])
@@ -132,7 +152,8 @@ class Pack:
 			"p":
 				if not force:
 					self.textbox.pause(args, self)
-					self.delete = false
+					return true
+		return false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -212,31 +233,13 @@ func get_next_pack(text_to_print):
 			i += 1
 			continue
 		if found_bracket and i != 0 and c == '}':
-			return [Pack.new(pack.substr(1, pack.length()-2), self),text_to_print.substr(i+1)]
+			return [CommandPack.new(pack.substr(1, pack.length()-2), self),text_to_print.substr(i+1)]
 		if not found_bracket and i > 0 and c == '{':
 			return [TextPack.new(pack.left(pack.length()-1), self),text_to_print.substr(i)]
 		i += 1
 	return [TextPack.new(pack, self), ""]
 	
-func parse_command(pack):
-	# parse pack text
-	var args
-	for command in [
-		"sfx", "sound", "delay", "spd", "_fullspeed", "_endfullspeed",
-		"wait", "center", "type", "next", "tbon", "tboff", 
-		"e", "f", "s", "p", "c", "$"
-	]:
-		if pack.text.begins_with(command):
-			args = pack.text.substr(command.length()).strip_edges()
-			if args:
-				args = args.split(" ")
-			else:
-				args = []
-			pack.text = command
-			pack.args = args
-			return pack
-	print("command not found:", pack.text)
-	return pack
+
 
 func tokenize_text(text_to_print):
 	var next_pack
