@@ -269,7 +269,6 @@ func strip_bbcode(source:String) -> String:
 	return ret
 
 func update_textbox(force = false):
-	update_nametag()
 	if not packs and text_to_print:
 		packs = tokenize_text(text_to_print)
 		$Backdrop/Label.visible_characters = 0
@@ -283,4 +282,5 @@ func update_textbox(force = false):
 		_set_speaking_animation("blink")
 		
 func _process(dt):
+	update_nametag()
 	update_textbox()
