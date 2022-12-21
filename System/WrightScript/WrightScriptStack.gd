@@ -67,6 +67,7 @@ func load_macros_from_path(path):
 		print("COULDN'T OPEN DIRECTORY")
 
 func init_game(path):
+	DirectoryCache.init_game("res://"+path)
 	# Used to load a game and then a case inside the game
 	filesystem = load("res://System/Files/Filesystem.gd").new()
 	load_script(path+"/intro.txt")
@@ -152,7 +153,6 @@ func force_clear_blockers():
 # TODO simplify process, we have more states than we need now that we almost never yield or return from the while loop
 func process():
 	var frame
-	print("PROCESS BEGINS")
 	if not scripts:
 		if state == STACK_PROCESSING or state == STACK_YIELD:
 			emit_signal("stack_empty")

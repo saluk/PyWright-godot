@@ -7,6 +7,7 @@ var script_tab
 var popup_menu
 
 var scripts = []
+export(NodePath) var reload_button
 export(NodePath) var step
 export(NodePath) var allev
 export(NodePath) var pause
@@ -23,13 +24,21 @@ func _ready():
 	step = get_node(step)
 	allev = get_node(allev)
 	pause = get_node(pause)
-	node_scripts= get_node(node_scripts)
+	node_scripts = get_node(node_scripts)
+	reload_button = get_node(reload_button)
 	
 	node_scripts.remove_child(script_tab)
 	# TODO conceal buttons if game is not playing to prevent error
 	step.connect("button_up", self, "step")
 	pause.connect("button_up", self, "start_debugger")
 	allev.connect("button_up", self, "all_ev")
+	reload_button.connect("button_up", self, "reload")
+
+func reload():
+	if current_stack:
+		current_stack.clear_scripts()
+		current_stack.blockers = []
+		get_tree().change_scene("res://Main.tscn")
 	
 func start_debugger(force=false):
 	if in_debugger:

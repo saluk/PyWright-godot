@@ -340,7 +340,7 @@ func call_macro(command, script, arguments):
 	new_script.root_path = script.root_path
 	new_script.filename = "{"+command+"}"
 	# TODO not sure if this is how to handle macros that try to goto
-	new_script.allow_goto = false
+	new_script.allow_goto_parent_script = true
 	return YIELD
 	
 func macro_or_label(key, script, arguments):

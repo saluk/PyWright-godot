@@ -11,6 +11,7 @@ margin_right = -262.0
 margin_bottom = -46.0
 theme = ExtResource( 1 )
 script = ExtResource( 2 )
+reload_button = NodePath("vbox/buttons/Reload")
 step = NodePath("vbox/buttons/Step")
 allev = NodePath("vbox/buttons/AllEv")
 pause = NodePath("vbox/buttons/Pause")
