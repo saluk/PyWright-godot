@@ -28,6 +28,9 @@ func keys():
 	return store.keys()
 
 func set_val(key, value):
+	match key:
+		"wrightscript_version":
+			Commands.index_commands(value)
 	store[key] = str(value)
 	
 func del_val(key):
