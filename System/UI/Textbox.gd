@@ -18,16 +18,20 @@ enum {
 	COMMAND_PACK
 }
 
-class _Pack:
+class TextPack:
+	var text = ""
+	var textbox
 	var leftover
 	var characters_per_frame = 1
 	var pending = true
 	var delete = false
-	func _init():
-		pass
+	
+	func _init(text, textbox):
+		self.text = text
+		self.textbox = textbox
 		
 	func _run(force = false): 
-		return false
+		self.pending = false
 		
 	# add all text to label, then increase visible characters each frame
 	# if characters per frame is INF, will print text immediately
@@ -41,31 +45,22 @@ class _Pack:
 			
 	# execute pack command and change the provided textbox accordingly
 	func consume(rich_text_label, force = false):
-		pending = self._run(force)
+		self._run(force)
 		_print_text(rich_text_label)
-		if not pending and not leftover: self.delete = true
+		if not self.pending and not leftover: self.delete = true
 
-class TextPack extends _Pack:
-	var text
-	var textbox
-	
-	func _init(text, textbox):
-		self.text = text
-		self.textbox = textbox
-
-class CommandPack extends _Pack:
+class CommandPack extends TextPack:
 	var command_args := ""
 	var command
 	var args = []
-	var textbox
-	var text = ""
 	
-	func _init(line, textbox):
+	func _init(line, textbox).(line, textbox):
 		self.command_args = line
 		self.textbox = textbox
 		self.parse_command()
 		self.text = _to_text(self.textbox)
 		self.characters_per_frame = INF
+		self.pending = true
 		
 	func parse_command():
 		# parse pack text
@@ -152,8 +147,9 @@ class CommandPack extends _Pack:
 			"p":
 				if not force:
 					self.textbox.pause(args, self)
-					return true
-		return false
+					self.pending = true
+					return
+		self.pending = false
 
 
 # Called when the node enters the scene tree for the first time.
