@@ -53,6 +53,7 @@ class CommandPack extends TextPack:
 	var command_args := ""
 	var command
 	var args = []
+	var first_run = true
 	
 	func _init(line, textbox).(line, textbox):
 		self.command_args = line
@@ -145,10 +146,13 @@ class CommandPack extends TextPack:
 			"s":
 				pass
 			"p":
-				if not force:
+				if force:
+					self.pending = false
+				elif first_run:
 					self.textbox.pause(args, self)
 					self.pending = true
-					return
+					self.first_run = false
+				return
 		self.pending = false
 
 
@@ -187,12 +191,12 @@ func update_emotion(emotion):
 		character.load_emotion(emotion)
 		
 func stop_timer(pack):
-	packs.remove(0)
+	pack.pending = false
+	tb_timer.disconnect("timeout", self, "stop_timer")
 		
 func pause(args, pack):
-	if tb_timer.is_stopped():
-		tb_timer.connect("timeout", self, "stop_timer", [pack])
-		tb_timer.start()
+	tb_timer.connect("timeout", self, "stop_timer", [pack])
+	tb_timer.start()
 
 func _on_Area2D_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton and event.is_pressed():
