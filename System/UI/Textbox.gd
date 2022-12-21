@@ -257,7 +257,7 @@ func tokenize_text(text_to_print):
 
 func _set_speaking_animation(name):
 	for character in Commands.get_speaking_char():
-		character.play_state("talk")
+		character.play_state(name)
 		
 func strip_bbcode(source:String) -> String:
 	var regex = RegEx.new()
