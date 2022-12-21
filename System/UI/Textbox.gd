@@ -13,11 +13,6 @@ var z:int
 var center = false
 var diffcolor = false
 
-enum {
-	TEXT_PACK,
-	COMMAND_PACK
-}
-
 class TextPack:
 	var text = ""
 	var textbox
