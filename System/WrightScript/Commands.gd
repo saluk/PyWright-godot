@@ -53,10 +53,12 @@ func clear_main_screen():
 		main_screen.remove_child(child)
 		child.queue_free()
 		
-func load_command_engine():
+func load_command_engine(version="1"):
 	main = get_tree().get_nodes_in_group("Main")[0]
 	main_screen = get_tree().get_nodes_in_group("MainScreen")[0]
-	index_commands()
+	index_commands(version)
+	# Depending on version, we might reset some of the objects on main or main.stack
+	# for example loading a different Variable class instance
 	
 func value_replace(value):
 	# Replace from variables if starts with $
@@ -260,20 +262,24 @@ func load_scripts():
 	return true
 # Call interface
 
-var external_command_files = [
-	"Fade", 
-	"Scroll", 
-	"Variables", 
-	"CrossExamination", 
-	"Effects",
-	"Textbox",
-	"Graphics",
-	"Audio",
-	"Scripting",
-	"Timing",
-	"Interface",
-	"Gui"
-]
+func generate_command_map(version="1"):
+	var path = "res://System/WrightScript/Commands_"+version+"/"
+	var folder = Directory.new()
+	if folder.open(path) != OK:
+		print("ERROR: NO COMMANDS FOUND FOR VERSION "+version+"!")
+		assert(false)
+	var command_files = []
+	var file_name = "yes"
+	folder.list_dir_begin()
+	while file_name:
+		file_name = folder.get_next()
+		if not file_name.ends_with(".gd"):
+			continue
+		command_files.append(path+file_name)
+	if not command_files:
+		print("ERROR: NO COMMANDS FOUND FOR VERSION "+version+"!")
+		assert(false)
+	return command_files
 
 func get_call_methods(object):
 	var l = []
@@ -282,13 +288,12 @@ func get_call_methods(object):
 			l.append(method["name"])
 	return l
 
-func index_commands():
+func index_commands(version="1"):
 	var command_folder = "res://System/WrightScript/Commands/"
-	for command_file in external_command_files:
-		var extern = load(command_folder+command_file+".gd").new(self)
+	for command_file in generate_command_map(version):
+		var extern = load(command_file).new(self)
 		for command in get_call_methods(extern):
 			external_commands[command] = extern
-	pass
 
 func call_command(command, script, arguments):
 	command = value_replace(command)
