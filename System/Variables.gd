@@ -66,3 +66,9 @@ func evidence_keys():
 		if key.ends_with("_name") or key.ends_with("_pic") or key.ends_with("_desc"):
 			ev_keys[key.split("_")[0]] = 1
 	return ev_keys.keys()
+
+func value_replace(value):
+	# Replace from variables if starts with $
+	if value.begins_with("$"):
+		return self.get_string(value.substr(1))
+	return value
