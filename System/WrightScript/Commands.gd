@@ -260,20 +260,26 @@ func load_scripts():
 	return true
 # Call interface
 
-var external_command_files = [
-	"Fade", 
-	"Scroll", 
-	"Variables", 
-	"CrossExamination", 
-	"Effects",
-	"Textbox",
-	"Graphics",
-	"Audio",
-	"Scripting",
-	"Timing",
-	"Interface",
-	"Gui"
-]
+func generate_command_map(version=""):
+	# TODO implement versioning
+	var path = "res://System/WrightScript/Commands/"
+	var folder = Directory.new()
+	if folder.open(path) != OK:
+		print("ERROR: NO COMMANDS FOUND")
+		assert(false)
+	var command_files = []
+	var file_name = "yes"
+	folder.list_dir_begin()
+	while file_name:
+		file_name = folder.get_next()
+		# Exported source files end in gdc
+		if not (file_name.ends_with(".gd") or file_name.ends_with(".gdc")):
+			continue
+		command_files.append(path+file_name)
+	if not command_files:
+		print("ERROR: NO COMMANDS FOUND")
+		assert(false)
+	return command_files
 
 func get_call_methods(object):
 	var l = []
@@ -283,12 +289,10 @@ func get_call_methods(object):
 	return l
 
 func index_commands():
-	var command_folder = "res://System/WrightScript/Commands/"
-	for command_file in external_command_files:
-		var extern = load(command_folder+command_file+".gd").new(self)
+	for command_file in generate_command_map():
+		var extern = load(command_file).new(self)
 		for command in get_call_methods(extern):
 			external_commands[command] = extern
-	pass
 
 func call_command(command, script, arguments):
 	command = value_replace(command)
