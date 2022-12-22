@@ -1,0 +1,4 @@
+"pause for 30 after each 9"
+"{sound /null}{c900}123456789{p30}123456789{p30}123456789{p30}"
+"now add a newline after 5, pause after 9"
+"{sound /null}{c900}12345{n}6789{p30}12345{n}6789{p30}12345{n}6789{p30}"
