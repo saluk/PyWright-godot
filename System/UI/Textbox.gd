@@ -17,8 +17,8 @@ class TextPack:
 	var text = ""
 	var textbox
 	var leftover
+	var has_run = false
 	var characters_per_frame = 1
-	var pending = true
 	var delete = false
 	
 	func _init(text, textbox):
@@ -26,7 +26,7 @@ class TextPack:
 		self.textbox = textbox
 		
 	func _run(force = false): 
-		self.pending = false
+		has_run = true
 		
 	# add all text to label, then increase visible characters each frame
 	# if characters per frame is INF, will print text immediately
@@ -40,23 +40,21 @@ class TextPack:
 			
 	# execute pack command and change the provided textbox accordingly
 	func consume(rich_text_label, force = false):
-		self._run(force)
+		if not has_run:
+			self._run(force)
 		_print_text(rich_text_label)
-		if not self.pending and not leftover: self.delete = true
+		if not leftover: self.delete = true
 
 class CommandPack extends TextPack:
 	var command_args := ""
 	var command
 	var args = []
-	var first_run = true
 	
 	func _init(line, textbox).(line, textbox):
 		self.command_args = line
 		self.textbox = textbox
 		self.parse_command()
 		self.text = _to_text(self.textbox)
-		self.characters_per_frame = INF
-		self.pending = true
 		
 	func parse_command():
 		# parse pack text
@@ -141,14 +139,9 @@ class CommandPack extends TextPack:
 			"s":
 				pass
 			"p":
-				if force:
-					self.pending = false
-				elif first_run:
+				if not force:
 					self.textbox.pause(args, self)
-					self.pending = true
-					self.first_run = false
-				return
-		self.pending = false
+		has_run = true
 
 
 # Called when the node enters the scene tree for the first time.
@@ -185,12 +178,13 @@ func update_emotion(emotion):
 	for character in Commands.get_speaking_char():
 		character.load_emotion(emotion)
 		
-func stop_timer(pack):
-	pack.pending = false
+func stop_timer():
+	set_process(true)
 	tb_timer.disconnect("timeout", self, "stop_timer")
 		
 func pause(args, pack):
-	tb_timer.connect("timeout", self, "stop_timer", [pack])
+	set_process(false)
+	tb_timer.connect("timeout", self, "stop_timer")
 	tb_timer.start()
 
 func _on_Area2D_input_event(viewport, event, shape_idx):

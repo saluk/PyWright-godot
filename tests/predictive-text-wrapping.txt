@@ -1,1 +1,3 @@
 "hello! i am supercalifragilistic-espialidocious-always-looking-for-some-fun"
+set world (This is a set of text representing the world)
+"Hello {$world}!"
