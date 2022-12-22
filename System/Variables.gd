@@ -69,7 +69,6 @@ func evidence_keys():
 
 func value_replace(value):
 	# Replace from variables if starts with $
-	# TODO move to stack
 	if value.begins_with("$"):
 		return self.get_string(value.substr(1))
 	return value
