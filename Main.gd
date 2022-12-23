@@ -110,6 +110,10 @@ func test_eval():
 	assert(WSExpression.EVAL_STR("5 > 3") == "true")
 	assert(WSExpression.EVAL_STR("5 > 6") == "false")
 	assert(WSExpression.EVAL_STR("5 < 3") == "false")
+	stack.variables.set_val("door", "5")
+	assert(WSExpression.EVAL_STR("door >= 4") == "true")
+	assert(WSExpression.EVAL_STR("door >= 6") == "false")
+	assert(WSExpression.EVAL_STR("unset_variable == 6") == "false")
 	assert(WSExpression.EVAL_STR(
 		WSExpression.SIMPLE_TO_EXPR("$is_int == 1010")) == "true")
 	assert(WSExpression.EVAL_STR(

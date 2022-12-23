@@ -1,5 +1,8 @@
 extends Node
 
+func variables():
+	return Commands.main.stack.variables
+
 func NUM(n:String):
 	if "." in n:
 		return float(n)
@@ -8,10 +11,10 @@ func NUM(n:String):
 func EVAL(code:String):
 	var code_spaces = Array(code.split(" ", true, 2))
 	if len(code_spaces) == 1:
-		return Commands.main.stack.variables.get_truth(code_spaces[0])
+		return variables().get_truth(code_spaces[0])
 	if len(code_spaces) == 2:
 		code_spaces = [code_spaces[0], "=", code_spaces[1]]
-	var current_value = Commands.main.stack.variables.get_string(code_spaces[0])
+	var current_value = variables().get_string(code_spaces[0])
 	var operation = code_spaces[1]
 	var check_value = code_spaces[2]
 	if not operation in ["<", ">", "=", "!=", "<=", ">="]:
@@ -63,6 +66,10 @@ func MINUS(statements:Array):
 func DIV(statements:Array):
 	return GV(statements[0]) / GV(statements[1])
 func EQ(statements:Array):
+	var l = GV(statements[0])
+	var r = GV(statements[1])
+	if(typeof(l) != typeof(r)):
+		return "false"
 	return bool_to_string(GV(statements[0]) == GV(statements[1]))
 func GTEQ(statements:Array):
 	return bool_to_string(GV(statements[0]) >= GV(statements[1]))
