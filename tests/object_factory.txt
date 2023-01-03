@@ -1,0 +1,34 @@
+label top
+goto now
+
+label now
+label bg
+bg courtroom
+"Courtroomi is visible. Now show gavel animation"
+
+label fg
+fg ani-judge-gavel
+"Hopefully there was a delay"
+fg ani-judge-gavel nowait
+"Hopefully this is printed at the same time as the animation"
+fg pointer
+"pointer is centered"
+
+label port
+bg prosecution
+fg pbench
+char edgeworth
+"Basic edgeworth"
+emo name=edgeworth confident
+"Now edgeworth is confident"
+emo name=edgeworth document
+"I am holding a document. {n}{econfident} Now I am confident."
+char skye
+"I can load (combined) sprites too"
+
+label effects
+char skye
+grey name=skye
+"I'm grey"
+
+goto top

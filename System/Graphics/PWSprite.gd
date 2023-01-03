@@ -27,10 +27,13 @@ func queue_free():
 	free_members()
 	return .queue_free()
 	
+func can_wait():
+	return animated_sprite.frames.get_frame_count("default") > 1 and not animated_sprite.frames.get_animation_loop("default")
+	
 func set_wait(b):
 	print(animated_sprite.frames.get_frame_count("default"))
 	print(animated_sprite.frames.get_animation_loop("default"))
-	if animated_sprite.frames.get_frame_count("default") > 1 and not animated_sprite.frames.get_animation_loop("default"):
+	if can_wait():
 		wait = b
 		return
 	wait = false

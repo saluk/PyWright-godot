@@ -8,7 +8,7 @@ func _init(commands):
 func ws_menu(script, arguments):
 	var menu_name = arguments[0]
 	var kw = Commands.keywords(arguments)
-	var menu = Commands.create_object(
+	var menu = ObjectFactory.create_object(
 		script,
 		"menu",
 		"res://System/UI/Investigate.gd",
@@ -57,7 +57,7 @@ func ws_localmenu(script, arguments):
 func ws_examine(script, arguments):
 	var hide = "hide" in arguments
 	var fail = Commands.keywords(arguments).get("fail", "none")
-	var examine_menu = Commands.create_object(
+	var examine_menu = ObjectFactory.create_object(
 		script,
 		"examine_menu",
 		"res://System/UI/Examine.gd",
@@ -94,7 +94,7 @@ func ws_list(script, arguments):
 	var tag
 	if arguments:
 		tag = arguments[0]
-	var list_menu = Commands.create_object(
+	var list_menu = ObjectFactory.create_object(
 		script,
 		"listmenu",
 		"res://System/UI/PWList.gd",

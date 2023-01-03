@@ -109,7 +109,6 @@ class CommandPack extends TextPack:
 		match self.command:
 			"e":
 				Commands.call_command("emo", self.textbox.main.top_script(), args)
-				#update_emotion(args[0])
 			"sfx":
 				pass
 			"sound":
@@ -166,17 +165,13 @@ func update_nametag():
 	for character in Commands.get_speaking_char():
 		nametag = main.stack.variables.get_string(
 			"char_"+character.char_name+"_name", 
-			character.char_name.capitalize()
+			character.base_path.capitalize()
 		)
 	if not nametag:
 		$NametagBackdrop.visible = false
 	else:
 		$NametagBackdrop/Label.text = nametag
 		$NametagBackdrop.visible = true
-		
-func update_emotion(emotion):
-	for character in Commands.get_speaking_char():
-		character.load_emotion(emotion)
 		
 func stop_timer():
 	set_process(true)
@@ -246,7 +241,7 @@ func tokenize_text(text_to_print):
 
 func _set_speaking_animation(name):
 	for character in Commands.get_speaking_char():
-		character.play_state(name)
+		character.set_sprite(name)
 		
 func strip_bbcode(source:String) -> String:
 	var regex = RegEx.new()
