@@ -27,10 +27,16 @@ func ws_clearcross(script, arguments):
 
 # TODO test these
 func ws_next_statement(script, arguments):
-	script.next_statement()
+	var cross = main.cross_exam_script()
+	if cross:
+		cross.next_statement()
+	main.get_tree().call_group(Commands.TEXTBOX_GROUP, "queue_free")
 	
 func ws_prev_statement(script, arguments):
-	script.prev_statement()
+	var cross = main.cross_exam_script()
+	if cross:
+		cross.prev_statement()
+	main.get_tree().call_group(Commands.TEXTBOX_GROUP, "queue_free")
 	
 func ws_statement(script, arguments):
 	var test = Commands.keywords(arguments).get("test", "")

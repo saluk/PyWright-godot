@@ -29,7 +29,8 @@ var TEMPLATES = {
 			"start_sprite": "default",
 			"sort_with": "bg",
 			"default_variant": "",
-			"process_combined": false
+			"process_combined": false,
+			"clickable": false
 		},
 	"fg":
 		{
@@ -45,7 +46,25 @@ var TEMPLATES = {
 			"start_sprite": "default",
 			"sort_with": "fg",
 			"default_variant": "",
-			"process_combined": false
+			"process_combined": false,
+			"clickable": false
+		},
+	"graphic":
+		{
+			"sprites": {
+				"default": {
+					"path": "art/{base}.png",
+					"animation_mode": "loop"
+				}
+			},
+			"centered": false,
+			"block_script": false,
+			"groups": [Commands.SPRITE_GROUP],
+			"start_sprite": "default",
+			"sort_with": "fg",
+			"default_variant": "",
+			"process_combined": false,
+			"clickable": false
 		},
 	"portrait":
 		{
@@ -69,16 +88,41 @@ var TEMPLATES = {
 			"start_sprite": "blink",
 			"sort_with": "portrait",
 			"default_variant": "normal",
-			"process_combined": true
+			"process_combined": true,
+			"clickable": false
+		},
+	"button":
+		{
+			"sprites": {
+				"default": {
+					"path": "art/{base}.png",
+					"animation_mode": "once"
+				},
+				"highlight": {
+					"path": "art/{base}_high.png",
+					"animation_mode": "once"
+				}
+			},
+			"centered": false,
+			"block_script": false,
+			"groups": [Commands.SPRITE_GROUP],
+			"start_sprite": "default",
+			"sort_with": "gui",
+			"default_variant": "",
+			"process_combined": false,
+			"clickable": true
 		}
 }
 
-func create_from_template(script, template_key, arguments=[]):
+func create_from_template(script, template_key_or_template, arguments=[]):
 	var object:Node
-	var template = TEMPLATES[template_key]
+	var template = template_key_or_template
+	if template_key_or_template is String:
+		template = TEMPLATES[template_key_or_template]
 	object = load("res://System/Scene/WrightObject.gd").new()
 	get_main_screen().add_child(object)
 	object.main = get_main()
+	object.wrightscript = script
 	var keyword_arguments = Commands.keywords(arguments)
 	var x=int(keyword_arguments.get("x", 0))
 	var y=int(keyword_arguments.get("y", 0))
@@ -88,6 +132,9 @@ func create_from_template(script, template_key, arguments=[]):
 	object.base_path = base_path
 	object.variant_path = template["default_variant"]
 	object.root_path = script.root_path
+	if keyword_arguments.get("rect", null):
+		var rc = keyword_arguments["rect"].split(",")
+		object.sub_rect = Rect2(int(rc[0]), int(rc[1]), int(rc[2]), int(rc[3]))
 	object.load_sprites(template)
 	last_object = object
 	if arguments:
@@ -107,11 +154,15 @@ func create_from_template(script, template_key, arguments=[]):
 		object.set_wait(true)    #Try to make the object wait, if it is a single play animation that has more than one frame
 	if "nowait" in arguments:
 		object.set_wait(false)
+	if "flipx" in arguments:
+		object.sprite_root.scale.x = -1
+	if "flipy" in arguments:
+		object.sprite_root.scale.y = -1
 	return object
 
 # TODO implement:
 # loops
-# flipx
+# flipx, flipy
 # rotx, roty, rotz
 # stack
 # fade

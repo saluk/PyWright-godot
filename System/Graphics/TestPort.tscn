@@ -1,6 +1,6 @@
 [gd_scene load_steps=21 format=2]
 
-[ext_resource path="res://tests/TestColors.gd" type="Script" id=1]
+[ext_resource path="res://System/Graphics/PWSprite.gd" type="Script" id=1]
 [ext_resource path="res://System/UI/Textbox.tscn" type="PackedScene" id=2]
 [ext_resource path="res://System/Mesh.gd" type="Script" id=3]
 [ext_resource path="res://games/diamond/magnus diamond test/art/models/gembig.obj" type="ArrayMesh" id=4]
@@ -21,7 +21,7 @@ shader = SubResource( 12 )
 shader = ExtResource( 6 )
 shader_param/greyscale_amt = 0.0
 shader_param/to_color_amount = 0.0
-shader_param/to_color = Vector3( 1, 1, 0 )
+shader_param/to_color = Vector3( 1, 1, 1 )
 
 [sub_resource type="AtlasTexture" id=1]
 flags = 4
@@ -86,8 +86,10 @@ position = Vector2( 128, 96 )
 frames = SubResource( 10 )
 
 [node name="ViewportContainer" type="ViewportContainer" parent="."]
-margin_right = 256.0
-margin_bottom = 193.0
+margin_left = 257.0
+margin_top = 179.0
+margin_right = 513.0
+margin_bottom = 372.0
 
 [node name="Viewport" type="Viewport" parent="ViewportContainer"]
 size = Vector2( 256, 192 )

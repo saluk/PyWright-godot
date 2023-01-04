@@ -1,10 +1,11 @@
 label top
+clear
 goto now
 
 label now
 label bg
 bg courtroom
-"Courtroomi is visible. Now show gavel animation"
+"Courtroom is visible. Now show gavel animation"
 
 label fg
 fg ani-judge-gavel
@@ -31,4 +32,19 @@ char skye
 grey name=skye
 "I'm grey"
 
+label gui
+
+macro dostuff
+"hello from the macro"
+goto next
+endmacro
+
+"click the button to continue{next}"
+gui Button dostuff graphic=general/back_gba graphichigh=general/back_high_gba
+gui Wait
+label next
+delete name=dostuff
+"finished gui section"
+
+"return to top{next}"
 goto top

@@ -148,6 +148,14 @@ func top_script():
 		return stack.scripts[-1]
 	return null
 
+# Return topmost script that is in a cross examination
+func cross_exam_script():
+	if stack.scripts.size() > 0:
+		for i in range(stack.scripts.size()):
+			if stack.scripts[-i-1].is_inside_cross():
+				return stack.scripts[-i-1]
+	return null
+
 func reload():
 	MusicPlayer.stop_music()
 	# TODO stop running sounds

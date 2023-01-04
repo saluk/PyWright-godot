@@ -22,11 +22,9 @@ func ws_delete(script, arguments):
 func ws_obj(script, arguments):
 	if not main.get_tree():
 		return
-	var obj:Node = ObjectFactory.create_object(
+	var obj:Node = ObjectFactory.create_from_template(
 		script,
 		"graphic",
-		"res://System/Graphics/PWSprite.gd",
-		[Commands.SPRITE_GROUP],
 		arguments
 	)
 	return obj

@@ -63,7 +63,7 @@ func load_info(path:String):
 		data['length'] = int(data['horizontal']) * int(data['vertical'])
 	return data
 
-func load_animation(path:String, info=null):
+func load_animation(path:String, info=null, sub_rect=null):
 	if not path.begins_with("res://"):
 		path = "res://"+path
 	sprite_path = path
@@ -73,12 +73,20 @@ func load_animation(path:String, info=null):
 		info = load_info(path.rsplit(".", true, 1)[0]+'.txt')
 	print("txt:", info)
 
-	var frames = Filesystem.load_atlas_frames(
-		path, 
-		int(info['horizontal']),
-		int(info['vertical']),
-		int(info['length'])
-	)
+	var frames
+	# TODO - sub_rect only works with single frame animations!
+	if sub_rect:
+		frames = Filesystem.load_atlas_specific(
+			path,
+			[sub_rect]
+		)
+	else:
+		frames = Filesystem.load_atlas_frames(
+			path, 
+			int(info['horizontal']),
+			int(info['vertical']),
+			int(info['length'])
+		)
 	if frames:
 		width = frames[0].region.size.x
 		height = frames[0].region.size.y
@@ -142,3 +150,8 @@ func rescale(size_x, size_y):
 func set_grey(value):
 	if material:
 		material.set_shader_param("greyscale_amt", float(value))
+
+func set_colorize(color, amount):
+	if material:
+		material.set_shader_param("to_color", color)
+		material.set_shader_param("to_color_amount", amount)

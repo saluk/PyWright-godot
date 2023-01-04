@@ -187,7 +187,7 @@ func _on_Area2D_input_event(viewport, event, shape_idx):
 		click_continue()
 		
 func queue_free():
-	Commands.hide_arrows(main.stack.scripts[-1])
+	connect("tree_exited", Commands, "hide_arrows", [main.stack.scripts[-1]])
 	.queue_free()
 			
 func click_continue(immediate_skip=false):

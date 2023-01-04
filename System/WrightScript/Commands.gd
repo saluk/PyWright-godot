@@ -89,20 +89,15 @@ func create_textbox(line) -> Node:
 	return l
 	
 func refresh_arrows(script):
-	get_tree().call_group(ARROW_GROUP, "queue_free")
-	var arrow_class = "res://System/UI/IArrow.gd"
+	if script.get_prev_statement() == null:
+		main.stack.variables.set_val("_cross_exam_start", "true")
+	else:
+		main.stack.variables.set_val("_cross_exam_start", "false")
 	if script.is_inside_cross():
-		arrow_class = "res://System/UI/IArrowCross.gd"
-	var arrow = ObjectFactory.create_object(
-		script,
-		"uglyarrow",
-		arrow_class,
-		[ARROW_GROUP, SPRITE_GROUP],
-		[]
-	)
-	if script.get_prev_statement() == null and "left" in arrow:
-		arrow.left.get_children()[1].visible = false
-		arrow.left.get_children()[2].visible = false
+		call_macro("show_cross_buttons", script, [])
+	else:
+		call_macro("show_main_button", script, [])
+
 	if script.is_inside_cross():
 		call_macro("show_present_button", script, [])
 		call_macro("show_press_button", script, [])
@@ -110,8 +105,10 @@ func refresh_arrows(script):
 		call_macro("hide_present_button", script, [])
 		call_macro("hide_press_button", script, [])
 		call_macro("show_court_record_button", script, [])
+	call_macro("hide_main_button_all", script, [])
 		
 func hide_arrows(script):
+	call_macro("hide_main_button", script, [])
 	call_macro("hide_court_record_button", script, [])
 	call_macro("hide_present_button", script, [])
 	call_macro("hide_press_button", script, [])

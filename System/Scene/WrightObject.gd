@@ -3,13 +3,22 @@ class_name WrightObject
 
 # Definitions
 var root_path:String
-var base_path:String  # The base path ("edgeworth") before variants and sprites
-var variant_path:String  # The variant path ("normal") before sprites are loaded
-var script_name:String # How to identify the character
-var char_name:String   # What this character is called for nametag purposes
+var base_path:String    # The base path ("edgeworth") before variants and sprites
+var variant_path:String # The variant path ("normal") before sprites are loaded
+var script_name:String  # How to identify the character
+var char_name:String    # What this character is called for nametag purposes
+var sub_rect:Rect2      # Cut out this rectangle from the sprite frames
 
 # Animation state
 var sprite_key:String
+# Depending on the object, the sprite key can be important
+#   - default: a default key
+#   - talk: the talk animation of a portrait
+#   - blink: the blink animation of a portrait
+#   - intro: an animation to show before switching to the default
+#   - high: highlight while the mouse is over a button
+#   - clicked: highlight while the mouse is clicking down on a button
+
 var current_sprite:Node
 var centered := false   # At x=0, y=0, the sprite should be in the center of the screen
 var template:Dictionary
@@ -22,6 +31,7 @@ var wait := false
 var wait_signal := "finished_playing"
 signal started_playing
 signal finished_playing
+signal sprite_changed
 
 ## Internal use ##
 var sprites:Dictionary = {
@@ -29,10 +39,14 @@ var sprites:Dictionary = {
 }
 
 var main
+var wrightscript
+var sprite_root
 
 # Classes
 onready var FilesystemS = load("res://System/Files/Filesystem.gd")
 onready var PWSpriteC = load("res://System/Graphics/PWSprite.gd")
+
+# Cleanup
 
 func free_members():
 	sprite_key = ""
@@ -50,6 +64,11 @@ func free():
 	print("freeing pwchar "+name)
 	free_members()
 	return .free()
+	
+func init():
+	if not sprite_root:
+		sprite_root = Node2D.new()
+		add_child(sprite_root)
 
 #Sprite template:
 #  path: path of sprite to load
@@ -65,11 +84,12 @@ func add_sprite(sprite_key, sprite_template):
 	if not filename:
 		return
 	var sprite = PWSpriteC.new()
-	sprite.load_animation(filename)
+	sprite.load_animation(filename, null, sub_rect)
 	sprites[sprite_key] = sprite
 	return sprite
 	
 func load_sprites(template, sprite_key=null):
+	init()
 	self.template = template
 	free_members()
 	for sprite_key in template["sprites"]:
@@ -81,10 +101,16 @@ func load_sprites(template, sprite_key=null):
 		sprite_key = template["start_sprite"]
 	set_sprite(sprite_key)
 	
+	if template["clickable"]:
+		add_child(ClickArea.new())
+		
+func has_sprite(sprite_key):
+	return sprite_key in sprites
+	
 # If we have a combined talk/blink sprite, separate the
 # Frames into a separate talk sprite and blink sprite
 func process_combined():
-	if "combined" in sprites:
+	if has_sprite("combined"):
 		var count = sprites["combined"].animated_sprite.frames.get_frame_count("default")
 		if not "talk" in sprites:
 			add_sprite("talk", template["sprites"]["combined"])
@@ -103,15 +129,16 @@ func set_sprite(new_sprite_key):
 		if current_sprite:
 			if current_sprite.is_connected("finished_playing", self, "sprite_finished_playing"):
 				current_sprite.disconnect("finished_playing", self, "sprite_finished_playing")
-			remove_child(current_sprite)
+			sprite_root.remove_child(current_sprite)
 		sprite_key = new_sprite_key
 		current_sprite = sprites[sprite_key]
-		add_child(current_sprite)
+		sprite_root.add_child(current_sprite)
 		set_wait(wait)
 		emit_signal("started_playing")
 		current_sprite.connect("finished_playing", self, "sprite_finished_playing")
 		if centered:
 			current_sprite.position = Vector2(256/2-current_sprite.width/2, 192/2-current_sprite.height/2)
+		emit_signal("sprite_changed")
 
 # Change the variant and reload the sprites
 func change_variant(new_variant):

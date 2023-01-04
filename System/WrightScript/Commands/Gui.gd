@@ -18,18 +18,23 @@ func gui_button(script, arguments):
 		arguments.append("button_text="+text)
 	var graphic = kw.get("graphic", "")
 	var graphichigh = kw.get("graphichigh", "")
+	var template = ObjectFactory.TEMPLATES["button"].duplicate()
+	template["sprites"]["default"]["path"] = "art/{base}.png".format({"base": graphic})
+	if graphichigh:
+		template["sprites"]["highlight"]["path"] = "art/{base}.png".format({"base": graphichigh})
+	else:
+		template["sprites"].erase("highlight")
 	var button
-	button = ObjectFactory.create_object(
-		script, 
-		"gui", 
-		"res://System/UI/IButton.gd", 
-		[Commands.SPRITE_GROUP],
+	button = ObjectFactory.create_from_template(
+		script,
+		template,
 		arguments
 	)
 	if not button:
 		main.log_error("Couldn't create button")
-	button.menu = self
-	button.button_name = macroname
+	for child in button.get_children():
+		if "macroname" in child:
+			child.macroname = macroname
 
 class GuiWait:
 	var wait_signal = "DONE_WAITING"
