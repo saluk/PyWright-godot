@@ -155,6 +155,7 @@ func create_from_template(script, template_key_or_template, arguments=[]):
 	if "nowait" in arguments:
 		object.set_wait(false)
 	if "flipx" in arguments:
+		# TODO Scaling this way screws with the object position, we'll need to fix
 		object.sprite_root.scale.x = -1
 	if "flipy" in arguments:
 		object.sprite_root.scale.y = -1
