@@ -135,6 +135,10 @@ func create_from_template(script, template_key_or_template, arguments=[]):
 	if keyword_arguments.get("rect", null):
 		var rc = keyword_arguments["rect"].split(",")
 		object.sub_rect = Rect2(int(rc[0]), int(rc[1]), int(rc[2]), int(rc[3]))
+	if "flipx" in arguments:
+		object.mirror.x = -1
+	if "flipy" in arguments:
+		object.mirror.y = -1
 	object.load_sprites(template)
 	last_object = object
 	if arguments:
@@ -154,11 +158,6 @@ func create_from_template(script, template_key_or_template, arguments=[]):
 		object.set_wait(true)    #Try to make the object wait, if it is a single play animation that has more than one frame
 	if "nowait" in arguments:
 		object.set_wait(false)
-	if "flipx" in arguments:
-		# TODO Scaling this way screws with the object position, we'll need to fix
-		object.sprite_root.scale.x = -1
-	if "flipy" in arguments:
-		object.sprite_root.scale.y = -1
 	return object
 
 # TODO implement:

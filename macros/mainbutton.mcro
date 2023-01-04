@@ -29,7 +29,7 @@ goto right_arrow
 label left_arrow
 is _cross_exam_start fake_arrow
 gui Button cross_exam_left graphic=general/cross_exam_buttons graphichigh=general/cross_exam_buttons_high name=_main_button_fg x=17 y=252 z=0 rect=0,0,106,79 try_bottom
-obj general/arrow_big name=_main_button_arrow x=96 y=273 z=0 flipx
+obj general/arrow_big name=_main_button_arrow x=32 y=273 z=0 flipx
 
 label right_arrow
 gui Button cross_exam_right graphic=general/cross_exam_buttons graphichigh=general/cross_exam_buttons_high name=_main_button_fg x=139 y=252 z=0 rect=117,0,106,79 try_bottom

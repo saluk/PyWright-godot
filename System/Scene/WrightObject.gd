@@ -21,6 +21,7 @@ var sprite_key:String
 
 var current_sprite:Node
 var centered := false   # At x=0, y=0, the sprite should be in the center of the screen
+var mirror := Vector2(1,1)
 var template:Dictionary
 
 # Positioning
@@ -138,6 +139,12 @@ func set_sprite(new_sprite_key):
 		current_sprite.connect("finished_playing", self, "sprite_finished_playing")
 		if centered:
 			current_sprite.position = Vector2(256/2-current_sprite.width/2, 192/2-current_sprite.height/2)
+		if mirror.x < 0:
+			current_sprite.scale.x = -1
+			current_sprite.position.x += current_sprite.width
+		if mirror.y < 0:
+			current_sprite.scale.y = -1
+			current_sprite.position.y += current_sprite.height
 		emit_signal("sprite_changed")
 
 # Change the variant and reload the sprites
