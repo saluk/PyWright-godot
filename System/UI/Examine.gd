@@ -44,16 +44,7 @@ func load_art(root_path):
 		add_child(bg_ob)
 	self.root_path = root_path
 	setup_crosshair()
-	if allow_back_button:
-		back_button = add_button(
-			"art/general/back.png",
-			"art/general/back_high.png",
-			"_^BACK^_"
-		)
-		back_button.position = Vector2(
-			back_button.width/2,
-			192-back_button.height/2
-		)
+
 	examine_button = add_button(
 		"art/general/check.png",
 		"art/general/check.png",
@@ -129,6 +120,17 @@ func click_option(option):
 		)
 		
 func update():
+	if allow_back_button:
+		back_button = add_button(
+			"art/general/back.png",
+			"art/general/back_high.png",
+			"_^BACK^_"
+		)
+		back_button.position = Vector2(
+			back_button.width/2,
+			192-back_button.height/2
+		)
+
 	examine_button.visible = false
 	current_region = null
 	print("CLEAR CURRENT REGION")

@@ -67,6 +67,7 @@ func ws_examine(script, arguments):
 	if hide:
 		examine_menu.reveal_regions = false
 		examine_menu.allow_back_button = false
+		# TODO probably need a backwards compatible way to disable the backbutton while still showing regions
 	examine_menu.fail = fail
 	var offset = 1
 	while 1:
@@ -74,7 +75,7 @@ func ws_examine(script, arguments):
 		if line.begins_with("region"):
 			examine_menu.add_region_text(line)
 		else:
-			script.goto_line_number(offset, true)
+			script.goto_line_number(offset-1, true)
 			break
 		offset += 1
 	return examine_menu

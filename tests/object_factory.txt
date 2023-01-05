@@ -2,7 +2,6 @@ label top
 clear
 goto now
 
-label now
 label bg
 bg courtroom
 "Courtroom is visible. Now show gavel animation"
@@ -45,6 +44,18 @@ gui Wait
 label next
 delete name=dostuff
 "finished gui section"
+
+label now
+label examine_menu
+set _enable_back_button false
+bg courtroom
+examine hide
+region 0 0 50 50 next2
+"nothing found"
+goto examine_menu
+
+label next2
+"something found"
 
 "return to top{next}"
 goto top

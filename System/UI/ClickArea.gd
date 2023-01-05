@@ -19,6 +19,7 @@ func _enter_tree():
 	connect("mouse_exited", self, "on_mouse_exited")
 	connect("gui_input", self, "on_gui_input")
 	sync_area()
+	get_viewport().warp_mouse(get_viewport().get_mouse_position())
 	
 func sync_area():
 	var current_sprite:PWSprite = parent.current_sprite
