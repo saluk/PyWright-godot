@@ -91,14 +91,13 @@ class Region extends Area2D:
 			return true
 		return false
 	
-func add_region_text(text):
-	var arguments = text.split(" ")
-	var x = int(arguments[1])
-	var y = int(arguments[2])
-	var width = int(arguments[3])
-	var height = int(arguments[4])
+func add_region_args(arguments):
+	var x = int(arguments[0])
+	var y = int(arguments[1])
+	var width = int(arguments[2])
+	var height = int(arguments[3])
 	var region = Region.new(x, y, width, height)
-	region.label = arguments[5]
+	region.label = arguments[4]
 	add_child(region)
 
 func click_option(option):

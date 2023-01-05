@@ -2,6 +2,9 @@ extends Reference
 
 var main
 
+# TODO might not be the best place for this kind of temporary global variable
+var next_examine := {}
+
 func _init(commands):
 	main = commands.main
 
@@ -54,30 +57,51 @@ func ws_menu(script, arguments):
 func ws_localmenu(script, arguments):
 	pass
 
+# Note - we handle region definitions in a bit of a weird way
+#  - in pywright, we create the examine interface, and then 
+#    step through the script adding regions to the object
+#  - no other object functions this way in wrightscript
+#  - From now on, we will add a command showexamine, similar to showlist
+#  - the region commands will buffer the regions and then they will be
+#    read by the examine object created by showexamine
+#  - For backwards compatibility:
+#      - showexamine will be added to scripts when preprocessing in the appropriate place
+#      - future wrightscript versions may require showexamine to be in the script
 func ws_examine(script, arguments):
-	var hide = "hide" in arguments
-	var fail = Commands.keywords(arguments).get("fail", "none")
+	next_examine = {
+		"hidden": false,
+		"regions": [],
+		"fail": "none"
+	}
+	next_examine["hidden"] = "hide" in arguments
+	next_examine["fail"] = Commands.keywords(arguments).get("fail", "none")
+	main.stack.variables.set_truth("_examine.hidden", next_examine["hidden"])
+	main.stack.variables.set_val("_examine.fail", next_examine["fail"])
+	
+func ws_region(script, arguments):
+	next_examine["regions"].append(arguments)
+	
+# NEW
+func ws_showexamine(script, arguments):
+	if not next_examine:
+		main.log_error("Examine must first be created with examine and region commands before it can be shown.")
+		return
 	var examine_menu = ObjectFactory.create_object(
 		script,
 		"examine_menu",
 		"res://System/UI/Examine.gd",
 		[Commands.SPRITE_GROUP],
-		arguments
+		[]
 	)
-	if hide:
+	for region_args in next_examine["regions"]:
+		examine_menu.add_region_args(region_args)
+	if next_examine["hidden"]:
 		examine_menu.reveal_regions = false
 		examine_menu.allow_back_button = false
 		# TODO probably need a backwards compatible way to disable the backbutton while still showing regions
-	examine_menu.fail = fail
-	var offset = 1
-	while 1:
-		var line = script.get_next_line(offset)
-		if line.begins_with("region"):
-			examine_menu.add_region_text(line)
-		else:
-			script.goto_line_number(offset-1, true)
-			break
-		offset += 1
+	examine_menu.fail = next_examine["fail"]
+	examine_menu.update()
+	next_examine = {}
 	return examine_menu
 	
 func ws_region3d(script, arguments):

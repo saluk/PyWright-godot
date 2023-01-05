@@ -2,6 +2,7 @@ label top
 clear
 goto now
 
+label now
 label bg
 bg courtroom
 "Courtroom is visible. Now show gavel animation"
@@ -45,14 +46,30 @@ label next
 delete name=dostuff
 "finished gui section"
 
-label now
-label examine_menu
+label examine_menu_hidden
 set _enable_back_button false
 bg courtroom
 examine hide
 region 0 0 50 50 next2
+"you clicked the back button"
+label none
 "nothing found"
-goto examine_menu
+goto examine_menu_hidden
+
+label next2
+"something found"
+
+label examine_menu_visible
+set _enable_back_button false
+bg courtroom
+examine
+region 0 0 50 50 next2
+"you clicked the back button, try again"
+goto examine_menu_visible
+
+label none
+"nothing found"
+goto examine_menu_visible
 
 label next2
 "something found"
