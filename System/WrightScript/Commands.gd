@@ -69,7 +69,7 @@ func keywords(arguments, remove=false):
 	var newargs = []
 	var d = {}
 	for arg in arguments:
-		if "=" in arg:
+		if "=" in arg and not "==" in arg:
 			var split = arg.split("=", true, 1)
 			d[split[0]] = value_replace(split[1])
 		else:
