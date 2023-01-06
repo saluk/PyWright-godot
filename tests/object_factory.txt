@@ -74,5 +74,29 @@ goto examine_menu_visible
 label next2
 "something found"
 
+list list1
+li again
+li continue
+showlist
+"Back button pressed, again."
+goto list1
+label again
+"Go back to the list"
+goto list1
+label continue
+"continuing"
+
+list list2 noback
+li again
+li continue
+showlist
+"Back button pressed, again."
+goto list1
+label again
+"Go back to the list"
+goto list2
+label continue
+"continuing"
+
 "return to top{next}"
 goto top

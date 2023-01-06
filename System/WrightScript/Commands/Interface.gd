@@ -126,6 +126,8 @@ func ws_list(script, arguments):
 		[Commands.SPRITE_GROUP, Commands.LIST_GROUP],
 		arguments
 	)
+	list_menu.allow_back_button = not noback
+	list_menu.update()
 	
 func ws_li(script, arguments):
 	var list_menu = main.get_tree().get_nodes_in_group(Commands.LIST_GROUP)

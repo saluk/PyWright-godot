@@ -239,15 +239,21 @@ func call_command(command, script, arguments):
 # TODO probably DONT want to do this long term, not save/load safe
 # it's mostly used with interfaces mainly implemented in gdscript
 # when interfaces can be implemented from wrightscript, it wont be needed
-func add_macro_command(macro_name, object, function):
+func add_internal_command(macro_name, object, function_name, function_args):
+	var function = function_name
+	if function_args:
+		function += " "+" ".join(function_args)
 	get_tree().root.get_node("Main").stack.macros[macro_name] = [function]
-	Commands.external_commands["ws_"+function] = object
+	Commands.external_commands["ws_"+function_name] = object
 	
 # TODO as with add_macro_command, this can be removed when interfaces
 # are wrightscript native
-func add_button_to_interface(root, normal, highlight, function_name):
+func add_button_to_interface(root, normal, highlight, function_name, function_args=[]):
 	var template = ObjectFactory.TEMPLATES["button"].duplicate()
-	template["click_macro"] = "_INTERNAL_"+function_name
+	var macro_name = "_INTERNAL_"+function_name
+	if function_args:
+		macro_name += "."+"-".join(function_args)
+	template["click_macro"] = macro_name
 	template["sprites"]["default"]["path"] = normal
 	template["sprites"]["highlight"]["path"] = highlight
 	var button = ObjectFactory.create_from_template(
@@ -255,7 +261,7 @@ func add_button_to_interface(root, normal, highlight, function_name):
 	)
 	button.get_parent().remove_child(button)
 	root.add_child(button)
-	add_macro_command("_INTERNAL_"+function_name, root, function_name)
+	add_internal_command(macro_name, root, function_name, function_args)
 	return button
 	
 func is_macro(command):

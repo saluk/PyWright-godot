@@ -118,6 +118,10 @@ func preprocess_lines():
 		if segments and segments[0] in label_statements and segments.size()>1:
 			var tag = segments[1].strip_edges()
 			if tag:
+				if segments[0] == "list" and "noback" in tag:
+					var args = Array(tag.split(" "))
+					args.erase("noback")
+					tag = " ".join(args)
 				add_label(tag, i)
 			i += 1
 			continue
