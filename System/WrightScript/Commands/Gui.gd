@@ -24,6 +24,7 @@ func gui_button(script, arguments):
 		template["sprites"]["highlight"]["path"] = "art/{base}.png".format({"base": graphichigh})
 	else:
 		template["sprites"].erase("highlight")
+	template["click_macro"] = macroname
 	var button
 	button = ObjectFactory.create_from_template(
 		script,
@@ -32,9 +33,6 @@ func gui_button(script, arguments):
 	)
 	if not button:
 		main.log_error("Couldn't create button")
-	for child in button.get_children():
-		if "macroname" in child:
-			child.macroname = macroname
 
 class GuiWait:
 	var wait_signal = "DONE_WAITING"

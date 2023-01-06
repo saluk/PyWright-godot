@@ -30,7 +30,8 @@ var TEMPLATES = {
 			"sort_with": "bg",
 			"default_variant": "",
 			"process_combined": false,
-			"clickable": false
+			"clickable": false,
+			"click_macro": ""
 		},
 	"fg":
 		{
@@ -47,7 +48,8 @@ var TEMPLATES = {
 			"sort_with": "fg",
 			"default_variant": "",
 			"process_combined": false,
-			"clickable": false
+			"clickable": false,
+			"click_macro": ""
 		},
 	"graphic":
 		{
@@ -64,7 +66,8 @@ var TEMPLATES = {
 			"sort_with": "fg",
 			"default_variant": "",
 			"process_combined": false,
-			"clickable": false
+			"clickable": false,
+			"click_macro": ""
 		},
 	"portrait":
 		{
@@ -89,7 +92,8 @@ var TEMPLATES = {
 			"sort_with": "portrait",
 			"default_variant": "normal",
 			"process_combined": true,
-			"clickable": false
+			"clickable": false,
+			"click_macro": ""
 		},
 	"button":
 		{
@@ -110,7 +114,8 @@ var TEMPLATES = {
 			"sort_with": "gui",
 			"default_variant": "",
 			"process_combined": false,
-			"clickable": true
+			"clickable": true,
+			"click_macro": ""
 		}
 }
 

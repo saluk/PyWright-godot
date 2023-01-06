@@ -103,7 +103,9 @@ func load_sprites(template, sprite_key=null):
 	set_sprite(sprite_key)
 	
 	if template["clickable"]:
-		add_child(ClickArea.new())
+		var click_area = ClickArea.new()
+		click_area.macroname = template["click_macro"]
+		add_child(click_area)
 		
 func has_sprite(sprite_key):
 	return sprite_key in sprites
