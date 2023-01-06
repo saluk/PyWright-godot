@@ -243,6 +243,21 @@ func add_macro_command(macro_name, object, function):
 	get_tree().root.get_node("Main").stack.macros[macro_name] = [function]
 	Commands.external_commands["ws_"+function] = object
 	
+# TODO as with add_macro_command, this can be removed when interfaces
+# are wrightscript native
+func add_button_to_interface(root, normal, highlight, function_name):
+	var template = ObjectFactory.TEMPLATES["button"].duplicate()
+	template["click_macro"] = "_INTERNAL_"+function_name
+	template["sprites"]["default"]["path"] = normal
+	template["sprites"]["highlight"]["path"] = highlight
+	var button = ObjectFactory.create_from_template(
+		get_tree().root.get_node("Main").top_script(), template, []
+	)
+	button.get_parent().remove_child(button)
+	root.add_child(button)
+	add_macro_command("_INTERNAL_"+function_name, root, function_name)
+	return button
+	
 func is_macro(command):
 	if command.begins_with("{") and command.ends_with("}"):
 		return command.substr(1,command.length()-2)

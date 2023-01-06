@@ -30,18 +30,6 @@ var fail = "none"
 
 var current_region
 
-func add_button(normal, highlight, button_name):
-	var template = ObjectFactory.TEMPLATES["button"].duplicate()
-	template["click_macro"] = button_name
-	template["sprites"]["default"]["path"] = normal
-	template["sprites"]["highlight"]["path"] = highlight
-	var button = ObjectFactory.create_from_template(
-		get_tree().root.get_node("Main").top_script(), template, []
-	)
-	button.get_parent().remove_child(button)
-	add_child(button)
-	return button
-
 # TODO figure out how we decide whther to show the back button or not
 	
 func load_art(root_path):
@@ -52,12 +40,12 @@ func load_art(root_path):
 	self.root_path = root_path
 	setup_crosshair()
 
-	examine_button = add_button(
+	examine_button = Commands.add_button_to_interface(
+		self,
 		"art/general/check.png",
 		"",
-		"_^CHECK^_"
+		"check_from_examine"
 	)
-	Commands.add_macro_command("_^CHECK^_", self, "check_from_examine")
 	examine_button.position = Vector2(
 		256-examine_button.width,
 		192-examine_button.height
@@ -126,16 +114,16 @@ func ws_back_from_examine(script, arguments):
 		
 func update():
 	if allow_back_button and not back_button:
-		back_button = add_button(
+		back_button = Commands.add_button_to_interface(
+			self,
 			"art/general/back.png",
 			"art/general/back_high.png",
-			"_^BACK^_"
+			"back_from_examine"
 		)
 		back_button.position = Vector2(
 			0,
 			192-back_button.height
 		)
-		Commands.add_macro_command("_^BACK^_", self, "back_from_examine")
 
 	examine_button.visible = false
 	current_region = null
