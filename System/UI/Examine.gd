@@ -1,3 +1,13 @@
+# TODO - eventually we want this to be managed by a wrightscript macro
+#  we need a few things to make that workable:
+# 		- need a way to define multiple regions
+#		- how to draw the crosshair and move it on mouse click/drag
+#		- how to determine when crosshair is over something
+#		(a lot of these hows can still be implenented in gdscript,
+#		 but the objects should derive from WrightObject and be templatable
+#		 and save/loadable)
+#  For now we have this as a stopgap 
+
 extends Node2D
 var script_name = "examine_menu"
 var wait_signal = "tree_exited"
@@ -8,7 +18,6 @@ var root_path
 
 var bg_obs = []
 
-var IButtonS = preload("res://System/UI/IButton.gd")
 var back_button
 var examine_button
 var crosshair
@@ -22,16 +31,14 @@ var fail = "none"
 var current_region
 
 func add_button(normal, highlight, button_name):
-	var button = IButtonS.new(
-		Filesystem.load_atlas_frames(
-			Filesystem.lookup_file(normal, root_path)
-		)[0],
-		Filesystem.load_atlas_frames(
-			Filesystem.lookup_file(highlight, root_path)
-		)[0]
+	var template = ObjectFactory.TEMPLATES["button"].duplicate()
+	template["click_macro"] = button_name
+	template["sprites"]["default"]["path"] = normal
+	template["sprites"]["highlight"]["path"] = highlight
+	var button = ObjectFactory.create_from_template(
+		get_tree().root.get_node("Main").top_script(), template, []
 	)
-	button.menu = self
-	button.button_name = button_name
+	button.get_parent().remove_child(button)
 	add_child(button)
 	return button
 
@@ -47,12 +54,13 @@ func load_art(root_path):
 
 	examine_button = add_button(
 		"art/general/check.png",
-		"art/general/check.png",
+		"",
 		"_^CHECK^_"
 	)
+	Commands.add_macro_command("_^CHECK^_", self, "check_from_examine")
 	examine_button.position = Vector2(
-		256-examine_button.width/2,
-		192-examine_button.height/2
+		256-examine_button.width,
+		192-examine_button.height
 	)
 	examine_button.visible = false
 	position = Vector2(0, 192)
@@ -99,36 +107,35 @@ func add_region_args(arguments):
 	var region = Region.new(x, y, width, height)
 	region.label = arguments[4]
 	add_child(region)
-
-func click_option(option):
-	print("CLICK OPTION "+option)
-	print(current_region)
+	
+func ws_check_from_examine(script, arguments):
 	queue_free()
-	if option == "_^BACK^_":
-		pass
-	else:
-		var label = fail
-		if current_region:
-			label = current_region.label
-		Commands.call_command(
-			"goto",
-			Commands.main.stack.scripts[-1],
-			[
-				label
-			]
-		)
+	var label = fail
+	if current_region:
+		label = current_region.label
+	return Commands.call_command(
+		"goto",
+		Commands.main.stack.scripts[-1],
+		[
+			label
+		]
+	)
+
+func ws_back_from_examine(script, arguments):
+	queue_free()
 		
 func update():
-	if allow_back_button:
+	if allow_back_button and not back_button:
 		back_button = add_button(
 			"art/general/back.png",
 			"art/general/back_high.png",
 			"_^BACK^_"
 		)
 		back_button.position = Vector2(
-			back_button.width/2,
-			192-back_button.height/2
+			0,
+			192-back_button.height
 		)
+		Commands.add_macro_command("_^BACK^_", self, "back_from_examine")
 
 	examine_button.visible = false
 	current_region = null

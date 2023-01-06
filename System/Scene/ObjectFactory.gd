@@ -133,8 +133,8 @@ func create_from_template(script, template_key_or_template, arguments=[]):
 	var y=int(keyword_arguments.get("y", 0))
 	object.position = Vector2(x, y)
 	object.centered = template["centered"]
-	var base_path = arguments[0]
-	object.base_path = base_path
+	if arguments:
+		object.base_path = arguments[0]
 	object.variant_path = template["default_variant"]
 	object.root_path = script.root_path
 	if keyword_arguments.get("rect", null):

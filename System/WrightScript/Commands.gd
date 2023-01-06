@@ -235,6 +235,11 @@ func call_command(command, script, arguments):
 		return call_macro(command, script, arguments)
 	return UNDEFINED
 	
+# Create a macro which when ran calls object.function from godot
+func add_macro_command(macro_name, object, function):
+	get_tree().root.get_node("Main").stack.macros[macro_name] = [function]
+	Commands.external_commands["ws_"+function] = object
+	
 func is_macro(command):
 	if command.begins_with("{") and command.ends_with("}"):
 		return command.substr(1,command.length()-2)

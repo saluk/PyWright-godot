@@ -40,7 +40,7 @@ goto next
 endmacro
 
 "click the button to continue{next}"
-gui Button dostuff graphic=general/back_gba graphichigh=general/back_high_gba
+gui Button dostuff graphic=general/back_gba graphichigh=general/back_high_gba name=dostuff
 gui Wait
 label next
 delete name=dostuff

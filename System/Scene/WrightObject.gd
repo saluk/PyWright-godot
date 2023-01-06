@@ -22,7 +22,12 @@ var sprite_key:String
 var current_sprite:Node
 var centered := false   # At x=0, y=0, the sprite should be in the center of the screen
 var mirror := Vector2(1,1)
-var template:Dictionary
+var _width_override = null
+var _height_override = null
+var width setget set_width_override, get_width
+var height setget set_height_override, get_height
+
+var template:Dictionary # Remember the template we were initialized with, useful for save/load
 
 # Positioning
 var z:int
@@ -46,6 +51,25 @@ var sprite_root
 # Classes
 onready var FilesystemS = load("res://System/Files/Filesystem.gd")
 onready var PWSpriteC = load("res://System/Graphics/PWSprite.gd")
+
+# SetGets
+func set_width_override(width):
+	_width_override = width
+func set_height_override(height):
+	_height_override = height
+func get_width():
+	if _width_override != null:
+		return _width_override
+	if current_sprite:
+		return current_sprite.width
+	return 0
+func get_height():
+	if _height_override != null:
+		return _height_override
+	if current_sprite:
+		return current_sprite.height
+	return 0
+		
 
 # Cleanup
 
