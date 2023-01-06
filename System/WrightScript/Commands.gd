@@ -236,6 +236,9 @@ func call_command(command, script, arguments):
 	return UNDEFINED
 	
 # Create a macro which when ran calls object.function from godot
+# TODO probably DONT want to do this long term, not save/load safe
+# it's mostly used with interfaces mainly implemented in gdscript
+# when interfaces can be implemented from wrightscript, it wont be needed
 func add_macro_command(macro_name, object, function):
 	get_tree().root.get_node("Main").stack.macros[macro_name] = [function]
 	Commands.external_commands["ws_"+function] = object
