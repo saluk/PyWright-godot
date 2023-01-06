@@ -1,0 +1,200 @@
+# Quickly set a dynamic variable name
+macro set_property
+  # set_property variable_group property_name value
+
+  # method
+  joinvar pname $1 $2
+  set $pname $3
+endmacro
+
+
+# Quickly retrive the value from a dynamic variable name
+macro get_property
+  # get_property variable_group property_name storage_variable
+
+  # method
+  joinvar pname $1 $2
+  get 4 $pname
+  set $3 $4
+endmacro
+
+
+# Initialize an array
+macro create_array
+  # create_array array_name
+
+  # args
+  set 1array_name $1
+
+  # method
+  set_property $1array_name .size 0
+endmacro
+
+
+# Add an item to an array
+macro array_add
+  # args
+  set 2array_name $1
+  set 2array_size 0
+  set 2array_index 0
+  set 2array_item $2
+  
+  # method
+  get_property $2array_name .size 2array_size
+  isempty 2array_size?
+  goto error
+
+  label do_add
+  addvar 2array_size 1
+  set_property $2array_name .size $2array_size
+  joinvar 2array_index .item - $2array_size
+  set_property $2array_name $2array_index $2array_item
+  endscript
+
+  label error
+  "no array {$2array_name} initialized"
+endmacro
+
+
+macro array_get
+  # args
+  set 3array_name $1
+  set 3array_index $2
+  
+  # method
+  joinvar 3array_name $3array_name .item- $3array_index
+  get $3 $3array_name
+endmacro
+
+
+macro array_set
+  # args
+  set 4array_name $1
+  set 4array_index $2
+  
+  # method
+  joinvar 4array_name $4array_name .item- $4array_index
+  set $4array_name $3
+endmacro
+
+
+macro array_move_left
+  # args
+  set aml_arr_name $1
+  set aml_cur_index $2
+  set aml_next_index $3
+
+  # method
+  array_get $aml_arr_name $aml_next_index aml_next_item
+  array_set $aml_arr_name $aml_cur_index $aml_next_item
+endmacro
+
+
+macro array_delete_index
+  # args
+  set 5array_name $1
+  set 5array_index $2
+
+  # error checking
+  get_property $5array_name .size 5array_size
+  isempty 5array_size error
+  is 5array_index < 1 error
+  is 5array_index > $5array_size error
+
+  # method
+  # for i=array_index to size-1: move next item here
+  set adi_cur $5array_index
+
+  label loop
+  is adi_cur >= $5array_size finish
+  set adi_next $adi_cur
+  addvar adi_next 1
+  array_move_left $5array_name $adi_cur $adi_next
+  set adi_cur $adi_next
+  goto loop
+
+  label finish
+  # subtract from size
+  subvar 5array_size 1
+  set_property $5array_name .size $5array_size
+  endscript
+
+label error
+"There was an error to delete the item"
+endmacro
+
+
+macro array_find_item
+  # args
+  set afi_array_name $1
+  set afi_array_search $2
+  set afi_dest_var $3
+  "array_find_item {$afi_array_name} {$afi_array_search}"
+  
+  # method
+  set afi_cur_index 1
+  get_property $afi_array_name .size afi_size
+  label loop_items
+  "loop: {$afi_cur_index}"
+  is afi_cur_index > $afi_size finish_loop
+  array_get $afi_array_name $afi_cur_index afi_array_item
+  "check: {$afi_array_item} {$afi_array_search}"
+  is afi_array_item $afi_array_search found
+
+  addvar afi_cur_index 1
+  goto loop_items
+
+  label found
+  "found at {$afi_cur_index}, setting to {$3}"
+  set $afi_dest_var $afi_cur_index
+  endscript
+
+  label finish_loop
+  "Could not find item"
+  endscript
+endmacro
+
+
+macro array_delete_item
+  # args
+  set adi_array_name $1
+  set adi_array_item $2
+  "array_delete_item {$adi_array_name} {$adi_array_item}"
+
+  # method
+  array_find_item $adi_array_name $adi_array_item adi_array_index
+  isempty adi_array_index skip
+
+  array_delete_index $adi_array_name $adi_array_index
+
+label skip
+endmacro
+
+
+"Show error when trying to interact with array before initialized"
+array_add my_array item1
+create_array my_array
+array_add my_array item1
+array_add my_array item2
+"Two items in array. item1: {$my_array.item-1} {n}item2: {$my_array.item-2}"
+
+array_add my_array world
+"set first item to hello and remove middle item (item2)"
+array_set my_array 1 hello
+array_delete_index my_array 2
+"Two items in array. item1 should be hello: {$my_array.item-1} {n}item2 should be world: {$my_array.item-2} "
+
+set index 1
+label integer_loop
+is index > $my_array.size finish_loop
+array_get my_array $index array_item
+"Array index {$index}: {$array_item}"
+addvar index 1
+goto integer_loop
+label finish_loop
+"finished printing array items"
+
+array_find_item my_array hello found_index
+"Should have found hello at 1: {$found_index}"
+array_delete_item my_array hello
+"{$my_array.item-1} should be world"
