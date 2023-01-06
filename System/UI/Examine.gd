@@ -8,6 +8,7 @@ var root_path
 
 var bg_obs = []
 
+var IButtonS = preload("res://System/UI/IButton.gd")
 var back_button
 var examine_button
 var crosshair
