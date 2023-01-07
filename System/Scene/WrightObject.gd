@@ -109,7 +109,7 @@ func add_sprite(sprite_key, sprite_template):
 	if not filename:
 		return
 	var sprite = PWSpriteC.new()
-	sprite.load_animation(filename, null, sub_rect)
+	sprite.load_animation(filename, null, template["rect"])
 	sprites[sprite_key] = sprite
 	return sprite
 	

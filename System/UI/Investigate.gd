@@ -13,42 +13,27 @@ var relative_positions = {
 	"talk": Vector2(0, 1),
 	"present": Vector2(1, 1)
 }
-
-var sprites = {}
-var sprites_high = {}
-onready var IButtonS = load("res://System/UI/IButton.gd")
 	
 func load_art(root_path):
-	var path = Filesystem.lookup_file("art/general/talkbuttons.png", root_path)
-	var frames = Filesystem.load_atlas_frames(
-		path, 2, 2, 4
-	)
-	for i in range(order.size()):
-		sprites[order[i]] = frames[i]
-	path = Filesystem.lookup_file("art/general/talkbuttons_high.png", root_path)
-	var frames2 = Filesystem.load_atlas_frames(
-		path, 2, 2, 4
-	)
-	for i in range(order.size()):
-		sprites_high[order[i]] = frames2[i]
+	pass
 
 func add_option(option):
-	if not IButtonS:
-		return
-	var width = sprites[option].region.size.x
-	var height = sprites[option].region.size.y
-	var button = IButtonS.new(
-		sprites[option], 
-		sprites_high.get(option, null), 
-		Vector2(
-			(256-width)/2 + relative_positions[option].x*width,
-			(192-height)/2 + relative_positions[option].y*height+192
-		))
-	button.menu = self
-	button.button_name = option
-	add_child(button)
+	var rect_offset = relative_positions[option]
+	var button = Commands.add_button_to_interface(
+		self,
+		"art/general/talkbuttons.png",
+		"art/general/talkbuttons_high.png",
+		"investigate_option",
+		[option],
+		Rect2(226/2*rect_offset.x, 59/2*rect_offset.y, 226/2, 59/2)
+	)
+	button.position = Vector2(
+		(256/2-button.width) + rect_offset.x*button.width,
+		(192/2-button.height) + rect_offset.y*button.height+192
+	)
 
-func click_option(option):
+func ws_investigate_option(script, args):
+	var option = args[0]
 	if scene_name:
 		Commands.call_command(
 			"script",

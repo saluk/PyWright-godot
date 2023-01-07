@@ -30,6 +30,7 @@ var TEMPLATES = {
 			"sort_with": "bg",
 			"default_variant": "",
 			"process_combined": false,
+			"rect": null,
 			"clickable": false,
 			"click_macro": ""
 		},
@@ -48,6 +49,7 @@ var TEMPLATES = {
 			"sort_with": "fg",
 			"default_variant": "",
 			"process_combined": false,
+			"rect": null,
 			"clickable": false,
 			"click_macro": ""
 		},
@@ -66,6 +68,7 @@ var TEMPLATES = {
 			"sort_with": "fg",
 			"default_variant": "",
 			"process_combined": false,
+			"rect": null,
 			"clickable": false,
 			"click_macro": ""
 		},
@@ -92,6 +95,7 @@ var TEMPLATES = {
 			"sort_with": "portrait",
 			"default_variant": "normal",
 			"process_combined": true,
+			"rect": null,
 			"clickable": false,
 			"click_macro": ""
 		},
@@ -114,6 +118,7 @@ var TEMPLATES = {
 			"sort_with": "gui",
 			"default_variant": "",
 			"process_combined": false,
+			"rect": null,
 			"clickable": true,
 			"click_macro": ""
 		}
@@ -123,7 +128,7 @@ func create_from_template(script, template_key_or_template, arguments=[]):
 	var object:Node
 	var template = template_key_or_template
 	if template_key_or_template is String:
-		template = TEMPLATES[template_key_or_template]
+		template = TEMPLATES[template_key_or_template].duplicate()
 	object = load("res://System/Scene/WrightObject.gd").new()
 	get_main_screen().add_child(object)
 	object.main = get_main()
@@ -139,7 +144,7 @@ func create_from_template(script, template_key_or_template, arguments=[]):
 	object.root_path = script.root_path
 	if keyword_arguments.get("rect", null):
 		var rc = keyword_arguments["rect"].split(",")
-		object.sub_rect = Rect2(int(rc[0]), int(rc[1]), int(rc[2]), int(rc[3]))
+		template["rect"] = Rect2(int(rc[0]), int(rc[1]), int(rc[2]), int(rc[3]))
 	if "flipx" in arguments:
 		object.mirror.x = -1
 	if "flipy" in arguments:
