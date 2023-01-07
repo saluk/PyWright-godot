@@ -56,10 +56,11 @@ static func load_resource(path:String):
 
 static func load_image_from_path(path:String) -> Image:
 	# TODO - we should try the file before the resource to allow modding
-	var resource = load_resource(path)
-	if resource:
-		print("resource found")
-		return resource
+	if OS.has_feature("standalone") or OS.has_feature("HTML5"):
+		var resource = load_resource(path)
+		if resource:
+			print("resource found")
+			return resource
 	var f = File.new()
 	var err = f.open(path, File.READ)
 	var image:Image
@@ -92,6 +93,7 @@ static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -
 	else:
 		texture = ImageTexture.new()
 		texture.create_from_image(image, 0)
+		pass
 		
 	if not texture or not image:
 		return []
