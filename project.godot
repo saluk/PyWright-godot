@@ -134,6 +134,15 @@ window/stretch/aspect="keep"
 
 limits=false
 
+[importer_defaults]
+
+texture={
+"detect_3d": false,
+"flags/anisotropic": true,
+"flags/filter": false,
+"process/fix_alpha_border": false
+}
+
 [input]
 
 quickload={

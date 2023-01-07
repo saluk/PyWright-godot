@@ -75,15 +75,15 @@ label next2
 "something found"
 
 list list1
-li again
-li continue
+li play list again
+li show next list
 showlist
 "Back button pressed, again."
 goto list1
-label again
+label play list again
 "Go back to the list"
 goto list1
-label continue
+label show next list
 "continuing"
 
 list list2 noback

@@ -66,7 +66,7 @@ func ws_click_list_item(script, arguments):
 			"goto",
 			Commands.main.stack.scripts[-1],
 			[
-				arguments[0]
+				" ".join(arguments)
 			]
 		)
 		queue_free()
