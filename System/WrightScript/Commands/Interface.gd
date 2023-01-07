@@ -2,7 +2,7 @@ extends Reference
 
 var main
 
-# TODO might not be the best place for this kind of temporary global variable
+# TODO might not be the best place for this kind of temporary global variable but it works
 var next_examine := {}
 
 func _init(commands):
@@ -11,12 +11,7 @@ func _init(commands):
 func ws_menu(script, arguments):
 	var menu_name = arguments[0]
 	var kw = Commands.keywords(arguments)
-	var menu = ObjectFactory.create_object(
-		script,
-		"menu",
-		"res://System/UI/Investigate.gd",
-		[Commands.SPRITE_GROUP],
-		["name=invest_menu"])
+	var menu = ws_localmenu(script, arguments)
 	menu.scene_name = menu_name
 	for option in ["examine", "move", "talk", "present"]:
 		print(kw)
@@ -55,7 +50,19 @@ func ws_menu(script, arguments):
 #        m.init_normal()
 #        return True
 func ws_localmenu(script, arguments):
-	pass
+	var menu_name = arguments[0]
+	var kw = Commands.keywords(arguments)
+	var menu = ObjectFactory.create_object(
+		script,
+		"menu",
+		"res://System/UI/Investigate.gd",
+		[Commands.SPRITE_GROUP],
+		["name=invest_menu"])
+	for option in ["examine", "move", "talk", "present"]:
+		if WSExpression.string_to_bool(kw.get(option, "false")):
+			menu.add_option(option)
+	menu.fail_label = kw.get("fail", "none")
+	return menu
 
 # Note - we handle region definitions in a bit of a weird way
 #  - in pywright, we create the examine interface, and then 

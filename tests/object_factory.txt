@@ -98,5 +98,21 @@ goto list2
 label continue
 "continuing"
 
+label themenu
+localmenu talk=true examine=true move=true present=true fail=myfail
+label talk
+"talking 1"
+goto themenu
+label examine
+"examine 1"
+goto themenu
+label move
+"move 1"
+goto themenu
+label none
+"shouldn't get here"
+label myfail
+"myfail"
+
 "return to top{next}"
 goto top

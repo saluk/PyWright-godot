@@ -3,6 +3,7 @@ var script_name = "invest_menu"
 var wait_signal = "tree_exited"
 
 var scene_name:String
+var fail_label:String
 var z:int
 
 var order = ["examine", "move", "talk", "present"]
@@ -48,10 +49,17 @@ func add_option(option):
 	add_child(button)
 
 func click_option(option):
-	Commands.call_command(
-		"script",
-		Commands.main.stack.scripts[-1],
-		[
-			scene_name+"."+option
-		]
-	)
+	if scene_name:
+		Commands.call_command(
+			"script",
+			Commands.main.stack.scripts[-1],
+			[
+				scene_name+"."+option
+			]
+		)
+	elif fail_label:
+		Commands.main.stack.scripts[-1].goto_label(option, fail_label)
+	else:
+		print("bad investigate menu")
+		assert(0)
+	queue_free()
