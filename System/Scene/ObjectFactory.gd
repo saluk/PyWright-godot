@@ -35,7 +35,8 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": false,
-			"click_macro": ""
+			"click_macro": "",
+			"click_args": []
 		},
 	"fg":
 		{
@@ -57,7 +58,8 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": false,
-			"click_macro": ""
+			"click_macro": "",
+			"click_args": []
 		},
 	"graphic":
 		{
@@ -79,7 +81,8 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": false,
-			"click_macro": ""
+			"click_macro": "",
+			"click_args": []
 		},
 	"portrait":
 		{
@@ -111,7 +114,8 @@ var TEMPLATES = {
 			"process_combined": true,
 			"rect": null,
 			"clickable": false,
-			"click_macro": ""
+			"click_macro": "",
+			"click_args": []
 		},
 	"button":
 		{
@@ -138,13 +142,16 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": true,
-			"click_macro": ""
+			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
+			"click_args": []
 		}
 }
 
 # Get a template to be modified and then passed into create_from_template
-func get_template(key):
-	return TEMPLATES[key].duplicate(true)
+func get_template(key, modified_data={}):
+	var t = TEMPLATES[key].duplicate(true)
+	t.merge(modified_data, true)
+	return t
 	
 # Helper functions to modify a template
 
@@ -226,6 +233,7 @@ func create_from_template(script, template_key_or_template, arguments=[], parent
 		object.z = ZLayers.z_sort[template["sort_with"]]
 	for group in template["groups"]:
 		object.add_to_group(group)
+		
 	# This is just to help debugging in godot
 	# Godot .name should be unique in the scene but WrightScript can have duplicate names
 	object.name = object.script_name
@@ -240,6 +248,7 @@ func create_from_template(script, template_key_or_template, arguments=[], parent
 # loops
 # flipx, flipy
 # rotx, roty, rotz
+# scalex, scaley
 # stack
 # fade
 var WAITERS = ["fg"]

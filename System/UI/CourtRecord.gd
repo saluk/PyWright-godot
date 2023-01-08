@@ -82,11 +82,17 @@ func _process(dt):
 	
 func load_back_button():
 	# TODO only load this if we are allowed
-	var back_button = Commands.add_button_to_interface(
-		self,
-		"art/general/back.png",
-		"art/general/back_high.png",
-		"click_back_from_court_record"
+	var back_button = ObjectFactory.create_from_template(
+		main.top_script(), 
+		ObjectFactory.get_template("button", {
+				"sprites": {
+					"default": {"path":"art/general/back.png"},
+					"highlight": {"path":"art/general/back_high.png"}
+				},
+				"click_macro": "click_back_from_court_record",
+			}), 
+			[], 
+			script_name
 	)
 	back_button.position = Vector2(
 		0,
@@ -94,6 +100,11 @@ func load_back_button():
 	)
 	
 func ws_click_back_from_court_record(script, arguments):
+	if zoom:
+		zoom = false
+		offset = int(offset/8)
+		reset()
+		return
 	queue_free()
 	
 func load_page_button():
@@ -123,15 +134,22 @@ func load_page_button():
 	add_child(b)
 	
 func load_arrow(direction):
-	var pos = Vector2(5, 92)
+	var pos = Vector2(3, 58)
 	if direction == "R":
 		pos.x = 241
-	var template = ObjectFactory.get_template("button")
-	ObjectFactory.update_sprite(template, "default", {"path":"art/general/arrow_right.png"})
-	if direction == "L":
-		ObjectFactory.update_template(template, {"mirror":[-1, 1]})
-	ObjectFactory.make_internal_command(template, self, "record_click_direction", [direction])
-	var b = ObjectFactory.create_from_template(main.top_script(), template, [], script_name)
+	var b = ObjectFactory.create_from_template(
+		main.top_script(), 
+		ObjectFactory.get_template("button", {
+				"sprites": {
+					"default": {"path":"art/general/evidence_arrow_right.png"}
+				},
+				"mirror": [{"L":-1, "R": 1}[direction], 1],
+				"click_macro": "record_click_direction",
+				"click_args": [direction]
+			}), 
+			[], 
+			script_name
+	)
 	b.position = pos
 	
 func ws_record_click_direction(script, arguments):
@@ -248,7 +266,6 @@ func load_page_overview():
 		ev_db[evname] = {
 			"name": key_name, "desc": key_desc, "pic": key_pic, "check": key_check
 		}
-		var pic = PWSprite.new()
 		var ev_path = Filesystem.lookup_file(
 			"art/ev/"+key_pic+".png",
 			self.root_path
@@ -258,25 +275,29 @@ func load_page_overview():
 				"art/ev/envelope.png",
 				self.root_path
 			)
-		pic.load_animation(ev_path)
-		pic.rescale(
-			main.stack.variables.get_int("ev_small_width")+1,
-			main.stack.variables.get_int("ev_small_height")+1
+		var ev_button = ObjectFactory.create_from_template(
+			main.top_script(), 
+			ObjectFactory.get_template("button", {
+					"sprites": {
+						"default": {"path":ev_path.replace("res://", "")}
+					},
+					"click_macro": "record_zoom_evidence",
+					"click_args": [evname]
+				}), 
+				[], 
+				script_name
 		)
-		# IButton are positioned at center TODO we shouldn't do that
-		pic.position = Vector2(-pic.width/2, -pic.height/2)
-		
-		var ev_button = IButton.new(
-			pic, null, Vector2(x+pic.width/2, y+pic.height/2)
-		)
-		ev_button.menu = self
-		ev_button.button_name = evname
-		add_child(ev_button)
-		ev_button.area.connect("mouse_entered", self, "highlight_evidence", [evname])
+		ev_button.position = Vector2(x, y)
+		if ev_button.current_sprite:
+			ev_button.current_sprite.rescale(
+				main.stack.variables.get_int("ev_small_width")+1,
+				main.stack.variables.get_int("ev_small_height")+1
+			)
+		ev_button.click_area.connect("mouse_entered", self, "highlight_evidence", [evname])
 		
 		# Move to next spot
 		x += main.stack.variables.get_int("ev_spacing_x")
-		if x > 256-pic.width:
+		if x > 256-ev_button.width:
 			x = main.stack.variables.get_int("ev_items_x")
 			y += main.stack.variables.get_int("ev_spacing_y")
 	if left_arrow:
@@ -287,6 +308,13 @@ func load_page_overview():
 func highlight_evidence(evname):
 	if not zoom:
 		name_label.text = ev_db[evname]["name"]
+		
+func ws_record_zoom_evidence(script, arguments):
+	var evname = arguments[0]
+	main.stack.variables.set_val("_selected", evname)
+	zoom = true
+	offset = main.stack.evidence_pages.get(page, []).find(evname)
+	reset()
 
 func click_option(option):
 	if option.begins_with("MODE_"):

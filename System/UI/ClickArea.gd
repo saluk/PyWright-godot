@@ -11,6 +11,7 @@ var over := false
 var clicked := false
 
 var macroname:String  # Macro to call when button is pressed
+var macroargs:Array
 
 func _enter_tree():
 	parent = get_parent()
@@ -56,7 +57,7 @@ func on_gui_input(event):
 		else:
 			clicked = false
 			set_highlight()
-			Commands.call_macro(macroname, parent.wrightscript, [])
+			Commands.call_command(macroname, parent.wrightscript, macroargs)
 
 # TODO - allow customize click colors in wrightscript
 # TODO - allow change clicked graphic for gui Button
@@ -78,4 +79,5 @@ func set_highlight():
 			final_color = Vector3(1,1,1)
 			final_amount = 0.5
 	parent.set_sprite(final_sprite)
-	parent.current_sprite.set_colorize(final_color, final_amount)
+	if parent.current_sprite:
+		parent.current_sprite.set_colorize(final_color, final_amount)

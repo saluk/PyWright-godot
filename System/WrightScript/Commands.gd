@@ -233,6 +233,10 @@ func call_command(command, script, arguments):
 	
 	if is_macro(command):
 		return call_macro(command, script, arguments)
+		
+	for object in get_objects(null):
+		if object.has_method("ws_"+command):
+			return object.callv("ws_"+command, [script, arguments])
 	return UNDEFINED
 	
 # Create a macro which when ran calls object.function from godot
