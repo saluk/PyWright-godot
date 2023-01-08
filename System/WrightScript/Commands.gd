@@ -248,6 +248,7 @@ func add_internal_command(macro_name, object, function_name, function_args):
 	
 # TODO as with add_macro_command, this can be removed when interfaces
 # are wrightscript native
+# TODO SOON - moving from add_button_to_interface to helper functions found in ObjectFactory
 func add_button_to_interface(root, normal, highlight, function_name, function_args=[], rect=null):
 	var template = ObjectFactory.get_template("button")
 	var macro_name = "_INTERNAL_"+function_name.replace(" ","_")
