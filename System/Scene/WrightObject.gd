@@ -2,15 +2,15 @@ extends Node2D
 class_name WrightObject
 
 # Definitions
-var root_path:String
-var base_path:String    # The base path ("edgeworth") before variants and sprites
-var variant_path:String # The variant path ("normal") before sprites are loaded
-var script_name:String  # How to identify the character
+export var root_path:String = "res://"
+export var base_path:String    # The base path ("edgeworth") before variants and sprites
+export var variant_path:String # The variant path ("normal") before sprites are loaded
+export var script_name:String  # How to identify the character
+
 var char_name:String    # What this character is called for nametag purposes
-var sub_rect:Rect2      # Cut out this rectangle from the sprite frames
 
 # Animation state
-var sprite_key:String
+export var sprite_key:String
 # Depending on the object, the sprite key can be important
 #   - default: a default key
 #   - talk: the talk animation of a portrait
@@ -69,7 +69,6 @@ func get_height():
 	if current_sprite:
 		return current_sprite.height
 	return 0
-		
 
 # Cleanup
 

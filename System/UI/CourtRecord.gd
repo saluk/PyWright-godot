@@ -12,18 +12,20 @@ var offset = 0
 var zoom = false
 
 var ev_db = {}
-onready var IButtonS = load("res://System/UI/IButton.gd")
 
 var in_presentation_context = false
 
 var name_label:Label
 var page_label:Label
 
+var has_objects = false
+
 func can_present():
 	# TODO tie this to variables
 	return in_presentation_context
 
 func reset():
+	has_objects = false
 	for child in get_children():
 		child.queue_free()
 	load_art(root_path)
@@ -40,20 +42,36 @@ func load_art(root_path):
 	page_label.text = ""
 	
 	self.root_path = root_path
-	var bg = PWSprite.new()
-	var evbg_path = main.stack.variables.get_string("ev_mode_bg_evidence")
-	evbg_path = Filesystem.lookup_file(
-		"art/"+evbg_path+".png",
-		root_path
-	)
-	bg.load_animation(evbg_path)
-	add_child(bg)
 	
+func add_button(normal, highlight, button_name):
+	var button = Commands.add_button_to_interface(
+		self,
+		normal,
+		highlight,
+		"click_button",
+		[button_name]
+	)
+	return button
+	
+func _process(dt):
+	if has_objects:
+		return
+	has_objects = true
+	var evbg_path = main.stack.variables.get_string("ev_mode_bg_evidence")
+	var bg = ObjectFactory.create_from_template(
+		main.top_script(),
+		"graphic",
+		[evbg_path],
+		script_name
+	)
+	
+	# Ensure interface doesn't allow clicks below it
 	# TODO - it's weird to have to make guis to block things off, should be
-	# built into PWSprite
+	# built into ObjectFactory template maybe?
 	var blocker = Control.new()
+	blocker.name = "BLOCKER"
 	blocker.rect_size = Vector2(bg.width, bg.height)
-	add_child(blocker)
+	bg.add_child(blocker)
 	
 	position = Vector2(0, 192)
 	z = ZLayers.z_sort[script_name]
@@ -62,31 +80,21 @@ func load_art(root_path):
 	add_child(page_label)
 	add_child(name_label)
 	
-func add_button(normal, highlight, button_name):
-	print(normal, highlight)
-	var button = IButton.new(
-		Filesystem.load_atlas_frames(
-			Filesystem.lookup_file(normal, root_path)
-		)[0],
-		Filesystem.load_atlas_frames(
-			Filesystem.lookup_file(highlight, root_path)
-		)[0]
-	)
-	button.menu = self
-	button.button_name = button_name
-	add_child(button)
-	return button
-	
 func load_back_button():
-	var back_button = add_button(
+	# TODO only load this if we are allowed
+	var back_button = Commands.add_button_to_interface(
+		self,
 		"art/general/back.png",
 		"art/general/back_high.png",
-		"_^BACK^_"
+		"click_back_from_court_record"
 	)
 	back_button.position = Vector2(
-		back_button.width/2,
-		192-back_button.height/2
+		0,
+		192-back_button.height
 	)
+	
+func ws_click_back_from_court_record(script, arguments):
+	queue_free()
 	
 func load_page_button():
 	var pages = main.stack.evidence_pages.keys()

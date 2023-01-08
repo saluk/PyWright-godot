@@ -258,10 +258,8 @@ func add_button_to_interface(root, normal, highlight, function_name, function_ar
 	template["sprites"]["highlight"]["path"] = highlight
 	template["rect"] = rect
 	var button = ObjectFactory.create_from_template(
-		get_tree().root.get_node("Main").top_script(), template, []
+		get_tree().root.get_node("Main").top_script(), template, [], root.script_name
 	)
-	button.get_parent().remove_child(button)
-	root.add_child(button)
 	add_internal_command(macro_name, root, function_name, function_args)
 	return button
 	

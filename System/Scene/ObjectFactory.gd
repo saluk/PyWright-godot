@@ -17,6 +17,7 @@ func get_main():
 var TEMPLATES = {
 	"bg":
 		{
+			"default_name": "bg",
 			"sprites": {
 				"default": {
 					"path": "art/bg/{base}.png",
@@ -36,6 +37,7 @@ var TEMPLATES = {
 		},
 	"fg":
 		{
+			"default_name": "fg",
 			"sprites": {
 				"default": {
 					"path": "art/fg/{base}.png",
@@ -55,6 +57,7 @@ var TEMPLATES = {
 		},
 	"graphic":
 		{
+			"default_name": "graphic",
 			"sprites": {
 				"default": {
 					"path": "art/{base}.png",
@@ -74,6 +77,7 @@ var TEMPLATES = {
 		},
 	"portrait":
 		{
+			"default_name": "portrait",
 			"sprites": {
 				"talk": {
 					"path": "art/port/{base}/{variant}(talk).png",
@@ -101,6 +105,7 @@ var TEMPLATES = {
 		},
 	"button":
 		{
+			"default_name": "button",
 			"sprites": {
 				"default": {
 					"path": "art/{base}.png",
@@ -124,13 +129,24 @@ var TEMPLATES = {
 		}
 }
 
-func create_from_template(script, template_key_or_template, arguments=[]):
+func create_from_template(script, template_key_or_template, arguments=[], parent_name=null):
 	var object:Node
 	var template = template_key_or_template
 	if template_key_or_template is String:
 		template = TEMPLATES[template_key_or_template].duplicate()
 	object = load("res://System/Scene/WrightObject.gd").new()
-	get_main_screen().add_child(object)
+	
+	var parent
+	if not parent_name:
+		parent = get_main_screen()
+	else:
+		parent = Commands.get_objects(parent_name)
+		if not parent:
+			parent = get_main_screen()
+			get_main_screen().log_error("Failed to find parent:"+parent_name)
+		else:
+			parent = parent[0]
+	parent.add_child(object)
 	object.main = get_main()
 	object.wrightscript = script
 	var keyword_arguments = Commands.keywords(arguments)
@@ -154,6 +170,13 @@ func create_from_template(script, template_key_or_template, arguments=[]):
 	if arguments:
 		object.script_name = keyword_arguments.get("name", arguments[0])
 		object.add_to_group("name_"+object.script_name)
+	else:
+		if object.base_path:
+			object.script_name = object.base_path
+		elif object.variant_path:
+			object.script_name = object.variant_path
+		else:
+			object.script_name = template["default_name"]
 	if keyword_arguments.get("z", null)!=null:
 		object.z = int(keyword_arguments["z"])
 	else:

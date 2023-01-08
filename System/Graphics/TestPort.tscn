@@ -1,6 +1,6 @@
 [gd_scene load_steps=21 format=2]
 
-[ext_resource path="res://System/Graphics/PWSprite.gd" type="Script" id=1]
+[ext_resource path="res://System/Scene/WrightObject.gd" type="Script" id=1]
 [ext_resource path="res://System/UI/Textbox.tscn" type="PackedScene" id=2]
 [ext_resource path="res://System/Mesh.gd" type="Script" id=3]
 [ext_resource path="res://games/diamond/magnus diamond test/art/models/gembig.obj" type="ArrayMesh" id=4]
