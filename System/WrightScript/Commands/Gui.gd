@@ -18,7 +18,7 @@ func gui_button(script, arguments):
 		arguments.append("button_text="+text)
 	var graphic = kw.get("graphic", "")
 	var graphichigh = kw.get("graphichigh", "")
-	var template = ObjectFactory.TEMPLATES["button"].duplicate()
+	var template = ObjectFactory.get_template("button")
 	template["sprites"]["default"]["path"] = "art/{base}.png".format({"base": graphic})
 	if graphichigh:
 		template["sprites"]["highlight"]["path"] = "art/{base}.png".format({"base": graphichigh})

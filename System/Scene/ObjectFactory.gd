@@ -21,10 +21,12 @@ var TEMPLATES = {
 			"sprites": {
 				"default": {
 					"path": "art/bg/{base}.png",
-					"animation_mode": "loop"
+					"animation_mode": "loop",
+					"mirror": [1, 1]
 				}
 			},
 			"centered": false,
+			"mirror": [1, 1],
 			"block_script": false,
 			"groups": [Commands.SPRITE_GROUP, Commands.BG_GROUP, Commands.CLEAR_GROUP],
 			"start_sprite": "default",
@@ -41,10 +43,12 @@ var TEMPLATES = {
 			"sprites": {
 				"default": {
 					"path": "art/fg/{base}.png",
-					"animation_mode": "loop"
+					"animation_mode": "loop",
+					"mirror": [1, 1]
 				}
 			},
 			"centered": true,
+			"mirror": [1, 1],
 			"block_script": true,
 			"groups": [Commands.SPRITE_GROUP, Commands.FG_GROUP, Commands.CLEAR_GROUP],
 			"start_sprite": "default",
@@ -61,10 +65,12 @@ var TEMPLATES = {
 			"sprites": {
 				"default": {
 					"path": "art/{base}.png",
-					"animation_mode": "loop"
+					"animation_mode": "loop",
+					"mirror": [1, 1]
 				}
 			},
 			"centered": false,
+			"mirror": [1, 1],
 			"block_script": false,
 			"groups": [Commands.SPRITE_GROUP],
 			"start_sprite": "default",
@@ -81,18 +87,22 @@ var TEMPLATES = {
 			"sprites": {
 				"talk": {
 					"path": "art/port/{base}/{variant}(talk).png",
-					"animation_mode": "talk"
+					"animation_mode": "talk",
+					"mirror": [1, 1]
 				},
 				"blink": {
 					"path": "art/port/{base}/{variant}(blink).png",
-					"animation_mode": "blink"
+					"animation_mode": "blink",
+					"mirror": [1, 1]
 				},
 				"combined": {
 					"path": "art/port/{base}/{variant}(combined).png",
-					"animation_mode": "loop"
+					"animation_mode": "loop",
+					"mirror": [1, 1]
 				},
 			},
 			"centered": true,
+			"mirror": [1, 1],
 			"block_script": false,
 			"groups": [Commands.CHAR_GROUP, Commands.SPRITE_GROUP, Commands.CLEAR_GROUP],
 			"start_sprite": "blink",
@@ -109,14 +119,17 @@ var TEMPLATES = {
 			"sprites": {
 				"default": {
 					"path": "art/{base}.png",
-					"animation_mode": "once"
+					"animation_mode": "once",
+					"mirror": [1, 1]
 				},
 				"highlight": {
 					"path": "art/{base}_high.png",
-					"animation_mode": "once"
+					"animation_mode": "once",
+					"mirror": [1, 1]
 				}
 			},
 			"centered": false,
+			"mirror": [1, 1],
 			"block_script": false,
 			"groups": [Commands.SPRITE_GROUP],
 			"start_sprite": "default",
@@ -129,11 +142,40 @@ var TEMPLATES = {
 		}
 }
 
+# Get a template to be modified and then passed into create_from_template
+func get_template(key):
+	return TEMPLATES[key].duplicate(true)
+	
+# Helper functions to modify a template
+
+# Add, remove, or update a sprite
+func update_sprite(template, key, data={}):
+	data = data.duplicate(true)
+	if not key in template["sprites"]:
+		template["sprites"][key] = data
+	else:
+		template["sprites"][key].merge(data, true)
+		
+# Update potentially all values in the template
+func update_template(template, data={}):
+	data = data.duplicate(true)
+	template.merge(data, true)
+	
+# Set up the template to call a macro when the button is clicked that we also define here
+func make_internal_command(template, object, function_name, function_args):
+	var macro_name = "_INTERNAL_"+function_name+"."+"_".join(function_args)
+	var function = function_name
+	if function_args:
+		function += " "+" ".join(function_args)
+	get_main().stack.macros[macro_name] = [function]
+	Commands.external_commands["ws_"+function_name] = object
+	template["click_macro"] = macro_name
+
 func create_from_template(script, template_key_or_template, arguments=[], parent_name=null):
 	var object:Node
 	var template = template_key_or_template
 	if template_key_or_template is String:
-		template = TEMPLATES[template_key_or_template].duplicate()
+		template = get_template(template_key_or_template)
 	object = load("res://System/Scene/WrightObject.gd").new()
 	
 	var parent
@@ -162,9 +204,10 @@ func create_from_template(script, template_key_or_template, arguments=[], parent
 		var rc = keyword_arguments["rect"].split(",")
 		template["rect"] = Rect2(int(rc[0]), int(rc[1]), int(rc[2]), int(rc[3]))
 	if "flipx" in arguments:
-		object.mirror.x = -1
+		template["mirror"][0] = -1
 	if "flipy" in arguments:
-		object.mirror.y = -1
+		template["mirror"][1] = -1
+		
 	object.load_sprites(template)
 	last_object = object
 	if arguments:

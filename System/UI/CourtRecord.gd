@@ -126,14 +126,19 @@ func load_arrow(direction):
 	var pos = Vector2(5, 92)
 	if direction == "R":
 		pos.x = 241
-	var b = IButton.new(null, null, pos, Vector2(30, 30), false)
-	b.menu = self
-	b.button_name = "ARROW_"+direction
-	b.name = b.button_name
-	var l = Label.new()
-	l.text = direction
-	b.add_child(l)
-	add_child(b)
+	var template = ObjectFactory.get_template("button")
+	ObjectFactory.update_sprite(template, "default", {"path":"art/general/arrow_right.png"})
+	if direction == "L":
+		ObjectFactory.update_template(template, {"mirror":[-1, 1]})
+	ObjectFactory.make_internal_command(template, self, "record_click_direction", [direction])
+	var b = ObjectFactory.create_from_template(main.top_script(), template, [], script_name)
+	b.position = pos
+	
+func ws_record_click_direction(script, arguments):
+	var direction = {"L":-1, "R":1}[arguments[0]]
+	offset += direction*{true:1, false:8}[zoom]
+	reset()
+	return
 	
 func load_page():
 	page_label.text = page
@@ -287,12 +292,6 @@ func click_option(option):
 	if option.begins_with("MODE_"):
 		page = option.split("_")[1]
 		offset = 0
-		reset()
-		return
-	if option.begins_with("ARROW_"):
-		var direction = option.split("_")[1]
-		direction = {"L":-1, "R":1}[direction]
-		offset += direction*{true:1, false:8}[zoom]
 		reset()
 		return
 	if option.begins_with("^PRESENT^_"):

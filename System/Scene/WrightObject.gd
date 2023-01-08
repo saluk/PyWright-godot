@@ -26,6 +26,7 @@ var _width_override = null
 var _height_override = null
 var width setget set_width_override, get_width
 var height setget set_height_override, get_height
+var click_area
 
 var template:Dictionary # Remember the template we were initialized with, useful for save/load
 
@@ -98,6 +99,8 @@ func init():
 #  path: path of sprite to load
 #  animation_mode: loop, once, blink, talk, ...
 func add_sprite(sprite_key, sprite_template):
+	if not sprite_template["path"]:
+		return
 	var filename = Filesystem.lookup_file(
 		sprite_template["path"].format({
 			"base": base_path,
@@ -123,12 +126,16 @@ func load_sprites(template, sprite_key=null):
 		process_combined()
 	if not sprite_key:
 		sprite_key = template["start_sprite"]
-	set_sprite(sprite_key)
+	# TODO mirror property should be set by the sprite!
+	mirror.x = template["mirror"][0]
+	mirror.y = template["mirror"][1]
 	
 	if template["clickable"]:
-		var click_area = ClickArea.new()
+		click_area = ClickArea.new()
 		click_area.macroname = template["click_macro"]
 		add_child(click_area)
+		
+	set_sprite(sprite_key)
 		
 func has_sprite(sprite_key):
 	return sprite_key in sprites
@@ -162,6 +169,7 @@ func set_sprite(new_sprite_key):
 		set_wait(wait)
 		emit_signal("started_playing")
 		current_sprite.connect("finished_playing", self, "sprite_finished_playing")
+		# TODO center and mirror should be controlled by the sprite
 		if centered:
 			current_sprite.position = Vector2(256/2-current_sprite.width/2, 192/2-current_sprite.height/2)
 		if mirror.x < 0:

@@ -39,18 +39,6 @@ func load_art(root_path):
 		add_child(bg_ob)
 	self.root_path = root_path
 	setup_crosshair()
-
-	examine_button = Commands.add_button_to_interface(
-		self,
-		"art/general/check.png",
-		"",
-		"check_from_examine"
-	)
-	examine_button.position = Vector2(
-		256-examine_button.width,
-		192-examine_button.height
-	)
-	examine_button.visible = false
 	position = Vector2(0, 192)
 	
 func setup_crosshair():
@@ -123,6 +111,17 @@ func update():
 		back_button.position = Vector2(
 			0,
 			192-back_button.height
+		)
+	if not examine_button:
+		examine_button = Commands.add_button_to_interface(
+			self,
+			"art/general/check.png",
+			"",
+			"check_from_examine"
+		)
+		examine_button.position = Vector2(
+			256-examine_button.width,
+			192-examine_button.height
 		)
 
 	examine_button.visible = false

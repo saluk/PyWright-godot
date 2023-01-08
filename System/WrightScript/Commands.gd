@@ -249,16 +249,24 @@ func add_internal_command(macro_name, object, function_name, function_args):
 # TODO as with add_macro_command, this can be removed when interfaces
 # are wrightscript native
 func add_button_to_interface(root, normal, highlight, function_name, function_args=[], rect=null):
-	var template = ObjectFactory.TEMPLATES["button"].duplicate()
+	var template = ObjectFactory.get_template("button")
 	var macro_name = "_INTERNAL_"+function_name.replace(" ","_")
 	if function_args:
 		macro_name += "."+"-".join(function_args)
-	template["click_macro"] = macro_name
-	template["sprites"]["default"]["path"] = normal
-	template["sprites"]["highlight"]["path"] = highlight
-	template["rect"] = rect
+	
+	ObjectFactory.update_template(template, {
+		"click_macro": macro_name,
+		"rect": rect
+	})
+	ObjectFactory.update_sprite(template, "default", {
+		"path": normal
+	})
+	ObjectFactory.update_sprite(template, "highlight", {
+		"path": highlight
+	})
+
 	var button = ObjectFactory.create_from_template(
-		get_tree().root.get_node("Main").top_script(), template, [], root.script_name
+		get_tree().root.get_node("Main").top_script(), template, []
 	)
 	add_internal_command(macro_name, root, function_name, function_args)
 	return button

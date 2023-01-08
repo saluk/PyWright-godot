@@ -26,6 +26,11 @@ func sync_area():
 	if current_sprite:
 		rect_position = current_sprite.position# + Vector2(-current_sprite.width/2, -current_sprite.height/2)
 		rect_size = Vector2(current_sprite.width, current_sprite.height)
+		# TODO mirror property should be set by the sprite!
+		if parent.mirror.x < 0:
+			rect_position.x -= current_sprite.width
+		if parent.mirror.y < 0:
+			rect_position.y -= current_sprite.height
 		update()
 
 func _draw():
