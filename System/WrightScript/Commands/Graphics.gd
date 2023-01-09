@@ -25,6 +25,7 @@ func ws_obj(script, arguments):
 	var obj:Node = ObjectFactory.create_from_template(
 		script,
 		"graphic",
+		{},
 		arguments
 	)
 	return obj
@@ -34,13 +35,13 @@ func ws_bg(script, arguments):
 		return
 	if not "stack" in arguments:
 		main.get_tree().call_group(Commands.CLEAR_GROUP, "queue_free")
-	var bg:Node = ObjectFactory.create_from_template(script, "bg", arguments)
+	var bg:Node = ObjectFactory.create_from_template(script, "bg", {}, arguments)
 	return bg
 	
 func ws_fg(script, arguments):
 	if not main.get_tree():
 		return
-	var fg:Node = ObjectFactory.create_from_template(script, "fg", arguments)
+	var fg:Node = ObjectFactory.create_from_template(script, "fg", {}, arguments)
 	return fg
 
 # TODO support more commands
@@ -61,6 +62,7 @@ func ws_char(script, arguments):
 	var character = ObjectFactory.create_from_template(
 		script,
 		"portrait",
+		{},
 		arguments
 	)
 	if "hide" in arguments:

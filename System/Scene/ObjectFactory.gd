@@ -178,13 +178,24 @@ func make_internal_command(template, object, function_name, function_args):
 	Commands.external_commands["ws_"+function_name] = object
 	template["click_macro"] = macro_name
 
-func create_from_template(script, template_key_or_template, arguments=[], parent_name=null):
-	var object:Node
+func create_from_template(
+		script, 
+		template_key_or_template, 
+		modify_template={}, 
+		arguments=[],
+		parent_name=null
+	):
+
+	
+	# Load and modify template
 	var template = template_key_or_template
 	if template_key_or_template is String:
-		template = get_template(template_key_or_template)
-	object = load("res://System/Scene/WrightObject.gd").new()
+		template = get_template(template_key_or_template, modify_template)
 	
+	# Make object
+	var object:Node = load("res://System/Scene/WrightObject.gd").new()
+	
+	# Find parent and add object to it
 	var parent
 	if not parent_name:
 		parent = get_main_screen()
@@ -196,8 +207,11 @@ func create_from_template(script, template_key_or_template, arguments=[], parent
 		else:
 			parent = parent[0]
 	parent.add_child(object)
+	
+	# Initialize object values
 	object.main = get_main()
 	object.wrightscript = script
+
 	var keyword_arguments = Commands.keywords(arguments)
 	var x=int(keyword_arguments.get("x", 0))
 	var y=int(keyword_arguments.get("y", 0))

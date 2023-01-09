@@ -61,6 +61,7 @@ func _process(dt):
 	var bg = ObjectFactory.create_from_template(
 		main.top_script(),
 		"graphic",
+		{},
 		[evbg_path],
 		script_name
 	)
@@ -84,15 +85,16 @@ func load_back_button():
 	# TODO only load this if we are allowed
 	var back_button = ObjectFactory.create_from_template(
 		main.top_script(), 
-		ObjectFactory.get_template("button", {
-				"sprites": {
-					"default": {"path":"art/general/back.png"},
-					"highlight": {"path":"art/general/back_high.png"}
-				},
-				"click_macro": "click_back_from_court_record",
-			}), 
-			[], 
-			script_name
+		"button",
+		{
+			"sprites": {
+				"default": {"path":"art/general/back.png"},
+				"highlight": {"path":"art/general/back_high.png"}
+			},
+			"click_macro": "click_back_from_court_record",
+		},
+		[],
+		script_name
 	)
 	back_button.position = Vector2(
 		0,
@@ -119,16 +121,17 @@ func load_page_button():
 	var next_page = pages[cur_i]
 	var b = ObjectFactory.create_from_template(
 		main.top_script(), 
-		ObjectFactory.get_template("button", {
-				"sprites": {
-					"default": {"path":"art/general/evidence_mode_button.png"},
-					"highlight": {"path":"art/general/evidence_mode_button_high.png"}
-				},
-				"click_macro": "click_page_from_court_record",
-				"click_args": [next_page]
-			}), 
-			[], 
-			script_name
+		"button", 
+		{
+			"sprites": {
+				"default": {"path":"art/general/evidence_mode_button.png"},
+				"highlight": {"path":"art/general/evidence_mode_button_high.png"}
+			},
+			"click_macro": "click_page_from_court_record",
+			"click_args": [next_page]
+		}, 
+		[], 
+		script_name
 	)
 	b.position = Vector2(256-b.width, 0)
 	var l = Label.new()
@@ -143,16 +146,17 @@ func load_arrow(direction):
 		pos.x = 241
 	var b = ObjectFactory.create_from_template(
 		main.top_script(), 
-		ObjectFactory.get_template("button", {
+		"button", 
+		{
 				"sprites": {
 					"default": {"path":"art/general/evidence_arrow_right.png"}
 				},
 				"mirror": [{"L":-1, "R": 1}[direction], 1],
 				"click_macro": "record_click_direction",
 				"click_args": [direction]
-			}), 
-			[], 
-			script_name
+		}, 
+		[], 
+		script_name
 	)
 	b.position = pos
 	
@@ -233,16 +237,17 @@ func load_page_zoom():
 			select(evname)
 			var present_button = ObjectFactory.create_from_template(
 				main.top_script(), 
-				ObjectFactory.get_template("button", {
-						"sprites": {
-							"default": {"path":"art/general/press/present2.png"},
-							"highlight": {"path":"art/general/press/present2_high.png"}
-						},
-						"click_macro": "record_click_present",
-						"click_args": [evname]
-					}), 
-					[], 
-					script_name
+				"button", 
+				{
+					"sprites": {
+						"default": {"path":"art/general/press/present2.png"},
+						"highlight": {"path":"art/general/press/present2_high.png"}
+					},
+					"click_macro": "record_click_present",
+					"click_args": [evname]
+				}, 
+				[], 
+				script_name
 			)
 			present_button.position = Vector2(100,0)
 	if left_arrow:
@@ -289,15 +294,16 @@ func load_page_overview():
 			)
 		var ev_button = ObjectFactory.create_from_template(
 			main.top_script(), 
-			ObjectFactory.get_template("button", {
-					"sprites": {
-						"default": {"path":ev_path.replace("res://", "")}
-					},
-					"click_macro": "record_zoom_evidence",
-					"click_args": [evname]
-				}), 
-				[], 
-				script_name
+			"button", 
+			{
+				"sprites": {
+					"default": {"path":ev_path.replace("res://", "")}
+				},
+				"click_macro": "record_zoom_evidence",
+				"click_args": [evname]
+			}, 
+			[], 
+			script_name
 		)
 		ev_button.position = Vector2(x, y)
 		if ev_button.current_sprite:

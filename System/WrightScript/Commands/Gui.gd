@@ -29,6 +29,7 @@ func gui_button(script, arguments):
 	button = ObjectFactory.create_from_template(
 		script,
 		template,
+		{},
 		arguments
 	)
 	if not button:

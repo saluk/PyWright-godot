@@ -271,7 +271,7 @@ func add_button_to_interface(root, normal, highlight, function_name, function_ar
 	})
 
 	var button = ObjectFactory.create_from_template(
-		get_tree().root.get_node("Main").top_script(), template, []
+		get_tree().root.get_node("Main").top_script(), template, {}, []
 	)
 	add_internal_command(macro_name, root, function_name, function_args)
 	return button
