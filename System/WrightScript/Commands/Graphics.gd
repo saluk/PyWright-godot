@@ -52,13 +52,6 @@ func ws_char(script, arguments):
 	# If we don't "stack" then delete existing character
 	if not "stack" in arguments and not "hide" in arguments:
 		main.get_tree().call_group(Commands.CHAR_GROUP, "queue_free")
-#	var character = ObjectFactory.create_object(
-#		script,
-#		"portrait", 
-#		"res://System/Graphics/PWChar.gd",
-#		[Commands.CHAR_GROUP, Commands.SPRITE_GROUP, Commands.CLEAR_GROUP],
-#		arguments
-#	)
 	var character = ObjectFactory.create_from_template(
 		script,
 		"portrait",

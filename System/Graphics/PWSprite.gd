@@ -13,6 +13,8 @@ var wait = false   # Pause script until animation has finished playing
 var wait_signal = "finished_playing"
 signal finished_playing
 
+# TODO needs to handle different animation modes, loop, once, and blink mode at minimum
+
 func free_members():
 	if animated_sprite and is_instance_valid(animated_sprite) and not animated_sprite.is_queued_for_deletion():
 		animated_sprite.free()
