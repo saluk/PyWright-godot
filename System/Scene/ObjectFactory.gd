@@ -222,6 +222,8 @@ func create_from_template(
 	if arguments:
 		object.base_path = arguments[0]
 	object.variant_path = template["default_variant"]
+	if keyword_arguments.get("e", null):
+		object.variant_path = keyword_arguments["e"]
 	object.root_path = script.root_path
 	if keyword_arguments.get("rect", null):
 		var rc = keyword_arguments["rect"].split(",")
