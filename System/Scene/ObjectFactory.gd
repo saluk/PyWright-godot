@@ -178,6 +178,8 @@ func make_internal_command(template, object, function_name, function_args):
 	Commands.external_commands["ws_"+function_name] = object
 	template["click_macro"] = macro_name
 
+# TODO we probably never need to pass any script other than the top script
+# should eliminate need for passing in the script
 func create_from_template(
 		script, 
 		template_key_or_template, 

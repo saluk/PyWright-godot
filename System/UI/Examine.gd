@@ -102,22 +102,35 @@ func ws_back_from_examine(script, arguments):
 		
 func update():
 	if allow_back_button and not back_button:
-		back_button = Commands.add_button_to_interface(
-			self,
-			"art/general/back.png",
-			"art/general/back_high.png",
-			"back_from_examine"
+		back_button = ObjectFactory.create_from_template(
+			get_tree().root.get_node("Main").top_script(),
+			"button",
+			{
+				"sprites": {
+					"default": {"path": "art/general/back.png"},
+					"highlight": {"path": "art/general/back_high.png"}
+				},
+				"click_macro": "back_from_examine"
+			},
+			[],
+			script_name
 		)
 		back_button.position = Vector2(
 			0,
 			192-back_button.height
 		)
 	if not examine_button:
-		examine_button = Commands.add_button_to_interface(
-			self,
-			"art/general/check.png",
-			"",
-			"check_from_examine"
+		examine_button = ObjectFactory.create_from_template(
+			get_tree().root.get_node("Main").top_script(),
+			"button",
+			{
+				"sprites": {
+					"default": {"path": "art/general/check.png"}
+				},
+				"click_macro": "check_from_examine"
+			},
+			[],
+			script_name
 		)
 		examine_button.position = Vector2(
 			256-examine_button.width,

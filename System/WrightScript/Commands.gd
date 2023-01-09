@@ -239,43 +239,6 @@ func call_command(command, script, arguments):
 			return object.callv("ws_"+command, [script, arguments])
 	return UNDEFINED
 	
-# Create a macro which when ran calls object.function from godot
-# TODO probably DONT want to do this long term, not save/load safe
-# it's mostly used with interfaces mainly implemented in gdscript
-# when interfaces can be implemented from wrightscript, it wont be needed
-func add_internal_command(macro_name, object, function_name, function_args):
-	var function = function_name
-	if function_args:
-		function += " "+" ".join(function_args)
-	get_tree().root.get_node("Main").stack.macros[macro_name] = [function]
-	Commands.external_commands["ws_"+function_name] = object
-	
-# TODO as with add_macro_command, this can be removed when interfaces
-# are wrightscript native
-# TODO SOON - moving from add_button_to_interface to helper functions found in ObjectFactory
-func add_button_to_interface(root, normal, highlight, function_name, function_args=[], rect=null):
-	var template = ObjectFactory.get_template("button")
-	var macro_name = "_INTERNAL_"+function_name.replace(" ","_")
-	if function_args:
-		macro_name += "."+"-".join(function_args)
-	
-	ObjectFactory.update_template(template, {
-		"click_macro": macro_name,
-		"rect": rect
-	})
-	ObjectFactory.update_sprite(template, "default", {
-		"path": normal
-	})
-	ObjectFactory.update_sprite(template, "highlight", {
-		"path": highlight
-	})
-
-	var button = ObjectFactory.create_from_template(
-		get_tree().root.get_node("Main").top_script(), template, {}, []
-	)
-	add_internal_command(macro_name, root, function_name, function_args)
-	return button
-	
 func is_macro(command):
 	if command.begins_with("{") and command.ends_with("}"):
 		return command.substr(1,command.length()-2)

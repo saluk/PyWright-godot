@@ -24,11 +24,18 @@ func load_art(root_path):
 	
 func update():
 	if allow_back_button and not back_button:
-		back_button = Commands.add_button_to_interface(
-			self,
-			"art/general/back.png",
-			"art/general/back_high.png",
-			"click_back_from_list"
+		back_button = ObjectFactory.create_from_template(
+			get_tree().root.get_node("Main").top_script(),
+			"button",
+			{
+				"sprites": {
+					"default": {"path": "art/general/back.png"},
+					"highlight": {"path": "art/general/back_high.png"}
+				},
+				"click_macro": "click_back_from_list"
+			},
+			[],
+			script_name
 		)
 		back_button.position = Vector2(
 			0,
@@ -37,12 +44,19 @@ func update():
 	.update()
 	
 func add_item(text, result):
-	var button = Commands.add_button_to_interface(
-		self,
-		"art/general/talkchoice.png",
-		"art/general/talkchoice_high.png",
-		"click_list_item",
-		[result]
+	var button = ObjectFactory.create_from_template(
+		get_tree().root.get_node("Main").top_script(),
+		"button",
+		{
+			"sprites": {
+				"default": {"path":"art/general/talkchoice.png"},
+				"highlight": {"path": "art/general/talkchoice_high.png"}
+			},
+			"click_macro": "click_list_item",
+			"click_args": [result],
+		},
+		[],
+		script_name
 	)
 	button.position = Vector2((256-button.width)/2, button_y)
 	button_y += button.height+5

@@ -19,13 +19,18 @@ func load_art(root_path):
 
 func add_option(option):
 	var rect_offset = relative_positions[option]
-	var button = Commands.add_button_to_interface(
-		self,
-		"art/general/talkbuttons.png",
-		"art/general/talkbuttons_high.png",
-		"investigate_option",
-		[option],
-		Rect2(226/2*rect_offset.x, 59/2*rect_offset.y, 226/2, 59/2)
+	var button = ObjectFactory.create_from_template(
+		get_tree().root.get_node("Main").top_script(),
+		"button",
+		{"sprites":{
+			"default": {"path": "art/general/talkbuttons.png"},
+			"highlight": {"path": "art/general/talkbuttons_high.png"}
+		},
+		"click_macro": "investigate_option",
+		"click_args": [option],
+		"rect": Rect2(226/2*rect_offset.x, 59/2*rect_offset.y, 226/2, 59/2)},
+		[],
+		script_name
 	)
 	button.position = Vector2(
 		(256/2-button.width) + rect_offset.x*button.width,

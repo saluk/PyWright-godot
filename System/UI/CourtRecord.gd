@@ -43,16 +43,6 @@ func load_art(root_path):
 	
 	self.root_path = root_path
 	
-func add_button(normal, highlight, button_name):
-	var button = Commands.add_button_to_interface(
-		self,
-		normal,
-		highlight,
-		"click_button",
-		[button_name]
-	)
-	return button
-	
 func _process(dt):
 	if has_objects:
 		return
