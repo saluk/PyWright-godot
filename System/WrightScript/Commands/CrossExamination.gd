@@ -78,10 +78,11 @@ func ws_present(script, arguments):
 
 # Show the court record to allow an evidence to be selected to present
 # TODO verify difference between present
+# TODO maybe this is what should hide the back button?
 # I *think* showpresent is meant to be called from an official cross examination
 # while present can be used outside of cross examinations
 func ws_showpresent(script, arguments):
-	Commands.call_command("present", script, arguments)
+	return Commands.call_command("present", script, arguments)
 
 # Show court record but dont allow evidence to be presented
 func ws_showrecord(script, arguments):

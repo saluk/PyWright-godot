@@ -226,15 +226,20 @@ func load_page_zoom():
 		add_child(desc)
 		
 		if can_present():
-			var present_button = IButton.new(
-				PWSprite.new().load_animation(Filesystem.lookup_file("art/general/press/present2.png", root_path)),
-				PWSprite.new().load_animation(Filesystem.lookup_file("art/general/press/present2_high.png", root_path)),
-				Vector2(100,0), null, false
+			var present_button = ObjectFactory.create_from_template(
+				main.top_script(), 
+				ObjectFactory.get_template("button", {
+						"sprites": {
+							"default": {"path":"art/general/press/present2.png"},
+							"highlight": {"path":"art/general/press/present2_high.png"}
+						},
+						"click_macro": "record_click_present",
+						"click_args": [evname]
+					}), 
+					[], 
+					script_name
 			)
-			present_button.menu = self
-			present_button.name = "Present button"
-			present_button.button_name = "^PRESENT^_"+evname
-			add_child(present_button)
+			present_button.position = Vector2(100,0)
 	if left_arrow:
 		load_arrow("L")
 	if right_arrow:
@@ -315,6 +320,9 @@ func ws_record_zoom_evidence(script, arguments):
 	zoom = true
 	offset = main.stack.evidence_pages.get(page, []).find(evname)
 	reset()
+	
+func ws_record_click_present(script, arguments):
+	present(arguments[0])
 
 func click_option(option):
 	if option.begins_with("MODE_"):
