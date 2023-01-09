@@ -117,18 +117,22 @@ func load_page_button():
 	elif cur_i == pages.size()-1:
 		cur_i = 0
 	var next_page = pages[cur_i]
-	var b = IButton.new(null, null, 
-		Vector2(
-			main.stack.variables.get_int("ev_modebutton_x"),
-			main.stack.variables.get_int("ev_modebutton_y")
-		),
-		Vector2(60, 30),
-		false
+	var b = ObjectFactory.create_from_template(
+		main.top_script(), 
+		ObjectFactory.get_template("button", {
+				"sprites": {
+					"default": {"path":"art/general/evidence_mode_button.png"},
+					"highlight": {"path":"art/general/evidence_mode_button_high.png"}
+				},
+				"click_macro": "click_page_from_court_record",
+				"click_args": [next_page]
+			}), 
+			[], 
+			script_name
 	)
-	b.menu = self
-	b.button_name = "MODE_"+next_page
-	b.name = b.button_name
+	b.position = Vector2(256-b.width, 0)
 	var l = Label.new()
+	l.rect_position += Vector2(18,8)
 	l.text = next_page
 	b.add_child(l)
 	add_child(b)
@@ -226,6 +230,7 @@ func load_page_zoom():
 		add_child(desc)
 		
 		if can_present():
+			select(evname)
 			var present_button = ObjectFactory.create_from_template(
 				main.top_script(), 
 				ObjectFactory.get_template("button", {
@@ -245,6 +250,8 @@ func load_page_zoom():
 	if right_arrow:
 		load_arrow("R")
 
+func select(evname):
+	main.stack.variables.set_val("_selected", evname)
 		
 func load_page_overview():
 	var x = main.stack.variables.get_int("ev_items_x")
@@ -316,35 +323,16 @@ func highlight_evidence(evname):
 		
 func ws_record_zoom_evidence(script, arguments):
 	var evname = arguments[0]
-	main.stack.variables.set_val("_selected", evname)
 	zoom = true
 	offset = main.stack.evidence_pages.get(page, []).find(evname)
 	reset()
 	
 func ws_record_click_present(script, arguments):
 	present(arguments[0])
-
-func click_option(option):
-	if option.begins_with("MODE_"):
-		page = option.split("_")[1]
-		offset = 0
-		reset()
-		return
-	if option.begins_with("^PRESENT^_"):
-		present(option.split("_")[1])
-		return
-	if option == "_^BACK^_":
-		if zoom:
-			zoom = false
-			offset = int(offset/8)
-			reset()
-			return
-		else:
-			queue_free()
-			return
-	main.stack.variables.set_val("_selected", option)
-	zoom = true
-	offset = main.stack.evidence_pages.get(page, []).find(option)
+	
+func ws_click_page_from_court_record(script, arguments):
+	page = arguments[0]
+	offset = 0
 	reset()
 	
 func present(option):
