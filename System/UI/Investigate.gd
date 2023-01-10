@@ -1,10 +1,7 @@
-extends Node2D
-var script_name = "invest_menu"
-var wait_signal = "tree_exited"
+extends WrightObject
 
 var scene_name:String
 var fail_label:String
-var z:int
 
 var order = ["examine", "move", "talk", "present"]
 var relative_positions = {
@@ -13,6 +10,11 @@ var relative_positions = {
 	"talk": Vector2(0, 1),
 	"present": Vector2(1, 1)
 }
+
+func _ready():
+	script_name = "invest_menu"
+	wait_signal = "tree_exited"
+	wait = true
 	
 func load_art(root_path):
 	pass

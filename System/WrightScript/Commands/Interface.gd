@@ -52,12 +52,11 @@ func ws_menu(script, arguments):
 func ws_localmenu(script, arguments):
 	var menu_name = arguments[0]
 	var kw = Commands.keywords(arguments)
-	var menu = ObjectFactory.create_object(
+	var menu = ObjectFactory.create_from_template(
 		script,
-		"menu",
-		"res://System/UI/Investigate.gd",
-		[Commands.SPRITE_GROUP],
-		["name=invest_menu"])
+		"investigate",
+		{}
+	)
 	for option in ["examine", "move", "talk", "present"]:
 		if WSExpression.string_to_bool(kw.get(option, "false")):
 			menu.add_option(option)

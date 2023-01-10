@@ -58,10 +58,6 @@ func get_value():
 	
 func set_value(value):
 	Commands.main.stack.variables.set_val(variable, value)
-	
-func set_wait(value):
-	# Standard WrightObjects only wait if they have a current_sprite
-	wait = value
 
 # TODO get sizes pixel perfect
 func _process(dt):

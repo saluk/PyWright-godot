@@ -143,8 +143,6 @@ func ws_penalty(script, arguments):
 		if not damage_amount or threat:
 			delay = 0
 	main.get_tree().call_group(Commands.PENALTY_GROUP, "queue_free")
-#	var penalty = ObjectFactory.create_object(script, "penalty", "res://System/UI/Penalty.gd", 
-#		[Commands.SPRITE_GROUP, Commands.PENALTY_GROUP], ["name=penalty"])
 	var penalty = ObjectFactory.create_from_template(
 		script,
 		"penalty",
