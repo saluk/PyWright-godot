@@ -68,6 +68,30 @@ var TEMPLATES = {
 			"click_macro": "",
 			"click_args": []
 		},
+	"ev":
+		{
+			"default_name": "ev",
+			"class": "WrightObject",
+			"sprites": {
+				"default": {
+					"path": "art/ev/{base}.png",
+					"animation_mode": "loop",
+					"mirror": [1, 1]
+				}
+			},
+			"centered": false,
+			"mirror": [1, 1],
+			"block_script": false,
+			"groups": [Commands.SPRITE_GROUP, Commands.CLEAR_GROUP],
+			"start_sprite": "default",
+			"sort_with": "evidence",
+			"default_variant": "",
+			"process_combined": false,
+			"rect": null,
+			"clickable": false,
+			"click_macro": "",
+			"click_args": []
+		},
 	"graphic":
 		{
 			"default_name": "graphic",
@@ -335,8 +359,6 @@ func create_object(script, command, class_path, groups, arguments=[]):
 			keyword_arguments.get("e", "normal"),
 			script.root_path
 		)
-	elif "PWEvidence" in class_path:
-		object.load_art(script.root_path, arguments[0])
 	elif object.has_method("load_animation"):
 		object.load_animation(
 			Filesystem.lookup_file(

@@ -5,18 +5,18 @@ class_name WrightObject
 export var root_path:String = "res://"
 export var base_path:String    # The base path ("edgeworth") before variants and sprites
 export var variant_path:String # The variant path ("normal") before sprites are loaded
-export var script_name:String  # How to identify the character
+export var script_name:String  # How to identify the object
 
 var char_name:String    # What this character is called for nametag purposes
 
 # Animation state
-export var sprite_key:String
+export var sprite_key:String  # Current chosen sprite
 # Depending on the object, the sprite key can be important
 #   - default: a default key
 #   - talk: the talk animation of a portrait
 #   - blink: the blink animation of a portrait
 #   - intro: an animation to show before switching to the default
-#   - high: highlight while the mouse is over a button
+#   - highlight: highlight while the mouse is over a button
 #   - clicked: highlight while the mouse is clicking down on a button
 
 var current_sprite:Node

@@ -32,6 +32,12 @@ char skye
 grey name=skye
 "I'm grey"
 
+label evidence
+set idcard_pic id card
+ev idcard x=10 y=10
+"show id card at 10,10"
+delete name=idcard
+
 label gui
 
 macro dostuff
@@ -39,7 +45,7 @@ macro dostuff
 goto next
 endmacro
 
-"click the button to continue{next}"
+"click the button to continue{p10}{next}"
 gui Button dostuff graphic=general/back_gba graphichigh=general/back_high_gba name=dostuff
 gui Wait
 label next

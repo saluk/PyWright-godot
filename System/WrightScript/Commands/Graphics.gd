@@ -90,11 +90,18 @@ func ws_bemo(script, arguments):
 	return ws_emo(script, arguments)
 
 func ws_ev(script, arguments):
-	var ev = ObjectFactory.create_object(
+	var ev_name = arguments[0]
+	var pic = Commands.main.stack.variables.get_string(ev_name+"_pic", ev_name)
+	var ev = ObjectFactory.create_from_template(
 		script,
-		"evidence",
-		"res://System/Graphics/PWEvidence.gd",
-		[Commands.SPRITE_GROUP, Commands.CLEAR_GROUP],
+		"ev",
+		{
+			"sprites": {
+				"default": {
+					"path": "art/ev/"+pic+".png"
+				}
+			}
+		},
 		arguments
 	)
 	return ev

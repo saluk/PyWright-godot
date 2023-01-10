@@ -35,11 +35,6 @@ _global_script_classes=[ {
 "path": "res://Main.gd"
 }, {
 "base": "Node2D",
-"class": "PWEvidence",
-"language": "GDScript",
-"path": "res://System/Graphics/PWEvidence.gd"
-}, {
-"base": "Node2D",
 "class": "PWSprite",
 "language": "GDScript",
 "path": "res://System/Graphics/PWSprite.gd"
@@ -75,7 +70,6 @@ _global_script_class_icons={
 "Colors": "",
 "Filesystem": "",
 "MainScene": "",
-"PWEvidence": "",
 "PWSprite": "",
 "Penalty": "",
 "Variables": "",
