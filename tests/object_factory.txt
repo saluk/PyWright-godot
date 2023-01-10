@@ -1,0 +1,124 @@
+label top
+clear
+goto now
+
+label now
+label bg
+bg courtroom
+"Courtroom is visible. Now show gavel animation"
+
+label fg
+fg ani-judge-gavel
+"Hopefully there was a delay"
+fg ani-judge-gavel nowait
+"Hopefully this is printed at the same time as the animation"
+fg pointer
+"pointer is centered"
+
+label port
+bg prosecution
+fg pbench
+char edgeworth
+"Basic edgeworth"
+emo name=edgeworth confident
+"Now edgeworth is confident"
+emo name=edgeworth document
+"I am holding a document. {n}{econfident} Now I am confident."
+char skye
+"I can load (combined) sprites too"
+
+label effects
+char skye
+grey name=skye
+"I'm grey"
+
+label evidence
+set idcard_pic id card
+ev idcard x=10 y=10
+"show id card at 10,10"
+delete name=idcard
+
+label gui
+
+macro dostuff
+"hello from the macro"
+goto next
+endmacro
+
+"click the button to continue{p10}{next}"
+gui Button dostuff graphic=general/back_gba graphichigh=general/back_high_gba name=dostuff
+gui Wait
+label next
+delete name=dostuff
+"finished gui section"
+
+label examine_menu_hidden
+set _enable_back_button false
+bg courtroom
+examine hide
+region 0 0 50 50 next2
+"you clicked the back button"
+label none
+"nothing found"
+goto examine_menu_hidden
+
+label next2
+"something found"
+
+label examine_menu_visible
+set _enable_back_button false
+bg courtroom
+examine
+region 0 0 50 50 next2
+"you clicked the back button, try again"
+goto examine_menu_visible
+
+label none
+"nothing found"
+goto examine_menu_visible
+
+label next2
+"something found"
+
+list list1
+li play list again
+li show next list
+showlist
+"Back button pressed, again."
+goto list1
+label play list again
+"Go back to the list"
+goto list1
+label show next list
+"continuing"
+
+list list2 noback
+li again
+li continue
+showlist
+"Back button pressed, again."
+goto list1
+label again
+"Go back to the list"
+goto list2
+label continue
+"continuing"
+
+label themenu
+localmenu talk=true examine=true move=true present=true fail=myfail
+label talk
+"talking 1"
+goto themenu
+label examine
+"examine 1"
+goto themenu
+label move
+"move 1"
+goto themenu
+label none
+"shouldn't get here"
+label myfail
+"myfail"
+
+"return to top{next}"
+goto top

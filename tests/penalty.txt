@@ -5,6 +5,12 @@ penalty +24
 
 clear
 set penalty 75
+"show penalty for a second"
+penalty delay=60
+"penalty gone"
+
+clear
+set penalty 75
 penalty -25 delay=100
 "Should see penalty go from 75 to 50 with long delay"
 

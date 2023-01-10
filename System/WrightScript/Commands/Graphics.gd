@@ -22,11 +22,10 @@ func ws_delete(script, arguments):
 func ws_obj(script, arguments):
 	if not main.get_tree():
 		return
-	var obj:Node = Commands.create_object(
+	var obj:Node = ObjectFactory.create_from_template(
 		script,
 		"graphic",
-		"res://System/Graphics/PWSprite.gd",
-		[Commands.SPRITE_GROUP],
+		{},
 		arguments
 	)
 	return obj
@@ -36,15 +35,13 @@ func ws_bg(script, arguments):
 		return
 	if not "stack" in arguments:
 		main.get_tree().call_group(Commands.CLEAR_GROUP, "queue_free")
-	var bg:Node = Commands.create_object(script, "bg", "res://System/Graphics/PWSprite.gd", 
-	[Commands.SPRITE_GROUP, Commands.BG_GROUP, Commands.CLEAR_GROUP], arguments)
+	var bg:Node = ObjectFactory.create_from_template(script, "bg", {}, arguments)
 	return bg
 	
 func ws_fg(script, arguments):
 	if not main.get_tree():
 		return
-	var fg:Node = Commands.create_object(script, "fg", "res://System/Graphics/PWSprite.gd", 
-	[Commands.SPRITE_GROUP, Commands.FG_GROUP, Commands.CLEAR_GROUP], arguments)
+	var fg:Node = ObjectFactory.create_from_template(script, "fg", {}, arguments)
 	return fg
 
 # TODO support more commands
@@ -55,11 +52,10 @@ func ws_char(script, arguments):
 	# If we don't "stack" then delete existing character
 	if not "stack" in arguments and not "hide" in arguments:
 		main.get_tree().call_group(Commands.CHAR_GROUP, "queue_free")
-	var character = Commands.create_object(
+	var character = ObjectFactory.create_from_template(
 		script,
-		"portrait", 
-		"res://System/Graphics/PWChar.gd",
-		[Commands.CHAR_GROUP, Commands.SPRITE_GROUP, Commands.CLEAR_GROUP],
+		"portrait",
+		{},
 		arguments
 	)
 	if "hide" in arguments:
@@ -84,9 +80,9 @@ func ws_emo(script, arguments):
 	else:
 		characters = Commands.get_objects(name, false, Commands.CHAR_GROUP)
 	if characters:
-		characters[0].load_emotion(emotion)
+		characters[0].change_variant(emotion)
 		if mode:
-			characters[0].play_state(mode)
+			characters[0].set_sprite(mode)
 			
 # TODO test
 func ws_bemo(script, arguments):
@@ -94,11 +90,18 @@ func ws_bemo(script, arguments):
 	return ws_emo(script, arguments)
 
 func ws_ev(script, arguments):
-	var ev = Commands.create_object(
+	var ev_name = arguments[0]
+	var pic = Commands.main.stack.variables.get_string(ev_name+"_pic", ev_name)
+	var ev = ObjectFactory.create_from_template(
 		script,
-		"evidence",
-		"res://System/Graphics/PWEvidence.gd",
-		[Commands.SPRITE_GROUP, Commands.CLEAR_GROUP],
+		"ev",
+		{
+			"sprites": {
+				"default": {
+					"path": "art/ev/"+pic+".png"
+				}
+			}
+		},
 		arguments
 	)
 	return ev
@@ -137,11 +140,14 @@ func ws_penalty(script, arguments):
 			damage_amount = arguments[0]
 	if delay==null:
 		delay = 50
-		if not (damage_amount or threat):
+		if not damage_amount or threat:
 			delay = 0
 	main.get_tree().call_group(Commands.PENALTY_GROUP, "queue_free")
-	var penalty = Commands.create_object(script, "penalty", "res://System/UI/Penalty.gd", 
-		[Commands.SPRITE_GROUP, Commands.PENALTY_GROUP], ["name=penalty"])
+	var penalty = ObjectFactory.create_from_template(
+		script,
+		"penalty",
+		{}
+	)
 	penalty.variable = variable
 	if threat:
 		penalty.threat_amount = int(threat)

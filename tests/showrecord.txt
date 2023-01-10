@@ -1,3 +1,5 @@
+label top
+"present evidence 2"
 addev evidence1
 set evidence1_desc This is a piece of evidence
 addev evidence2
@@ -21,6 +23,11 @@ addev profile7$
 addev profile8$
 addev profile9$
 showpresent
+label none
+"no label"
+goto top
+
+label evidence2
 enable_court_record_button
 "{$_cr_button}"
 {show_court_record_button}

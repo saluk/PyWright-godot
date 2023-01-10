@@ -18,6 +18,13 @@ func ws_nt(script, arguments):
 	main.stack.variables.set_val("_speaking", "")    		  # Set no character as speaking
 	main.stack.variables.set_val("_speaking_name", nametag)   # Next character will have this name
 
+# NEW 
+# finds the textbox and makes it continue
+func ws_advance_text(script, arguments):
+	for obj in Commands.get_objects(null, null, Commands.TEXTBOX_GROUP):
+		obj.click_continue()
+		return
+
 # TODO IMPLEMENT
 #    @category([VALUE('x','x value to place text'),VALUE('y','y value to place text'),VALUE('width','width of text block'),
 #    VALUE('height','height of text block (determines rows but the value is in pixels)'),

@@ -30,6 +30,10 @@ func keys():
 func set_val(key, value):
 	store[key] = str(value)
 	
+func set_truth(key, value):
+	if value:
+		store[key] = WSExpression.bool_to_string(value)
+	
 func del_val(key):
 	store.erase(key)
 

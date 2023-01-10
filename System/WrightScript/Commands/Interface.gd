@@ -2,18 +2,16 @@ extends Reference
 
 var main
 
+# TODO might not be the best place for this kind of temporary global variable but it works
+var next_examine := {}
+
 func _init(commands):
 	main = commands.main
 
 func ws_menu(script, arguments):
 	var menu_name = arguments[0]
 	var kw = Commands.keywords(arguments)
-	var menu = Commands.create_object(
-		script,
-		"menu",
-		"res://System/UI/Investigate.gd",
-		[Commands.SPRITE_GROUP],
-		["name=invest_menu"])
+	var menu = ws_localmenu(script, arguments)
 	menu.scene_name = menu_name
 	for option in ["examine", "move", "talk", "present"]:
 		print(kw)
@@ -52,31 +50,62 @@ func ws_menu(script, arguments):
 #        m.init_normal()
 #        return True
 func ws_localmenu(script, arguments):
-	pass
-
-func ws_examine(script, arguments):
-	var hide = "hide" in arguments
-	var fail = Commands.keywords(arguments).get("fail", "none")
-	var examine_menu = Commands.create_object(
+	var menu_name = arguments[0]
+	var kw = Commands.keywords(arguments)
+	var menu = ObjectFactory.create_from_template(
 		script,
-		"examine_menu",
-		"res://System/UI/Examine.gd",
-		[Commands.SPRITE_GROUP],
-		arguments
+		"investigate",
+		{}
 	)
-	if hide:
+	for option in ["examine", "move", "talk", "present"]:
+		if WSExpression.string_to_bool(kw.get(option, "false")):
+			menu.add_option(option)
+	menu.fail_label = kw.get("fail", "none")
+	return menu
+
+# Note - we handle region definitions in a bit of a weird way
+#  - in pywright, we create the examine interface, and then 
+#    step through the script adding regions to the object
+#  - no other object functions this way in wrightscript
+#  - From now on, we will add a command showexamine, similar to showlist
+#  - the region commands will buffer the regions and then they will be
+#    read by the examine object created by showexamine
+#  - For backwards compatibility:
+#      - showexamine will be added to scripts when preprocessing in the appropriate place
+#      - future wrightscript versions may require showexamine to be in the script
+func ws_examine(script, arguments):
+	next_examine = {
+		"hidden": false,
+		"regions": [],
+		"fail": "none"
+	}
+	next_examine["hidden"] = "hide" in arguments
+	next_examine["fail"] = Commands.keywords(arguments).get("fail", "none")
+	main.stack.variables.set_truth("_examine.hidden", next_examine["hidden"])
+	main.stack.variables.set_val("_examine.fail", next_examine["fail"])
+	
+func ws_region(script, arguments):
+	next_examine["regions"].append(arguments)
+	
+# NEW
+func ws_showexamine(script, arguments):
+	if not next_examine:
+		main.log_error("Examine must first be created with examine and region commands before it can be shown.")
+		return
+	var examine_menu = ObjectFactory.create_from_template(
+		script,
+		"examine_menu"
+	)
+	examine_menu.position = Vector2(0, 192)
+	for region_args in next_examine["regions"]:
+		examine_menu.add_region_args(region_args)
+	if next_examine["hidden"]:
 		examine_menu.reveal_regions = false
 		examine_menu.allow_back_button = false
-	examine_menu.fail = fail
-	var offset = 1
-	while 1:
-		var line = script.get_next_line(offset)
-		if line.begins_with("region"):
-			examine_menu.add_region_text(line)
-		else:
-			script.goto_line_number(offset, true)
-			break
-		offset += 1
+		# TODO probably need a backwards compatible way to disable the backbutton while still showing regions
+	examine_menu.fail = next_examine["fail"]
+	examine_menu.update()
+	next_examine = {}
 	return examine_menu
 	
 func ws_region3d(script, arguments):
@@ -94,13 +123,13 @@ func ws_list(script, arguments):
 	var tag
 	if arguments:
 		tag = arguments[0]
-	var list_menu = Commands.create_object(
+	var list_menu = ObjectFactory.create_from_template(
 		script,
-		"listmenu",
-		"res://System/UI/PWList.gd",
-		[Commands.SPRITE_GROUP, Commands.LIST_GROUP],
-		arguments
+		"list_menu"
 	)
+	list_menu.position = Vector2(0, 192)
+	list_menu.allow_back_button = not noback
+	list_menu.update()
 	
 func ws_li(script, arguments):
 	var list_menu = main.get_tree().get_nodes_in_group(Commands.LIST_GROUP)
