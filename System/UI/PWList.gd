@@ -1,10 +1,6 @@
-extends Node2D
-var script_name = "listmenu"
-var wait_signal = "tree_exited"
+extends WrightObject
 
 var scene_name:String
-var root_path
-var z
 
 var back_button
 var choice_art
@@ -16,11 +12,10 @@ var allow_back_button = true
 var fail = "none"
 
 # TODO figure out how we decide whther to show the back button or not
-	
-func load_art(root_path):
-	self.root_path = root_path
-	position = Vector2(0, 192)
-	z = ZLayers.z_sort[script_name]
+
+func _ready():
+	script_name = "listmenu"
+	wait_signal = "tree_exited"
 	
 func update():
 	if allow_back_button and not back_button:

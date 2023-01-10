@@ -123,13 +123,11 @@ func ws_list(script, arguments):
 	var tag
 	if arguments:
 		tag = arguments[0]
-	var list_menu = ObjectFactory.create_object(
+	var list_menu = ObjectFactory.create_from_template(
 		script,
-		"listmenu",
-		"res://System/UI/PWList.gd",
-		[Commands.SPRITE_GROUP, Commands.LIST_GROUP],
-		arguments
+		"list_menu"
 	)
+	list_menu.position = Vector2(0, 192)
 	list_menu.allow_back_button = not noback
 	list_menu.update()
 	

@@ -193,14 +193,15 @@ func set_wait(value):
 	if current_sprite:
 		if current_sprite.can_wait():
 			wait = value
+			return
 		wait = false
 		return
 
 	# We will never finish playing if we don't have a sprite
 	if wait_signal == "finished_playing":
 		wait = false
-		
-	wait = true
+
+	wait = value
 
 func sprite_finished_playing():
 	emit_signal("finished_playing")
