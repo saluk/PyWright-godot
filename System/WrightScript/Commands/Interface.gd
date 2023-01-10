@@ -92,13 +92,11 @@ func ws_showexamine(script, arguments):
 	if not next_examine:
 		main.log_error("Examine must first be created with examine and region commands before it can be shown.")
 		return
-	var examine_menu = ObjectFactory.create_object(
+	var examine_menu = ObjectFactory.create_from_template(
 		script,
-		"examine_menu",
-		"res://System/UI/Examine.gd",
-		[Commands.SPRITE_GROUP],
-		[]
+		"examine_menu"
 	)
+	examine_menu.position = Vector2(0, 192)
 	for region_args in next_examine["regions"]:
 		examine_menu.add_region_args(region_args)
 	if next_examine["hidden"]:

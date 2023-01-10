@@ -8,13 +8,9 @@
 #		 and save/loadable)
 #  For now we have this as a stopgap 
 
-extends Node2D
-var script_name = "examine_menu"
-var wait_signal = "tree_exited"
-var z:int
+extends WrightObject
 
 var scene_name:String
-var root_path
 
 var bg_obs = []
 
@@ -22,7 +18,7 @@ var back_button
 var examine_button
 var crosshair
 
-var click_area:Area2D
+var cross_area:Area2D
 
 var allow_back_button = true
 var reveal_regions = true
@@ -32,28 +28,28 @@ var current_region
 
 # TODO figure out how we decide whther to show the back button or not
 	
-func load_art(root_path):
+func _ready():
+	script_name = "examine_menu"
+	wait_signal = "tree_exited"
 	for bg_ob in Commands.get_objects(null, null, Commands.BG_GROUP):
 		bg_ob = bg_ob.duplicate()
 		bg_obs.append(bg_ob)
 		add_child(bg_ob)
-	self.root_path = root_path
 	setup_crosshair()
-	position = Vector2(0, 192)
 	
 func setup_crosshair():
 	crosshair = Crosshair.new()
 	add_child(crosshair)
-	click_area = Area2D.new()
+	cross_area = Area2D.new()
 	var shape := CollisionShape2D.new()
 	shape.shape = RectangleShape2D.new()
 	shape.shape.extents = Vector2(256, 192)/2
-	click_area.add_child(shape)
-	click_area.position = Vector2(256/2, 192/2)
-	add_child(click_area)
-	click_area.connect("input_event", self, "_on_click_area_input_event")
+	cross_area.add_child(shape)
+	cross_area.position = Vector2(256/2, 192/2)
+	add_child(cross_area)
+	cross_area.connect("input_event", self, "_on_cross_area_input_event")
 	
-func _on_click_area_input_event(viewport, event, shape_idx):
+func _on_cross_area_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton or event is InputEventMouseMotion:
 		if Input.get_mouse_button_mask() & BUTTON_LEFT:
 			var pos = event.position-position
