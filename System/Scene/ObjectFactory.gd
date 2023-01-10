@@ -16,7 +16,8 @@ func get_main():
 	
 var classes = {
 	"WrightObject": "res://System/Scene/WrightObject.gd",
-	"CourtRecord": "res://System/UI/CourtRecord.gd"
+	"CourtRecord": "res://System/UI/CourtRecord.gd",
+	"Penalty": "res://System/UI/Penalty.gd"
 }
 	
 var TEMPLATES = {
@@ -190,6 +191,24 @@ var TEMPLATES = {
 			"groups": [Commands.SPRITE_GROUP],
 			"start_sprite": "",
 			"sort_with": "evidence_menu",
+			"default_variant": "",
+			"process_combined": false,
+			"rect": null,
+			"clickable": false,
+			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
+			"click_args": []
+		},
+	"penalty":
+		{
+			"default_name": "evidence_menu",
+			"class": "Penalty",
+			"sprites": {},
+			"centered": false,
+			"mirror": [1, 1],
+			"block_script": true,
+			"groups": [Commands.SPRITE_GROUP, Commands.PENALTY_GROUP],
+			"start_sprite": "",
+			"sort_with": "penalty",
 			"default_variant": "",
 			"process_combined": false,
 			"rect": null,

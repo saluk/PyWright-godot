@@ -64,13 +64,6 @@ func ws_callpress(script, arguments):
 func ws_present(script, arguments):
 	var present = not "nopresent" in arguments
 	arguments.erase("nopresent")
-#	var cr = ObjectFactory.create_object(
-#		script, 
-#		"evidence_menu",
-#		"res://System/UI/CourtRecord.gd",
-#		[Commands.SPRITE_GROUP],
-#		arguments
-#	)
 	var cr = ObjectFactory.create_from_template(
 		script,
 		"court_record",

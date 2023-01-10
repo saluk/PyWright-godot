@@ -39,7 +39,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://System/Graphics/PWSprite.gd"
 }, {
-"base": "Node2D",
+"base": "WrightObject",
 "class": "Penalty",
 "language": "GDScript",
 "path": "res://System/UI/Penalty.gd"
