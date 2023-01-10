@@ -1,11 +1,5 @@
 # TODO - make it save your place, implement the ability to check
-extends Node2D
-var script_name = "evidence_menu"
-var wait_signal = "tree_exited"
-
-var main:Node
-var root_path
-var z
+extends WrightObject
 
 var page = "evidence"
 var offset = 0
@@ -20,6 +14,10 @@ var page_label:Label
 
 var has_objects = false
 
+func _ready():
+	script_name = "evidence_menu"
+	wait_signal = "tree_exited"
+
 func can_present():
 	# TODO tie this to variables
 	return in_presentation_context
@@ -28,20 +26,6 @@ func reset():
 	has_objects = false
 	for child in get_children():
 		child.queue_free()
-	load_art(root_path)
-	
-func load_art(root_path):
-	name_label = Label.new()
-	name_label.name = "Name Label"
-	name_label.rect_position = Vector2(28,41)
-	name_label.text = ""
-	
-	page_label = Label.new()
-	page_label.name = "Page Label"
-	page_label.rect_position = Vector2(1,14)
-	page_label.text = ""
-	
-	self.root_path = root_path
 	
 func _process(dt):
 	if has_objects:
@@ -66,10 +50,21 @@ func _process(dt):
 	
 	position = Vector2(0, 192)
 	z = ZLayers.z_sort[script_name]
-	load_page()
-	load_back_button()
+	
+	name_label = Label.new()
+	name_label.name = "Name Label"
+	name_label.rect_position = Vector2(28,41)
+	name_label.text = ""
+	
+	page_label = Label.new()
+	page_label.name = "Page Label"
+	page_label.rect_position = Vector2(1,14)
+	page_label.text = ""
+
 	add_child(page_label)
 	add_child(name_label)
+	load_page()
+	load_back_button()
 	
 func load_back_button():
 	# TODO only load this if we are allowed

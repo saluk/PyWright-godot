@@ -60,15 +60,22 @@ func ws_callpress(script, arguments):
 	)
 
 # Show the court record to allow an evidence to be selected to present
+# Also used internally to trigger creating the court record ui
 func ws_present(script, arguments):
 	var present = not "nopresent" in arguments
 	arguments.erase("nopresent")
-	var cr = ObjectFactory.create_object(
-		script, 
-		"evidence_menu",
-		"res://System/UI/CourtRecord.gd",
-		[Commands.SPRITE_GROUP],
-		arguments
+#	var cr = ObjectFactory.create_object(
+#		script, 
+#		"evidence_menu",
+#		"res://System/UI/CourtRecord.gd",
+#		[Commands.SPRITE_GROUP],
+#		arguments
+#	)
+	var cr = ObjectFactory.create_from_template(
+		script,
+		"court_record",
+		{},
+		[]
 	)
 	if not present:
 		cr.in_presentation_context = false

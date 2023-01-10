@@ -14,10 +14,16 @@ func get_main_screen():
 func get_main():
 	return get_tree().get_nodes_in_group("Main")[0]
 	
+var classes = {
+	"WrightObject": "res://System/Scene/WrightObject.gd",
+	"CourtRecord": "res://System/UI/CourtRecord.gd"
+}
+	
 var TEMPLATES = {
 	"bg":
 		{
 			"default_name": "bg",
+			"class": "WrightObject",
 			"sprites": {
 				"default": {
 					"path": "art/bg/{base}.png",
@@ -41,6 +47,7 @@ var TEMPLATES = {
 	"fg":
 		{
 			"default_name": "fg",
+			"class": "WrightObject",
 			"sprites": {
 				"default": {
 					"path": "art/fg/{base}.png",
@@ -64,6 +71,7 @@ var TEMPLATES = {
 	"graphic":
 		{
 			"default_name": "graphic",
+			"class": "WrightObject",
 			"sprites": {
 				"default": {
 					"path": "art/{base}.png",
@@ -87,6 +95,7 @@ var TEMPLATES = {
 	"portrait":
 		{
 			"default_name": "portrait",
+			"class": "WrightObject",
 			"sprites": {
 				"talk": {
 					"path": "art/port/{base}/{variant}(talk).png",
@@ -120,6 +129,7 @@ var TEMPLATES = {
 	"button":
 		{
 			"default_name": "button",
+			"class": "WrightObject",
 			"sprites": {
 				"default": {
 					"path": "art/{base}.png",
@@ -142,6 +152,24 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": true,
+			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
+			"click_args": []
+		},
+	"court_record":
+		{
+			"default_name": "evidence_menu",
+			"class": "CourtRecord",
+			"sprites": {},
+			"centered": false,
+			"mirror": [1, 1],
+			"block_script": true,
+			"groups": [Commands.SPRITE_GROUP],
+			"start_sprite": "",
+			"sort_with": "evidence_menu",
+			"default_variant": "",
+			"process_combined": false,
+			"rect": null,
+			"clickable": false,
 			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
 			"click_args": []
 		}
@@ -195,7 +223,7 @@ func create_from_template(
 		template = get_template(template_key_or_template, modify_template)
 	
 	# Make object
-	var object:Node = load("res://System/Scene/WrightObject.gd").new()
+	var object:Node = load(classes[template["class"]]).new()
 	
 	# Find parent and add object to it
 	var parent
