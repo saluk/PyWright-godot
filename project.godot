@@ -88,6 +88,8 @@ _global_script_class_icons={
 
 config/name="GodotWright"
 run/main_scene="res://Main.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="GodotWright"
 config/icon="res://icon.png"
 
 [autoload]
