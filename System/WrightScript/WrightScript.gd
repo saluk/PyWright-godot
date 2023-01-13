@@ -170,8 +170,9 @@ func goto_label(label, fail=null):
 		if allow_goto_parent_script:
 			end()
 			main.stack.scripts.pop_back()
-			emit_signal("GOTO_RESULT")
-			return main.stack.scripts[-1].goto_label(label, fail)
+			if main.stack.scripts:
+				emit_signal("GOTO_RESULT")
+				return main.stack.scripts[-1].goto_label(label, fail)
 		main.log_error("Tried to go somewhere non existent "+label)
 		allow_next_line = true
 		return

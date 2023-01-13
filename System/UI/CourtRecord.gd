@@ -76,7 +76,7 @@ func load_back_button():
 				"default": {"path":"art/general/back.png"},
 				"highlight": {"path":"art/general/back_high.png"}
 			},
-			"click_macro": "click_back_from_court_record",
+			"click_macro": "{click_back_from_court_record}",
 		},
 		[],
 		script_name
@@ -112,7 +112,7 @@ func load_page_button():
 				"default": {"path":"art/general/evidence_mode_button.png"},
 				"highlight": {"path":"art/general/evidence_mode_button_high.png"}
 			},
-			"click_macro": "click_page_from_court_record",
+			"click_macro": "{click_page_from_court_record}",
 			"click_args": [next_page]
 		}, 
 		[], 
@@ -137,7 +137,7 @@ func load_arrow(direction):
 					"default": {"path":"art/general/evidence_arrow_right.png"}
 				},
 				"mirror": [{"L":-1, "R": 1}[direction], 1],
-				"click_macro": "record_click_direction",
+				"click_macro": "{record_click_direction}",
 				"click_args": [direction]
 		}, 
 		[], 
@@ -228,7 +228,7 @@ func load_page_zoom():
 						"default": {"path":"art/general/press/present2.png"},
 						"highlight": {"path":"art/general/press/present2_high.png"}
 					},
-					"click_macro": "record_click_present",
+					"click_macro": "{record_click_present}",
 					"click_args": [evname]
 				}, 
 				[], 
@@ -284,7 +284,7 @@ func load_page_overview():
 				"sprites": {
 					"default": {"path":ev_path.replace("res://", "")}
 				},
-				"click_macro": "record_zoom_evidence",
+				"click_macro": "{record_zoom_evidence}",
 				"click_args": [evname]
 			}, 
 			[], 

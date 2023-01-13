@@ -106,7 +106,7 @@ func update():
 					"default": {"path": "art/general/back.png"},
 					"highlight": {"path": "art/general/back_high.png"}
 				},
-				"click_macro": "back_from_examine"
+				"click_macro": "{back_from_examine}"
 			},
 			[],
 			script_name
@@ -123,7 +123,7 @@ func update():
 				"sprites": {
 					"default": {"path": "art/general/check.png"}
 				},
-				"click_macro": "check_from_examine"
+				"click_macro": "{check_from_examine}"
 			},
 			[],
 			script_name

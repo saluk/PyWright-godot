@@ -32,6 +32,8 @@ var PENALTY_GROUP = "PWPENALTY"
 
 var external_commands = {}
 
+signal button_clicked
+
 # Helper functions
 		
 func get_objects(script_name, last=null, group=SPRITE_GROUP):
@@ -221,18 +223,19 @@ func call_command(command, script, arguments):
 		args.append(value_replace(arg))
 	arguments = args
 
+	# gui Buttons use {} to mean either a macro or a command
+	if command.begins_with("{") and command.ends_with("}"):
+		command = command.substr(1,command.length()-2)
+		
+	if is_macro(command):
+		return call_macro(command, script, arguments)
+
 	if has_method("ws_"+command):
 		return call("ws_"+command, script, arguments)
 
 	if "ws_"+command in external_commands:
 		var extern = external_commands["ws_"+command]
 		return extern.callv("ws_"+command, [script, arguments])
-	
-	if command.begins_with("{") and command.ends_with("}"):
-		return call_macro(command.substr(1,command.length()-2), script, arguments)
-	
-	if is_macro(command):
-		return call_macro(command, script, arguments)
 		
 	for object in get_objects(null):
 		if object.has_method("ws_"+command):
@@ -240,8 +243,6 @@ func call_command(command, script, arguments):
 	return UNDEFINED
 	
 func is_macro(command):
-	if command.begins_with("{") and command.ends_with("}"):
-		return command.substr(1,command.length()-2)
 	if main.stack.macros.has(command):
 		return command
 	return ""

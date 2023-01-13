@@ -57,7 +57,18 @@ func on_gui_input(event):
 		else:
 			clicked = false
 			set_highlight()
-			Commands.call_command(macroname, parent.wrightscript, macroargs)
+			perform_action()
+			
+func perform_action():
+	# If macroname is surrounded by {}, call macro
+	# Otherwise goto the label
+	# In either case, delete any guiWaits
+	Commands.emit_signal("button_clicked", self)  # This should signal to guiWaits
+	if macroname.begins_with("{") and macroname.ends_with("}"):
+		Commands.call_command(macroname, parent.wrightscript, macroargs)
+	else:
+		parent.wrightscript.goto_label(macroname)
+				
 
 # TODO - allow customize click colors in wrightscript
 # TODO - allow change clicked graphic for gui Button

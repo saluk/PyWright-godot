@@ -295,16 +295,6 @@ func update_sprite(template, key, data={}):
 func update_template(template, data={}):
 	data = data.duplicate(true)
 	template.merge(data, true)
-	
-# Set up the template to call a macro when the button is clicked that we also define here
-func make_internal_command(template, object, function_name, function_args):
-	var macro_name = "_INTERNAL_"+function_name+"."+"_".join(function_args)
-	var function = function_name
-	if function_args:
-		function += " "+" ".join(function_args)
-	get_main().stack.macros[macro_name] = [function]
-	Commands.external_commands["ws_"+function_name] = object
-	template["click_macro"] = macro_name
 
 # TODO we probably never need to pass any script other than the top script
 # should eliminate need for passing in the script

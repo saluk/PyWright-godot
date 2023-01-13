@@ -27,7 +27,7 @@ func update():
 					"default": {"path": "art/general/back.png"},
 					"highlight": {"path": "art/general/back_high.png"}
 				},
-				"click_macro": "click_back_from_list"
+				"click_macro": "{click_back_from_list}"
 			},
 			[],
 			script_name
@@ -47,7 +47,7 @@ func add_item(text, result):
 				"default": {"path":"art/general/talkchoice.png"},
 				"highlight": {"path": "art/general/talkchoice_high.png"}
 			},
-			"click_macro": "click_list_item",
+			"click_macro": "{click_list_item}",
 			"click_args": [result],
 		},
 		[],
