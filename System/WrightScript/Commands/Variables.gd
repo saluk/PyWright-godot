@@ -32,53 +32,34 @@ func ws_getvar(script, arguments):
 	
 func ws_get(script, arguments):
 	return ws_getvar(script, arguments)
-	
-# TODO IMPLEMENT
-#    @category([VALUE("variable","The variable to save the value into"),KEYWORD("name","The object to get the property from"),KEYWORD("prop","The property to get from the object")],type="logic")
-#    def _getprop(self,command,variable,*args):
-#        """Copies the value of some property of an object into a variable"""
-#        name = None
-#        prop = None
-#        for a in args:
-#            if a.startswith("name="):
-#                name = a.split("=",1)[1]
-#            if a.startswith("prop="):
-#                prop = a.split("=",1)[1]
-#        if not name or not prop:
-#            raise script_error("getprop: need to supply an object name= and a prop= to get")
-#        for o in self.obs:
-#            if getattr(o,"id_name",None)==name:
-#                p = str(o.getprop(prop))
-#                assets.variables[variable]=p
-#                return
-#        raise script_error("getprop: object not found")
+
 func ws_getprop(script, arguments):
-	pass
-	
-# TODO IMPLEMENT
-#    @category([VALUE("variable","The variable to save the value into"),KEYWORD("name","The object to get the property from"),KEYWORD("prop","The property to get from the object")],type="logic")
-#    def _setprop(self,command,*args):
-#        """Copies the value of a variable to some property of an object"""
-#        name = None
-#        prop = None
-#        val = []
-#        for a in args:
-#            if a.startswith("name="):
-#                name = a.split("=",1)[1]
-#            elif a.startswith("prop="):
-#                prop = a.split("=",1)[1]
-#            else:
-#                val.append(a)
-#        val = " ".join(val)
-#        if not name or not prop:
-#            raise script_error("setprop: need to supply an object name= and a prop= to set")
-#        for o in self.obs:
-#            if getattr(o,"id_name",None)==name:
-#                o.setprop(prop,val)
-#                return
-#        raise script_error("setprop: object not found")
+	var variable = arguments.pop_front()
+	var kw = Commands.keywords(arguments)
+	for object in Commands.get_objects(kw["name"]):
+		var value
+		if kw["prop"] in "xy":
+			value = object.position[{"x":0, "y":1}[kw["prop"]]]
+		elif kw["prop"] == "z":
+			value = object.z
+		elif kw["prop"] == "frame":
+			value = object.current_sprite.animated_sprite.frame
+		main.stack.variables.set_val(variable, value)
+
 func ws_setprop(script, arguments):
-	pass
+	var variable = arguments.pop_front()
+	var kw = Commands.keywords(arguments)
+	var value
+	for object in Commands.get_objects(kw["name"]):
+		if kw["prop"] in "xy":
+			value = main.stack.variables.get_int(variable)
+			object.position[{"x":0, "y":1}[kw["prop"]]] = value
+		elif kw["prop"] == "z":
+			value = main.stack.variables.get_int(variable)
+			object.z = value
+		elif kw["prop"] == "frame":
+			value = main.stack.variables.get_int(variable)
+			object.current_sprite.animated_sprite.frame = value
 	
 # TODO IMPLEMENT
 #    @category([VALUE("variable","variable name to save random value to"),VALUE("start","smallest number to generate"),VALUE("end","largest number to generate")],type="logic")
