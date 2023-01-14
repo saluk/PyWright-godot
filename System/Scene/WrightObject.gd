@@ -123,8 +123,13 @@ func load_sprites(template, sprite_key=null):
 	for sprite_key in template["sprites"]:
 		var sprite_options = template["sprites"][sprite_key]
 		add_sprite(sprite_key, sprite_options)
-	if template["process_combined"]:
-		process_combined()
+	
+	# (combined) files turn into talk and blink animations
+	process_combined()
+	
+	# if specific (required) animation types are not loaded, use the default
+	process_missing()
+
 	if not sprite_key:
 		sprite_key = template["start_sprite"]
 	# TODO mirror property should be set by the sprite!
@@ -157,6 +162,14 @@ func process_combined():
 			while sprites["blink"].animated_sprite.frames.get_frame_count("default") > count/2:
 				sprites["blink"].animated_sprite.frames.remove_frame("default", 0)
 
+
+func process_missing():
+	var tsprites = template["sprites"]
+	for key in tsprites:
+		if tsprites[key].get("fallback", false):
+			if has_sprite(tsprites[key]["fallback"]) and not has_sprite(key):
+				sprites[key] = sprites[tsprites[key]["fallback"]]
+
 	
 func set_sprite(new_sprite_key):
 	if not new_sprite_key in sprites:
@@ -168,6 +181,7 @@ func set_sprite(new_sprite_key):
 			sprite_root.remove_child(current_sprite)
 		sprite_key = new_sprite_key
 		current_sprite = sprites[sprite_key]
+
 		sprite_root.add_child(current_sprite)
 		set_wait(wait)
 		emit_signal("started_playing")

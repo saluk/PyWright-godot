@@ -42,7 +42,6 @@ var TEMPLATES = {
 			"start_sprite": "default",
 			"sort_with": "bg",
 			"default_variant": "",
-			"process_combined": false,
 			"rect": null,
 			"clickable": false,
 			"scrollable": true,
@@ -67,7 +66,6 @@ var TEMPLATES = {
 			"start_sprite": "default",
 			"sort_with": "fg",
 			"default_variant": "",
-			"process_combined": false,
 			"rect": null,
 			"clickable": false,
 			"scrollable": true,
@@ -92,7 +90,6 @@ var TEMPLATES = {
 			"start_sprite": "default",
 			"sort_with": "evidence",
 			"default_variant": "",
-			"process_combined": false,
 			"rect": null,
 			"clickable": false,
 			"scrollable": true,
@@ -117,7 +114,6 @@ var TEMPLATES = {
 			"start_sprite": "default",
 			"sort_with": "fg",
 			"default_variant": "",
-			"process_combined": false,
 			"rect": null,
 			"clickable": false,
 			"scrollable": true,
@@ -132,18 +128,25 @@ var TEMPLATES = {
 				"talk": {
 					"path": "art/port/{base}/{variant}(talk).png",
 					"animation_mode": "talk",
-					"mirror": [1, 1]
+					"mirror": [1, 1],
+					"fallback": "default"
 				},
 				"blink": {
 					"path": "art/port/{base}/{variant}(blink).png",
 					"animation_mode": "blink",
-					"mirror": [1, 1]
+					"mirror": [1, 1],
+					"fallback": "default"
 				},
 				"combined": {
 					"path": "art/port/{base}/{variant}(combined).png",
 					"animation_mode": "loop",
 					"mirror": [1, 1]
 				},
+				"default": {
+					"path": "art/port/{base}/{variant}.png",
+					"animation_mode": "loop",
+					"mirror": [1, 1]
+				}
 			},
 			"centered": true,
 			"mirror": [1, 1],
@@ -152,7 +155,6 @@ var TEMPLATES = {
 			"start_sprite": "blink",
 			"sort_with": "portrait",
 			"default_variant": "normal",
-			"process_combined": true,
 			"rect": null,
 			"clickable": false,
 			"scrollable": true,
@@ -182,7 +184,6 @@ var TEMPLATES = {
 			"start_sprite": "default",
 			"sort_with": "gui",
 			"default_variant": "",
-			"process_combined": false,
 			"rect": null,
 			"clickable": true,
 			"scrollable": false,
@@ -201,7 +202,6 @@ var TEMPLATES = {
 			"start_sprite": "",
 			"sort_with": "evidence_menu",
 			"default_variant": "",
-			"process_combined": false,
 			"rect": null,
 			"clickable": false,
 			"scrollable": false,
@@ -220,7 +220,6 @@ var TEMPLATES = {
 			"start_sprite": "",
 			"sort_with": "menu",
 			"default_variant": "",
-			"process_combined": false,
 			"rect": null,
 			"clickable": false,
 			"scrollable": false,
@@ -239,7 +238,6 @@ var TEMPLATES = {
 			"start_sprite": "",
 			"sort_with": "examine_menu",
 			"default_variant": "",
-			"process_combined": false,
 			"rect": null,
 			"clickable": false,
 			"scrollable": false,
@@ -258,7 +256,6 @@ var TEMPLATES = {
 			"start_sprite": "",
 			"sort_with": "examine_menu",
 			"default_variant": "",
-			"process_combined": false,
 			"rect": null,
 			"clickable": false,
 			"scrollable": true,
@@ -277,7 +274,6 @@ var TEMPLATES = {
 			"start_sprite": "",
 			"sort_with": "penalty",
 			"default_variant": "",
-			"process_combined": false,
 			"rect": null,
 			"clickable": false,
 			"scrollable": false,

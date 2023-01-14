@@ -6,6 +6,7 @@ var sprite_path:String
 var script_name:String
 var z:int
 
+var frames
 var width:int = 1
 var height:int = 1
 
@@ -75,7 +76,6 @@ func load_animation(path:String, info=null, sub_rect=null):
 		info = load_info(path.rsplit(".", true, 1)[0]+'.txt')
 	print("txt:", info)
 
-	var frames
 	# TODO - sub_rect only works with single frame animations!
 	if sub_rect:
 		frames = Filesystem.load_atlas_specific(
