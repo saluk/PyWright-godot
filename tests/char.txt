@@ -7,3 +7,11 @@ char maya
 "I'm normal"
 char maya stack e=bench
 "I'm in front"
+
+char phoenix x=-50 name=p nametag=test1
+char edgeworth x=50 name=e stack nametag=test2
+"My character is edgeworth and my nametag is test2"
+set _speaking phoenix
+"My character is phoenix and my nametag is test1"
+set _speaking edgeworth
+"My character is edgeworth and my nametag is test2"

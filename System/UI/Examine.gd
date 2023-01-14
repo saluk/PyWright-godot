@@ -1,19 +1,24 @@
-extends Node2D
-var script_name = "examine_menu"
-var wait_signal = "tree_exited"
-var z:int
+# TODO - eventually we want this to be managed by a wrightscript macro
+#  we need a few things to make that workable:
+# 		- need a way to define multiple regions
+#		- how to draw the crosshair and move it on mouse click/drag
+#		- how to determine when crosshair is over something
+#		(a lot of these hows can still be implenented in gdscript,
+#		 but the objects should derive from WrightObject and be templatable
+#		 and save/loadable)
+#  For now we have this as a stopgap 
+
+extends WrightObject
 
 var scene_name:String
-var root_path
 
 var bg_obs = []
 
-var IButtonS = preload("res://System/UI/IButton.gd")
 var back_button
 var examine_button
 var crosshair
 
-var click_area:Area2D
+var cross_area:Area2D
 
 var allow_back_button = true
 var reveal_regions = true
@@ -21,64 +26,30 @@ var fail = "none"
 
 var current_region
 
-func add_button(normal, highlight, button_name):
-	var button = IButtonS.new(
-		Filesystem.load_atlas_frames(
-			Filesystem.lookup_file(normal, root_path)
-		)[0],
-		Filesystem.load_atlas_frames(
-			Filesystem.lookup_file(highlight, root_path)
-		)[0]
-	)
-	button.menu = self
-	button.button_name = button_name
-	add_child(button)
-	return button
-
 # TODO figure out how we decide whther to show the back button or not
 	
-func load_art(root_path):
+func _ready():
+	script_name = "examine_menu"
+	wait_signal = "tree_exited"
 	for bg_ob in Commands.get_objects(null, null, Commands.BG_GROUP):
 		bg_ob = bg_ob.duplicate()
 		bg_obs.append(bg_ob)
 		add_child(bg_ob)
-	self.root_path = root_path
 	setup_crosshair()
-	if allow_back_button:
-		back_button = add_button(
-			"art/general/back.png",
-			"art/general/back_high.png",
-			"_^BACK^_"
-		)
-		back_button.position = Vector2(
-			back_button.width/2,
-			192-back_button.height/2
-		)
-	examine_button = add_button(
-		"art/general/check.png",
-		"art/general/check.png",
-		"_^CHECK^_"
-	)
-	examine_button.position = Vector2(
-		256-examine_button.width/2,
-		192-examine_button.height/2
-	)
-	examine_button.visible = false
-	position = Vector2(0, 192)
 	
 func setup_crosshair():
 	crosshair = Crosshair.new()
 	add_child(crosshair)
-	click_area = Area2D.new()
+	cross_area = Area2D.new()
 	var shape := CollisionShape2D.new()
 	shape.shape = RectangleShape2D.new()
 	shape.shape.extents = Vector2(256, 192)/2
-	click_area.add_child(shape)
-	click_area.position = Vector2(256/2, 192/2)
-	add_child(click_area)
-	click_area.connect("input_event", self, "_on_click_area_input_event")
+	cross_area.add_child(shape)
+	cross_area.position = Vector2(256/2, 192/2)
+	add_child(cross_area)
+	cross_area.connect("input_event", self, "_on_cross_area_input_event")
 	
-func _on_click_area_input_event(viewport, event, shape_idx):
+func _on_cross_area_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton or event is InputEventMouseMotion:
 		if Input.get_mouse_button_mask() & BUTTON_LEFT:
 			var pos = event.position-position
@@ -100,35 +71,68 @@ class Region extends Area2D:
 			return true
 		return false
 	
-func add_region_text(text):
-	var arguments = text.split(" ")
-	var x = int(arguments[1])
-	var y = int(arguments[2])
-	var width = int(arguments[3])
-	var height = int(arguments[4])
+func add_region_args(arguments):
+	var x = int(arguments[0])
+	var y = int(arguments[1])
+	var width = int(arguments[2])
+	var height = int(arguments[3])
 	var region = Region.new(x, y, width, height)
-	region.label = arguments[5]
+	region.label = arguments[4]
 	add_child(region)
-
-func click_option(option):
-	print("CLICK OPTION "+option)
-	print(current_region)
+	
+func ws_check_from_examine(script, arguments):
 	queue_free()
-	if option == "_^BACK^_":
-		pass
-	else:
-		var label = fail
-		if current_region:
-			label = current_region.label
-		Commands.call_command(
-			"goto",
-			Commands.main.stack.scripts[-1],
-			[
-				label
-			]
-		)
+	var label = fail
+	if current_region:
+		label = current_region.label
+	return Commands.call_command(
+		"goto",
+		Commands.main.stack.scripts[-1],
+		[
+			label
+		]
+	)
+
+func ws_back_from_examine(script, arguments):
+	queue_free()
 		
 func update():
+	if allow_back_button and not back_button:
+		back_button = ObjectFactory.create_from_template(
+			get_tree().root.get_node("Main").top_script(),
+			"button",
+			{
+				"sprites": {
+					"default": {"path": "art/general/back.png"},
+					"highlight": {"path": "art/general/back_high.png"}
+				},
+				"click_macro": "{back_from_examine}"
+			},
+			[],
+			script_name
+		)
+		back_button.position = Vector2(
+			0,
+			192-back_button.height
+		)
+	if not examine_button:
+		examine_button = ObjectFactory.create_from_template(
+			get_tree().root.get_node("Main").top_script(),
+			"button",
+			{
+				"sprites": {
+					"default": {"path": "art/general/check.png"}
+				},
+				"click_macro": "{check_from_examine}"
+			},
+			[],
+			script_name
+		)
+		examine_button.position = Vector2(
+			256-examine_button.width,
+			192-examine_button.height
+		)
+
 	examine_button.visible = false
 	current_region = null
 	print("CLEAR CURRENT REGION")

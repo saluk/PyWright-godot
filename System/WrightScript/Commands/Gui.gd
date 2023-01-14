@@ -18,26 +18,33 @@ func gui_button(script, arguments):
 		arguments.append("button_text="+text)
 	var graphic = kw.get("graphic", "")
 	var graphichigh = kw.get("graphichigh", "")
+	var template = ObjectFactory.get_template("button")
+	template["sprites"]["default"]["path"] = "art/{base}.png".format({"base": graphic})
+	if graphichigh:
+		template["sprites"]["highlight"]["path"] = "art/{base}.png".format({"base": graphichigh})
+	else:
+		template["sprites"].erase("highlight")
+	template["click_macro"] = macroname
 	var button
-	button = Commands.create_object(
-		script, 
-		"gui", 
-		"res://System/UI/IButton.gd", 
-		[Commands.SPRITE_GROUP],
+	button = ObjectFactory.create_from_template(
+		script,
+		template,
+		{},
 		arguments
 	)
 	if not button:
 		main.log_error("Couldn't create button")
-	button.menu = self
-	button.button_name = macroname
 
 class GuiWait:
 	var wait_signal = "DONE_WAITING"
 	signal DONE_WAITING
 	func _init(script):
 		script.connect("GOTO_RESULT", self, "finish")
+		Commands.connect("button_clicked", self, "button_finished")
 	func finish():
 		emit_signal("DONE_WAITING")
+	func button_finished(button):
+		finish()
 # TODO make macro script that executes while waiting
 func gui_wait(script, arguments):
 	return GuiWait.new(script)

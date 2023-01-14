@@ -27,10 +27,16 @@ func ws_clearcross(script, arguments):
 
 # TODO test these
 func ws_next_statement(script, arguments):
-	script.next_statement()
+	var cross = main.cross_exam_script()
+	if cross:
+		cross.next_statement()
+	main.get_tree().call_group(Commands.TEXTBOX_GROUP, "queue_free")
 	
 func ws_prev_statement(script, arguments):
-	script.prev_statement()
+	var cross = main.cross_exam_script()
+	if cross:
+		cross.prev_statement()
+	main.get_tree().call_group(Commands.TEXTBOX_GROUP, "queue_free")
 	
 func ws_statement(script, arguments):
 	var test = Commands.keywords(arguments).get("test", "")
@@ -54,15 +60,15 @@ func ws_callpress(script, arguments):
 	)
 
 # Show the court record to allow an evidence to be selected to present
+# Also used internally to trigger creating the court record ui
 func ws_present(script, arguments):
 	var present = not "nopresent" in arguments
 	arguments.erase("nopresent")
-	var cr = Commands.create_object(
-		script, 
-		"evidence_menu",
-		"res://System/UI/CourtRecord.gd",
-		[Commands.SPRITE_GROUP],
-		arguments
+	var cr = ObjectFactory.create_from_template(
+		script,
+		"court_record",
+		{},
+		[]
 	)
 	if not present:
 		cr.in_presentation_context = false
@@ -72,10 +78,11 @@ func ws_present(script, arguments):
 
 # Show the court record to allow an evidence to be selected to present
 # TODO verify difference between present
+# TODO maybe this is what should hide the back button?
 # I *think* showpresent is meant to be called from an official cross examination
 # while present can be used outside of cross examinations
 func ws_showpresent(script, arguments):
-	Commands.call_command("present", script, arguments)
+	return Commands.call_command("present", script, arguments)
 
 # Show court record but dont allow evidence to be presented
 func ws_showrecord(script, arguments):

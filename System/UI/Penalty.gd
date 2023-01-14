@@ -1,10 +1,6 @@
 # TODO implement damage amount, threat, flash, and timing
-extends Node2D
+extends WrightObject
 class_name Penalty
-
-var script_name
-var z
-var wait_signal = "animation_done"
 
 var variable
 var threat_amount
@@ -23,6 +19,8 @@ var threat_timer = 0.0
 signal animation_done
 
 func _ready():
+	wait_signal = "animation_done"
+	script_name = "penalty"
 	var atlas = Filesystem.load_atlas_specific(
 		"art/general/healthbar.png",
 		[

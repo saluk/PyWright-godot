@@ -1,34 +1,56 @@
 # TODO - make it save your place, implement the ability to check
-extends Node2D
-var script_name = "evidence_menu"
-var wait_signal = "tree_exited"
-
-var main:Node
-var root_path
-var z
+extends WrightObject
 
 var page = "evidence"
 var offset = 0
 var zoom = false
 
 var ev_db = {}
-onready var IButtonS = load("res://System/UI/IButton.gd")
 
 var in_presentation_context = false
 
 var name_label:Label
 var page_label:Label
 
+var has_objects = false
+
+func _ready():
+	script_name = "evidence_menu"
+	wait_signal = "tree_exited"
+
 func can_present():
 	# TODO tie this to variables
 	return in_presentation_context
 
 func reset():
+	has_objects = false
 	for child in get_children():
 		child.queue_free()
-	load_art(root_path)
 	
-func load_art(root_path):
+func _process(dt):
+	if has_objects:
+		return
+	has_objects = true
+	var evbg_path = main.stack.variables.get_string("ev_mode_bg_evidence")
+	var bg = ObjectFactory.create_from_template(
+		main.top_script(),
+		"graphic",
+		{},
+		[evbg_path],
+		script_name
+	)
+	
+	# Ensure interface doesn't allow clicks below it
+	# TODO - it's weird to have to make guis to block things off, should be
+	# built into ObjectFactory template maybe?
+	var blocker = Control.new()
+	blocker.name = "BLOCKER"
+	blocker.rect_size = Vector2(bg.width, bg.height)
+	bg.add_child(blocker)
+	
+	position = Vector2(0, 192)
+	z = ZLayers.z_sort[script_name]
+	
 	name_label = Label.new()
 	name_label.name = "Name Label"
 	name_label.rect_position = Vector2(28,41)
@@ -38,55 +60,39 @@ func load_art(root_path):
 	page_label.name = "Page Label"
 	page_label.rect_position = Vector2(1,14)
 	page_label.text = ""
-	
-	self.root_path = root_path
-	var bg = PWSprite.new()
-	var evbg_path = main.stack.variables.get_string("ev_mode_bg_evidence")
-	evbg_path = Filesystem.lookup_file(
-		"art/"+evbg_path+".png",
-		root_path
-	)
-	bg.load_animation(evbg_path)
-	add_child(bg)
-	
-	# TODO - it's weird to have to make guis to block things off, should be
-	# built into PWSprite
-	var blocker = Control.new()
-	blocker.rect_size = Vector2(bg.width, bg.height)
-	add_child(blocker)
-	
-	position = Vector2(0, 192)
-	z = ZLayers.z_sort[script_name]
-	load_page()
-	load_back_button()
+
 	add_child(page_label)
 	add_child(name_label)
-	
-func add_button(normal, highlight, button_name):
-	print(normal, highlight)
-	var button = IButton.new(
-		Filesystem.load_atlas_frames(
-			Filesystem.lookup_file(normal, root_path)
-		)[0],
-		Filesystem.load_atlas_frames(
-			Filesystem.lookup_file(highlight, root_path)
-		)[0]
-	)
-	button.menu = self
-	button.button_name = button_name
-	add_child(button)
-	return button
+	load_page()
+	load_back_button()
 	
 func load_back_button():
-	var back_button = add_button(
-		"art/general/back.png",
-		"art/general/back_high.png",
-		"_^BACK^_"
+	# TODO only load this if we are allowed
+	var back_button = ObjectFactory.create_from_template(
+		main.top_script(), 
+		"button",
+		{
+			"sprites": {
+				"default": {"path":"art/general/back.png"},
+				"highlight": {"path":"art/general/back_high.png"}
+			},
+			"click_macro": "{click_back_from_court_record}",
+		},
+		[],
+		script_name
 	)
 	back_button.position = Vector2(
-		back_button.width/2,
-		192-back_button.height/2
+		0,
+		192-back_button.height
 	)
+	
+func ws_click_back_from_court_record(script, arguments):
+	if zoom:
+		zoom = false
+		offset = int(offset/8)
+		reset()
+		return
+	queue_free()
 	
 func load_page_button():
 	var pages = main.stack.evidence_pages.keys()
@@ -98,34 +104,52 @@ func load_page_button():
 	elif cur_i == pages.size()-1:
 		cur_i = 0
 	var next_page = pages[cur_i]
-	var b = IButton.new(null, null, 
-		Vector2(
-			main.stack.variables.get_int("ev_modebutton_x"),
-			main.stack.variables.get_int("ev_modebutton_y")
-		),
-		Vector2(60, 30),
-		false
+	var b = ObjectFactory.create_from_template(
+		main.top_script(), 
+		"button", 
+		{
+			"sprites": {
+				"default": {"path":"art/general/evidence_mode_button.png"},
+				"highlight": {"path":"art/general/evidence_mode_button_high.png"}
+			},
+			"click_macro": "{click_page_from_court_record}",
+			"click_args": [next_page]
+		}, 
+		[], 
+		script_name
 	)
-	b.menu = self
-	b.button_name = "MODE_"+next_page
-	b.name = b.button_name
+	b.position = Vector2(256-b.width, 0)
 	var l = Label.new()
+	l.rect_position += Vector2(18,8)
 	l.text = next_page
 	b.add_child(l)
 	add_child(b)
 	
 func load_arrow(direction):
-	var pos = Vector2(5, 92)
+	var pos = Vector2(3, 58)
 	if direction == "R":
 		pos.x = 241
-	var b = IButton.new(null, null, pos, Vector2(30, 30), false)
-	b.menu = self
-	b.button_name = "ARROW_"+direction
-	b.name = b.button_name
-	var l = Label.new()
-	l.text = direction
-	b.add_child(l)
-	add_child(b)
+	var b = ObjectFactory.create_from_template(
+		main.top_script(), 
+		"button", 
+		{
+				"sprites": {
+					"default": {"path":"art/general/evidence_arrow_right.png"}
+				},
+				"mirror": [{"L":-1, "R": 1}[direction], 1],
+				"click_macro": "{record_click_direction}",
+				"click_args": [direction]
+		}, 
+		[], 
+		script_name
+	)
+	b.position = pos
+	
+func ws_record_click_direction(script, arguments):
+	var direction = {"L":-1, "R":1}[arguments[0]]
+	offset += direction*{true:1, false:8}[zoom]
+	reset()
+	return
 	
 func load_page():
 	page_label.text = page
@@ -195,20 +219,29 @@ func load_page_zoom():
 		add_child(desc)
 		
 		if can_present():
-			var present_button = IButton.new(
-				PWSprite.new().load_animation(Filesystem.lookup_file("art/general/press/present2.png", root_path)),
-				PWSprite.new().load_animation(Filesystem.lookup_file("art/general/press/present2_high.png", root_path)),
-				Vector2(100,0), null, false
+			select(evname)
+			var present_button = ObjectFactory.create_from_template(
+				main.top_script(), 
+				"button", 
+				{
+					"sprites": {
+						"default": {"path":"art/general/press/present2.png"},
+						"highlight": {"path":"art/general/press/present2_high.png"}
+					},
+					"click_macro": "{record_click_present}",
+					"click_args": [evname]
+				}, 
+				[], 
+				script_name
 			)
-			present_button.menu = self
-			present_button.name = "Present button"
-			present_button.button_name = "^PRESENT^_"+evname
-			add_child(present_button)
+			present_button.position = Vector2(100,0)
 	if left_arrow:
 		load_arrow("L")
 	if right_arrow:
 		load_arrow("R")
 
+func select(evname):
+	main.stack.variables.set_val("_selected", evname)
 		
 func load_page_overview():
 	var x = main.stack.variables.get_int("ev_items_x")
@@ -235,7 +268,6 @@ func load_page_overview():
 		ev_db[evname] = {
 			"name": key_name, "desc": key_desc, "pic": key_pic, "check": key_check
 		}
-		var pic = PWSprite.new()
 		var ev_path = Filesystem.lookup_file(
 			"art/ev/"+key_pic+".png",
 			self.root_path
@@ -245,25 +277,30 @@ func load_page_overview():
 				"art/ev/envelope.png",
 				self.root_path
 			)
-		pic.load_animation(ev_path)
-		pic.rescale(
-			main.stack.variables.get_int("ev_small_width")+1,
-			main.stack.variables.get_int("ev_small_height")+1
+		var ev_button = ObjectFactory.create_from_template(
+			main.top_script(), 
+			"button", 
+			{
+				"sprites": {
+					"default": {"path":ev_path.replace("res://", "")}
+				},
+				"click_macro": "{record_zoom_evidence}",
+				"click_args": [evname]
+			}, 
+			[], 
+			script_name
 		)
-		# IButton are positioned at center TODO we shouldn't do that
-		pic.position = Vector2(-pic.width/2, -pic.height/2)
-		
-		var ev_button = IButton.new(
-			pic, null, Vector2(x+pic.width/2, y+pic.height/2)
-		)
-		ev_button.menu = self
-		ev_button.button_name = evname
-		add_child(ev_button)
-		ev_button.area.connect("mouse_entered", self, "highlight_evidence", [evname])
+		ev_button.position = Vector2(x, y)
+		if ev_button.current_sprite:
+			ev_button.current_sprite.rescale(
+				main.stack.variables.get_int("ev_small_width")+1,
+				main.stack.variables.get_int("ev_small_height")+1
+			)
+		ev_button.click_area.connect("mouse_entered", self, "highlight_evidence", [evname])
 		
 		# Move to next spot
 		x += main.stack.variables.get_int("ev_spacing_x")
-		if x > 256-pic.width:
+		if x > 256-ev_button.width:
 			x = main.stack.variables.get_int("ev_items_x")
 			y += main.stack.variables.get_int("ev_spacing_y")
 	if left_arrow:
@@ -274,34 +311,19 @@ func load_page_overview():
 func highlight_evidence(evname):
 	if not zoom:
 		name_label.text = ev_db[evname]["name"]
-
-func click_option(option):
-	if option.begins_with("MODE_"):
-		page = option.split("_")[1]
-		offset = 0
-		reset()
-		return
-	if option.begins_with("ARROW_"):
-		var direction = option.split("_")[1]
-		direction = {"L":-1, "R":1}[direction]
-		offset += direction*{true:1, false:8}[zoom]
-		reset()
-		return
-	if option.begins_with("^PRESENT^_"):
-		present(option.split("_")[1])
-		return
-	if option == "_^BACK^_":
-		if zoom:
-			zoom = false
-			offset = int(offset/8)
-			reset()
-			return
-		else:
-			queue_free()
-			return
-	main.stack.variables.set_val("_selected", option)
+		
+func ws_record_zoom_evidence(script, arguments):
+	var evname = arguments[0]
 	zoom = true
-	offset = main.stack.evidence_pages.get(page, []).find(option)
+	offset = main.stack.evidence_pages.get(page, []).find(evname)
+	reset()
+	
+func ws_record_click_present(script, arguments):
+	present(arguments[0])
+	
+func ws_click_page_from_court_record(script, arguments):
+	page = arguments[0]
+	offset = 0
 	reset()
 	
 func present(option):
