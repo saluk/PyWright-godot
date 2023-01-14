@@ -45,10 +45,11 @@ func ws_fg(script, arguments):
 	return fg
 
 # TODO support more commands
-# e=, be=, priority=, nametag=, noauto
+# e=, be=, priority=, noauto
 func ws_char(script, arguments):
 	if not main.get_tree():
 		return
+	var kw = Commands.keywords(arguments)
 	# If we don't "stack" then delete existing character
 	if not "stack" in arguments and not "hide" in arguments:
 		main.get_tree().call_group(Commands.CHAR_GROUP, "queue_free")
@@ -62,7 +63,15 @@ func ws_char(script, arguments):
 		character.visible = false
 		main.get_tree().call_group(Commands.HIDDEN_CHAR_GROUP, "queue_free")
 		character.add_to_group(Commands.HIDDEN_CHAR_GROUP)
-	main.stack.variables.set_val("_speaking", character.char_name)
+	# This should maybe be a "property" (variable namespaced on the object)
+	character.char_name = main.stack.variables.get_string(
+		"char_"+character.base_path+"_name",
+		character.base_path.capitalize()
+	)
+	if "nametag" in kw:
+		character.char_name = kw["nametag"]
+	# Called last because _speaking has a setter that sets _speaking_name
+	main.stack.variables.set_val("_speaking", character.base_path)
 	return character
 	
 func ws_emo(script, arguments):
@@ -76,9 +85,12 @@ func ws_emo(script, arguments):
 		emotion = arguments[0]
 	var characters
 	if not name:
-		characters = Commands.get_speaking_char()
+		var speaking = Commands.get_speaking_char()
+		if speaking:
+			characters = [speaking]
 	else:
 		characters = Commands.get_objects(name, false, Commands.CHAR_GROUP)
+	# TODO should this be the first or last found character if multiple characters have the same name?
 	if characters:
 		characters[0].change_variant(emotion)
 		if mode:

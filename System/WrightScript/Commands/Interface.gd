@@ -81,8 +81,6 @@ func ws_examine(script, arguments):
 	}
 	next_examine["hidden"] = "hide" in arguments
 	next_examine["fail"] = Commands.keywords(arguments).get("fail", "none")
-	main.stack.variables.set_truth("_examine.hidden", next_examine["hidden"])
-	main.stack.variables.set_val("_examine.fail", next_examine["fail"])
 	
 func ws_region(script, arguments):
 	next_examine["regions"].append(arguments)

@@ -115,14 +115,32 @@ func hide_arrows(script):
 	call_macro("hide_present_button", script, [])
 	call_macro("hide_press_button", script, [])
 	
-func get_speaking_char():
+func get_speaking_char(speaking=null):
+	if not speaking:
+		speaking = main.stack.variables.get_string("_speaking", null)
+	if not speaking:
+		return null
 	var characters = get_objects(null, null, CHAR_GROUP)
+	var found = null
 	for character in characters:
-		if character.script_name == main.stack.variables.get_string("_speaking", null):
-			return [character]
+		if character.script_name == speaking:
+			found = character
+		if character.base_path == speaking:
+			found = character
+	if found:
+		return found
+	# _speaking not set to a character onscreen...
+	# assume the case author means to make SOMEBODY talk
 	for character in characters:
-		return [character]
-	return []
+		return character
+	
+# Gets nametag for currently speaking character
+func get_nametag():
+	var nametag = main.stack.variables.get_string("_speaking_name", "")
+	var character = get_speaking_char()
+	if character:
+		nametag = character.char_name
+	return nametag
 	
 # Save/Load
 func save_scripts():

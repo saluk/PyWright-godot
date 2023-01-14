@@ -16,6 +16,8 @@ var DEFAULTS := {
 }
 var store := {}
 
+var setters := ["_speaking"]
+
 func _init():
 	reset()
 	
@@ -28,11 +30,9 @@ func keys():
 	return store.keys()
 
 func set_val(key, value):
+	if key in setters:
+		call("setter_"+key, value)
 	store[key] = str(value)
-	
-func set_truth(key, value):
-	if value:
-		store[key] = WSExpression.bool_to_string(value)
 	
 func del_val(key):
 	store.erase(key)
@@ -70,3 +70,7 @@ func evidence_keys():
 		if key.ends_with("_name") or key.ends_with("_pic") or key.ends_with("_desc"):
 			ev_keys[key.split("_")[0]] = 1
 	return ev_keys.keys()
+
+func setter__speaking(val):
+	store["_speaking"] = val
+	store["_speaking_name"] = Commands.get_nametag()

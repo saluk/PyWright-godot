@@ -56,7 +56,6 @@ margin_top = -6.0
 margin_right = 196.0
 margin_bottom = 8.0
 text = "Somebody"
-align = 1
 
 [node name="Timer" type="Timer" parent="."]
 

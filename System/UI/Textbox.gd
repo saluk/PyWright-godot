@@ -167,17 +167,21 @@ func _ready():
 
 func update_nametag():
 	# Lookup character name
-	var nametag
-	for character in Commands.get_speaking_char():
-		nametag = main.stack.variables.get_string(
-			"char_"+character.char_name+"_name", 
-			character.base_path.capitalize()
-		)
+	var nametag = main.stack.variables.get_string("_speaking_name")
 	if not nametag:
 		$NametagBackdrop.visible = false
 	else:
 		$NametagBackdrop/Label.text = nametag
 		$NametagBackdrop.visible = true
+	update_nametag_size()
+	
+func update_nametag_size():
+	var label = $NametagBackdrop/Label
+	var size = label.get_font("font").get_string_size(label.text)
+	size.x += 10
+	$NametagBackdrop/NtMiddle.position.x = int(size.x/2)+2
+	$NametagBackdrop/NtMiddle.scale.x = size.x
+	$NametagBackdrop/NtRight.position.x = $NametagBackdrop/NtMiddle.position.x+int(size.x/2)
 		
 func stop_timer():
 	set_process(true)
@@ -246,7 +250,8 @@ func tokenize_text(text_to_print):
 	return packs
 
 func _set_speaking_animation(name):
-	for character in Commands.get_speaking_char():
+	var character = Commands.get_speaking_char()
+	if character:
 		character.set_sprite(name)
 		
 func strip_bbcode(source:String) -> String:

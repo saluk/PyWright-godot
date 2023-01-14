@@ -1,5 +1,9 @@
+nt narrator
+"I am the narrator"
+set char_maya_name Maya Fey
+
 char maya e=none name=m1
-"should be blank"
+"should be blank. my default name is Maya Fey"
 char maya name=m2
 "{ebench}I'm on the bench."
 "{echeerful}I'm cheerful."
@@ -8,10 +12,18 @@ char maya
 char maya stack e=bench
 "I'm in front"
 
-char phoenix x=-50 name=p nametag=test1
+nt narrator
+"Back to the narrator, maya's animation should not be talking at all"
+
+char maya
+char phoenix x=-50 name=p stack nametag=test1
 char edgeworth x=50 name=e stack nametag=test2
 "My character is edgeworth and my nametag is test2"
 set _speaking phoenix
 "My character is phoenix and my nametag is test1"
 set _speaking edgeworth
 "My character is edgeworth and my nametag is test2"
+set _speaking maya
+"Back to maya, nametag is Maya Fey"
+nt Not Maya
+"Now I'm Not Maya, the narrator (maya is not talking)"
