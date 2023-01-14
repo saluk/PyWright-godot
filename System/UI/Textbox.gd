@@ -145,6 +145,11 @@ class CommandPack extends TextPack:
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	var font_path = "res://fonts/pwinternational.ttf"
+	var font = DynamicFont.new()
+	font.font_data = load(font_path)
+	font.size = 10
+	
 	tb_timer = get_node(tb_timer)
 	tb_timer.one_shot = true
 	if not main:
@@ -154,6 +159,7 @@ func _ready():
 	if main.stack.variables.get_int("_textbox_lines", 3) == 2:
 		$Backdrop/Label.margin_bottom = 14
 		$Backdrop/Label.set("custom_constants/line_separation", 8)
+	$Backdrop/Label.set("custom_fonts/normal_font", font)
 	z = ZLayers.z_sort["textbox"]
 	add_to_group(Commands.TEXTBOX_GROUP)
 	Commands.refresh_arrows(main.stack.scripts[-1])
