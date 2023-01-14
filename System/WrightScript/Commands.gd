@@ -29,9 +29,10 @@ var CLEAR_GROUP = "PWCLEAR"   # Any object that should be cleared when setting a
 var ARROW_GROUP = "PWARROWS"
 var TEXTBOX_GROUP = "TEXTBOX_GROUP"
 var PENALTY_GROUP = "PWPENALTY"
-var centered_objects = ["fg"]
 
 var external_commands = {}
+
+signal button_clicked
 
 # Helper functions
 		
@@ -70,7 +71,7 @@ func keywords(arguments, remove=false):
 	var newargs = []
 	var d = {}
 	for arg in arguments:
-		if "=" in arg:
+		if "=" in arg and not "==" in arg:
 			var split = arg.split("=", true, 1)
 			d[split[0]] = value_replace(split[1])
 		else:
@@ -88,99 +89,17 @@ func create_textbox(line) -> Node:
 	l.text_to_print = line
 	main_screen.add_child(l)
 	return l
-
-# TODO implement:
-# loops
-# flipx
-# rotx, roty, rotz
-# stack
-# fade
-var WAITERS = ["fg"]
-func create_object(script, command, class_path, groups, arguments=[]):
-	var object:Node
-	object = load(class_path).new()
-	main_screen.add_child(object)
-	if "main" in object:
-		object.main = main
-	var x=int(keywords(arguments).get("x", 0))
-	var y=int(keywords(arguments).get("y", 0))
-	object.position = Vector2(x, y)
-	if command in ["bg", "fg"]:
-		var filename = Filesystem.lookup_file(
-			"art/"+command+"/"+arguments[0]+".png",
-			script.root_path
-		)
-		if not filename:
-			main.log_error("No file found for "+arguments[0]+" tried: "+"art/"+command+"/"+arguments[0]+".png")
-			return null
-		object.load_animation(filename)
-	elif command in ["gui"]:
-		var frame = Filesystem.lookup_file(
-			"art/"+keywords(arguments).get("graphic", "")+".png",
-			script.root_path
-		)
-		var frameactive = Filesystem.lookup_file(
-			"art/"+keywords(arguments).get("graphichigh", "")+".png",
-			script.root_path
-		)
-		object.load_art(frame, frameactive, keywords(arguments).get("button_text", ""))
-		object.area.rect_position = Vector2(0, 0)
-	elif "PWChar" in class_path:
-		object.load_character(
-			arguments[0], 
-			keywords(arguments).get("e", "normal"),
-			script.root_path
-		)
-	elif "PWEvidence" in class_path:
-		object.load_art(script.root_path, arguments[0])
-	elif object.has_method("load_animation"):
-		object.load_animation(
-			Filesystem.lookup_file(
-				"art/"+arguments[0]+".png",
-				script.root_path
-			)
-		)
-	elif object.has_method("load_art"):
-		object.load_art(script.root_path)
-	var center = Vector2()
-	if command in centered_objects:
-		object.position += Vector2(256/2-object.width/2, 192/2-object.height/2)
-	last_object = object
-	if arguments:
-		object.script_name = keywords(arguments).get("name", arguments[0])
-		object.add_to_group("name_"+object.script_name)
-	if keywords(arguments).get("z", null)!=null:
-		object.z = int(keywords(arguments)["z"])
-	else:
-		object.z = ZLayers.z_sort[command]
-	for group in groups:
-		object.add_to_group(group)
-	object.name = object.script_name
-	#Set object to wait mode if possible and directed to
-	if "wait" in object:
-		object.set_wait(command in WAITERS)
-		# If we say to wait or nowait, apply it
-		if "wait" in arguments:
-			object.set_wait(true)    #Try to make the object wait, if it is a single play animation that has more than one frame
-		if "nowait" in arguments:
-			object.set_wait(false)
-	return object
 	
 func refresh_arrows(script):
-	get_tree().call_group(ARROW_GROUP, "queue_free")
-	var arrow_class = "res://System/UI/IArrow.gd"
+	if script.get_prev_statement() == null:
+		main.stack.variables.set_val("_cross_exam_start", "true")
+	else:
+		main.stack.variables.set_val("_cross_exam_start", "false")
 	if script.is_inside_cross():
-		arrow_class = "res://System/UI/IArrowCross.gd"
-	var arrow = create_object(
-		script,
-		"uglyarrow",
-		arrow_class,
-		[ARROW_GROUP, SPRITE_GROUP],
-		[]
-	)
-	if script.get_prev_statement() == null and "left" in arrow:
-		arrow.left.get_children()[1].visible = false
-		arrow.left.get_children()[2].visible = false
+		call_macro("show_cross_buttons", script, [])
+	else:
+		call_macro("show_main_button", script, [])
+
 	if script.is_inside_cross():
 		call_macro("show_present_button", script, [])
 		call_macro("show_press_button", script, [])
@@ -188,8 +107,10 @@ func refresh_arrows(script):
 		call_macro("hide_present_button", script, [])
 		call_macro("hide_press_button", script, [])
 		call_macro("show_court_record_button", script, [])
+	call_macro("hide_main_button_all", script, [])
 		
 func hide_arrows(script):
+	call_macro("hide_main_button", script, [])
 	call_macro("hide_court_record_button", script, [])
 	call_macro("hide_present_button", script, [])
 	call_macro("hide_press_button", script, [])
@@ -302,23 +223,26 @@ func call_command(command, script, arguments):
 		args.append(value_replace(arg))
 	arguments = args
 
+	# gui Buttons use {} to mean either a macro or a command
+	if command.begins_with("{") and command.ends_with("}"):
+		command = command.substr(1,command.length()-2)
+		
+	if is_macro(command):
+		return call_macro(command, script, arguments)
+
 	if has_method("ws_"+command):
 		return call("ws_"+command, script, arguments)
 
 	if "ws_"+command in external_commands:
 		var extern = external_commands["ws_"+command]
 		return extern.callv("ws_"+command, [script, arguments])
-	
-	if command.begins_with("{") and command.ends_with("}"):
-		return call_macro(command.substr(1,command.length()-2), script, arguments)
-	
-	if is_macro(command):
-		return call_macro(command, script, arguments)
+		
+	for object in get_objects(null):
+		if object.has_method("ws_"+command):
+			return object.callv("ws_"+command, [script, arguments])
 	return UNDEFINED
 	
 func is_macro(command):
-	if command.begins_with("{") and command.ends_with("}"):
-		return command.substr(1,command.length()-2)
 	if main.stack.macros.has(command):
 		return command
 	return ""

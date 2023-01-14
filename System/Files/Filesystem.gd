@@ -1,8 +1,5 @@
 extends Reference
 class_name Filesystem
-
-# TODO clean up all the to_lower() for paths, we should really only be cleaning paths when loading files from script
-# also see if pre-generating a file index is a better method
 	
 static func path_join(a, b):
 	if a.ends_with("/"):

@@ -77,6 +77,7 @@ func preprocess_lines():
 	var segments:Array
 	var i = 0
 	var macro = {}
+	var examining = false
 	while 1:
 		if i >= lines.size():
 			return
@@ -87,24 +88,40 @@ func preprocess_lines():
 			line = line.substr(3)
 		lines[i] = line
 		segments = line.split(" ", true, 1)
+
 		# TODO still kind of don't like doing this
-		if macro:
-			if segments and segments[0] == "endmacro":
-				main.stack.macros[macro["name"]] = macro["lines"]
-				macro = {}
-			else:
-				macro["lines"].append(line)
-			lines[i] = "#> "+lines[i]
-			i += 1
+		if macro or segments[0] == "macro":
+			if macro:
+				if segments and segments[0] == "endmacro":
+					main.stack.macros[macro["name"]] = macro["lines"]
+					macro = {}
+				else:
+					macro["lines"].append(line)
+				lines[i] = "#> "+lines[i]
+				i += 1
+			elif segments[0] == "macro":
+				macro = {"name": line.split(" ")[1].strip_edges(), "lines": []}
+				lines[i] = "#> "+lines[i]
+				i += 1
 			continue
-		elif segments[0] == "macro":
-			macro = {"name": line.split(" ")[1].strip_edges(), "lines": []}
-			lines[i] = "#> "+lines[i]
-			i += 1
-			continue
-		elif segments and segments[0] in label_statements and segments.size()>1:
+			
+		# See comment above ws_examine
+		if examining:
+			if segments and segments[0]!="region":
+				examining = false
+				if segments[0] != "showexamine":
+					lines.insert(i,"showexamine")
+					i += 1
+		elif segments and segments[0] == "examine":
+			examining = true
+				
+		if segments and segments[0] in label_statements and segments.size()>1:
 			var tag = segments[1].strip_edges()
 			if tag:
+				if segments[0] == "list" and "noback" in tag:
+					var args = Array(tag.split(" "))
+					args.erase("noback")
+					tag = " ".join(args)
 				add_label(tag, i)
 			i += 1
 			continue
@@ -153,8 +170,9 @@ func goto_label(label, fail=null):
 		if allow_goto_parent_script:
 			end()
 			main.stack.scripts.pop_back()
-			emit_signal("GOTO_RESULT")
-			return main.stack.scripts[-1].goto_label(label, fail)
+			if main.stack.scripts:
+				emit_signal("GOTO_RESULT")
+				return main.stack.scripts[-1].goto_label(label, fail)
 		main.log_error("Tried to go somewhere non existent "+label)
 		allow_next_line = true
 		return

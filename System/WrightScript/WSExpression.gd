@@ -17,6 +17,7 @@ func EVAL(code:String):
 	if not operation in ["<", ">", "=", "!=", "<=", ">="]:
 		check_value = operation + " " + check_value
 		operation = "="
+	print("CURRENT_VALUE:", current_value, " CHECK VALUE:", check_value)
 	match operation:
 		"=":
 			return current_value == check_value
