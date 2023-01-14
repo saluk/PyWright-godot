@@ -45,6 +45,7 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": false,
+			"scrollable": true,
 			"click_macro": "",
 			"click_args": []
 		},
@@ -69,6 +70,7 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": false,
+			"scrollable": true,
 			"click_macro": "",
 			"click_args": []
 		},
@@ -93,6 +95,7 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": false,
+			"scrollable": true,
 			"click_macro": "",
 			"click_args": []
 		},
@@ -117,6 +120,7 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": false,
+			"scrollable": true,
 			"click_macro": "",
 			"click_args": []
 		},
@@ -151,6 +155,7 @@ var TEMPLATES = {
 			"process_combined": true,
 			"rect": null,
 			"clickable": false,
+			"scrollable": true,
 			"click_macro": "",
 			"click_args": []
 		},
@@ -180,6 +185,7 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": true,
+			"scrollable": false,
 			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
 			"click_args": []
 		},
@@ -198,6 +204,7 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": false,
+			"scrollable": false,
 			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
 			"click_args": []
 		},
@@ -216,6 +223,7 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": false,
+			"scrollable": false,
 			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
 			"click_args": []
 		},
@@ -234,6 +242,7 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": false,
+			"scrollable": false,
 			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
 			"click_args": []
 		},
@@ -252,6 +261,7 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": false,
+			"scrollable": true,
 			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
 			"click_args": []
 		},
@@ -270,6 +280,7 @@ var TEMPLATES = {
 			"process_combined": false,
 			"rect": null,
 			"clickable": false,
+			"scrollable": false,
 			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
 			"click_args": []
 		}

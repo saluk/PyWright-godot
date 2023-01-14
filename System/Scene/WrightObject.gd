@@ -32,6 +32,7 @@ var template:Dictionary # Remember the template we were initialized with, useful
 
 # Positioning
 var z:int
+var scrollable := true
 
 # Waiting
 var wait := false
@@ -129,6 +130,7 @@ func load_sprites(template, sprite_key=null):
 	# TODO mirror property should be set by the sprite!
 	mirror.x = template["mirror"][0]
 	mirror.y = template["mirror"][1]
+	scrollable = template["scrollable"]
 	
 	if template["clickable"]:
 		click_area = ClickArea.new()

@@ -49,6 +49,9 @@ endmacro
 gui Button dostuff graphic=general/back_gba graphichigh=general/back_high_gba name=dostuff
 gui Wait
 label next
+"buttons dont scroll but other stuff does"
+fg angellunches
+scroll x=50
 delete name=dostuff
 "finished gui section"
 
