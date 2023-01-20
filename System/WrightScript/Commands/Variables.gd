@@ -13,6 +13,10 @@ func ws_set(script, arguments):
 func ws_setvar(script, arguments):
 	return ws_set(script, arguments)
 	
+# NEW
+func ws_delvar(script, arguments):
+	main.stack.variables.del_val(arguments[0])
+	
 # TODO IMPLEMENT
 #    @category([VALUE("variable","variable name to set"),COMBINED("expression2","The results of the expression will be stored in the variable.")],type="logic")
 #    def _set_ex(self,command,variable,*args):

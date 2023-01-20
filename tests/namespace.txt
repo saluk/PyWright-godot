@@ -20,6 +20,41 @@ set script.x 5
 "This macro scripts variable x == 5 {$script.x}"
 endmacro
 
+# access namespace like array
+set hats:0 top
+set hats:1 baseball cap
+set hats:2 sun
+"top,bball,sun: {$hats:0} {$hats:1} {hats:2}"
+
+# delete item from array
+delvar hats:1
+"top,sun: {$hats:0} {$hats:1}"
+
+# add to end of array
+set hats:n+1 baseball cap
+"top,sun,bball: {$hats:0} {$hats:1} {$hats:2}"
+
+# clear array
+delvar hats
+set hats:n+1 sun
+"sun: {$hats:0} {$hats:1} {$hats:2}"
+
+# Iteration
+set hats:n+1 baseball cap
+set hats:n+1 top
+"should print sun, bbal, then top"
+forvar for1 hats array
+"current hat:{$for1}"
+goto for1
+
+# namespace in an array
+set objects:0.name fred
+"after set"
+"{$objects:0.name}"
+set objects:0.height 6-11
+"{$objects:0.name} {$objects:0.height}"
+
+label weird
 "next bit is weird"
 set my_object.x 10
 set my_object.color green
