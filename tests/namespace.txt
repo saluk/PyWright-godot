@@ -48,9 +48,11 @@ set hats:n+1 sun
 set hats:n+1 baseball cap
 set hats:n+1 top
 "should print sun, bbal, then top"
-forvar for1 hats array
-"current hat:{$for1}"
-goto for1
+set hatsi 0
+label while
+"item {$hatsi} current hat:{$hats:$hatsi} #hats:{$hats:length}"
+addvar hatsi 1
+is hatsi < $hats:length while
 
 # namespace in an array
 set objects:0.name fred

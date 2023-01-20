@@ -51,19 +51,26 @@ func init_game_namespace(game_file):
 class Accessor:
 	var key:String
 	var namespace:Variables
+	var namespaces:NameSpaces
 	var access_item = null
-	func _init(key, namespace):
+	func _init(key, namespace, namespaces):
 		self.key = key
 		self.namespace = namespace
+		self.namespaces = namespaces
 
 		var listpart = ""
 		if ":" in key:
 			var parts = Array(key.split(":"))
 			self.key = parts[0]
+			# further expansion
+			if parts[1].begins_with("$"):
+				parts[1] = namespaces.get_accessor(parts[1].substr(1)).get_val("string", "0")
 			if parts[1].is_valid_integer():
 				access_item = int(parts[1])
 			elif parts[1] == "n+1":
 				access_item = list().size()
+			elif parts[1] == "length":
+				access_item = parts[1]
 			else:
 				print("invalid access item")
 				assert(false)
@@ -91,6 +98,8 @@ class Accessor:
 					val = ""
 				else:
 					val = val[access_item]
+			elif access_item == "length":
+				val = str(val.size())
 			else:
 				print("invalid access item")
 				val = ""
@@ -109,7 +118,6 @@ class Accessor:
 				val = Values.to_truth_string(val)
 		if val==null:
 			return default
-		print(val)
 		return val
 	func set_val(value):
 		if access_item is int:
@@ -136,6 +144,8 @@ class Accessor:
 				print("can't access > size")
 				return
 			list().remove(access_item)
+		elif access_item == "length":
+			pass
 		else:
 			namespace.del_val(key)
 	func exists():
@@ -176,7 +186,7 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 			return get_accessor(variable, object.variables, setting)
 		namespace = global_namespace
 		
-	var accessor = Accessor.new(next, namespace)
+	var accessor = Accessor.new(next, namespace, self)
 	
 	# We are at the end of the line, let caller figure out what to do with the address
 	if not variable:
