@@ -162,6 +162,10 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 	else:
 		variable = ""
 		
+	# Expand variables further
+	if next.begins_with("$"):
+		next = get_accessor(next.substr(1), null, setting).get_val("string", "")
+		
 	if not namespace:
 		if next == "script":
 			return get_accessor(variable, script.variables, setting)

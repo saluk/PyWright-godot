@@ -3,6 +3,11 @@ set x 200
 set script.x 100
 "The main script's variable x == 100: {$script.x}"
 
+# set script based on a variable
+set my_name patrick
+set script.$my_name.happy true
+"patrick is happy? true:{$script.patrick.happy}"
+
 obj general/back name=back_button
 
 set back_button.hello hello world
