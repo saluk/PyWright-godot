@@ -7,6 +7,7 @@ var root_path := ""
 var filename := ""
 var lines := []
 var labels := {}  # each label will have a list of line numbers
+var variables:Variables  # local variables accessed with script.x
 var line_num := 0
 var line:String
 
@@ -28,6 +29,7 @@ func _init(main, stack):
 	assert(stack)
 	self.main = main
 	self.stack = stack
+	variables = Variables.new()
 		
 func has_script(scene_name) -> String:
 	for name in [scene_name+".script.txt", scene_name+".txt"]:

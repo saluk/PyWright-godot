@@ -1,19 +1,6 @@
 extends Reference
 class_name Variables
 
-var DEFAULTS := {
-	"ev_mode_bg_evidence": "general/evidence",
-	"ev_items_x": "38",
-	"ev_items_y": "63",
-	"ev_spacing_x": "48",
-	"ev_spacing_y": "46",
-	"ev_small_width": "35",
-	"ev_small_height": "35",
-	"ev_big_width": "70",
-	"ev_big_height": "70",
-	"ev_modebutton_x": "196",
-	"ev_modebutton_y": "7"
-}
 var store := {}
 
 var setters := ["_speaking"]
@@ -23,11 +10,6 @@ func _init():
 	
 func reset():
 	self.store = {}
-	for k in DEFAULTS.keys():
-		self.store[k] = DEFAULTS[k]
-
-func keys():
-	return store.keys()
 
 func set_val(key, value):
 	if key in setters:
@@ -38,7 +20,10 @@ func del_val(key):
 	store.erase(key)
 
 func get_string(key, default=""):
-	return store.get(key, default)
+	var val = store.get(key, default)
+	if val is String:
+		return val
+	return ""
 
 func get_int(key, default=0):
 	return int(store.get(key, default))

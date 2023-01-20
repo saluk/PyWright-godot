@@ -1,0 +1,36 @@
+set x 200
+"The global x is 200: {$x}"
+set script.x 100
+"The main script's variable x == 100: {$script.x}"
+
+obj general/back name=back_button
+
+set back_button.hello hello world
+"Back button hello = hello world: {$back_button.hello}"
+delete name=back_button
+"Back button hello is gone: {$back_button.hello}"
+
+localvars
+
+"the global x is still 200: {$x}"
+"the main scripts x is still 100: {$script.x}"
+
+macro localvars
+set script.x 5
+"This macro scripts variable x == 5 {$script.x}"
+endmacro
+
+"next bit is weird"
+set my_object.x 10
+set my_object.color green
+set my_object.size big
+"my_object is at 10, green, and big:{n}{$my_object.x} {$my_object.color} {$my_object.size}{n}{$my_object} is nothing"
+# overwrite my_object the namespace with a value
+set my_object red
+"{$my_object} is red, but {$my_object.x} {$my_object.color} {$my_object.size} are all blank"
+
+set my_object.x 10
+set my_object.color green
+set my_object.size big
+"my_object is at 10, green, and big:{n}{$my_object.x} {$my_object.color} {$my_object.size}{n}{$my_object} is nothing"
+
