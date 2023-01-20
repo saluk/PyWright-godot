@@ -31,15 +31,8 @@ func get_int(key, default=0):
 func get_float(key, default=0.0):
 	return float(store.get(key, default))
 	
-func to_num(v):
-	if v is float:
-		return v
-	if v is String and "." in v:
-		return float(v)
-	return int(v)
-	
 func get_num(key, default=0.0):
-	return to_num(store.get(key, default))
+	return Values.to_num(store.get(key, default))
 
 func get_truth(key, default="false"):
 	return WSExpression.string_to_bool(get_string(key, default))
@@ -48,13 +41,6 @@ func get_truth_string(key, default="false"):
 	if get_truth(key, default):
 		return 'true'
 	return 'false'
-
-func evidence_keys():
-	var ev_keys = {}
-	for key in store.keys():
-		if key.ends_with("_name") or key.ends_with("_pic") or key.ends_with("_desc"):
-			ev_keys[key.split("_")[0]] = 1
-	return ev_keys.keys()
 
 func setter__speaking(val):
 	store["_speaking"] = val

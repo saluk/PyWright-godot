@@ -54,6 +54,24 @@ class Accessor:
 	func _init(key, namespace):
 		self.key = key
 		self.namespace = namespace
+	func get_val(type, default):
+		match type:
+			"string":
+				return namespace.get_string(key, default)
+			"int":
+				return namespace.get_int(key, default)
+			"float":
+				return namespace.get_float(key, default)
+			"num":
+				return namespace.get_num(key, default)
+			"truth":
+				return namespace.get_truth(key, default)
+			"truth_string":
+				return namespace.get_truth_string(key, default)
+	func set_val(value):
+		return namespace.set_val(key, value)
+	func del_val():
+		namespace.del_val(key)
 
 # Lookup a variable
 # [object_script_name].x <- lookup in object
@@ -94,40 +112,32 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 # Passthrough functions to namespace
 
 func set_val(key, value):
-	var accessor = get_accessor(key, null, true)
-	return accessor.namespace.set_val(accessor.key, value)
+	return get_accessor(key, null, true).set_val(value)
 	
-func del_val(key, namespace=global_namespace):
-	var accessor = get_accessor(key, null, true)
-	return accessor.namespace.del_val(accessor.key)
+func del_val(key):
+	return get_accessor(key, null, true).del_val()
 
-func get_string(key, default="", namespace=global_namespace):
-	var accessor = get_accessor(key)
-	return accessor.namespace.get_string(accessor.key, default)
+func get_string(key, default=""):
+	return get_accessor(key).get_val("string", default)
 
-func get_int(key, default=0, namespace=global_namespace):
-	var accessor = get_accessor(key)
-	return accessor.namespace.get_int(accessor.key, default)
+func get_int(key, default=0):
+	return get_accessor(key).get_val("int", default)
 	
-func get_float(key, default=0.0, namespace=global_namespace):
-	var accessor = get_accessor(key)
-	return accessor.namespace.get_float(accessor.key, default)
+func get_float(key, default=0.0):
+	return get_accessor(key).get_val("float", default)
 	
-# TODO This should be in a utility module as a static
-func to_num(v):
-	return global_namespace.to_num(v)
-	
-func get_num(key, default=0.0, namespace=global_namespace):
-	var accessor = get_accessor(key)
-	return accessor.namespace.get_num(accessor.key, default)
+func get_num(key, default=0.0):
+	return get_accessor(key).get_val("num", default)
 
-func get_truth(key, default="false", namespace=global_namespace):
-	var accessor = get_accessor(key)
-	return accessor.namespace.get_truth(accessor.key, default)
+func get_truth(key, default="false"):
+	return get_accessor(key).get_val("truth", default)
 
-func get_truth_string(key, default="false", namespace=global_namespace):
-	var accessor = get_accessor(key)
-	return accessor.namespace.get_truth_string(accessor.key, default)
+func get_truth_string(key, default="false"):
+	return get_accessor(key).get_val("truth_string", default)
 
 func evidence_keys():
-	return global_namespace.evidence_keys()
+	var ev_keys = {}
+	for key in global_namespace.keys():
+		if key.ends_with("_name") or key.ends_with("_pic") or key.ends_with("_desc"):
+			ev_keys[key.split("_")[0]] = 1
+	return ev_keys.keys()

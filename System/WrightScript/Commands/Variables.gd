@@ -79,28 +79,28 @@ func ws_joinvar(script, arguments):
 
 func ws_addvar(script, arguments):
 	var numa = main.stack.variables.get_num(arguments[0])
-	var numb = main.stack.variables.to_num(arguments[1])
+	var numb = Values.to_num(arguments[1])
 	if numa==null:
 		return main.log_error(arguments[0]+"="+str(numa)+" not a number")
 	main.stack.variables.set_val(arguments[0], numa + numb)
 
 func ws_subvar(script, arguments):
 	var numa = main.stack.variables.get_num(arguments[0])
-	var numb = main.stack.variables.to_num(arguments[1])
+	var numb = Values.to_num(arguments[1])
 	if numa==null:
 		return main.log_error(arguments[0]+"="+str(numa)+" not a number")
 	main.stack.variables.set_val(arguments[0], numa - numb)
 
 func ws_mulvar(script, arguments):
 	var numa = main.stack.variables.get_num(arguments[0])
-	var numb = main.stack.variables.to_num(arguments[1])
+	var numb = Values.to_num(arguments[1])
 	if numa==null:
 		return main.log_error(arguments[0]+"="+str(numa)+" not a number")
 	main.stack.variables.set_val(arguments[0], numa * numb)
 	
 func ws_divvar(script, arguments):
 	var numa = main.stack.variables.get_num(arguments[0])
-	var numb = main.stack.variables.to_num(arguments[1])
+	var numb = Values.to_num(arguments[1])
 	if numa==null:
 		return main.log_error(arguments[0]+"="+str(numa)+" not a number")
 	main.stack.variables.set_val(arguments[0], numa / numb)
