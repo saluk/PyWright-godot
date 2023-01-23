@@ -30,6 +30,10 @@ func _init(main, stack):
 	self.main = main
 	self.stack = stack
 	variables = Variables.new()
+	
+# get the global namespaces for variable access
+func namespaces():
+	return stack.variables
 		
 func has_script(scene_name) -> String:
 	for name in [scene_name+".script.txt", scene_name+".txt"]:

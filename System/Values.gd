@@ -26,7 +26,7 @@ static func to_int(v):
 static func to_float(v):
 	if v is float:
 		return v
-	if v.is_valid_float(v):
+	if v.is_valid_float():
 		return float(v)
 	return null
 
