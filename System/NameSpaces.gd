@@ -67,7 +67,7 @@ class Accessor:
 				parts[1] = namespaces.get_accessor(parts[1].substr(1)).get_val("string", "0")
 			if parts[1].is_valid_integer():
 				access_item = int(parts[1])
-			elif parts[1] == "n+1":
+			elif parts[1] == "end":
 				access_item = list().size()
 			elif parts[1] == "length":
 				access_item = parts[1]
@@ -161,7 +161,7 @@ class Accessor:
 # x <- lookup in global
 # [object_name].x.y <- create or access namespace in object_name called x, retrieve y
 # something:2 <- make something an array, get item at index 2
-# set something.n+1 <- add item to the end of array
+# set something.end <- add item to the end of array
 func get_accessor(variable:String, namespace:Variables=null, setting=false):
 	var script = main.top_script()
 	var next = variable

@@ -1,3 +1,19 @@
+macro list_in_macro
+delvar mylist
+set script.mylist:end item1
+set script.mylist:end item2
+set script.mylist:end item3
+set i 0
+label loop
+"{$script.mylist:$i} {$i}"
+addvar i 1
+is i > $script.mylist:length endscript
+goto loop
+endmacro
+
+list_in_macro
+"{$script.mylist:0} is empty"
+
 set x 200
 "The global x is 200: {$x}"
 set script.x 100
@@ -36,17 +52,17 @@ delvar hats:1
 "top,sun: {$hats:0} {$hats:1}"
 
 # add to end of array
-set hats:n+1 baseball cap
+set hats:end baseball cap
 "top,sun,bball: {$hats:0} {$hats:1} {$hats:2}"
 
 # clear array
 delvar hats
-set hats:n+1 sun
+set hats:end sun
 "sun: {$hats:0} {$hats:1} {$hats:2}"
 
 # Iteration
-set hats:n+1 baseball cap
-set hats:n+1 top
+set hats:end baseball cap
+set hats:end top
 "should print sun, bbal, then top"
 set hatsi 0
 label while
