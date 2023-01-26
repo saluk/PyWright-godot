@@ -95,7 +95,7 @@ func ws_click_back_from_court_record(script, arguments):
 	queue_free()
 	
 func load_page_button():
-	var pages = main.stack.evidence_pages.keys()
+	var pages = stack.evidence_pages.keys()
 	if pages.size() == 1:
 		return
 	var cur_i = pages.find(page)
@@ -174,7 +174,7 @@ func load_page_zoom():
 	var count = 0
 	var left_arrow = false
 	var right_arrow = false
-	for evname in main.stack.evidence_pages.get(page, []):
+	for evname in stack.evidence_pages.get(page, []):
 		i += 1
 		if i < offset:
 			# We're trying to draw before the offset, show left arrow
@@ -185,10 +185,10 @@ func load_page_zoom():
 			right_arrow = true
 			break
 		count += 1
-		var key_name = main.stack.variables.get_string(evname+"_name", evname)
-		var key_desc = main.stack.variables.get_string(evname+"_desc", "")
-		var key_pic = main.stack.variables.get_string(evname+"_pic", evname)
-		var key_check = main.stack.variables.get_string(evname+"_check", null)
+		var key_name = stack.variables.get_string(evname+"_name", evname)
+		var key_desc = stack.variables.get_string(evname+"_desc", "")
+		var key_pic = stack.variables.get_string(evname+"_pic", evname)
+		var key_check = stack.variables.get_string(evname+"_check", null)
 		ev_db[evname] = {
 			"name": key_name, "desc": key_desc, "pic": key_pic, "check": key_check
 		}
@@ -205,8 +205,8 @@ func load_page_zoom():
 		pic.name = "ZoomedEv"+key_pic
 		pic.load_animation(ev_path)
 		pic.rescale(
-			main.stack.variables.get_int("ev_big_width")+1,
-			main.stack.variables.get_int("ev_big_height")+1
+			stack.variables.get_int("ev_big_width")+1,
+			stack.variables.get_int("ev_big_height")+1
 		)
 		pic.position = Vector2(x, y)
 		add_child(pic)
@@ -243,16 +243,16 @@ func load_page_zoom():
 		load_arrow("R")
 
 func select(evname):
-	main.stack.variables.set_val("_selected", evname)
+	stack.variables.set_val("_selected", evname)
 		
 func load_page_overview():
-	var x = main.stack.variables.get_int("ev_items_x")
-	var y = main.stack.variables.get_int("ev_items_y")
+	var x = stack.variables.get_int("ev_items_x")
+	var y = stack.variables.get_int("ev_items_y")
 	var i = -1
 	var count = 0
 	var left_arrow = false
 	var right_arrow = false
-	for evname in main.stack.evidence_pages.get(page, []):
+	for evname in stack.evidence_pages.get(page, []):
 		i += 1
 		if i < offset:
 			# We're trying to draw before the offset, show left arrow
@@ -263,10 +263,10 @@ func load_page_overview():
 			right_arrow = true
 			break
 		count += 1
-		var key_name = main.stack.variables.get_string(evname+"_name", evname)
-		var key_desc = main.stack.variables.get_string(evname+"_desc", "")
-		var key_pic = main.stack.variables.get_string(evname+"_pic", evname)
-		var key_check = main.stack.variables.get_string(evname+"_check", null)
+		var key_name = stack.variables.get_string(evname+"_name", evname)
+		var key_desc = stack.variables.get_string(evname+"_desc", "")
+		var key_pic = stack.variables.get_string(evname+"_pic", evname)
+		var key_check = stack.variables.get_string(evname+"_check", null)
 		ev_db[evname] = {
 			"name": key_name, "desc": key_desc, "pic": key_pic, "check": key_check
 		}
@@ -295,16 +295,16 @@ func load_page_overview():
 		ev_button.position = Vector2(x, y)
 		if ev_button.current_sprite:
 			ev_button.current_sprite.rescale(
-				main.stack.variables.get_int("ev_small_width")+1,
-				main.stack.variables.get_int("ev_small_height")+1
+				stack.variables.get_int("ev_small_width")+1,
+				stack.variables.get_int("ev_small_height")+1
 			)
 		ev_button.click_area.connect("mouse_entered", self, "highlight_evidence", [evname])
 		
 		# Move to next spot
-		x += main.stack.variables.get_int("ev_spacing_x")
+		x += stack.variables.get_int("ev_spacing_x")
 		if x > 256-ev_button.width:
-			x = main.stack.variables.get_int("ev_items_x")
-			y += main.stack.variables.get_int("ev_spacing_y")
+			x = stack.variables.get_int("ev_items_x")
+			y += stack.variables.get_int("ev_spacing_y")
 	if left_arrow:
 		load_arrow("L")
 	if right_arrow:
@@ -317,7 +317,7 @@ func highlight_evidence(evname):
 func ws_record_zoom_evidence(script, arguments):
 	var evname = arguments[0]
 	zoom = true
-	offset = main.stack.evidence_pages.get(page, []).find(evname)
+	offset = stack.evidence_pages.get(page, []).find(evname)
 	reset()
 	
 func ws_record_click_present(script, arguments):
@@ -331,7 +331,7 @@ func ws_click_page_from_court_record(script, arguments):
 func present(option):
 	Commands.call_command(
 		"callpresent",
-		main.stack.scripts[-1],
+		stack.scripts[-1],
 		[option]
 	)
 	queue_free()

@@ -87,7 +87,7 @@ func ws_check_from_examine(script, arguments):
 		label = current_region.label
 	return Commands.call_command(
 		"goto",
-		Commands.main.stack.scripts[-1],
+		stack.scripts[-1],
 		[
 			label
 		]
