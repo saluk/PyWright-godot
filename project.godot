@@ -34,6 +34,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Main.gd"
 }, {
+"base": "Reference",
+"class": "NameSpaces",
+"language": "GDScript",
+"path": "res://System/NameSpaces.gd"
+}, {
 "base": "Node2D",
 "class": "PWSprite",
 "language": "GDScript",
@@ -43,6 +48,11 @@ _global_script_classes=[ {
 "class": "Penalty",
 "language": "GDScript",
 "path": "res://System/UI/Penalty.gd"
+}, {
+"base": "Reference",
+"class": "Values",
+"language": "GDScript",
+"path": "res://System/Values.gd"
 }, {
 "base": "Reference",
 "class": "Variables",
@@ -70,8 +80,10 @@ _global_script_class_icons={
 "Colors": "",
 "Filesystem": "",
 "MainScene": "",
+"NameSpaces": "",
 "PWSprite": "",
 "Penalty": "",
+"Values": "",
 "Variables": "",
 "WrightObject": "",
 "WrightScript": "",

@@ -7,6 +7,7 @@ var root_path := ""
 var filename := ""
 var lines := []
 var labels := {}  # each label will have a list of line numbers
+var variables:Variables  # local variables accessed with script.x
 var line_num := 0
 var line:String
 
@@ -28,6 +29,7 @@ func _init(main, stack):
 	assert(stack)
 	self.main = main
 	self.stack = stack
+	variables = Variables.new()
 		
 func has_script(scene_name) -> String:
 	for name in [scene_name+".script.txt", scene_name+".txt"]:
@@ -93,7 +95,7 @@ func preprocess_lines():
 		if macro or segments[0] == "macro":
 			if macro:
 				if segments and segments[0] == "endmacro":
-					main.stack.macros[macro["name"]] = macro["lines"]
+					stack.macros[macro["name"]] = macro["lines"]
 					macro = {}
 				else:
 					macro["lines"].append(line)
@@ -169,10 +171,10 @@ func goto_label(label, fail=null):
 	else:
 		if allow_goto_parent_script:
 			end()
-			main.stack.scripts.pop_back()
-			if main.stack.scripts:
+			stack.scripts.pop_back()
+			if stack.scripts:
 				emit_signal("GOTO_RESULT")
-				return main.stack.scripts[-1].goto_label(label, fail)
+				return stack.scripts[-1].goto_label(label, fail)
 		main.log_error("Tried to go somewhere non existent "+label)
 		allow_next_line = true
 		return
@@ -226,15 +228,15 @@ func is_inside_cross():
 			endcrosses.append(i)
 		i += 1
 	if not crosses or not endcrosses:
-		main.stack.variables.set_val("_is_cross", "nocrosses")
+		stack.variables.set_val("_is_cross", "nocrosses")
 		return false
 	for c in crosses:
 		if c < line_num:
 			for ec in endcrosses:
 				if ec > line_num:
-					main.stack.variables.set_val("_is_cross","true")
+					stack.variables.set_val("_is_cross","true")
 					return true
-	main.stack.variables.set_val("_is_cross", "notbetween")
+	stack.variables.set_val("_is_cross", "notbetween")
 	return false
 
 func next_statement():
@@ -255,7 +257,7 @@ func get_prev_statement():
 	while si > -1:
 		if is_cross(lines[si]):
 			return null
-		if is_statement(lines[si]) and si != main.stack.variables.get_int("_statement_line_num"):
+		if is_statement(lines[si]) and si != stack.variables.get_int("_statement_line_num"):
 			return si
 		si -= 1
 	return null
@@ -285,7 +287,7 @@ func read_macro():
 			break
 		macro_lines.append(line)
 		line_num += 1
-	main.stack.macros[macro_name] = macro_lines
+	stack.macros[macro_name] = macro_lines
 	if line_num >= lines.size():
 		end()
 		
@@ -338,7 +340,7 @@ func to_string():
 	var l = ""
 	if line_num < lines.size():
 		l = lines[line_num]
-	var stack_index = main.stack.scripts.find(self)
+	var stack_index = stack.scripts.find(self)
 	return "SCRIPT("+"si:"+str(stack_index)+" "+filename+":"+str(line_num)+") - "+l
 
 #Force script to end

@@ -44,13 +44,13 @@ func ws_investigate_option(script, args):
 	if scene_name:
 		Commands.call_command(
 			"script",
-			Commands.main.stack.scripts[-1],
+			stack.scripts[-1],
 			[
 				scene_name+"."+option
 			]
 		)
 	elif fail_label:
-		Commands.main.stack.scripts[-1].goto_label(option, fail_label)
+		stack.scripts[-1].goto_label(option, fail_label)
 	else:
 		print("bad investigate menu")
 		assert(0)

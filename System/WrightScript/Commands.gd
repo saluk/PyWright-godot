@@ -145,7 +145,7 @@ func get_nametag():
 # Save/Load
 func save_scripts():
 	var data = {
-		"variables": main.stack.variables.store,
+		"variables": {}, # TODO Redo how variables get saved
 		"macros": main.stack.macros,
 		"evidence_pages": main.stack.evidence_pages,
 		"stack": []
@@ -178,7 +178,7 @@ func load_scripts():
 	
 	clear_main_screen()
 	main.stack.clear_scripts()
-	main.stack.variables.store = data["variables"]
+	#main.stack.variables.store = data["variables"]  # TODO Redo how variables get loaded
 	main.stack.evidence_pages = data["evidence_pages"]
 	main.stack.macros = data["macros"]
 	
