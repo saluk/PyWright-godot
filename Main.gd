@@ -15,6 +15,9 @@ char phoenix
 """
 
 signal stack_initialized
+signal frame_drawn
+signal line_executed
+signal text_finished
 
 func main_screen():
 	return get_tree().get_nodes_in_group("MainScreen")[0]
@@ -138,6 +141,7 @@ func _process(_delta):
 	if stack:
 		if stack.state in [stack.STACK_READY, stack.STACK_YIELD]:
 			stack.process()
+	emit_signal("frame_drawn")
 
 func log_error(msg):
 	stack.show_in_debugger()

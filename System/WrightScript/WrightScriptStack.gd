@@ -187,8 +187,10 @@ func process():
 			continue
 		# We may have a paused frame from before to keep processing
 		frame = scripts[-1].process_wrightscript()
-		show_frame(frame)
-		show_in_debugger()
+		if not frame.line.begins_with("ut_"):
+			show_frame(frame)
+			show_in_debugger()
+			main.emit_signal("line_executed")
 		print("FRAME:", frame, ",", frame.line_num, ",<<", frame.line, ">>,", frame.sig)
 		if REPEAT_MAX > 0:
 			if (repeated["line"] == null or (repeated["line"] != frame.line or repeated["line_num"] != frame.line_num)):

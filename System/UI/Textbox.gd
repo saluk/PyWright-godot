@@ -33,6 +33,7 @@ class TextPack:
 	func _print_text(rich_text_label):
 		if leftover == null:
 			rich_text_label.bbcode_text += self.text
+			textbox.printed += self.text
 			leftover =  self.textbox.strip_bbcode(self.text).length()
 		var delta = min(characters_per_frame, leftover)
 		rich_text_label.visible_characters += delta
@@ -273,6 +274,8 @@ func update_textbox(force = false):
 		packs[0].consume($Backdrop/Label, force)
 		if packs[0].delete:
 			packs.remove(0)
+		if not packs:
+			main.emit_signal("text_finished")
 	else:
 		_set_speaking_animation("blink")
 		

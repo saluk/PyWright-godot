@@ -45,6 +45,11 @@ _global_script_classes=[ {
 "path": "res://System/UI/Penalty.gd"
 }, {
 "base": "Reference",
+"class": "Testing",
+"language": "GDScript",
+"path": "res://System/Testing/Testing.gd"
+}, {
+"base": "Reference",
 "class": "Variables",
 "language": "GDScript",
 "path": "res://System/Variables.gd"
@@ -72,6 +77,7 @@ _global_script_class_icons={
 "MainScene": "",
 "PWSprite": "",
 "Penalty": "",
+"Testing": "",
 "Variables": "",
 "WrightObject": "",
 "WrightScript": "",

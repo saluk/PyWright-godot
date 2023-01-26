@@ -12,6 +12,7 @@ var height:int = 1
 
 var wait = false   # Pause script until animation has finished playing
 var wait_signal = "finished_playing"
+var loaded = false
 signal finished_playing
 
 # TODO needs to handle different animation modes, loop, once, and blink mode at minimum
@@ -92,6 +93,7 @@ func load_animation(path:String, info=null, sub_rect=null):
 	if frames:
 		width = frames[0].region.size.x
 		height = frames[0].region.size.y
+		loaded = true
 	
 	# Build animated sprite
 	animated_sprite = AnimatedSprite.new()

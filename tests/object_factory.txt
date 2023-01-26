@@ -1,23 +1,31 @@
 label top
 clear
+ut_assert objects().size()==0
+ut_after lines=1 current_line().has("now")
 goto now
 
 label now
 label bg
 bg courtroom
+ut_assert objects("courtroom")[0].current_sprite.loaded
+ut_after signal=text_finished_quick textbox().printed == "Courtroom is visible. Now show gavel animation"
 "Courtroom is visible. Now show gavel animation"
 
 label fg
+# assert_after(0.5) objects(name="textbox").length==0
 fg ani-judge-gavel
 "Hopefully there was a delay"
+# assert_after(0.5) objects(name="textbox").length==1; objects(name="textbox").text.has("Hopefully this")
 fg ani-judge-gavel nowait
 "Hopefully this is printed at the same time as the animation"
+# assert objects(name="pointer").visible_in_bounds(x1=100,x2=150,y1=100,y2=150)
 fg pointer
 "pointer is centered"
 
 label port
 bg prosecution
 fg pbench
+# assert objects(name="prosecution").visible_equals_bounds(x1=0,x2=256,y1=0,y1=192); objects(name="pbench").visible_equals_bounds(x=141,y=156,w=115,h=36)}
 char edgeworth
 "Basic edgeworth"
 emo name=edgeworth confident
