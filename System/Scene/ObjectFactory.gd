@@ -347,6 +347,7 @@ func create_from_template(
 	# Initialize object values
 	object.main = get_main()
 	object.wrightscript = script
+	object.stack = get_main().stack
 
 	var keyword_arguments = Commands.keywords(arguments)
 	var x=int(keyword_arguments.get("x", 0))

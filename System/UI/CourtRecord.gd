@@ -31,7 +31,7 @@ func _process(dt):
 	if has_objects:
 		return
 	has_objects = true
-	var evbg_path = main.stack.variables.get_string("ev_mode_bg_evidence")
+	var evbg_path = stack.variables.get_string("ev_mode_bg_evidence")
 	var bg = ObjectFactory.create_from_template(
 		main.top_script(),
 		"graphic",
@@ -103,6 +103,8 @@ func load_page_button():
 		cur_i += 1
 	elif cur_i == pages.size()-1:
 		cur_i = 0
+	if not pages:
+		return
 	var next_page = pages[cur_i]
 	var b = ObjectFactory.create_from_template(
 		main.top_script(), 

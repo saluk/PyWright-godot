@@ -48,7 +48,8 @@ var sprites:Dictionary = {
 }
 
 var main
-var wrightscript
+var wrightscript  # Keeps a reference to the script that created us TODO ability for objects to be cleared when a script ends
+var stack
 var sprite_root
 
 # Classes
