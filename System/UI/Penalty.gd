@@ -54,10 +54,10 @@ func begin():
 		threat_section.visible = false
 	
 func get_value():
-	return wrightscript.namespaces().get_float(variable, 100)
+	return stack.variables.get_float(variable, 100)
 	
 func set_value(value):
-	wrightscript.namespaces().set_val(variable, value)
+	stack.variables.set_val(variable, value)
 
 # TODO get sizes pixel perfect
 func _process(dt):
