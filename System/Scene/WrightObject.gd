@@ -6,6 +6,7 @@ export var root_path:String = "res://"
 export var base_path:String    # The base path ("edgeworth") before variants and sprites
 export var variant_path:String # The variant path ("normal") before sprites are loaded
 export var script_name:String  # How to identify the object
+var variables:Variables # Object local variables accessed via [script_name].x 
 
 var char_name:String    # What this character is called for nametag purposes
 
@@ -47,7 +48,8 @@ var sprites:Dictionary = {
 }
 
 var main
-var wrightscript
+var wrightscript  # Keeps a reference to the script that created us TODO ability for objects to be cleared when a script ends
+var stack
 var sprite_root
 
 # Classes
@@ -92,6 +94,7 @@ func free():
 	return .free()
 	
 func init():
+	variables = Variables.new()
 	if not sprite_root:
 		sprite_root = Node2D.new()
 		add_child(sprite_root)

@@ -4,7 +4,8 @@ class_name WrightScriptStack
 var main
 var scripts := []
 
-var variables:Variables
+# Contains all namespaces except for scripts and objects
+var variables:NameSpaces
 var evidence_pages := {
 	
 }
@@ -32,7 +33,8 @@ var repeated = {"line":null, "line_num": -1, "amount": 0}
 func _init(main):
 	assert(main)
 	self.main = main
-	variables = Variables.new()
+	variables = NameSpaces.new()
+	variables.main = main
 	filesystem = load("res://System/Files/Filesystem.gd").new()
 
 signal stack_empty
