@@ -1,21 +1,28 @@
 label top
+# This should make text print immediately, which for this test should be sufficient
+set _debug true
 clear
 ut_assert objects().size()==0
-ut_after lines=1 current_line().has("now")
+ut_assert_after lines=1 current_line().has("now")
 goto now
 
 label now
 label bg
 bg courtroom
 ut_assert objects("courtroom")[0].current_sprite.loaded
-ut_after signal=text_finished_quick textbox().printed == "Courtroom is visible. Now show gavel animation"
+ut_assert_after signal=text_finished textbox().printed == "Courtroom is visible. Now show gavel animation"
+ut_after signal=text_finished textbox().click_continue()
 "Courtroom is visible. Now show gavel animation"
 
 label fg
-# assert_after(0.5) objects(name="textbox").length==0
+ut_assert_after frames=5 textbox()==null
 fg ani-judge-gavel
+ut_assert_after frames=10 textbox()!=null
+ut_after signal=text_finished textbox().click_continue()
 "Hopefully there was a delay"
-# assert_after(0.5) objects(name="textbox").length==1; objects(name="textbox").text.has("Hopefully this")
+ut_after frames=5 textbox().printed.begins_with("Hopefully")
+ut_after frames=5 objects("ani-judge-gavel")[0].current_sprite.get_animation_progress() < 1
+ut_after signal=text_finished textbox().click_continue()
 fg ani-judge-gavel nowait
 "Hopefully this is printed at the same time as the animation"
 # assert objects(name="pointer").visible_in_bounds(x1=100,x2=150,y1=100,y2=150)

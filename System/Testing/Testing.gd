@@ -23,7 +23,9 @@ static func objects(name=null):
 	return Commands.get_objects(name)
 	
 static func textbox():
-	return Commands.get_objects(null, null, Commands.TEXTBOX_GROUP)[0]
+	var obs = Commands.get_objects(null, null, Commands.TEXTBOX_GROUP)
+	if obs:
+		return obs[0]
 	
 class line_query:
 	var text
@@ -38,7 +40,7 @@ static func current_line():
 		return null
 	return line_query.new(scripts[-1].get_next_line(0))
 	
-func run_assert(string):
+func run(string, do_assert=false):
 	var script = GDScript.new()
 	script.set_source_code(template.format({
 		"command": string
@@ -49,4 +51,5 @@ func run_assert(string):
 	obj.set_script(script)
 	
 	var v = obj.command()
-	assert(v)
+	if do_assert:
+		assert(v)

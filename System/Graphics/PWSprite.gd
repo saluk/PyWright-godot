@@ -159,3 +159,10 @@ func set_colorize(color, amount):
 	if material:
 		material.set_shader_param("to_color", color)
 		material.set_shader_param("to_color_amount", amount)
+
+# mostly used for tests
+func get_animation_progress():
+	if not animated_sprite:
+		return 0
+	var count = animated_sprite.frames.get_frame_count(animated_sprite.animation)
+	return float(animated_sprite.frame/count)

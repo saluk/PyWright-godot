@@ -165,6 +165,8 @@ func _ready():
 	add_to_group(Commands.TEXTBOX_GROUP)
 	Commands.refresh_arrows(main.stack.scripts[-1])
 	update_nametag()
+	if main.stack.variables.get_truth("_debug", false):
+		click_continue()
 
 func update_nametag():
 	# Lookup character name
