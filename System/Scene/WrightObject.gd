@@ -19,7 +19,7 @@ export var sprite_key:String  # Current chosen sprite
 #   - highlight: highlight while the mouse is over a button
 #   - clicked: highlight while the mouse is clicking down on a button
 
-var current_sprite:Node
+var current_sprite:Node2D
 var centered := false   # At x=0, y=0, the sprite should be in the center of the screen
 var mirror := Vector2(1,1)
 var _width_override = null
@@ -226,3 +226,39 @@ func sprite_finished_playing():
 func set_grey(value):
 	for sprite in sprites.values():
 		sprite.set_grey(value)
+
+### mainly for testing ###
+
+# gets the current texture
+func get_texture():
+	if not current_sprite:
+		return null
+	var sprite = current_sprite.animated_sprite
+	var frames = sprite.frames
+	var texture = frames.get_frame(sprite.animation, sprite.frame)
+	return texture
+	
+func get_display_rect():
+	if not current_sprite:
+		return null
+	var texture:Texture = get_texture()
+	var size = texture.get_size()
+	var pos = current_sprite.global_position
+	return Rect2(pos, size)
+
+# true of the object can be found within the given rectangle
+func visible_within(collide_rect:Rect2):
+	var display_rect = get_display_rect()
+	if collide_rect.encloses(display_rect):
+		return true
+	# TODO probably only show this if debugging shapes
+	main.get_node("DebugLayer").draw(
+		"draw_rect", [collide_rect, Color.blueviolet, false, 2, true]
+	)
+	main.get_node("DebugLayer").draw(
+		"draw_rect", [display_rect, Color.red, false, 2, true]
+	)
+	main.pause(true)
+	yield(get_tree(), "idle_frame")
+	main.pause(false)
+	return false

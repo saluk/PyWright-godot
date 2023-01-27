@@ -168,3 +168,14 @@ func reload():
 	MusicPlayer.stop_music()
 	# TODO stop running sounds
 	get_tree().reload_current_scene()
+
+func pause(paused=true, toggle=false):
+	if toggle:
+		paused = not is_processing()
+	var nodes = [self]
+	var node:Node
+	while nodes:
+		node = nodes.pop_front()
+		node.set_process(paused)
+		for child in node.get_children():
+			nodes.append(child)

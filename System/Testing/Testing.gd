@@ -51,5 +51,7 @@ func run(string, do_assert=false):
 	obj.set_script(script)
 	
 	var v = obj.command()
+	if v is GDScriptFunctionState:
+		v = yield(v, "completed")
 	if do_assert:
 		assert(v)

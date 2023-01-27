@@ -25,7 +25,7 @@ ut_after frames=5 objects("ani-judge-gavel")[0].current_sprite.get_animation_pro
 ut_after signal=text_finished textbox().click_continue()
 fg ani-judge-gavel nowait
 "Hopefully this is printed at the same time as the animation"
-# assert objects(name="pointer").visible_in_bounds(x1=100,x2=150,y1=100,y2=150)
+ut_assert_after frames=2 objects("pointer")[0].visible_within(Rect2(154,75,45,32))
 fg pointer
 "pointer is centered"
 
