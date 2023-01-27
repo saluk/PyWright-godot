@@ -55,9 +55,9 @@ char skye
 ut_assert objects("edgeworth").size() == 0
 ut_assert_after frames=5 objects("skye")[0].current_sprite
 ut_assert_after frames=5 objects("skye")[0].variant_path=="normal"
-ut_assert_after frames=5 objects("skye")[0].animation.sprite_key=="talk"
-ut_assert_after frames=15 objects("skye")[0].animation.sprite_key=="blink"
-ut_assert_after frames=15 objects("skye")[0].current_sprite
+ut_assert_after frames=5 objects("skye")[0].sprite_key=="talk"
+ut_assert_after frames=40 objects("skye")[0].sprite_key=="blink"
+ut_assert_after frames=40 objects("skye")[0].current_sprite
 "I can load (combined) sprites too"
 
 label effects
