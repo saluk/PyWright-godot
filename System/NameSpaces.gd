@@ -1,0 +1,242 @@
+# Replaces main.variables with main.namespaces
+# Can ask for a variable like in Variables, will return out of the global namespace
+# Can ask for a variable from a given namespace, will access the variable from that variable set
+# Can pass a name the includes dots (.) and the namespace will handle the logic of finding
+#    or creating the given namespace
+
+extends Reference
+class_name NameSpaces
+
+var DEFAULTS := {
+	"ev_mode_bg_evidence": "general/evidence",
+	"ev_items_x": "38",
+	"ev_items_y": "63",
+	"ev_spacing_x": "48",
+	"ev_spacing_y": "46",
+	"ev_small_width": "35",
+	"ev_small_height": "35",
+	"ev_big_width": "70",
+	"ev_big_height": "70",
+	"ev_modebutton_x": "196",
+	"ev_modebutton_y": "7"
+}
+
+var global_namespace:Variables
+# The default namespace like PyWright used for everything
+var game_namespace:Variables
+# A special namespace which saves it's variables to a file and loads them
+# again when the game loads
+
+# Other namespaces:
+# each WrightObject has a namespace
+# each WrightScript has a namespace
+
+var main
+
+func _init():
+	global_namespace = Variables.new()
+	game_namespace = Variables.new()
+	
+func reset():
+	global_namespace = Variables.new()
+	game_namespace = Variables.new()
+	for k in DEFAULTS.keys():
+		global_namespace.store[k] = DEFAULTS[k]
+	
+func init_game_namespace(game_file):
+	pass
+	# TODO load game file and populate the game_namespace
+	# Attach a signal to save the file when variables are written to
+	
+class Accessor:
+	var key:String
+	var namespace:Variables
+	var namespaces:NameSpaces
+	var access_item = null
+	func _init(key, namespace, namespaces):
+		self.key = key
+		self.namespace = namespace
+		self.namespaces = namespaces
+
+		var listpart = ""
+		if ":" in key:
+			var parts = Array(key.split(":"))
+			self.key = parts[0]
+			# further expansion
+			if parts[1].begins_with("$"):
+				parts[1] = namespaces.get_accessor(parts[1].substr(1)).get_val("string", "0")
+			if parts[1].is_valid_integer():
+				access_item = int(parts[1])
+			elif parts[1] == "end":
+				access_item = list().size()
+			elif parts[1] == "length":
+				access_item = parts[1]
+			else:
+				print("invalid access item")
+				assert(false)
+	# make the namespace able to act as a list
+	func list():
+		if not key in namespace.store:
+			namespace.store[key] = []
+		if not namespace.store[key] is Array:
+			return []
+		return namespace.store[key]
+	func get_val(type=null, default=null):
+		if not key in namespace.store:
+			return default
+		var val = namespace.store[key]
+		if access_item != null:
+			if not val is Array:
+				print("cant access from non-array")
+				return ""
+			if access_item is int:
+				if access_item < 0:
+					print("can't access <0")
+					val = ""
+				elif access_item >= val.size():
+					print("can't access > size")
+					val = ""
+				else:
+					val = val[access_item]
+			elif access_item == "length":
+				val = str(val.size())
+			else:
+				print("invalid access item")
+				val = ""
+		match type:
+			"string":
+				val = Values.to_str(val)
+			"int":
+				val = Values.to_int(val)
+			"float":
+				val = Values.to_float(val)
+			"num":
+				val = Values.to_num(val)
+			"truth":
+				val = Values.to_truth(val)
+			"truth_string":
+				val = Values.to_truth_string(val)
+		if val==null:
+			return default
+		return val
+	func set_val(value):
+		if access_item is int:
+			if access_item < 0:
+				print("can't access <0")
+				return
+			elif access_item >= list().size():
+				while access_item >= list().size():
+					list().append("")
+			list()[access_item] = value
+		elif access_item!=null:
+			print("invalid access item")
+		else:
+			if value is Variables:
+				namespace.store[key] = value
+			else:
+				namespace.set_val(key, value)
+	func del_val():
+		if access_item is int:
+			if access_item < 0:
+				print("can't access <0")
+				return
+			elif access_item >= list().size():
+				print("can't access > size")
+				return
+			list().remove(access_item)
+		elif access_item == "length":
+			pass
+		else:
+			namespace.del_val(key)
+	func exists():
+		return namespace.store.has(key)
+	func is_namespace():
+		return get_val() is Variables
+
+# Lookup a variable
+# [object_script_name].x <- lookup in object
+# [object_script_name]-2.x <- lookup in second object with that name
+# game.y <- lookup in game
+# script.z <- lookup in current script or previous scripts
+# x <- lookup in global
+# [object_name].x.y <- create or access namespace in object_name called x, retrieve y
+# something:2 <- make something an array, get item at index 2
+# set something.end <- add item to the end of array
+func get_accessor(variable:String, namespace:Variables=null, setting=false):
+	var script = main.top_script()
+	var next = variable
+	if "." in variable:
+		var parts = Array(variable.split("."))
+		next = parts.pop_front()
+		variable = ".".join(parts)
+	else:
+		variable = ""
+		
+	# Expand variables further
+	if next.begins_with("$"):
+		next = get_accessor(next.substr(1), null, setting).get_val("string", "")
+		
+	if not namespace:
+		if next == "script":
+			return get_accessor(variable, script.variables, setting)
+		if next == "game":
+			return get_accessor(variable, game_namespace, setting)
+		# See if next is an object
+		for object in Commands.get_objects(next):
+			return get_accessor(variable, object.variables, setting)
+		namespace = global_namespace
+		
+	var accessor = Accessor.new(next, namespace, self)
+	
+	# We are at the end of the line, let caller figure out what to do with the address
+	if not variable:
+		return accessor
+		
+	if accessor.exists():
+		if accessor.is_namespace():
+			return get_accessor(variable, accessor.get_val(), setting)
+		# We are trying to access values in an accessor that's not a namespace
+		print("Error, "+next+" has a value and is not a namespace")
+		print(accessor.get_val())
+	if setting:
+		print("creating new namespace "+accessor.key)
+		accessor.set_val(Variables.new())
+	else:
+		print("creating temp namespace "+accessor.key)
+		accessor.namespace = Variables.new()
+	return get_accessor(variable, accessor.get_val(), setting)
+
+
+# Passthrough functions to namespace
+
+func set_val(key, value):
+	var a = get_accessor(key, null, true)
+	return a.set_val(value)
+	
+func del_val(key):
+	return get_accessor(key, null, true).del_val()
+
+func get_string(key, default=""):
+	return get_accessor(key).get_val("string", default)
+
+func get_int(key, default=0):
+	return get_accessor(key).get_val("int", default)
+	
+func get_float(key, default=0.0):
+	return get_accessor(key).get_val("float", default)
+	
+func get_num(key, default=0.0):
+	return get_accessor(key).get_val("num", default)
+
+func get_truth(key, default="false"):
+	return get_accessor(key).get_val("truth", default)
+
+func get_truth_string(key, default="false"):
+	return get_accessor(key).get_val("truth_string", default)
+
+func evidence_keys():
+	var ev_keys = {}
+	for key in global_namespace.keys():
+		if key.ends_with("_name") or key.ends_with("_pic") or key.ends_with("_desc"):
+			ev_keys[key.split("_")[0]] = 1
+	return ev_keys.keys()

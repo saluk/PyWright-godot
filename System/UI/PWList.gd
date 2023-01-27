@@ -73,7 +73,7 @@ func ws_click_back_from_list(script, arguments):
 func ws_click_list_item(script, arguments):
 		Commands.call_command(
 			"goto",
-			Commands.main.stack.scripts[-1],
+			stack.scripts[-1],
 			[
 				" ".join(arguments)
 			]
