@@ -251,7 +251,6 @@ func visible_within(collide_rect:Rect2):
 	var display_rect = get_display_rect()
 	if collide_rect.encloses(display_rect):
 		return true
-	# TODO probably only show this if debugging shapes
 	main.get_node("DebugLayer").draw(
 		"draw_rect", [collide_rect, Color.blueviolet, false, 2, true]
 	)
