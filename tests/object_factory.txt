@@ -25,21 +25,39 @@ ut_after frames=5 objects("ani-judge-gavel")[0].current_sprite.get_animation_pro
 ut_after signal=text_finished textbox().click_continue()
 fg ani-judge-gavel nowait
 "Hopefully this is printed at the same time as the animation"
-ut_assert_after frames=2 objects("pointer")[0].visible_within(Rect2(154,75,45,32))
+ut_assert_after frames=2 objects("pointer")[0].visible_within(Rect2(104,75,45,32))
 fg pointer
+ut_after frames=10 textbox().click_continue()
 "pointer is centered"
 
 label port
 bg prosecution
 fg pbench
-# assert objects(name="prosecution").visible_equals_bounds(x1=0,x2=256,y1=0,y1=192); objects(name="pbench").visible_equals_bounds(x=141,y=156,w=115,h=36)}
 char edgeworth
+ut_assert objects("prosecution")[0].visible_within(Rect2(0,0,256,192))
+ut_assert objects("pbench")[0].visible_within(Rect2(0,0,256,192))
+ut_assert objects("edgeworth")[0].variant_path=="normal"
+ut_assert objects("edgeworth")[0].current_sprite
+ut_after signal=text_finished textbox().click_continue()
 "Basic edgeworth"
 emo name=edgeworth confident
+ut_assert objects("edgeworth")[0].variant_path=="confident"
+ut_assert objects("edgeworth")[0].current_sprite
 "Now edgeworth is confident"
 emo name=edgeworth document
+ut_assert objects("edgeworth")[0].variant_path=="document"
+ut_assert objects("edgeworth")[0].current_sprite
 "I am holding a document. {n}{econfident} Now I am confident."
+
+# We need the text to print a little by little
+set _debug false
 char skye
+ut_assert objects("edgeworth").size() == 0
+ut_assert_after frames=5 objects("skye")[0].current_sprite
+ut_assert_after frames=5 objects("skye")[0].variant_path=="normal"
+ut_assert_after frames=5 objects("skye")[0].animation.sprite_key=="talk"
+ut_assert_after frames=15 objects("skye")[0].animation.sprite_key=="blink"
+ut_assert_after frames=15 objects("skye")[0].current_sprite
 "I can load (combined) sprites too"
 
 label effects

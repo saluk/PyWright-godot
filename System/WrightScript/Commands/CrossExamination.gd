@@ -30,13 +30,13 @@ func ws_next_statement(script, arguments):
 	var cross = main.cross_exam_script()
 	if cross:
 		cross.next_statement()
-	main.get_tree().call_group(Commands.TEXTBOX_GROUP, "queue_free")
+	Commands.delete_object_group(Commands.TEXTBOX_GROUP)
 	
 func ws_prev_statement(script, arguments):
 	var cross = main.cross_exam_script()
 	if cross:
 		cross.prev_statement()
-	main.get_tree().call_group(Commands.TEXTBOX_GROUP, "queue_free")
+	Commands.delete_object_group(Commands.TEXTBOX_GROUP)
 	
 func ws_statement(script, arguments):
 	var test = Commands.keywords(arguments).get("test", "")
@@ -53,7 +53,7 @@ func ws_resume(script, arguments):
 
 # Press the current statement
 func ws_callpress(script, arguments):
-	main.get_tree().call_group(Commands.TEXTBOX_GROUP, "queue_free")
+	Commands.delete_object_group(Commands.TEXTBOX_GROUP)
 	return script.goto_label(
 		"press "+main.stack.variables.get_string("_statement"),
 		"none"
@@ -96,7 +96,7 @@ func ws_showrecord(script, arguments):
 # goto the label '[_statement] maya' if we are in a statement
 # goto the label 'maya' if we are not in a statement
 func ws_callpresent(script, arguments):
-	main.get_tree().call_group(Commands.TEXTBOX_GROUP, "queue_free")
+	Commands.delete_object_group(Commands.TEXTBOX_GROUP)
 	var ev = main.stack.variables.get_string("_selected")
 	var statement = main.stack.variables.get_string("_statement")
 	if statement:
