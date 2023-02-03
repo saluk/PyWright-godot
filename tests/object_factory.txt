@@ -43,10 +43,12 @@ ut_after signal=text_finished textbox().click_continue()
 emo name=edgeworth confident
 ut_assert objects("edgeworth")[0].variant_path=="confident"
 ut_assert objects("edgeworth")[0].current_sprite
+ut_after signal=text_finished textbox().click_continue()
 "Now edgeworth is confident"
 emo name=edgeworth document
 ut_assert objects("edgeworth")[0].variant_path=="document"
 ut_assert objects("edgeworth")[0].current_sprite
+ut_after signal=text_finished textbox().click_continue()
 "I am holding a document. {n}{econfident} Now I am confident."
 
 # We need the text to print a little by little
@@ -58,34 +60,54 @@ ut_assert_after frames=5 objects("skye")[0].variant_path=="normal"
 ut_assert_after frames=5 objects("skye")[0].sprite_key=="talk"
 ut_assert_after frames=40 objects("skye")[0].sprite_key=="blink"
 ut_assert_after frames=40 objects("skye")[0].current_sprite
+ut_after frames=120 textbox().click_continue()
 "I can load (combined) sprites too"
+ut_assert objects("skye")[0].current_sprite.material.get_shader_param("greyscale_amt") == 0
+set _debug true
 
 label effects
 char skye
 grey name=skye
+ut_after signal=text_finished textbox().click_continue()
 "I'm grey"
+ut_assert objects("skye")[0].current_sprite.material.get_shader_param("greyscale_amt") == 1
 
 label evidence
 set idcard_pic id card
 ev idcard x=10 y=10
+ut_assert objects("idcard")[0].current_sprite
+ut_after signal=text_finished textbox().click_continue()
 "show id card at 10,10"
 delete name=idcard
+ut_assert objects("idcard").size()==0
 
 label gui
 
 macro dostuff
+ut_after signal=text_finished textbox().click_continue()
 "hello from the macro"
 goto next
 endmacro
 
 "click the button to continue{p10}{next}"
-gui Button dostuff graphic=general/back_gba graphichigh=general/back_high_gba name=dostuff
+ut_after frames=5 click_release_at(10, 10)
+ut_after frames=10 current_line().has("buttons")
+gui Button {dostuff} graphic=general/back_gba graphichigh=general/back_high_gba name=dostuff
 gui Wait
+ut_assert false
 label next
+ut_after signal=text_finished textbox().click_continue()
 "buttons dont scroll but other stuff does"
 fg angellunches
 scroll x=50
+ut_assert objects("dostuff")[0].position.x==0 and objects("dostuff")[0].position.y==0
+ut_assert objects("angellunches")[0].position.x==50
+ut_assert objects("prosecution")[0].position.x==50
+ut_assert objects("pbench")[0].position.x==50
+ut_assert objects("skye")[0].position.x==50
 delete name=dostuff
+ut_assert objects("dostuff").size()==0
+ut_after signal=text_finished textbox().click_continue()
 "finished gui section"
 
 label examine_menu_hidden

@@ -30,12 +30,15 @@ var yields = []  # functions to resume
 var REPEAT_MAX = 6  #If nonzero, and the same line is attempted to execute more than this value, drop to the debugger
 var repeated = {"line":null, "line_num": -1, "amount": 0}
 
+var testing
+
 func _init(main):
 	assert(main)
 	self.main = main
 	variables = NameSpaces.new()
 	variables.main = main
 	filesystem = load("res://System/Files/Filesystem.gd").new()
+	testing = Testing.new()
 
 signal stack_empty
 signal enter_debugger

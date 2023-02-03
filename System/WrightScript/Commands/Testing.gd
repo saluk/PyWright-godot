@@ -13,6 +13,12 @@ func ws_ut_assert(script, arguments):
 	var testing = Testing.new()
 	testing.run(unit_test_command, true)
 	
+func ws_ut_do(script, arguments):
+	var unit_test_command = PoolStringArray(arguments).join(" ")
+	print(unit_test_command)
+	var testing = Testing.new()
+	testing.run(unit_test_command, false)
+	
 class After:
 	var times
 	var command

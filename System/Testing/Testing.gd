@@ -8,9 +8,6 @@ class_name Testing
 # ut_after time - run the command after this many seconds
 
 # The command should be gdscript and pull from possible helper functions in this class
-
-func _ready():
-	pass # Replace with function body.
 	
 var template = """
 extends Testing
@@ -39,6 +36,19 @@ static func current_line():
 	if not scripts:
 		return null
 	return line_query.new(scripts[-1].get_next_line(0))
+	
+static func click_release_at(x, y):
+	var event_lmb = InputEventMouseButton.new()
+	event_lmb.position = Vector2(x, y)
+	event_lmb.pressed = true
+	Input.parse_input_event(event_lmb)
+	Commands.main.get_tree().create_timer(0.5).connect("timeout", Commands.main.stack.testing, "release_at", [x, y])
+	
+static func release_at(x, y):
+	var event_lmb = InputEventMouseButton.new()
+	event_lmb.position = Vector2(x, y)
+	event_lmb.pressed = false
+	Input.parse_input_event(event_lmb)
 	
 func run(string, do_assert=false):
 	var script = GDScript.new()
