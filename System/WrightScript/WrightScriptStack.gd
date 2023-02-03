@@ -23,6 +23,8 @@ enum {
 }
 var state = STACK_READY
 
+var mode = "play"  # play = play game normally, test = running unit tests
+
 var blockers = []
 var blocked_scripts = []
 var yields = []  # functions to resume

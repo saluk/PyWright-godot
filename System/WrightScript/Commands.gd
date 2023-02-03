@@ -235,6 +235,7 @@ func get_call_methods(object):
 	return l
 
 func index_commands():
+	external_commands = {}
 	for command_file in generate_command_map():
 		var extern = load(command_file).new(self)
 		for command in get_call_methods(extern):

@@ -8,12 +8,16 @@ func _init(commands):
 	main = commands.main
 
 func ws_ut_assert(script, arguments):
+	if not main.stack.mode == "test":
+		return
 	var unit_test_command = PoolStringArray(arguments).join(" ")
 	print(unit_test_command)
 	var testing = Testing.new()
 	testing.run(unit_test_command, true)
 	
 func ws_ut_do(script, arguments):
+	if not main.stack.mode == "test":
+		return
 	var unit_test_command = PoolStringArray(arguments).join(" ")
 	print(unit_test_command)
 	var testing = Testing.new()
@@ -39,9 +43,13 @@ class After:
 		waiters.erase(self)
 
 func ws_ut_assert_after(script, arguments):
+	if not main.stack.mode == "test":
+		return
 	_ut_command(script, arguments, true)
 	
 func ws_ut_after(script, arguments):
+	if not main.stack.mode == "test":
+		return
 	_ut_command(script, arguments, false)
 	
 func _ut_command(script, arguments, do_assert):

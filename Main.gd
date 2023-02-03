@@ -71,13 +71,16 @@ func _ready():
 	
 	var loader = load("res://System/UI/GamesMenu.tscn").instance()
 	main_screen().add_child(loader)
-	var path = yield(loader, "game_loaded")
+	var array = yield(loader, "game_loaded")
+	var path = array[0]
+	var mode = array[1]
 	if path.ends_with(".pck"):
 		load_game_from_pack(path)
 	elif path.ends_with(".txt"):
 		load_script_from_path(path)
 	else:
 		load_game(path)
+	stack.mode = mode
 		
 func test_eval():
 	stack.variables.set_val("is_true", "true")
