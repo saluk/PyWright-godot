@@ -5,6 +5,7 @@ var nametag := ""
 var text_to_print := ""
 var packs := []
 var printed := ""
+var has_finished := false
 var wait_signal := "tree_exited"
 export(NodePath) var tb_timer
 var z:int
@@ -165,8 +166,10 @@ func _ready():
 	add_to_group(Commands.TEXTBOX_GROUP)
 	Commands.refresh_arrows(main.stack.scripts[-1])
 	update_nametag()
+	
+	# Debug mode immediately prints text
 	if main.stack.variables.get_truth("_debug", false):
-		click_continue()
+		finish_text()
 
 func update_nametag():
 	# Lookup character name
@@ -202,11 +205,14 @@ func _on_Area2D_input_event(viewport, event, shape_idx):
 func queue_free():
 	connect("tree_exited", Commands, "hide_arrows", [main.stack.scripts[-1]])
 	.queue_free()
+	
+func finish_text():
+	while text_to_print or packs:
+		update_textbox(true)
 			
 func click_continue(immediate_skip=false):
 	if not immediate_skip and (text_to_print or packs):
-		while text_to_print or packs:
-			update_textbox(true)
+		finish_text()
 	else:
 		queue_free()
 		
@@ -276,10 +282,11 @@ func update_textbox(force = false):
 		packs[0].consume($Backdrop/Label, force)
 		if packs[0].delete:
 			packs.remove(0)
-		if not packs:
-			main.emit_signal("text_finished")
 	else:
-		_set_speaking_animation("blink")
+		if not has_finished:
+			has_finished = true
+			_set_speaking_animation("blink")
+			main.emit_signal("text_finished")
 		
 func _process(dt):
 	update_nametag()

@@ -60,7 +60,7 @@ ut_assert_after frames=5 objects("skye")[0].variant_path=="normal"
 ut_assert_after frames=5 objects("skye")[0].sprite_key=="talk"
 ut_assert_after frames=40 objects("skye")[0].sprite_key=="blink"
 ut_assert_after frames=40 objects("skye")[0].current_sprite
-ut_after frames=120 textbox().click_continue()
+ut_after frames=60 textbox().click_continue()
 "I can load (combined) sprites too"
 ut_assert objects("skye")[0].current_sprite.material.get_shader_param("greyscale_amt") == 0
 set _debug true
@@ -110,9 +110,27 @@ ut_assert objects("dostuff").size()==0
 ut_after signal=text_finished textbox().click_continue()
 "finished gui section"
 
+set times=0
 label examine_menu_hidden
+addvar times 1
 set _enable_back_button false
-bg courtroom
+bg courtrooom
+
+is times 1 first
+is times 2 second
+
+label first
+ut_after frames=2 click_release_at(215,369)
+ut_after frames=15 textbox().has("nothing found")
+goto show
+
+label second
+ut_after frames=2 click_release_at(25, 206)
+ut_after frames=3 click_release_at(215,369)
+ut_after frames=4 textbox().has("something found")
+goto show
+
+label show
 examine hide
 region 0 0 50 50 next2
 "you clicked the back button"

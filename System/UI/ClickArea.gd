@@ -50,14 +50,15 @@ func on_mouse_exited():
 	set_highlight()
 	
 func on_gui_input(event):
-	if event is InputEventMouseButton:
+	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
 		if event.pressed:
 			clicked = true
 			set_highlight()
 		else:
 			clicked = false
 			set_highlight()
-			perform_action()
+			if over:
+				perform_action()
 			
 func perform_action():
 	# If macroname is surrounded by {}, call macro

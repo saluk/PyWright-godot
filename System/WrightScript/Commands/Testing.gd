@@ -23,7 +23,7 @@ func ws_ut_do(script, arguments):
 	var testing = Testing.new()
 	testing.run(unit_test_command, false)
 	
-class After:
+class After extends Reference:
 	var times
 	var command
 	var waiters
