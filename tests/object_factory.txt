@@ -1,63 +1,132 @@
 label top
+# This should make text print immediately, which for this test should be sufficient
+set _debug true
 clear
+
+goto start_examine_test
+
+ut_assert objects().size()==0
+ut_assert_after lines=1 current_line().has("now")
 goto now
 
 label now
 label bg
 bg courtroom
+ut_assert objects("courtroom")[0].current_sprite.loaded
+ut_assert_after signal=text_finished textbox().printed == "Courtroom is visible. Now show gavel animation"
+ut_after signal=text_finished textbox().click_continue()
 "Courtroom is visible. Now show gavel animation"
 
 label fg
+ut_assert_after frames=5 textbox()==null
 fg ani-judge-gavel
+ut_assert_after frames=10 textbox()!=null
+ut_after signal=text_finished textbox().click_continue()
 "Hopefully there was a delay"
+ut_after frames=5 textbox().printed.begins_with("Hopefully")
+ut_after frames=5 objects("ani-judge-gavel")[0].current_sprite.get_animation_progress() < 1
+ut_after signal=text_finished textbox().click_continue()
 fg ani-judge-gavel nowait
 "Hopefully this is printed at the same time as the animation"
+ut_assert_after frames=2 objects("pointer")[0].visible_within(Rect2(104,75,45,32))
 fg pointer
+ut_after frames=10 textbox().click_continue()
 "pointer is centered"
 
 label port
 bg prosecution
 fg pbench
 char edgeworth
+ut_assert objects("prosecution")[0].visible_within(Rect2(0,0,256,192))
+ut_assert objects("pbench")[0].visible_within(Rect2(0,0,256,192))
+ut_assert objects("edgeworth")[0].variant_path=="normal"
+ut_assert objects("edgeworth")[0].current_sprite
+ut_after signal=text_finished textbox().click_continue()
 "Basic edgeworth"
 emo name=edgeworth confident
+ut_assert objects("edgeworth")[0].variant_path=="confident"
+ut_assert objects("edgeworth")[0].current_sprite
+ut_after signal=text_finished textbox().click_continue()
 "Now edgeworth is confident"
 emo name=edgeworth document
+ut_assert objects("edgeworth")[0].variant_path=="document"
+ut_assert objects("edgeworth")[0].current_sprite
+ut_after signal=text_finished textbox().click_continue()
 "I am holding a document. {n}{econfident} Now I am confident."
+
+# We need the text to print a little by little
+set _debug false
 char skye
+ut_assert objects("edgeworth").size() == 0
+ut_assert_after frames=5 objects("skye")[0].current_sprite
+ut_assert_after frames=5 objects("skye")[0].variant_path=="normal"
+ut_assert_after frames=5 objects("skye")[0].sprite_key=="talk"
+ut_assert_after frames=40 objects("skye")[0].sprite_key=="blink"
+ut_assert_after frames=40 objects("skye")[0].current_sprite
+ut_after frames=60 textbox().click_continue()
 "I can load (combined) sprites too"
+ut_assert objects("skye")[0].current_sprite.material.get_shader_param("greyscale_amt") == 0
+set _debug true
 
 label effects
 char skye
 grey name=skye
+ut_after signal=text_finished textbox().click_continue()
 "I'm grey"
+ut_assert objects("skye")[0].current_sprite.material.get_shader_param("greyscale_amt") == 1
 
 label evidence
 set idcard_pic id card
 ev idcard x=10 y=10
+ut_assert objects("idcard")[0].current_sprite
+ut_after signal=text_finished textbox().click_continue()
 "show id card at 10,10"
 delete name=idcard
+ut_assert objects("idcard").size()==0
 
 label gui
 
 macro dostuff
+ut_after signal=text_finished textbox().click_continue()
 "hello from the macro"
 goto next
 endmacro
 
 "click the button to continue{p10}{next}"
-gui Button dostuff graphic=general/back_gba graphichigh=general/back_high_gba name=dostuff
+ut_after frames=5 click_button("dostuff")
+ut_after frames=10 current_line().has("buttons")
+gui Button {dostuff} graphic=general/back_gba graphichigh=general/back_high_gba name=dostuff
 gui Wait
+ut_assert false
 label next
+ut_after signal=text_finished textbox().click_continue()
 "buttons dont scroll but other stuff does"
 fg angellunches
 scroll x=50
+ut_assert objects("dostuff")[0].position.x==0 and objects("dostuff")[0].position.y==0
+ut_assert objects("angellunches")[0].position.x==50
+ut_assert objects("prosecution")[0].position.x==50
+ut_assert objects("pbench")[0].position.x==50
+ut_assert objects("skye")[0].position.x==50
 delete name=dostuff
+ut_assert objects("dostuff").size()==0
+ut_after signal=text_finished textbox().click_continue()
 "finished gui section"
+
+label start_examine_test
+ut_after frames=1 objects("examine_menu")[0].ws_check_from_examine(null,null)
+ut_after frames=2 textbox().printed == "nothing found"
+ut_after frames=3 textbox().click_continue()
+
+ut_after frames=4 objects("examine_menu")[0].set_crosshair_pos(25, 25)
+ut_after frames=5 objects("examine_menu")[0].ws_check_from_examine(null,null)
+ut_after frames=6 textbox().printed == "something found"
+ut_after frames=7 textbox().click_continue()
 
 label examine_menu_hidden
 set _enable_back_button false
 bg courtroom
+
 examine hide
 region 0 0 50 50 next2
 "you clicked the back button"
@@ -67,6 +136,16 @@ goto examine_menu_hidden
 
 label next2
 "something found"
+
+ut_after frames=1 objects("examine_menu")[0].examine_button.visible == false
+ut_after frames=1 objects("examine_menu")[0].ws_back_from_examine(null,null)
+ut_after frames=2 textbox().printed == "you clicked the back button, try again"
+ut_after frames=3 textbox().click_continue()
+
+ut_after frames=4 objects("examine_menu")[0].set_crosshair_pos(25, 25)
+ut_after frames=5 objects("examine_menu")[0].ws_check_from_examine(null,null)
+ut_after frames=6 textbox().printed == "something found"
+ut_after frames=7 textbox().click_continue()
 
 label examine_menu_visible
 set _enable_back_button false
@@ -83,6 +162,19 @@ goto examine_menu_visible
 label next2
 "something found"
 
+label TEST_LIST
+ut_after frames=1 objects("listmenu")[0].get_node("back").click_area.perform_action()
+ut_after frames=2 textbox().printed == "Back button pressed, again."
+ut_after frames=3 textbox().click_continue()
+
+ut_after frames=5 objects("listmenu")[0].get_node("play list again").click_area.perform_action()
+ut_after frames=6 textbox().printed == "Go back to the list"
+ut_after frames=7 textbox().click_continue()
+
+ut_after frames=8 objects("listmenu")[0].get_node("show next list").click_area.perform_action()
+ut_after frames=9 textbox().printed == "continuing"
+ut_after frames=10 textbox().click_continue()
+
 list list1
 li play list again
 li show next list
@@ -94,6 +186,17 @@ label play list again
 goto list1
 label show next list
 "continuing"
+
+label TEST_LIST_NO_BACK
+ut_after frames=1 objects("listmenu")[0].get_node("back") == null
+
+ut_after frames=2 objects("listmenu")[0].get_node("again").click_area.perform_action()
+ut_after frames=3 textbox().printed == "Go back to the list"
+ut_after frames=4 textbox().click_continue()
+
+ut_after frames=5 objects("listmenu")[0].get_node("continue").click_area.perform_action()
+ut_after frames=6 textbox().printed == "continuing"
+ut_after frames=7 textbox().click_continue()
 
 list list2 noback
 li again
@@ -107,8 +210,23 @@ goto list2
 label continue
 "continuing"
 
+label TEST_INVESTIGATE_MENU
+ut_after frames=2 objects("invest_menu")[0].get_node("examine").click_area.perform_action()
+ut_after frames=3 textbox().printed == "examine 1"
+ut_after frames=4 textbox().click_continue()
+ut_after frames=10 objects("invest_menu")[0].get_node("move").click_area.perform_action()
+ut_after frames=11 textbox().printed == "move 1"
+ut_after frames=12 textbox().click_continue()
+ut_after frames=16 objects("invest_menu")[0].get_node("talk").click_area.perform_action()
+ut_after frames=17 textbox().printed == "talking 1"
+ut_after frames=18 textbox().click_continue()
+ut_after frames=21 objects("invest_menu")[0].get_node("present").click_area.perform_action()
+ut_after frames=22 textbox().printed == "myfail"
+ut_after frames=23 textbox().click_continue()
+
 label themenu
 localmenu talk=true examine=true move=true present=true fail=myfail
+
 label talk
 "talking 1"
 goto themenu
@@ -123,5 +241,6 @@ label none
 label myfail
 "myfail"
 
+ut_after frames=1 exit()
 "return to top{next}"
 goto top

@@ -5,11 +5,13 @@ func _init(commands):
 
 class Scroller extends Node:
 	var objects = []
+	var tween:Tween
 	var wait_signal = ""
 	var total = Vector3(0.0, 0.0, 0.0)
 	var move = Vector3(0.0, 0.0, 0.0)
 	var speed = 1   # Pixels to scroll per frame
 	var time_left = 0.0
+	var total_time = 0.0
 	var script_name = "scroll"
 	var z = 0
 	func _init(x, y, z, speed, wait, filter):
@@ -18,8 +20,26 @@ class Scroller extends Node:
 		objects = getscrollable(Commands.get_objects(null, false))
 		move = total.normalized() * (speed/0.02)
 		time_left = total.length()/(speed/0.02)
+		total_time = time_left
 		if wait:
 			wait_signal = "tree_exited"
+	func make_tweens():
+		tween = Tween.new()
+		add_child(tween)
+		for o in objects:
+			tween.interpolate_property(
+				o, 
+				"global_position", 
+				o.global_position, 
+				o.global_position+total, 
+				total_time, 
+				Tween.TRANS_LINEAR
+			)
+			print(o.name)
+			print(o.global_position)
+			print(total)
+			print(o.global_position+total)
+		tween.start()
 	func getscrollable(objects):
 		var return_list = []
 		for o in objects:
@@ -44,11 +64,9 @@ class Scroller extends Node:
 				continue
 			new_objects.append(o)
 		objects = new_objects
-		pass
+		pass	
 	func _process(dt):
-		for object in objects:
-			if is_instance_valid(object):
-				object.position += move * dt
+		#tween.seek(total_time-time_left)
 		time_left -= dt
 		if time_left <= 0:
 			queue_free()
@@ -73,4 +91,5 @@ static func ws_scroll(script, arguments):
 	else:
 		scroller.control_filter(filter)
 	Commands.main_screen.add_child(scroller)
+	scroller.make_tweens()
 	return scroller

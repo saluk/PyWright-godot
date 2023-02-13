@@ -34,7 +34,7 @@ func ws_bg(script, arguments):
 	if not main.get_tree():
 		return
 	if not "stack" in arguments:
-		main.get_tree().call_group(Commands.CLEAR_GROUP, "queue_free")
+		Commands.delete_object_group(Commands.CLEAR_GROUP)
 	var bg:Node = ObjectFactory.create_from_template(script, "bg", {}, arguments)
 	return bg
 	
@@ -52,7 +52,7 @@ func ws_char(script, arguments):
 	var kw = Commands.keywords(arguments)
 	# If we don't "stack" then delete existing character
 	if not "stack" in arguments and not "hide" in arguments:
-		main.get_tree().call_group(Commands.CHAR_GROUP, "queue_free")
+		Commands.delete_object_group(Commands.CHAR_GROUP)
 	var character = ObjectFactory.create_from_template(
 		script,
 		"portrait",
@@ -61,7 +61,7 @@ func ws_char(script, arguments):
 	)
 	if "hide" in arguments:
 		character.visible = false
-		main.get_tree().call_group(Commands.HIDDEN_CHAR_GROUP, "queue_free")
+		Commands.delete_object_group(Commands.HIDDEN_CHAR_GROUP)
 		character.add_to_group(Commands.HIDDEN_CHAR_GROUP)
 	# This should maybe be a "property" (variable namespaced on the object)
 	character.char_name = main.stack.variables.get_string(
@@ -154,7 +154,7 @@ func ws_penalty(script, arguments):
 		delay = 50
 		if not damage_amount or threat:
 			delay = 0
-	main.get_tree().call_group(Commands.PENALTY_GROUP, "queue_free")
+	Commands.delete_object_group(Commands.PENALTY_GROUP)
 	var penalty = ObjectFactory.create_from_template(
 		script,
 		"penalty",

@@ -9,7 +9,7 @@
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 127, 31 )
 
-[node name="Textbox" type="Node2D"]
+[node name="Textbox" type="Node2D" groups=["TEXTBOX_GROUP"]]
 script = ExtResource( 4 )
 tb_timer = NodePath("Timer")
 

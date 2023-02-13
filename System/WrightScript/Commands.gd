@@ -40,14 +40,21 @@ func get_objects(script_name, last=null, group=SPRITE_GROUP):
 	if not get_tree():
 		return []
 	if last:
-		return [last_object]
+		if last_object and not last_object.is_queued_for_deletion():
+			return [last_object]
+		return []
 	var objects = []
 	for object in get_tree().get_nodes_in_group(group):
 		if object.is_queued_for_deletion():
+			print(" ! "+object.name+" IS queued for deletion")
 			continue
+		print(object.name+" is not queued for deletion")
 		if not script_name or object.script_name == script_name:
 			objects.append(object)
 	return objects
+	
+func delete_object_group(group):
+	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, group, "queue_free")
 
 func clear_main_screen():
 	for child in main_screen.get_children():
@@ -228,6 +235,7 @@ func get_call_methods(object):
 	return l
 
 func index_commands():
+	external_commands = {}
 	for command_file in generate_command_map():
 		var extern = load(command_file).new(self)
 		for command in get_call_methods(extern):

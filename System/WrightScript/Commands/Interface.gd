@@ -114,7 +114,7 @@ func ws_examine3d(script, arguments):
 
 # TODO support noback
 func ws_list(script, arguments):
-	main.get_tree().call_group(Commands.LIST_GROUP, "queue_free")
+	Commands.delete_object_group(Commands.LIST_GROUP)
 	var noback = "noback" in arguments
 	if noback:
 		arguments.erase("noback")

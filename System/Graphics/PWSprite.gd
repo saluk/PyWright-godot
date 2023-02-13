@@ -12,6 +12,7 @@ var height:int = 1
 
 var wait = false   # Pause script until animation has finished playing
 var wait_signal = "finished_playing"
+var loaded = false
 signal finished_playing
 
 # TODO needs to handle different animation modes, loop, once, and blink mode at minimum
@@ -126,9 +127,11 @@ func load_animation(path:String, info=null, sub_rect=null):
 	if frames:
 		width = frames[0].region.size.x
 		height = frames[0].region.size.y
+		loaded = true
 	
 	# Build animated sprite
 	animated_sprite = AnimatedSprite.new()
+	animated_sprite.name = path.replace(":", "|").replace("/",";")
 	animated_sprite.use_parent_material = true
 	add_child(animated_sprite)
 	animated_sprite.frames = SpriteFrames.new()
@@ -191,3 +194,10 @@ func set_colorize(color, amount):
 	if material:
 		material.set_shader_param("to_color", color)
 		material.set_shader_param("to_color_amount", amount)
+
+# mostly used for tests
+func get_animation_progress():
+	if not animated_sprite:
+		return 0
+	var count = animated_sprite.frames.get_frame_count(animated_sprite.animation)
+	return float(animated_sprite.frame/count)

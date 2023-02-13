@@ -31,7 +31,7 @@ func add_option(option):
 		"click_macro": "{investigate_option}",
 		"click_args": [option],
 		"rect": Rect2(226/2*rect_offset.x, 59/2*rect_offset.y, 226/2, 59/2)},
-		[],
+		["name="+option],
 		script_name
 	)
 	button.position = Vector2(

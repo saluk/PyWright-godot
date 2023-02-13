@@ -5,6 +5,7 @@ var nametag := ""
 var text_to_print := ""
 var packs := []
 var printed := ""
+var has_finished := false
 var wait_signal := "tree_exited"
 export(NodePath) var tb_timer
 var z:int
@@ -33,6 +34,7 @@ class TextPack:
 	func _print_text(rich_text_label):
 		if leftover == null:
 			rich_text_label.bbcode_text += self.text
+			textbox.printed += self.text
 			leftover =  self.textbox.strip_bbcode(self.text).length()
 		var delta = min(characters_per_frame, leftover)
 		rich_text_label.visible_characters += delta
@@ -164,6 +166,10 @@ func _ready():
 	add_to_group(Commands.TEXTBOX_GROUP)
 	Commands.refresh_arrows(main.stack.scripts[-1])
 	update_nametag()
+	
+	# Debug mode immediately prints text
+	if main.stack.variables.get_truth("_debug", false):
+		finish_text()
 
 func update_nametag():
 	# Lookup character name
@@ -199,11 +205,14 @@ func _on_Area2D_input_event(viewport, event, shape_idx):
 func queue_free():
 	connect("tree_exited", Commands, "hide_arrows", [main.stack.scripts[-1]])
 	.queue_free()
+	
+func finish_text():
+	while text_to_print or packs:
+		update_textbox(true)
 			
 func click_continue(immediate_skip=false):
 	if not immediate_skip and (text_to_print or packs):
-		while text_to_print or packs:
-			update_textbox(true)
+		finish_text()
 	else:
 		queue_free()
 		
@@ -274,7 +283,10 @@ func update_textbox(force = false):
 		if packs[0].delete:
 			packs.remove(0)
 	else:
-		_set_speaking_animation("blink")
+		if not has_finished:
+			has_finished = true
+			_set_speaking_animation("blink")
+			main.emit_signal("text_finished")
 		
 func _process(dt):
 	update_nametag()

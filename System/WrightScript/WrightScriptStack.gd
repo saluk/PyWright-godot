@@ -23,6 +23,8 @@ enum {
 }
 var state = STACK_READY
 
+var mode = "play"  # play = play game normally, test = running unit tests
+
 var blockers = []
 var blocked_scripts = []
 var yields = []  # functions to resume
@@ -30,12 +32,15 @@ var yields = []  # functions to resume
 var REPEAT_MAX = 6  #If nonzero, and the same line is attempted to execute more than this value, drop to the debugger
 var repeated = {"line":null, "line_num": -1, "amount": 0}
 
+var testing
+
 func _init(main):
 	assert(main)
 	self.main = main
 	variables = NameSpaces.new()
 	variables.main = main
 	filesystem = load("res://System/Files/Filesystem.gd").new()
+	testing = Testing.new()
 
 signal stack_empty
 signal enter_debugger
@@ -189,8 +194,10 @@ func process():
 			continue
 		# We may have a paused frame from before to keep processing
 		frame = scripts[-1].process_wrightscript()
-		show_frame(frame)
-		show_in_debugger()
+		if not frame.line.begins_with("ut_"):
+			show_frame(frame)
+			show_in_debugger()
+			main.emit_signal("line_executed")
 		print("FRAME:", frame, ",", frame.line_num, ",<<", frame.line, ">>,", frame.sig)
 		if REPEAT_MAX > 0:
 			if (repeated["line"] == null or (repeated["line"] != frame.line or repeated["line_num"] != frame.line_num)):

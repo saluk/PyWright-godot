@@ -10,17 +10,34 @@ func add_pck_button(path):
 	$Control/ScrollContainer/VBoxContainer.add_child(b)
 	
 func add_game_button(path):
+	var hbox = HBoxContainer.new()
 	var txt = path.replace("_"," ")
 	var b = Button.new()
-	b.text = "games/"+txt
+	b.text = "P"
+	b.align = Button.ALIGN_LEFT
 	b.connect("pressed", self, "launch_game", ["games/"+path])
-	$Control/ScrollContainer/VBoxContainer.add_child(b)
+	hbox.add_child(b)
+	var l = Label.new()
+	l.text = path
+	hbox.add_child(l)
+	$Control/ScrollContainer/VBoxContainer.add_child(hbox)
 	
 func add_test_button(path):
+	var hbox = HBoxContainer.new()
 	var b = Button.new()
-	b.text = path
-	b.connect("pressed", self, "launch_test", [path])
-	$Control/ScrollContainer2/VBoxContainer.add_child(b)
+	b.text = "P"
+	b.align = Button.ALIGN_LEFT
+	b.connect("pressed", self, "launch_game", [path, "play"])
+	hbox.add_child(b)
+	b = Button.new()
+	b.text = "T"
+	b.align = Button.ALIGN_LEFT
+	b.connect("pressed", self, "launch_game", [path, "test"])
+	hbox.add_child(b)
+	var l = Label.new()
+	l.text = path
+	hbox.add_child(l)
+	$Control/ScrollContainer2/VBoxContainer.add_child(hbox)
 	
 func _ready():
 	var listing = Directory.new()
@@ -51,11 +68,6 @@ func _ready():
 				add_test_button(next_file_name)
 			next_file_name = test_listing.get_next()
 
-func launch_game(path):
-	print("launching game ", path)
-	emit_signal("game_loaded", path)
-	queue_free()
-
-func launch_test(path):
-	emit_signal("game_loaded", path)
+func launch_game(path, mode="play"):
+	emit_signal("game_loaded", path, mode)
 	queue_free()

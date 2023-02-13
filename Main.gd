@@ -15,6 +15,9 @@ char phoenix
 """
 
 signal stack_initialized
+signal frame_drawn
+signal line_executed
+signal text_finished
 
 func main_screen():
 	return get_tree().get_nodes_in_group("MainScreen")[0]
@@ -68,13 +71,16 @@ func _ready():
 	
 	var loader = load("res://System/UI/GamesMenu.tscn").instance()
 	main_screen().add_child(loader)
-	var path = yield(loader, "game_loaded")
+	var array = yield(loader, "game_loaded")
+	var path = array[0]
+	var mode = array[1]
 	if path.ends_with(".pck"):
 		load_game_from_pack(path)
 	elif path.ends_with(".txt"):
 		load_script_from_path(path)
 	else:
 		load_game(path)
+	stack.mode = mode
 		
 func test_eval():
 	stack.variables.set_val("is_true", "true")
@@ -138,6 +144,7 @@ func _process(_delta):
 	if stack:
 		if stack.state in [stack.STACK_READY, stack.STACK_YIELD]:
 			stack.process()
+	emit_signal("frame_drawn")
 
 func log_error(msg):
 	stack.show_in_debugger()
@@ -164,3 +171,14 @@ func reload():
 	MusicPlayer.stop_music()
 	# TODO stop running sounds
 	get_tree().reload_current_scene()
+
+func pause(paused=true, toggle=false):
+	if toggle:
+		paused = not is_processing()
+	var nodes = [self]
+	var node:Node
+	while nodes:
+		node = nodes.pop_front()
+		node.set_process(paused)
+		for child in node.get_children():
+			nodes.append(child)
