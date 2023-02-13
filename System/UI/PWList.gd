@@ -29,7 +29,7 @@ func update():
 				},
 				"click_macro": "{click_back_from_list}"
 			},
-			[],
+			["name=back"],
 			script_name
 		)
 		back_button.position = Vector2(
@@ -50,7 +50,7 @@ func add_item(text, result):
 			"click_macro": "{click_list_item}",
 			"click_args": [result],
 		},
-		[],
+		["name="+text],
 		script_name
 	)
 	button.position = Vector2((256-button.width)/2, button_y)

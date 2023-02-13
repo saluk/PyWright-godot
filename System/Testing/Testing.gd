@@ -76,6 +76,9 @@ static func click_button(name):
 	for button in objects(name):
 		button.click_area.perform_action()
 	
+static func exit():
+	Commands.call_command("exit", Commands.main.top_script(), [])
+	
 func run(string, do_assert=false):
 	var script = GDScript.new()
 	script.set_source_code(template.format({

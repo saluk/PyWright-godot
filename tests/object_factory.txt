@@ -114,30 +114,19 @@ ut_after signal=text_finished textbox().click_continue()
 "finished gui section"
 
 label start_examine_test
-set times 0
-label examine_menu_hidden
-addvar times 1
-set _enable_back_button false
-bg courtroom
-
-is times 1 first
-is times 2 second
-"couldn't find continue point"
-
-label first
 ut_after frames=1 objects("examine_menu")[0].ws_check_from_examine(null,null)
 ut_after frames=2 textbox().printed == "nothing found"
 ut_after frames=3 textbox().click_continue()
-goto show
 
-label second
-ut_after frames=1 objects("examine_menu")[0].set_crosshair_pos(25, 25)
-ut_after frames=2 objects("examine_menu")[0].ws_check_from_examine(null,null)
-ut_after frames=3 textbox().printed == "something found"
-ut_after frames=4 textbox().click_continue()
-goto show
+ut_after frames=4 objects("examine_menu")[0].set_crosshair_pos(25, 25)
+ut_after frames=5 objects("examine_menu")[0].ws_check_from_examine(null,null)
+ut_after frames=6 textbox().printed == "something found"
+ut_after frames=7 textbox().click_continue()
 
-label show
+label examine_menu_hidden
+set _enable_back_button false
+bg courtroom
+
 examine hide
 region 0 0 50 50 next2
 "you clicked the back button"
@@ -147,6 +136,16 @@ goto examine_menu_hidden
 
 label next2
 "something found"
+
+ut_after frames=1 objects("examine_menu")[0].examine_button.visible == false
+ut_after frames=1 objects("examine_menu")[0].ws_back_from_examine(null,null)
+ut_after frames=2 textbox().printed == "you clicked the back button, try again"
+ut_after frames=3 textbox().click_continue()
+
+ut_after frames=4 objects("examine_menu")[0].set_crosshair_pos(25, 25)
+ut_after frames=5 objects("examine_menu")[0].ws_check_from_examine(null,null)
+ut_after frames=6 textbox().printed == "something found"
+ut_after frames=7 textbox().click_continue()
 
 label examine_menu_visible
 set _enable_back_button false
@@ -163,6 +162,19 @@ goto examine_menu_visible
 label next2
 "something found"
 
+label TEST_LIST
+ut_after frames=1 objects("listmenu")[0].get_node("back").click_area.perform_action()
+ut_after frames=2 textbox().printed == "Back button pressed, again."
+ut_after frames=3 textbox().click_continue()
+
+ut_after frames=5 objects("listmenu")[0].get_node("play list again").click_area.perform_action()
+ut_after frames=6 textbox().printed == "Go back to the list"
+ut_after frames=7 textbox().click_continue()
+
+ut_after frames=8 objects("listmenu")[0].get_node("show next list").click_area.perform_action()
+ut_after frames=9 textbox().printed == "continuing"
+ut_after frames=10 textbox().click_continue()
+
 list list1
 li play list again
 li show next list
@@ -174,6 +186,17 @@ label play list again
 goto list1
 label show next list
 "continuing"
+
+label TEST_LIST_NO_BACK
+ut_after frames=1 objects("listmenu")[0].get_node("back") == null
+
+ut_after frames=2 objects("listmenu")[0].get_node("again").click_area.perform_action()
+ut_after frames=3 textbox().printed == "Go back to the list"
+ut_after frames=4 textbox().click_continue()
+
+ut_after frames=5 objects("listmenu")[0].get_node("continue").click_area.perform_action()
+ut_after frames=6 textbox().printed == "continuing"
+ut_after frames=7 textbox().click_continue()
 
 list list2 noback
 li again
@@ -187,8 +210,23 @@ goto list2
 label continue
 "continuing"
 
+label TEST_INVESTIGATE_MENU
+ut_after frames=2 objects("invest_menu")[0].get_node("examine").click_area.perform_action()
+ut_after frames=3 textbox().printed == "examine 1"
+ut_after frames=4 textbox().click_continue()
+ut_after frames=10 objects("invest_menu")[0].get_node("move").click_area.perform_action()
+ut_after frames=11 textbox().printed == "move 1"
+ut_after frames=12 textbox().click_continue()
+ut_after frames=16 objects("invest_menu")[0].get_node("talk").click_area.perform_action()
+ut_after frames=17 textbox().printed == "talking 1"
+ut_after frames=18 textbox().click_continue()
+ut_after frames=21 objects("invest_menu")[0].get_node("present").click_area.perform_action()
+ut_after frames=22 textbox().printed == "myfail"
+ut_after frames=23 textbox().click_continue()
+
 label themenu
 localmenu talk=true examine=true move=true present=true fail=myfail
+
 label talk
 "talking 1"
 goto themenu
@@ -203,5 +241,6 @@ label none
 label myfail
 "myfail"
 
+ut_after frames=1 exit()
 "return to top{next}"
 goto top

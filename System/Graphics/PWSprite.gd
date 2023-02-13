@@ -131,6 +131,7 @@ func load_animation(path:String, info=null, sub_rect=null):
 	
 	# Build animated sprite
 	animated_sprite = AnimatedSprite.new()
+	animated_sprite.name = path.replace(":", "|").replace("/",";")
 	animated_sprite.use_parent_material = true
 	add_child(animated_sprite)
 	animated_sprite.frames = SpriteFrames.new()

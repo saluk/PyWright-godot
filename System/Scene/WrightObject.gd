@@ -97,6 +97,7 @@ func init():
 	variables = Variables.new()
 	if not sprite_root:
 		sprite_root = Node2D.new()
+		sprite_root.name = "SpriteRoot"
 		add_child(sprite_root)
 
 #Sprite template:
@@ -115,6 +116,7 @@ func add_sprite(sprite_key, sprite_template):
 	if not filename:
 		return
 	var sprite = PWSpriteC.new()
+	sprite.name = "PWSprite:"+base_path+";"+variant_path
 	sprite.load_animation(filename, null, template["rect"])
 	sprites[sprite_key] = sprite
 	return sprite
@@ -142,6 +144,7 @@ func load_sprites(template, sprite_key=null):
 	
 	if template["clickable"]:
 		click_area = ClickArea.new()
+		click_area.name = "ClickArea"
 		click_area.macroname = template["click_macro"]
 		click_area.macroargs = template["click_args"]
 		add_child(click_area)
