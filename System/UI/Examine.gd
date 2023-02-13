@@ -53,10 +53,14 @@ func _on_cross_area_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton or event is InputEventMouseMotion:
 		if Input.get_mouse_button_mask() & BUTTON_LEFT:
 			var pos = event.position-position
-			crosshair.crosshair_position = Vector2(int(pos.x), int(pos.y))
-			update()
+			set_crosshair_pos(pos.x, pos.y)
 		#if event is InputEventMouseButton and event.pressed == false:
 		#	click_option("region")
+		
+func set_crosshair_pos(x, y):
+	print("CROSS X Y ",x," ",y)
+	crosshair.crosshair_position = Vector2(int(x), int(y))
+	update()
 			
 class Region extends Area2D:
 	var label
