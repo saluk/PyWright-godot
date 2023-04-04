@@ -5,6 +5,8 @@ export_presets.cfg
 *.apk
 *.apk.*
 *.import
+.godot/imported/*
+.godot/shader_cache
 
 # GDUnit
 reports/
