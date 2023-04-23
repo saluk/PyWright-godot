@@ -125,7 +125,6 @@ func load_page_button():
 	l.rect_position += Vector2(18,8)
 	l.text = next_page
 	b.add_child(l)
-	add_child(b)
 	
 func load_arrow(direction):
 	var pos = Vector2(3, 58)

@@ -63,9 +63,6 @@ func add_item(text, result):
 	button_label.rect_size = Vector2(button.width, button.height)
 	button_label.text = text
 	button.add_child(button_label)
-	add_child(
-		button
-	)
 	
 func ws_click_back_from_list(script, arguments):
 	queue_free()
