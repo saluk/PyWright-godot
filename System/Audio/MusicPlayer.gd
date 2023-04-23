@@ -5,7 +5,7 @@ var playing = false
 var loop = true
 var playing_path
 
-var MUSIC_VOLUME = 0.1
+var MUSIC_VOLUME = 0.01
 
 func _ready():
 	audio_player = AudioStreamPlayer.new()
@@ -33,8 +33,8 @@ func _load_audio_stream(path):
 		stream = ResourceLoader.load(path)
 	if stream:
 		audio_player.stream = stream
+		audio_player.volume_db = linear2db(MUSIC_VOLUME)
 		audio_player.play(0)
-		audio_player.volume_db = MUSIC_VOLUME
 
 func stop_music():
 	playing = false
