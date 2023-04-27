@@ -87,6 +87,8 @@ func ws_script(script, arguments, script_text=null):
 	arguments = args[1]
 	if not "stack" in arguments:
 		main.stack.clear_scripts()
+	else:
+		arguments.erase("stack")
 	if not "noclear" in arguments:
 		Commands.clear_main_screen()
 		pass

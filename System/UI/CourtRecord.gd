@@ -260,10 +260,34 @@ func load_page_zoom():
 				script_name
 			)
 			present_button.position = Vector2(100,0)
+		
+		load_check_button(evname)
 	if left_arrow:
 		load_arrow("L")
 	if right_arrow:
 		load_arrow("R")
+	
+func load_check_button(evname):
+	var check_script = stack.variables.get_string(evname+"_check")
+	if not check_script:
+		return
+	var check_img = stack.variables.get_string("ev_check_img")
+	var check_button = ObjectFactory.create_from_template(
+		main.top_script(),
+		"button",
+		{
+			"sprites": {
+				"default": {"path": "art/"+check_img+".png"},
+				"highlight": {"path": "art/"+check_img+"_high.png"}
+			},
+			"click_macro": "{record_click_check}",
+			"click_args": [evname, check_script]
+		},
+		[],
+		script_name
+	)
+	check_button.position = Vector2(256-check_button.width, 192-check_button.height)
+	pass
 
 func select(evname):
 	stack.variables.set_val("_selected", evname)
@@ -316,14 +340,10 @@ func load_page_overview():
 			script_name
 		)
 		ev_button.position = Vector2(x, y)
-		var ev_button_size = [
-			stack.variables.get_int("ev_small_width"),
-			stack.variables.get_int("ev_small_height")
-		]
 		if ev_button.current_sprite:
 			ev_button.current_sprite.rescale(
-				ev_button_size[0],
-				ev_button_size[1]
+				stack.variables.get_int("ev_small_width"),
+				stack.variables.get_int("ev_small_height")
 			)
 		ev_button.click_area.connect("mouse_entered", self, "highlight_evidence", [evname])
 		
@@ -350,6 +370,9 @@ func ws_record_zoom_evidence(script, arguments):
 func ws_record_click_present(script, arguments):
 	present(arguments[0])
 	
+func ws_record_click_check(script, arguments):
+	check(arguments[0], arguments[1])
+	
 func ws_click_page_from_court_record(script, arguments):
 	page = arguments[0]
 	offset = 0
@@ -362,5 +385,13 @@ func present(option):
 		[option]
 	)
 	queue_free()
+	
+func check(evname, check_script):
+	select(evname)
+	Commands.call_command(
+		"script",
+		stack.scripts[-1],
+		[check_script, "stack", "noclear"]
+	)
 
 # TODO implement check

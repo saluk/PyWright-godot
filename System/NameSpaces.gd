@@ -23,6 +23,7 @@ var DEFAULTS := {
 	"ev_z_textbox_y": "70",
 	"ev_z_textbox_w": "130",
 	"ev_z_textbox_h": "100",
+	"ev_check_img": "general/check",
 	"textblock_line_height": "-1"
 }
 
