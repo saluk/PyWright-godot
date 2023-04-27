@@ -214,7 +214,10 @@ func load_page_zoom():
 		
 		var desc = Label.new()
 		Fonts.set_element_font(desc, "block", stack.variables)
-		desc.rect_position = Vector2(106, 66)
+		desc.rect_position = Vector2(
+			stack.variables.get_int("ev_z_textbox_x", 0),  # zero so we can ensure it loads the variable
+			stack.variables.get_int("ev_z_textbox_y", 0)
+		)
 		desc.text = key_desc.replace("{n}","\n")
 		desc.clip_text = true
 		desc.autowrap = true

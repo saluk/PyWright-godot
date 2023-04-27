@@ -271,11 +271,19 @@ func is_macro(command):
 		return command
 	return ""
 	
+func watched(command):
+	if 0: # Replace 0 to watch for a specific command
+		return true
+	return false
+	
 # TODO - may need to support actually replacing macro text with the arguments passed, 
 # but wont implement till we actually need to
-func call_macro(command, script, arguments):
-	command = is_macro(command)
+func call_macro(macro_name, script, arguments):
+	var command = is_macro(macro_name)
 	if not command:
+		if watched(macro_name):
+			print("macro not found:"+command)
+			return DEBUG
 		return
 	var i = 1
 	for arg in arguments:
@@ -293,6 +301,9 @@ func call_macro(command, script, arguments):
 	new_script.filename = "{"+command+"}"
 	# TODO not sure if this is how to handle macros that try to goto
 	new_script.allow_goto_parent_script = true
+	if watched(macro_name):
+		print("macro ran:"+macro_name)
+		return DEBUG
 	return YIELD
 	
 func macro_or_label(key, script, arguments):

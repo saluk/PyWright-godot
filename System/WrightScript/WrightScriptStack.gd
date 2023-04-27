@@ -65,6 +65,7 @@ var run_macros_on_scene_change = [
 ]
 
 func load_macros_from_path(path):
+	var macro_scripts = []
 	if not "res://" in path:
 		path = "res://" + path 
 	print("SCANNING ", path)
@@ -81,29 +82,37 @@ func load_macros_from_path(path):
 				continue
 			elif file_name == "macros.txt" or file_name.ends_with(".mcro"):
 				var script = WrightScript.new(main, self)
-				print("MACRO LOADED: ", path, "/", file_name)
+				script.stack = self
 				script.load_txt_file(Filesystem.path_join(path, file_name))
-				scripts.append(script)
-				script.allowed_commands = ["macro", "endmacro"]
+				macro_scripts.insert(0, script)
 				macro_scripts_found += 1
 	else:
 		print("COULDN'T OPEN DIRECTORY")
+	# We search from most child path to most parent,
+	# we want to execute the parents before the children
+	for script in macro_scripts:
+		print("MACRO LOADED: ", script.root_path, ":", script.filename)
+		script.preprocess_lines()
 		
 func run_macro_set(l):
 	for macro in l:
 		Commands.call_macro(macro, scripts[-1], [])
 		
-func init_game(path):
+func init_game(path, init_script="intro.txt"):
 	DirectoryCache.init_game("res://"+path)
 	# Used to load a game and then a case inside the game
 	filesystem = load("res://System/Files/Filesystem.gd").new()
-	load_script(path+"/intro.txt")
+	print("load base macros")
+	load_macros_from_path("macros")
+	print("load script macros")
+	load_macros_from_path(path)
+	# TODO - if we are loading a subfolder of a game, we should load macros
+	#		 from the parent folder as well
+	load_script(path+"/"+init_script)
 	if not scripts[-1].lines.size():
 		add_script("casemenu")
 		scripts[-1].root_path = path
-	# Reverse order load the macro scripts so they run first
 	run_macro_set(run_macros_on_game_start)
-	load_macros_from_path("macros")
 	if not macro_scripts_found:
 		print("MACRO ERROR")
 	
@@ -117,8 +126,6 @@ func load_script(script_path):
 	var new_script = WrightScript.new(main, self)
 	new_script.load_txt_file(script_path)
 	scripts.append(new_script)
-	# TODO - pretty sure we dont want to reload the macros on every script change, but only when starting a game or case
-	load_macros_from_path(script_path.rsplit("/", true, 1)[0])
 	return new_script
 	
 func remove_script(script):
