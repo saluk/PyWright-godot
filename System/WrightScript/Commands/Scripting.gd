@@ -104,7 +104,7 @@ func ws_script(script, arguments, script_text=null):
 	if scr and label:
 		scr.goto_label(label)
 	Commands.save_scripts()
-	Commands.call_macro("defaults", script, arguments)
+	main.stack.run_macro_set(main.stack.run_macros_on_scene_change)
 	return Commands.YIELD
 	
 # TODO IMPLEMENT

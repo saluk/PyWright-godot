@@ -213,10 +213,12 @@ func load_page_zoom():
 		name_label.text = key_name
 		
 		var desc = Label.new()
+		Fonts.set_element_font(desc, "block", stack.variables)
 		desc.rect_position = Vector2(106, 66)
-		desc.text = key_desc
-		desc.rect_size = Vector2(130, 128)
+		desc.text = key_desc.replace("{n}","\n")
+		desc.clip_text = true
 		desc.autowrap = true
+		desc.rect_size = Vector2(120, 50)
 		add_child(desc)
 		
 		if can_present():

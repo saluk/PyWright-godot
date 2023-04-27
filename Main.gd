@@ -1,7 +1,7 @@
 extends Node2D
 class_name MainScene
 
-var stack
+var stack: WrightScriptStack
 
 var init_script = """
 mus 02 - courtroom lounge ~ beginning prelude.ogg

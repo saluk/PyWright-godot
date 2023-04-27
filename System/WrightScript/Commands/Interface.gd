@@ -21,6 +21,8 @@ func ws_menu(script, arguments):
 			or option in kw
 		):
 			menu.add_option(option)
+	# As we end the current script, the scene is changing
+	main.stack.run_macro_set(main.stack.run_macros_on_scene_change)
 	script.end()
 	return menu
 	

@@ -46,9 +46,7 @@ func get_objects(script_name, last=null, group=SPRITE_GROUP):
 	var objects = []
 	for object in get_tree().get_nodes_in_group(group):
 		if object.is_queued_for_deletion():
-			print(" ! "+object.name+" IS queued for deletion")
 			continue
-		print(object.name+" is not queued for deletion")
 		if not script_name or object.script_name == script_name:
 			objects.append(object)
 	return objects

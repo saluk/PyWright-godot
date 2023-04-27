@@ -48,6 +48,22 @@ signal line_executed   # emit when any script executes a line
 
 var macro_scripts_found = 0
 
+var run_macros_on_game_start = [
+	"init_defaults",
+	"font_defaults",
+	"load_defaults",
+	"init_court_record_settings"
+]
+
+var run_macros_on_load_player_save = [
+	"load_defaults",
+	"init_court_record_settings"
+]
+
+var run_macros_on_scene_change = [
+	"defaults"
+]
+
 func load_macros_from_path(path):
 	if not "res://" in path:
 		path = "res://" + path 
@@ -72,7 +88,11 @@ func load_macros_from_path(path):
 				macro_scripts_found += 1
 	else:
 		print("COULDN'T OPEN DIRECTORY")
-
+		
+func run_macro_set(l):
+	for macro in l:
+		Commands.call_macro(macro, scripts[-1], [])
+		
 func init_game(path):
 	DirectoryCache.init_game("res://"+path)
 	# Used to load a game and then a case inside the game
@@ -85,6 +105,7 @@ func init_game(path):
 	load_macros_from_path("macros")
 	if not macro_scripts_found:
 		print("MACRO ERROR")
+	run_macro_set(run_macros_on_game_start)
 	
 func add_script(script_text):
 	var new_script = WrightScript.new(main, self)
