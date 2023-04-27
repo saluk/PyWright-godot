@@ -95,8 +95,9 @@ func load_macros_from_path(path):
 		script.preprocess_lines()
 		
 func run_macro_set(l):
-	for macro in l:
-		Commands.call_macro(macro, scripts[-1], [])
+	if scripts:
+		for macro in l:
+			Commands.call_macro(macro, scripts[-1], [])
 		
 func init_game(path, init_script="intro.txt"):
 	DirectoryCache.init_game("res://"+path)

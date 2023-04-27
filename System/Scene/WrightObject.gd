@@ -182,16 +182,18 @@ func set_sprite(new_sprite_key):
 		return
 	if sprite_key != new_sprite_key:
 		if current_sprite:
-			if current_sprite.is_connected("finished_playing", self, "sprite_finished_playing"):
-				current_sprite.disconnect("finished_playing", self, "sprite_finished_playing")
+			SignalUtils.remove_all(current_sprite)
 			sprite_root.remove_child(current_sprite)
 		sprite_key = new_sprite_key
 		current_sprite = sprites[sprite_key]
+		current_sprite.set_block_signals(false)
 
 		sprite_root.add_child(current_sprite)
 		set_wait(wait)
 		emit_signal("started_playing")
 		current_sprite.connect("finished_playing", self, "sprite_finished_playing")
+		if click_area:
+			current_sprite.connect("size_changed", click_area, "sync_area")
 		# TODO center and mirror should be controlled by the sprite
 		if centered:
 			current_sprite.position = Vector2(256/2-current_sprite.width/2, 192/2-current_sprite.height/2)

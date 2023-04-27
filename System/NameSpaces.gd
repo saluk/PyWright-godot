@@ -13,12 +13,17 @@ var DEFAULTS := {
 	"ev_items_y": "63",
 	"ev_spacing_x": "48",
 	"ev_spacing_y": "46",
-	"ev_small_width": "35",
-	"ev_small_height": "35",
+	"ev_small_width": "40",
+	"ev_small_height": "40",
 	"ev_big_width": "70",
 	"ev_big_height": "70",
 	"ev_modebutton_x": "196",
-	"ev_modebutton_y": "7"
+	"ev_modebutton_y": "7",
+	"ev_z_textbox_x": "100",
+	"ev_z_textbox_y": "70",
+	"ev_z_textbox_w": "130",
+	"ev_z_textbox_h": "100",
+	"textblock_line_height": "-1"
 }
 
 var global_namespace:Variables

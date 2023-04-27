@@ -14,6 +14,7 @@ var wait = false   # Pause script until animation has finished playing
 var wait_signal = "finished_playing"
 var loaded = false
 signal finished_playing
+signal size_changed
 
 # TODO needs to handle different animation modes, loop, once, and blink mode at minimum
 
@@ -185,6 +186,8 @@ func rescale(size_x, size_y):
 	height = size_y
 	animated_sprite.position = Vector2(width/2, height/2)
 	animated_sprite.position = Vector2(width/2, height/2)
+	self.emit_signal("size_changed")
+	
 
 func set_grey(value):
 	if material:

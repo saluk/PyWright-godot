@@ -52,13 +52,21 @@ func _process(dt):
 	z = ZLayers.z_sort[script_name]
 	
 	name_label = Label.new()
+	Fonts.set_element_font(name_label, "itemname", stack)
 	name_label.name = "Name Label"
-	name_label.rect_position = Vector2(28,41)
+	name_label.rect_position = Vector2(
+		stack.variables.get_int("ev_currentname_x"),
+		stack.variables.get_int("ev_currentname_y")
+	)
 	name_label.text = ""
 	
 	page_label = Label.new()
+	Fonts.set_element_font(page_label, "itemset", stack)
 	page_label.name = "Page Label"
-	page_label.rect_position = Vector2(1,14)
+	page_label.rect_position = Vector2(
+		stack.variables.get_int("ev_mode_x"),
+		stack.variables.get_int("ev_mode_y")
+	)
 	page_label.text = ""
 
 	add_child(page_label)
@@ -122,8 +130,12 @@ func load_page_button():
 	)
 	b.position = Vector2(256-b.width, 0)
 	var l = Label.new()
-	l.rect_position += Vector2(18,8)
-	l.text = next_page
+	Fonts.set_element_font(l, "itemset_big", stack)
+	l.rect_position += Vector2(
+		stack.variables.get_int("ev_modebutton_x", 0),
+		stack.variables.get_int("ev_modebutton_y", 0)
+	) - b.position
+	l.text = next_page.capitalize()
 	b.add_child(l)
 	
 func load_arrow(direction):
@@ -153,7 +165,7 @@ func ws_record_click_direction(script, arguments):
 	return
 	
 func load_page():
-	page_label.text = page
+	page_label.text = page.capitalize()
 	name_label.text = ""
 	load_page_button()
 	if not zoom:
@@ -212,16 +224,23 @@ func load_page_zoom():
 		
 		name_label.text = key_name
 		
+		# TODO make this a textblock after textblock is implemented
 		var desc = Label.new()
-		Fonts.set_element_font(desc, "block", stack.variables)
+		Fonts.set_element_font(desc, "block", stack)
 		desc.rect_position = Vector2(
 			stack.variables.get_int("ev_z_textbox_x", 0),  # zero so we can ensure it loads the variable
 			stack.variables.get_int("ev_z_textbox_y", 0)
 		)
+		desc.rect_size = Vector2(
+			stack.variables.get_int("ev_z_textbox_w", 0),  # zero so we can ensure it loads the variable
+			stack.variables.get_int("ev_z_textbox_h", 0)
+		)
+		desc.set("custom_constants/line_spacing", 
+			stack.variables.get_int("textblock_line_height", 10)
+		)
 		desc.text = key_desc.replace("{n}","\n")
 		desc.clip_text = true
 		desc.autowrap = true
-		desc.rect_size = Vector2(120, 150)
 		add_child(desc)
 		
 		if can_present():
@@ -297,10 +316,14 @@ func load_page_overview():
 			script_name
 		)
 		ev_button.position = Vector2(x, y)
+		var ev_button_size = [
+			stack.variables.get_int("ev_small_width"),
+			stack.variables.get_int("ev_small_height")
+		]
 		if ev_button.current_sprite:
 			ev_button.current_sprite.rescale(
-				stack.variables.get_int("ev_small_width")+1,
-				stack.variables.get_int("ev_small_height")+1
+				ev_button_size[0],
+				ev_button_size[1]
 			)
 		ev_button.click_area.connect("mouse_entered", self, "highlight_evidence", [evname])
 		

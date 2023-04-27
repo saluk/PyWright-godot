@@ -10,7 +10,7 @@ func _ready():
 			print("WARNING: could not load file index res://")
 			return
 	else:
-		create_game_cache("res://", ["res://art", "res://music", "res://sfx"])
+		create_game_cache("res://", ["res://art", "res://music", "res://sfx", "res://fonts"])
 		save_game_file_index("res://")
 	
 func init_game(game_path):
