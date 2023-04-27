@@ -218,7 +218,7 @@ func load_page_zoom():
 		desc.text = key_desc.replace("{n}","\n")
 		desc.clip_text = true
 		desc.autowrap = true
-		desc.rect_size = Vector2(120, 50)
+		desc.rect_size = Vector2(120, 150)
 		add_child(desc)
 		
 		if can_present():

@@ -102,10 +102,10 @@ func init_game(path):
 		add_script("casemenu")
 		scripts[-1].root_path = path
 	# Reverse order load the macro scripts so they run first
+	run_macro_set(run_macros_on_game_start)
 	load_macros_from_path("macros")
 	if not macro_scripts_found:
 		print("MACRO ERROR")
-	run_macro_set(run_macros_on_game_start)
 	
 func add_script(script_text):
 	var new_script = WrightScript.new(main, self)
