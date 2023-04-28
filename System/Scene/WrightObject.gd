@@ -28,6 +28,7 @@ var _height_override = null
 var width setget set_width_override, get_width
 var height setget set_height_override, get_height
 var click_area
+var button
 
 var template:Dictionary # Remember the template we were initialized with, useful for save/load
 
@@ -148,6 +149,14 @@ func load_sprites(template, sprite_key=null):
 		click_area.macroname = template["click_macro"]
 		click_area.macroargs = template["click_args"]
 		add_child(click_area)
+	
+	# Just the visual of the button, use click area to drive the game
+	if template["button_text"]:
+		button = Button.new()
+		button.text = template["button_text"]
+		button.name = "Button:"+template["button_text"]
+		button.connect("button_up", click_area, "perform_action")
+		add_child(button)
 		
 	set_sprite(sprite_key)
 		

@@ -44,9 +44,11 @@ var TEMPLATES = {
 			"default_variant": "",
 			"rect": null,
 			"clickable": false,
+			"button_text": false,
 			"scrollable": true,
 			"click_macro": "",
-			"click_args": []
+			"click_args": [],
+			"position": [0,0]
 		},
 	"fg":
 		{
@@ -68,9 +70,11 @@ var TEMPLATES = {
 			"default_variant": "",
 			"rect": null,
 			"clickable": false,
+			"button_text": false,
 			"scrollable": true,
 			"click_macro": "",
-			"click_args": []
+			"click_args": [],
+			"position": [0,0]
 		},
 	"ev":
 		{
@@ -92,9 +96,11 @@ var TEMPLATES = {
 			"default_variant": "",
 			"rect": null,
 			"clickable": false,
+			"button_text": false,
 			"scrollable": true,
 			"click_macro": "",
-			"click_args": []
+			"click_args": [],
+			"position": [0,0]
 		},
 	"graphic":
 		{
@@ -116,9 +122,11 @@ var TEMPLATES = {
 			"default_variant": "",
 			"rect": null,
 			"clickable": false,
+			"button_text": false,
 			"scrollable": true,
 			"click_macro": "",
-			"click_args": []
+			"click_args": [],
+			"position": [0,0]
 		},
 	"portrait":
 		{
@@ -157,9 +165,11 @@ var TEMPLATES = {
 			"default_variant": "normal",
 			"rect": null,
 			"clickable": false,
+			"button_text": false,
 			"scrollable": true,
 			"click_macro": "",
-			"click_args": []
+			"click_args": [],
+			"position": [0,0]
 		},
 	"button":
 		{
@@ -186,9 +196,11 @@ var TEMPLATES = {
 			"default_variant": "",
 			"rect": null,
 			"clickable": true,
+			"button_text": false,
 			"scrollable": false,
 			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
-			"click_args": []
+			"click_args": [],
+			"position": [0,0]
 		},
 	"court_record":
 		{
@@ -204,9 +216,11 @@ var TEMPLATES = {
 			"default_variant": "",
 			"rect": null,
 			"clickable": false,
+			"button_text": false,
 			"scrollable": false,
 			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
-			"click_args": []
+			"click_args": [],
+			"position": [0,0]
 		},
 	"investigate":
 		{
@@ -222,9 +236,11 @@ var TEMPLATES = {
 			"default_variant": "",
 			"rect": null,
 			"clickable": false,
+			"button_text": false,
 			"scrollable": false,
 			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
-			"click_args": []
+			"click_args": [],
+			"position": [0,0]
 		},
 	"examine_menu":
 		{
@@ -240,9 +256,11 @@ var TEMPLATES = {
 			"default_variant": "",
 			"rect": null,
 			"clickable": false,
+			"button_text": false,
 			"scrollable": false,
 			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
-			"click_args": []
+			"click_args": [],
+			"position": [0,0]
 		},
 	"list_menu":
 		{
@@ -258,9 +276,11 @@ var TEMPLATES = {
 			"default_variant": "",
 			"rect": null,
 			"clickable": false,
+			"button_text": false,
 			"scrollable": true,
 			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
-			"click_args": []
+			"click_args": [],
+			"position": [0,0]
 		},
 	"penalty":
 		{
@@ -276,9 +296,11 @@ var TEMPLATES = {
 			"default_variant": "",
 			"rect": null,
 			"clickable": false,
+			"button_text": false,
 			"scrollable": false,
 			"click_macro": "",  # TODO click_macro and click_args should be properties rather then in the template
-			"click_args": []
+			"click_args": [],
+			"position": [0,0]
 		}
 }
 
@@ -350,8 +372,8 @@ func create_from_template(
 	object.stack = get_main().stack
 
 	var keyword_arguments = Commands.keywords(arguments)
-	var x=int(keyword_arguments.get("x", 0))
-	var y=int(keyword_arguments.get("y", 0))
+	var x=int(keyword_arguments.get("x", template["position"][0]))
+	var y=int(keyword_arguments.get("y", template["position"][1]))
 	object.position = Vector2(x, y)
 	object.centered = template["centered"]
 	if arguments:
@@ -367,6 +389,8 @@ func create_from_template(
 		template["mirror"][0] = -1
 	if "flipy" in arguments:
 		template["mirror"][1] = -1
+	if keyword_arguments.get("button_text", ""):
+		template["button_text"] = keyword_arguments.get("button_text")
 		
 	object.load_sprites(template)
 	last_object = object
