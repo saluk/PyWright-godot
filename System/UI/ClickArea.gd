@@ -13,6 +13,15 @@ var clicked := false
 var macroname:String  # Macro to call when button is pressed
 var macroargs:Array
 
+var debuglabel:Label
+
+func _ready():
+	debuglabel = Label.new()
+	if get_tree().debug_collisions_hint:
+		add_child(debuglabel)
+	Fonts.set_element_font(debuglabel, "block", get_tree().get_nodes_in_group("Main")[0].top_script().stack)
+	set_debug_text()
+
 func _enter_tree():
 	parent = get_parent()
 	parent.connect("sprite_changed", self, "sync_area")
@@ -20,7 +29,9 @@ func _enter_tree():
 	connect("mouse_exited", self, "on_mouse_exited")
 	connect("gui_input", self, "on_gui_input")
 	sync_area()
-	get_viewport().warp_mouse(get_viewport().get_mouse_position())
+	
+func set_debug_text():
+	debuglabel.text = "o:"+str(over)+" c:"+str(clicked)
 	
 func sync_area():
 	var current_sprite:PWSprite = parent.current_sprite
@@ -33,6 +44,9 @@ func sync_area():
 		if parent.mirror.y < 0:
 			rect_position.y -= current_sprite.height
 		update()
+	# Force object to be in "over" state when it is newly created
+	if not over and get_global_rect().has_point(get_global_mouse_position()):
+		on_mouse_entered()
 
 func _draw():
 	if get_tree().debug_collisions_hint:
@@ -44,10 +58,12 @@ func _draw():
 func on_mouse_entered():
 	over = true
 	set_highlight()
+	set_debug_text()
 	
 func on_mouse_exited():
 	over = false
 	set_highlight()
+	set_debug_text()
 	
 func on_gui_input(event):
 	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
@@ -57,8 +73,9 @@ func on_gui_input(event):
 		else:
 			clicked = false
 			set_highlight()
-			if over:
-				perform_action()
+			#if over:
+			perform_action()
+	set_debug_text()
 			
 func perform_action():
 	# If macroname is surrounded by {}, call macro
