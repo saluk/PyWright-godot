@@ -54,6 +54,8 @@ func set_resolution(res:Vector2, scale:float, show_debugger:bool=false):
 		w *= 2
 	var h = res.y
 	OS.set_window_size(Vector2(w*scale, h*scale))
+	var screen_size:Vector2 = OS.get_screen_size()
+	OS.window_position = Vector2(screen_size.x/2-w*scale/2, screen_size.y/2-h*scale/2)
 	get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_2D, SceneTree.STRETCH_ASPECT_KEEP, Vector2(w, h), 1)
 
 func _ready():
