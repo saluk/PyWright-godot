@@ -40,3 +40,6 @@ func play_sound(path, current_path):
 	playing = true
 	playing_path = path
 	var audio_stream = _load_audio_stream(path)
+
+func stop_sounds():
+	pass

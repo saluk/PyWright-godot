@@ -19,6 +19,17 @@ func ws_delete(script, arguments):
 				children[-i].queue_free()
 				children[-i].name = "DELETED_"+children[-1].name
 				
+func apply_fader(obj, arguments):
+	if not "fade" in arguments:
+		return
+	var start = 0.0
+	var end = 100.0
+	var speed = 5.0
+	var wait = true
+	var fader = FadeLib.Fader.new(start, end, speed, wait)
+	fader.control(obj.script_name)
+	Commands.main_screen.add_child(fader)
+				
 func ws_obj(script, arguments):
 	if not main.get_tree():
 		return
@@ -28,6 +39,7 @@ func ws_obj(script, arguments):
 		{},
 		arguments
 	)
+	apply_fader(obj, arguments)
 	return obj
 	
 func ws_bg(script, arguments):
@@ -36,12 +48,14 @@ func ws_bg(script, arguments):
 	if not "stack" in arguments:
 		Commands.delete_object_group(Commands.CLEAR_GROUP)
 	var bg:Node = ObjectFactory.create_from_template(script, "bg", {}, arguments)
+	apply_fader(bg, arguments)
 	return bg
 	
 func ws_fg(script, arguments):
 	if not main.get_tree():
 		return
 	var fg:Node = ObjectFactory.create_from_template(script, "fg", {}, arguments)
+	apply_fader(fg, arguments)
 	return fg
 
 # TODO support more commands
@@ -72,6 +86,7 @@ func ws_char(script, arguments):
 		character.char_name = kw["nametag"]
 	# Called last because _speaking has a setter that sets _speaking_name
 	main.stack.variables.set_val("_speaking", character.base_path)
+	apply_fader(character, arguments)
 	return character
 	
 func ws_emo(script, arguments):
@@ -116,6 +131,7 @@ func ws_ev(script, arguments):
 		},
 		arguments
 	)
+	apply_fader(ev, arguments)
 	return ev
 
 func ws_addev(script, arguments):

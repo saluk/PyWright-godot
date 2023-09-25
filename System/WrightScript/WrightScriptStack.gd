@@ -180,7 +180,10 @@ func remove_blocker(frame):
 			
 func force_clear_blockers():
 	for obj in blockers:
-		obj.queue_free()
+		if obj is SceneTreeTimer:
+			pass
+		else:
+			obj.queue_free()
 	blockers = []
 	for scr in blocked_scripts:
 		scr.next_line()

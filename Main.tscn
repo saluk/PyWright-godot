@@ -10,7 +10,12 @@
 [node name="Main" type="Node2D" groups=["Main"]]
 script = ExtResource( 3 )
 
-[node name="MainScreen" type="Node2D" parent="." groups=["MainScreen"]]
+[node name="Control" type="Control" parent="."]
+margin_right = 256.0
+margin_bottom = 384.0
+rect_clip_content = true
+
+[node name="MainScreen" type="Node2D" parent="Control" groups=["MainScreen"]]
 script = ExtResource( 4 )
 
 [node name="DebugLayer" type="Node2D" parent="."]

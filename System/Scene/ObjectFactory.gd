@@ -335,7 +335,7 @@ func update_template(template, data={}):
 # stack - use templates for whether the object should stack by default or not
 #         non-stacked templates delete any other object generated from the same
 #         template key
-# fade - shorthand that also creates a fader object
+# fade - shorthand that also creates a fader object (should be implemented as part of the scripting layer)
 func create_from_template(
 		script, 
 		template_key_or_template, 

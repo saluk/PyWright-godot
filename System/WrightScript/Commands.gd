@@ -8,7 +8,7 @@ var textboxScene = preload("res://System/UI/Textbox.tscn")
 
 var last_object
 
-export var PAUSE_MULTIPLIER = 0.10
+export var PAUSE_MULTIPLIER = 1.0
 
 enum {
 	YIELD,              # Pause wrightscript for user input or animation

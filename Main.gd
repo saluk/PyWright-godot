@@ -2,6 +2,7 @@ extends Node2D
 class_name MainScene
 
 var stack: WrightScriptStack
+var timecounter: TimeCounter
 
 var init_script = """
 mus 02 - courtroom lounge ~ beginning prelude.ogg
@@ -41,6 +42,7 @@ func load_game(path):
 	stack.init_game(path)
 	stack.connect("stack_empty", self, "reload")
 	emit_signal("stack_initialized")
+	timecounter.reset()
 		
 func load_script_from_path(path):
 	stack.load_script("res://tests/"+path)
@@ -59,6 +61,7 @@ func set_resolution(res:Vector2, scale:float, show_debugger:bool=false):
 	get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_2D, SceneTree.STRETCH_ASPECT_KEEP, Vector2(w, h), 1)
 
 func _ready():
+	timecounter = TimeCounter.new()
 	if OS.has_feature("standalone") or OS.has_feature("HTML5"):
 		set_resolution(Vector2(256,384), 2.0, false)
 	else:
