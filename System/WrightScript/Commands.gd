@@ -333,9 +333,10 @@ func save_node(data):
 	print(last_object)
 	data["last_object"] = SaveState.to_node_path(last_object)
 
-func load_node(saved_data:Dictionary):
+func load_node(tree, saved_data:Dictionary):
 	pass
 
-func after_load(saved_data:Dictionary):
-	if get_tree().root.has_node(saved_data["last_object"]):
-		last_object = get_tree().root.get_node(saved_data["last_object"])
+func after_load(tree, saved_data:Dictionary):
+	if saved_data["last_object"]:
+		if get_tree().root.has_node(saved_data["last_object"]):
+			last_object = get_tree().root.get_node(saved_data["last_object"])

@@ -246,3 +246,21 @@ func evidence_keys():
 		if key.ends_with("_name") or key.ends_with("_pic") or key.ends_with("_desc"):
 			ev_keys[key.split("_")[0]] = 1
 	return ev_keys.keys()
+
+
+# SAVE/LOAD
+var save_properties = [
+]
+func save_node(data):
+	data["global_namespace"] = SaveState._save_node(global_namespace)
+	data["game_namespace"] = SaveState._save_node(game_namespace)
+
+static func create_node(saved_data:Dictionary):
+	pass # Not called
+	
+func load_node(tree, saved_data:Dictionary):
+	global_namespace.load_node(tree, saved_data["global_namespace"])
+	game_namespace.load_node(tree, saved_data["game_namespace"])
+
+func after_load(tree:SceneTree, saved_data:Dictionary):
+	pass # Not called

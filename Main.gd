@@ -3,6 +3,7 @@ class_name MainScene
 
 var stack: WrightScriptStack
 var timecounter: TimeCounter
+var current_game: String
 
 var init_script = """
 mus 02 - courtroom lounge ~ beginning prelude.ogg
@@ -37,10 +38,10 @@ func load_game_from_pack(path):
 		load_game("res://games/"+game)
 	else:
 		assert(false)
-		
+
 func load_game(path):
+	current_game = path
 	stack.init_game(path)
-	stack.connect("stack_empty", self, "reload")
 	emit_signal("stack_initialized")
 	timecounter.reset()
 		
@@ -68,6 +69,7 @@ func _ready():
 		set_resolution(Vector2(256,384), 2.0, true)
 	
 	stack = WrightScriptStack.new(self)
+	stack.connect("stack_empty", self, "reload")
 	Commands.load_command_engine()
 	
 	# TODO move tests for this elsewhere
@@ -180,6 +182,8 @@ func reload():
 func pause(paused=true, toggle=false):
 	if toggle:
 		paused = not is_processing()
+	else:
+		paused = paused
 	var nodes = [self]
 	var node:Node
 	while nodes:
@@ -187,3 +191,23 @@ func pause(paused=true, toggle=false):
 		node.set_process(paused)
 		for child in node.get_children():
 			nodes.append(child)
+
+
+# SAVE/LOAD
+var save_properties = [
+	"current_game"
+]
+func save_node(data):
+	data["timecounter.elapsed"] = timecounter.get_current_elapsed_time()
+	data["stack"] = SaveState._save_node(stack)
+
+static func create_node(saved_data:Dictionary):
+	pass
+	
+func load_node(tree, saved_data:Dictionary):
+	load_game(current_game)
+	timecounter.set_elapsed_time(saved_data["timecounter.elapsed"])
+	SaveState._load_node(tree, stack, saved_data["stack"])
+
+func after_load(tree, saved_data:Dictionary):
+	stack.state = stack.STACK_READY

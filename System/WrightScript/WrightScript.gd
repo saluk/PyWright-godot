@@ -16,7 +16,7 @@ var allowed_commands := []  #If any commands are in this list, only process thos
 
 var allow_next_line = true
 
-var processing
+var processing   # TODO unsure if used
 
 signal GOTO_RESULT
 
@@ -348,3 +348,23 @@ func end():
 	#processing = null
 	lines.append("")
 	line_num = len(lines)-1
+
+
+
+var save_properties = [
+	"root_path", "filename", "lines", "labels",
+	# "variables",
+	"line_num", "line", "allow_goto_parent_script",
+	"allowed_commands", "allow_next_line", "label_statements",
+]
+func save_node(data):
+	pass
+
+static func create_node(saved_data:Dictionary):
+	pass
+	
+func load_node(tree, saved_data:Dictionary):
+	pass
+
+func after_load(tree, saved_data:Dictionary):
+	pass

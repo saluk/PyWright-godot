@@ -288,3 +288,38 @@ func process():
 		else:
 			frame.scr.next_line()
 			#return new_state(STACK_YIELD)
+
+
+
+# SAVE/LOAD
+var save_properties = [
+	"evidence_pages",
+	"macros",
+	"state",
+	"mode",
+	# "blockers", 
+	# "blocked_scripts",
+	#  "yields",
+	"macro_scripts_found"
+]
+func save_node(data):
+	# Save script text and state for each script
+	var saved_scripts = []
+	for script in scripts:
+		saved_scripts.append(SaveState._save_node(script))
+	data["scripts"] = saved_scripts
+
+static func create_node(saved_data:Dictionary):
+	pass
+	
+func load_node(tree, saved_data:Dictionary):
+	scripts.clear()
+	# Add a script and copy its state
+	for script_data in saved_data["scripts"]:
+		var script = WrightScript.new(main, self)
+		SaveState._load_node(tree, script, script_data)
+		scripts.append(script)
+	show_in_debugger()
+
+func after_load(tree, saved_data:Dictionary):
+	pass  # Not called

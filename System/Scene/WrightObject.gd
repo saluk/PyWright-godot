@@ -27,8 +27,8 @@ var _width_override = null
 var _height_override = null
 var width setget set_width_override, get_width
 var height setget set_height_override, get_height
-var click_area
-var button
+var click_area  # S 
+var button # S
 
 var template:Dictionary # Remember the template we were initialized with, useful for save/load
 
@@ -278,3 +278,37 @@ func visible_within(collide_rect:Rect2):
 	yield(get_tree(), "idle_frame")
 	main.pause(false)
 	return false
+
+
+
+# SAVE/LOAD
+var save_properties = [
+	"root_path", "base_path", "variant_path", "script_name",
+	"char_name", "sprite_key", "centered",
+	"_width_override", "_height_override", "template",
+	"z", "scrollable", "wait", "wait_signal",
+	"rotation_degrees",
+	"visible", "position", "scale"
+]
+func save_node(data):
+	data["mirror"] = [mirror.x, mirror.y]
+	data["loader_class"] = "res://System/Scene/WrightObject.gd"
+	data["parent_path"] = get_parent().get_path()
+	data["script_index"] = stack.scripts.find(wrightscript)
+	data["variables"] = SaveState._save_node(variables)
+
+static func create_node(saved_data:Dictionary):
+	var ob = load(ObjectFactory.classes[saved_data["template"]["class"]]).new()
+	return ob
+	
+func load_node(tree, saved_data:Dictionary):
+	tree.get_nodes_in_group("MainScreen")[0].add_child(self)
+	load_sprites(saved_data["template"])
+	set_sprite(sprite_key)
+	SaveState._load_node(tree, variables, saved_data["variables"])
+
+func after_load(tree:SceneTree, saved_data:Dictionary):
+	main = tree.get_nodes_in_group("Main")[0]
+	stack = main.stack
+	if saved_data["script_index"] > -1:
+		wrightscript = stack.scripts[saved_data["script_index"]]

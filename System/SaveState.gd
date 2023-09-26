@@ -23,10 +23,14 @@ class_name SaveState
 
 static func save_game(tree:SceneTree, filename:String):
 	var objects = []
-	for node in tree.root.get_children():
+	var nodes = [tree.root]
+	while nodes:
+		var node = nodes.pop_front()
 		var saved = _save_node(node)
 		if saved:
 			objects.append(saved)
+		for child in node.get_children():
+			nodes.append(child)
 	var file = File.new()
 	print("saving:", objects)
 	file.open(filename, File.WRITE)
@@ -36,26 +40,66 @@ static func save_game(tree:SceneTree, filename:String):
 	file.close()
 			
 static func _save_node(node):
-	print(node.get_path())
 	if node.has_method("save_node"):
-		var save = {
-			"original_node_path": node.get_path()
-		}
+		var save = {}
+		# Non nodes will have to be restored outisde this script
+		if node.has_method("get_path"):
+			save["original_node_path"] = node.get_path()
 		if "save_properties" in node:
 			save_properties(node, save)
 		node.save_node(save)
 		return save
 	return null
 	
+static func _load_node(tree, ob, ob_data):
+	load_properties(ob, ob_data)
+	ob.load_node(tree, ob_data)
+	
 static func save_properties(node, save):
-	for prop in node.save_properties:
-		save[prop] = node.get(prop)
+	for prop in node.save_properties + ["name"]:
+		if prop in node:
+			var val = node.get(prop)
+			if val is Vector3:
+				val = {"Vector3":[val.x,val.y,val.z]}
+			elif val is Vector2:
+				val = {"Vector2":[val.x,val.y]}
+			elif val is Node:
+				val = 0
+			elif val is bool:
+				pass
+			elif val is String:
+				pass
+			elif val==null:
+				continue
+			elif val is Dictionary:
+				pass
+			elif val is int:
+				pass
+			elif val is float:
+				pass
+			elif val is Array:
+				pass
+			else:
+				print("error")
+			save[prop] = val
+	if node.has_method("get_groups"):
+		save["_groups_"] = node.get_groups()
 		
 static func load_properties(node, data):
 	if not "save_properties" in node:
 		return
-	for prop in node.save_properties:
-		node.set(prop, data[prop])
+	for prop in node.save_properties + ["name"]:
+		if prop in data:
+			var val = data[prop]
+			if val is Dictionary:
+				if "Vector3" in val:
+					val = Vector3(val["Vector3"][0],val["Vector3"][1],val["Vector3"][2])
+				elif "Vector2" in val:
+					val = Vector2(val["Vector2"][0],val["Vector2"][1])
+			node.set(prop, val)
+	if "_groups_" in data:
+		for group in data["_groups_"]:
+			node.add_to_group(group)
 	
 static func load_game(tree:SceneTree, filename:String):
 	var file = File.new()
@@ -67,22 +111,22 @@ static func load_game(tree:SceneTree, filename:String):
 	file.close()
 	
 	Commands.clear_main_screen()
+	
+	var after_load = []
 
 	for ob_data in data:
 		print(ob_data)
-		var existing = tree.root.get_node(ob_data["original_node_path"])
-		if existing:
-			existing.load_node(ob_data)
-			load_properties(existing, ob_data)
-		elif "loader_class" in ob_data:
+		var ob
+		if tree.root.has_node(ob_data["original_node_path"]):
+			ob = tree.root.get_node(ob_data["original_node_path"])
+		elif "loader_class" in ob_data:  # Overrides entire load process
 			var c = load(ob_data["loader_class"])
-			var ob = c.load_node(ob_data)
-			
-	for ob_data in data:
-		var existing = tree.root.get_node(ob_data["original_node_path"])
-		if existing and existing.has_method("after_load"):
-			existing.after_load(ob_data)
-			
+			ob = c.create_node(ob_data)
+		else:
+			continue
+		_load_node(tree, ob, ob_data)
+		after_load.append(ob)
+		tree.connect("idle_frame", ob, "after_load", [tree, ob_data], tree.CONNECT_ONESHOT)
 
 static func to_node_path(ob:Object):
 	if not ob:

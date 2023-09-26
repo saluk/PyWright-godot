@@ -40,3 +40,5 @@ margin_left = 4.0
 margin_top = 30.0
 margin_right = -4.0
 margin_bottom = -4.0
+
+[node name="IncomingObjects" type="Node" parent="."]

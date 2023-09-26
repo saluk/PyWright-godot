@@ -64,10 +64,11 @@ func save_node(data):
 		save_players.append(d)
 	data["audio_players"] = save_players
 
-func load_node(saved_data:Dictionary):
+func load_node(tree, saved_data:Dictionary):
 	pass
 
-func after_load(saved_data:Dictionary):
+func after_load(tree, saved_data:Dictionary):
 	for player in saved_data["audio_players"]:
-		var next_player = _load_audio_stream(player["path"])
-		next_player.seek(player["position"])
+		if player["path"]:
+			var next_player = _load_audio_stream(player["path"])
+			next_player.seek(player["position"])

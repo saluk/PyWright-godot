@@ -8,6 +8,12 @@ func _ready():
 	
 func reset():
 	ticks_offset = Time.get_ticks_msec()
+	
+func get_current_elapsed_time():
+	return Time.get_ticks_msec() - ticks_offset
+	
+func set_elapsed_time(ticks):
+	ticks_offset = Time.get_ticks_msec() - ticks
 
 func get_string():
 	var msec = Time.get_ticks_msec() - ticks_offset
