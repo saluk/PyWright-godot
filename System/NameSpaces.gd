@@ -259,8 +259,8 @@ static func create_node(saved_data:Dictionary):
 	pass # Not called
 	
 func load_node(tree, saved_data:Dictionary):
-	global_namespace.load_node(tree, saved_data["global_namespace"])
-	game_namespace.load_node(tree, saved_data["game_namespace"])
+	SaveState._load_node(tree, global_namespace, saved_data["global_namespace"])
+	SaveState._load_node(tree, game_namespace, saved_data["game_namespace"])
 
 func after_load(tree:SceneTree, saved_data:Dictionary):
 	pass # Not called

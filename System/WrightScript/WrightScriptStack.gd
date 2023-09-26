@@ -308,6 +308,7 @@ func save_node(data):
 	for script in scripts:
 		saved_scripts.append(SaveState._save_node(script))
 	data["scripts"] = saved_scripts
+	data["variables"] = SaveState._save_node(variables)
 
 static func create_node(saved_data:Dictionary):
 	pass
@@ -319,6 +320,7 @@ func load_node(tree, saved_data:Dictionary):
 		var script = WrightScript.new(main, self)
 		SaveState._load_node(tree, script, script_data)
 		scripts.append(script)
+	SaveState._load_node(tree, variables, saved_data["variables"])
 	show_in_debugger()
 
 func after_load(tree, saved_data:Dictionary):

@@ -358,13 +358,13 @@ var save_properties = [
 	"allowed_commands", "allow_next_line", "label_statements",
 ]
 func save_node(data):
-	pass
+	data["variables"] = SaveState._save_node(variables)
 
 static func create_node(saved_data:Dictionary):
 	pass
 	
 func load_node(tree, saved_data:Dictionary):
-	pass
+	SaveState._load_node(tree, variables, saved_data["variables"])
 
 func after_load(tree, saved_data:Dictionary):
 	pass
