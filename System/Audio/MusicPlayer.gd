@@ -55,3 +55,18 @@ func play_music(path, root_path):
 func _player_finished():
 	if loop and playing:
 		audio_player.play(0)
+
+# SAVE/LOAD
+var save_properties = [
+	"playing", "loop", "playing_path"
+]
+func save_node(data):
+	if playing:
+		data["song_position"] = audio_player.get_playback_position()
+
+func load_node(saved_data:Dictionary):
+	pass
+
+func after_load(saved_data:Dictionary):
+	_load_audio_stream(playing_path)
+	audio_player.seek(saved_data["song_position"])

@@ -6,8 +6,6 @@ var _main_screen
 var main setget , get_main
 var main_screen setget , get_main_screen
 
-var last_object
-
 func get_main_screen():
 	return get_tree().get_nodes_in_group("MainScreen")[0]
 	
@@ -393,7 +391,7 @@ func create_from_template(
 		template["button_text"] = keyword_arguments.get("button_text")
 		
 	object.load_sprites(template)
-	last_object = object
+	Commands.last_object = object
 	if arguments:
 		object.script_name = keyword_arguments.get("name", arguments[0])
 		object.add_to_group("name_"+object.script_name)

@@ -170,7 +170,9 @@ func save_scripts():
 	
 func _input(event):
 	if event and event.is_action_pressed("quickload"):
-		load_scripts()
+		SaveState.load_game(get_tree(), "user://mysave.txt")
+	if event and event.is_action_pressed("quicksave"):
+		SaveState.save_game(get_tree(), "user://mysave.txt")
 	
 func load_scripts():
 	var file = File.new()
@@ -325,3 +327,15 @@ func ws_draw_on(script, arguments):
 func ws_godotdebug(script, arguments):
 	# You can use this command to enter the godot debugger
 	pass
+
+
+func save_node(data):
+	print(last_object)
+	data["last_object"] = SaveState.to_node_path(last_object)
+
+func load_node(saved_data:Dictionary):
+	pass
+
+func after_load(saved_data:Dictionary):
+	if get_tree().root.has_node(saved_data["last_object"]):
+		last_object = get_tree().root.get_node(saved_data["last_object"])

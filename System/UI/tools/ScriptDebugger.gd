@@ -20,12 +20,13 @@ var debug_last_state = null
 # {"script": WrightScript, "editor": TextEdit, "highlighted_line":int, "bookmark_line": int}
 
 func _ready():
-	script_tab = get_node(current_script)
-	step = get_node(step)
-	allev = get_node(allev)
-	pause = get_node(pause)
-	node_scripts = get_node(node_scripts)
-	reload_button = get_node(reload_button)
+	if step is NodePath:
+		script_tab = get_node(current_script)
+		step = get_node(step)
+		allev = get_node(allev)
+		pause = get_node(pause)
+		node_scripts = get_node(node_scripts)
+		reload_button = get_node(reload_button)
 	
 	node_scripts.remove_child(script_tab)
 	# TODO conceal buttons if game is not playing to prevent error
@@ -38,9 +39,9 @@ func reload():
 	if current_stack:
 		current_stack.clear_scripts()
 		current_stack.blockers = []
-		MusicPlayer.stop_music()
-		SoundPlayer.stop_sounds()
-		get_tree().change_scene("res://Main.tscn")
+	MusicPlayer.stop_music()
+	SoundPlayer.stop_sounds()
+	get_tree().change_scene("res://Main.tscn")
 	
 func start_debugger(force=false):
 	if in_debugger:
