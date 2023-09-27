@@ -205,6 +205,8 @@ func _ready():
 	var font = DynamicFont.new()
 	font.font_data = load(font_path)
 	font.size = 10
+	font.set_spacing(DynamicFont.SPACING_SPACE, -1)
+	font.use_filter = true
 	
 	tb_timer = get_node(tb_timer)
 	tb_timer.one_shot = true
