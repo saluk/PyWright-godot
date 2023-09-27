@@ -48,7 +48,6 @@ func load_game(path):
 func load_script_from_path(path):
 	stack.load_script("res://tests/"+path)
 	stack.load_macros_from_path("macros")
-	stack.connect("stack_empty", self, "reload")
 	emit_signal("stack_initialized")
 	
 func set_resolution(res:Vector2, scale:float, show_debugger:bool=false):

@@ -14,6 +14,9 @@ var z:int
 var center = false
 var diffcolor = false
 
+var characters_per_update:float = 1.0
+var ticks_per_update:float = 2.0
+
 class TextPack:
 	var text = ""
 	var textbox
@@ -21,6 +24,7 @@ class TextPack:
 	var has_run = false
 	var characters_per_frame = 1
 	var delete = false
+	var time_elapsed = 0.0
 	
 	func _init(text, textbox):
 		self.text = text
@@ -31,20 +35,33 @@ class TextPack:
 		
 	# add all text to label, then increase visible characters each frame
 	# if characters per frame is INF, will print text immediately
-	func _print_text(rich_text_label):
+	func _print_text(dt:float, rich_text_label):
 		if leftover == null:
 			rich_text_label.bbcode_text += self.text
 			textbox.printed += self.text
 			leftover =  self.textbox.strip_bbcode(self.text).length()
-		var delta = min(characters_per_frame, leftover)
+		
+		var delta # Number of characters to add to the display
+		var characters_per_tick = float(textbox.characters_per_update) / float(textbox.ticks_per_update)
+		if characters_per_tick < 0.01:
+			delta = leftover
+		else:
+			var characters_per_second = characters_per_tick * 60.0
+			
+			time_elapsed += dt
+			delta = time_elapsed * characters_per_second
+			if delta < 1:
+				return
+			delta = int(delta)
+		delta = characters_per_frame
 		rich_text_label.visible_characters += delta
 		leftover -= delta
 			
 	# execute pack command and change the provided textbox accordingly
-	func consume(rich_text_label, force = false):
+	func consume(rich_text_label, dt:float, force = false):
 		if not has_run:
 			self._run(force)
-		_print_text(rich_text_label)
+		_print_text(dt, rich_text_label)
 		if not leftover: self.delete = true
 
 class CommandPack extends TextPack:
@@ -99,7 +116,9 @@ class CommandPack extends TextPack:
 					ret = "[color=#"+Colors.string_to_hex(args[0])+"]"
 					tb.diffcolor = true
 			"$":
-				ret = tb.main.stack.variables.get_string(args[0])
+				var packs = tb.tokenize_text(tb.main.stack.variables.get_string(args[0]))
+				for p in packs:
+					ret += p.text
 		return ret
 		
 	
@@ -115,9 +134,17 @@ class CommandPack extends TextPack:
 				pass
 			"sound":
 				pass
-			"delay":   # delay character printing for a time
+			"delay":
+				# the number of frames between UPDATE
+				# default 2
+				# MULTIPLIED by punctuation delays
+				# -> ticks_per_update
 				pass
 			"spd":
+				# Set to 0 to make text print instantly
+				# Set to anything else as the number of characters per UPDATE
+				# default 1
+				# -> characters_per_update
 				pass
 			"_fullspeed":
 				pass
@@ -203,12 +230,15 @@ func _on_Area2D_input_event(viewport, event, shape_idx):
 		click_continue()
 		
 func queue_free():
+	# TODO Probably close enough to use "printed" which is already in bbcode format
+	# PYWRIGHT used the text that still had markup {c}, {n} etc in the text
+	main.stack.variables.set_val("_last_written_text", printed)
 	connect("tree_exited", Commands, "hide_arrows", [main.stack.scripts[-1]])
 	.queue_free()
 	
 func finish_text():
 	while text_to_print or packs:
-		update_textbox(true)
+		update_textbox(0, true)
 			
 func click_continue(immediate_skip=false):
 	if not immediate_skip and (text_to_print or packs):
@@ -272,14 +302,14 @@ func strip_bbcode(source:String) -> String:
 	ret = regex.sub(ret, "", true)
 	return ret
 
-func update_textbox(force = false):
+func update_textbox(dt:float, force = false):
 	if not packs and text_to_print:
 		packs = tokenize_text(text_to_print)
 		$Backdrop/Label.visible_characters = 0
 		text_to_print = ""
 	if packs:
 		_set_speaking_animation("talk")
-		packs[0].consume($Backdrop/Label, force)
+		packs[0].consume($Backdrop/Label, dt, force)
 		if packs[0].delete:
 			packs.remove(0)
 	else:
@@ -290,4 +320,4 @@ func update_textbox(force = false):
 		
 func _process(dt):
 	update_nametag()
-	update_textbox()
+	update_textbox(dt)

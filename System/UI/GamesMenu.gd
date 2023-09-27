@@ -1,6 +1,7 @@
 extends Node
 
 signal game_loaded
+var z := 0
 
 func add_pck_button(path):
 	var txt = path.replace("_"," ").replace(".pck","")

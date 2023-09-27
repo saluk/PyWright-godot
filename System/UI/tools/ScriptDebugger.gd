@@ -101,7 +101,8 @@ func rebuild():
 		var last = scripts.pop_back()
 		node_scripts.remove_child(last["editor"])
 		last["editor"].queue_free()
-	node_scripts.current_tab = 0
+	if scripts:
+		node_scripts.current_tab = 0
 	
 func edit_script(script_index):
 	var d = scripts[script_index]
