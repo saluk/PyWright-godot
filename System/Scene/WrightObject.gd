@@ -109,13 +109,24 @@ func init():
 func add_sprite(sprite_key, sprite_template):
 	if not sprite_template["path"]:
 		return
-	var filename = Filesystem.lookup_file(
-		sprite_template["path"].format({
-			"base": base_path,
-			"variant": variant_path
-		}),
-		root_path
-	)
+	var search_path = sprite_template["path"].format({
+		"base": base_path,
+		"variant": variant_path
+	})
+	var search_paths = [search_path]
+	while "//" in search_path:
+		search_path = search_path.replace("//", "/")
+		search_paths.append(search_path)
+	var filename
+	for path in search_paths:
+		print(path)
+		filename = Filesystem.lookup_file(
+			path,
+			root_path
+		)
+		if not filename:
+			continue
+		break
 	if not filename:
 		return
 	var sprite = PWSpriteC.new()
