@@ -16,6 +16,7 @@ var diffcolor = false
 
 var characters_per_update:float = 1.0
 var ticks_per_update:float = 2.0
+var next_ticks_per_update:float = 1.0
 
 class TextPack:
 	var text = ""
@@ -35,34 +36,47 @@ class TextPack:
 		
 	# add all text to label, then increase visible characters each frame
 	# if characters per frame is INF, will print text immediately
-	func _print_text(dt:float, rich_text_label):
+	func _print_text(dt:float, rich_text_label, force):
 		if leftover == null:
 			rich_text_label.bbcode_text += self.text
 			textbox.printed += self.text
 			leftover =  self.textbox.strip_bbcode(self.text).length()
 		
 		var delta # Number of characters to add to the display
-		var characters_per_tick = float(textbox.characters_per_update) / float(textbox.ticks_per_update)
-		if characters_per_tick < 0.01:
-			delta = leftover
-		else:
-			var characters_per_second = characters_per_tick * 60.0
-			
-			time_elapsed += dt
-			delta = time_elapsed * characters_per_second
-			if delta < 1:
-				return
-			delta = int(delta)
-		delta = characters_per_frame
-		rich_text_label.visible_characters += delta
-		leftover -= delta
+		while (not delta or delta > 1 and leftover):
+			var characters_per_tick = float(textbox.characters_per_update) / float(textbox.ticks_per_update * textbox.next_ticks_per_update)
+			if characters_per_tick < 0.01 or force:
+				delta = leftover
+			else:
+				var characters_per_second = characters_per_tick * 60.0
+				print(characters_per_second, textbox.printed, time_elapsed)
+				
+				time_elapsed += dt
+				delta = time_elapsed * characters_per_second
+				if delta < 1:
+					return
+				delta = int(delta)
+				delta = 1
+				time_elapsed -= delta/characters_per_second
+
+			rich_text_label.visible_characters += delta
+			leftover -= delta
+			# TODO this is pretty hacky - Textbox really needs another rewrite
+			var t = self.textbox.strip_bbcode(self.textbox.printed)
+			print("TEXT:<<<", t, ">>>")
+			if t and t[min(rich_text_label.visible_characters-1,t.length()-1)] == " ":
+				textbox.next_ticks_per_update = 0.1
+			else:
+				textbox.next_ticks_per_update = 1.0
+			if force or characters_per_tick <= 0.01:
+				break
 			
 	# execute pack command and change the provided textbox accordingly
 	func consume(rich_text_label, dt:float, force = false):
 		if not has_run:
 			self._run(force)
-		_print_text(dt, rich_text_label)
-		if not leftover: self.delete = true
+		_print_text(dt, rich_text_label, force)
+		if not leftover or leftover <= 0: self.delete = true
 
 class CommandPack extends TextPack:
 	var command_args := ""
@@ -139,13 +153,15 @@ class CommandPack extends TextPack:
 				# default 2
 				# MULTIPLIED by punctuation delays
 				# -> ticks_per_update
-				pass
+				# ALSO sets wait mode to manual, which makes actual delay 5 times what was set
+				textbox.ticks_per_update = 5 * float(args[0])
+				print(textbox.ticks_per_update)
 			"spd":
 				# Set to 0 to make text print instantly
 				# Set to anything else as the number of characters per UPDATE
 				# default 1
 				# -> characters_per_update
-				pass
+				textbox.characters_per_update = float(args[0])
 			"_fullspeed":
 				pass
 			"_endfullspeed":
@@ -239,6 +255,7 @@ func queue_free():
 func finish_text():
 	while text_to_print or packs:
 		update_textbox(0, true)
+		print("updating", packs)
 			
 func click_continue(immediate_skip=false):
 	if not immediate_skip and (text_to_print or packs):
@@ -299,7 +316,7 @@ func strip_bbcode(source:String) -> String:
 	var ret = regex.sub(source, "", true)
 	regex = RegEx.new()
 	regex.compile("[\n\t]")
-	ret = regex.sub(ret, "", true)
+	#ret = regex.sub(ret, "", true)
 	return ret
 
 func update_textbox(dt:float, force = false):
