@@ -17,6 +17,7 @@ var diffcolor = false
 var characters_per_update:float = 1.0
 var ticks_per_update:float = 2.0
 var next_ticks_per_update:float = 1.0
+var override_sound = ""
 
 class TextPack:
 	var text = ""
@@ -26,10 +27,13 @@ class TextPack:
 	var characters_per_frame = 1
 	var delete = false
 	var time_elapsed = 0.0
+	signal text_printed
 	
-	func _init(text, textbox):
+	func _init(text, textbox, connect_signals=false):
 		self.text = text
 		self.textbox = textbox
+		if connect_signals:
+			self.connect("text_printed", self.textbox, "play_sound")
 		
 	func _run(force = false): 
 		has_run = true
@@ -59,6 +63,7 @@ class TextPack:
 				delta = 1
 				time_elapsed -= delta/characters_per_second
 
+			emit_signal("text_printed")
 			rich_text_label.visible_characters += delta
 			leftover -= delta
 			# TODO this is pretty hacky - Textbox really needs another rewrite
@@ -83,7 +88,7 @@ class CommandPack extends TextPack:
 	var command
 	var args = []
 	
-	func _init(line, textbox).(line, textbox):
+	func _init(line, textbox, connect_signals=false).(line, textbox, connect_signals):
 		self.command_args = line
 		self.textbox = textbox
 		self.parse_command()
@@ -145,9 +150,9 @@ class CommandPack extends TextPack:
 			"e":
 				Commands.call_command("emo", self.textbox.main.top_script(), args)
 			"sfx":
-				pass
+				textbox.play_sound(args[0])
 			"sound":
-				pass
+				textbox.override_sound = args[0]
 			"delay":
 				# the number of frames between UPDATE
 				# default 2
@@ -187,6 +192,12 @@ class CommandPack extends TextPack:
 					self.textbox.pause(args, self)
 		has_run = true
 
+func play_sound(path=null):
+	if not path:
+		path = "click1"
+		if override_sound:
+			path = override_sound
+	Commands.call_command("sfx", main.top_script(), [path])
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -235,8 +246,10 @@ func update_nametag_size():
 func stop_timer():
 	set_process(true)
 	tb_timer.disconnect("timeout", self, "stop_timer")
+	_set_speaking_animation("talk")
 		
 func pause(args, pack):
+	_set_speaking_animation("blink")
 	set_process(false)
 	tb_timer.connect("timeout", self, "stop_timer")
 	tb_timer.start()
@@ -271,7 +284,7 @@ func click_prev():
 	main.stack.scripts[-1].prev_statement()
 	click_continue(true)
 		
-func get_next_pack(text_to_print):
+func get_next_pack(text_to_print, connect_signals=false):
 	var i = 0
 	var pack = ""
 	var found_bracket = false
@@ -283,23 +296,23 @@ func get_next_pack(text_to_print):
 			i += 1
 			continue
 		if found_bracket and i != 0 and c == '}':
-			return [CommandPack.new(pack.substr(1, pack.length()-2), self),text_to_print.substr(i+1)]
+			return [CommandPack.new(pack.substr(1, pack.length()-2), self, connect_signals),text_to_print.substr(i+1)]
 		if not found_bracket and i > 0 and c == '{':
-			return [TextPack.new(pack.left(pack.length()-1), self),text_to_print.substr(i)]
+			return [TextPack.new(pack.left(pack.length()-1), self, connect_signals),text_to_print.substr(i)]
 		i += 1
-	return [TextPack.new(pack, self), ""]
+	return [TextPack.new(pack, self, connect_signals), ""]
 	
 
 
-func tokenize_text(text_to_print):
+func tokenize_text(text_to_print, connect_signals=false):
 	var next_pack
 	var packs = []
-	var v = get_next_pack(text_to_print)
+	var v = get_next_pack(text_to_print, connect_signals)
 	next_pack = v[0]
 	text_to_print = v[1]
 	while text_to_print:
 		packs.append(next_pack)
-		v = get_next_pack(text_to_print)
+		v = get_next_pack(text_to_print, connect_signals)
 		next_pack = v[0]
 		text_to_print = v[1]
 	packs.append(next_pack)
@@ -321,7 +334,7 @@ func strip_bbcode(source:String) -> String:
 
 func update_textbox(dt:float, force = false):
 	if not packs and text_to_print:
-		packs = tokenize_text(text_to_print)
+		packs = tokenize_text(text_to_print, true)
 		$Backdrop/Label.visible_characters = 0
 		text_to_print = ""
 	if packs:

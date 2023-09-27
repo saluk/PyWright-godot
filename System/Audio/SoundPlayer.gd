@@ -11,7 +11,7 @@ class AudioStreamProgress extends AudioStreamPlayer:
 	var path:String
 
 func _ready():
-	for i in range(2):
+	for i in range(10):
 		var audio_player = AudioStreamProgress.new()
 		add_child(audio_player)
 		players.append(audio_player)
@@ -27,7 +27,7 @@ func _load_audio_stream(path):
 		pass
 	if stream:
 		# Somewhere determine whether or not to loop the sound
-		var next_player:AudioStreamPlayer = players.pop_front()
+		var next_player:AudioStreamPlayer = get_free_player()
 		next_player.stream = stream
 		next_player.volume_db = linear2db(SOUND_VOLUME)
 		next_player.play(0)
@@ -35,6 +35,14 @@ func _load_audio_stream(path):
 		next_player.path = path
 		players.append(next_player)
 		return next_player
+		
+func get_free_player() -> AudioStreamPlayer:
+	for check_player in players:
+		if not check_player.playing:
+			return check_player
+	var next_player:AudioStreamPlayer = players.pop_front()
+	players.append(next_player)
+	return next_player
 	
 func play_sound(path, current_path):
 	#path = Filesystem.lookup_file(path, root_path)
