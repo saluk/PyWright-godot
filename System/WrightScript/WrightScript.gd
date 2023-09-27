@@ -11,6 +11,8 @@ var variables:Variables  # local variables accessed with script.x
 var line_num := 0
 var line:String
 
+var u_id # For saving
+
 var allow_goto_parent_script := false
 var allowed_commands := []  #If any commands are in this list, only process those commands
 
@@ -29,6 +31,7 @@ func _init(main, stack):
 	assert(stack)
 	self.main = main
 	self.stack = stack
+	u_id = OS.get_system_time_msecs()
 	variables = Variables.new()
 		
 func has_script(scene_name) -> String:
@@ -355,7 +358,7 @@ var save_properties = [
 	"root_path", "filename", "lines", "labels",
 	# "variables",
 	"line_num", "line", "allow_goto_parent_script",
-	"allowed_commands", "allow_next_line", "label_statements",
+	"allowed_commands", "allow_next_line", "label_statements","u_id"
 ]
 func save_node(data):
 	data["variables"] = SaveState._save_node(variables)

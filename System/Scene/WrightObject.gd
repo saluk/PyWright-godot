@@ -50,6 +50,8 @@ var sprites:Dictionary = {
 
 var main
 var wrightscript  # Keeps a reference to the script that created us TODO ability for objects to be cleared when a script ends
+# TODO not sure that wrightscript really needs to be a specific script
+# if wrightscript doesn't exist (often happens after a load) we should just get the top script
 var stack
 var sprite_root
 
@@ -294,7 +296,8 @@ func save_node(data):
 	data["mirror"] = [mirror.x, mirror.y]
 	data["loader_class"] = "res://System/Scene/WrightObject.gd"
 	data["parent_path"] = get_parent().get_path()
-	data["script_index"] = stack.scripts.find(wrightscript)
+	if wrightscript:
+		data["script_id"] = wrightscript.u_id
 	data["variables"] = SaveState._save_node(variables)
 
 static func create_node(saved_data:Dictionary):
@@ -310,5 +313,9 @@ func load_node(tree, saved_data:Dictionary):
 func after_load(tree:SceneTree, saved_data:Dictionary):
 	main = tree.get_nodes_in_group("Main")[0]
 	stack = main.stack
-	if saved_data["script_index"] > -1:
-		wrightscript = stack.scripts[saved_data["script_index"]]
+	if "script_id" in saved_data:
+		for script in stack.scripts:
+			if script.u_id == saved_data["script_id"]:
+				wrightscript = script
+				return
+	print("error no script id found")
