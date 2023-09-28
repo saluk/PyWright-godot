@@ -194,10 +194,23 @@ class CommandPack extends TextPack:
 
 func play_sound(path=null):
 	if not path:
-		path = "click1"
+		path = get_char_sound()
 		if override_sound:
 			path = override_sound
-	Commands.call_command("sfx", main.top_script(), [path])
+	if path:
+		Commands.call_command("sfx", main.top_script(), [path])
+	
+func get_char_sound():
+	var character = Commands.get_speaking_char()
+	if character:
+		# TODO need a better way of getting object namespaces
+		return character.variables._get_val("blipsound", null)
+	else:
+		var path = main.stack.variables.get_string(
+			"char_defsound")
+		if not path:
+			path = "blipmale.ogg"
+		return path
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

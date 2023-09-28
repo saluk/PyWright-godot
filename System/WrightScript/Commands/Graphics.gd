@@ -82,12 +82,36 @@ func ws_char(script, arguments):
 		"char_"+character.base_path+"_name",
 		character.base_path.capitalize()
 	)
+	set_blipsound(character)
 	if "nametag" in kw:
 		character.char_name = kw["nametag"]
 	# Called last because _speaking has a setter that sets _speaking_name
 	main.stack.variables.set_val("_speaking", character.base_path)
 	apply_fader(character, arguments)
 	return character
+	
+var DEFAULT_SOUNDS = {
+	"blipmale.ogg": "4judge acro apollo armando armstrong atmey ben brother cody daian edgeworth edgeworthDA edgeworth-young ese gant godot grey grossberg grossberg-young gumshoe gumshoe-young hamigaki hobo hotti jake judge kagerou karma kawadzu killer kirihito kyouya kyouya-young larry maki matt max meekins moe mugitsura payne paynette payne-young phoenix phoenix-young redd romaine ron sahwit sal takita terry tigre tsunekatsu varan varan-young victor wellington will yanni zakku".split(" "),
+	"blipfemale.ogg": "adrian angel april bikini dahlia dee desiree elise ema franziska ini iris koume lamiroir lana lisa lotta maggey makoto makoto-young masaka maya mia mia-young minami minuki minuki-young morgan oldbag pearl penny regina skye viola yuumi".split(" ")
+}
+	
+func set_blipsound(character:WrightObject):
+	var blipsound = main.stack.variables.get_string(
+		"char_"+character.base_path+"_defsound")
+	if not blipsound:
+		for key in DEFAULT_SOUNDS:
+			if character.base_path in DEFAULT_SOUNDS[key]:
+				blipsound = key
+	if not blipsound:
+		blipsound = main.stack.variables.get_string(
+			"char_defsound")
+	if not blipsound:
+		blipsound = "blipmale.ogg"
+	character.variables.set_val(
+		"blipsound",
+		blipsound
+	)
+	print("BLIPSOUND", blipsound)
 	
 func ws_emo(script, arguments):
 	var kw = Commands.keywords(arguments, true)
