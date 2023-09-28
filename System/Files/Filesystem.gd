@@ -55,27 +55,25 @@ static func load_resource(path:String):
 	return null
 
 static func load_image_from_path(path:String) -> Image:
-	# TODO - we should try the file before the resource to allow modding
 	var image:Image
 	image = load_resource(path)
-	var f = File.new()
-	var err = f.open(path, File.READ)
-	if err != OK:
-		image = load_resource(path)
-		if not image:
+	if not image:
+		var f = File.new()
+		var err = f.open(path, File.READ)
+		if err != OK:
 			print("Error loading file: ", path)
 			return null
-	var buffer:PoolByteArray
-	buffer = f.get_buffer(f.get_len())
-	f.close()
-	image = Image.new()
-	var error
-	if path.ends_with("png"):
-		error = image.load_png_from_buffer(buffer)
-	elif path.ends_with("bmp"):
-		error = image.load_bmp_from_buffer(buffer)
-	elif path.ends_with("jpg"):
-		error = image.load_jpg_from_buffer(buffer)
+		var buffer:PoolByteArray
+		buffer = f.get_buffer(f.get_len())
+		f.close()
+		image = Image.new()
+		var error
+		if path.ends_with("png"):
+			error = image.load_png_from_buffer(buffer)
+		elif path.ends_with("bmp"):
+			error = image.load_bmp_from_buffer(buffer)
+		elif path.ends_with("jpg"):
+			error = image.load_jpg_from_buffer(buffer)
 	print("image found: ", image)
 	de_pink_image(image)
 	return image
@@ -87,11 +85,12 @@ static func de_pink_image(img:Image):
 		for x in range(img.get_width()):
 			for y in range(img.get_height()):
 				var pixel = img.get_pixel(x, y)
-				if pixel.r > 0.95 and pixel.g < 0.05 and pixel.b > 0.95:
+				if pixel.r > 0.99 and pixel.g < 0.05 and pixel.b > 0.99:
 					pixel.a = 0.0
 					pixel.r = 0.0
 					pixel.g = 0.0
 					pixel.b = 0.0
+					img.set_pixel(x, y, pixel)
 		img.unlock()
 	return img
 
