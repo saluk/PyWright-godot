@@ -263,6 +263,7 @@ func stop_timer():
 func pause(args, pack):
 	_set_speaking_animation("blink")
 	set_process(false)
+	tb_timer.wait_time = float(args[0])/60.0
 	tb_timer.connect("timeout", self, "stop_timer")
 	tb_timer.start()
 
