@@ -53,7 +53,6 @@ class TextPack:
 				delta = leftover
 			else:
 				var characters_per_second = characters_per_tick * 60.0
-				print(characters_per_second, textbox.printed, time_elapsed)
 				
 				time_elapsed += dt
 				delta = time_elapsed * characters_per_second
@@ -68,7 +67,6 @@ class TextPack:
 			leftover -= delta
 			# TODO this is pretty hacky - Textbox really needs another rewrite
 			var t = self.textbox.strip_bbcode(self.textbox.printed)
-			print("TEXT:<<<", t, ">>>")
 			if t and t[min(rich_text_label.visible_characters-1,t.length()-1)] == " ":
 				textbox.next_ticks_per_update = 0.1
 			else:
@@ -282,7 +280,6 @@ func queue_free():
 func finish_text():
 	while text_to_print or packs:
 		update_textbox(0, true)
-		print("updating", packs)
 			
 func click_continue(immediate_skip=false):
 	if not immediate_skip and (text_to_print or packs):
