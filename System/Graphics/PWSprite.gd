@@ -156,7 +156,7 @@ func load_animation(path:String, info=null, sub_rect=null):
 	rescale(width, height)
 	
 	material = ShaderMaterial.new()
-	material.shader = load("res://System/Graphics/clear_pink.shader")
+	material.shader = load("res://System/Graphics/image_filters.shader")
 	
 	animated_sprite.connect("animation_finished", self, "finish_playing")
 	if "wbench" in sprite_path:
@@ -175,7 +175,7 @@ func from_frame(frame):
 	animated_sprite.frames = SpriteFrames.new()
 	animated_sprite.frames.add_frame("default", frame)
 	material = ShaderMaterial.new()
-	material.shader = load("res://System/Graphics/clear_pink.shader")
+	material.shader = load("res://System/Graphics/image_filters.shader")
 	
 func rescale(size_x, size_y):
 	var sc_w = float(size_x)/float(width)

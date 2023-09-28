@@ -48,18 +48,18 @@ static func lookup_file(sub_path:String, current_path:String, exts=[]):
 			current_path = "res://"
 		
 static func load_resource(path:String):
-	var resource = ResourceLoader.load(path)
-	return resource
+	if ResourceLoader.exists(path):
+		var resource = ResourceLoader.load(path, "", true)
+		if resource:
+			return resource.get_data()
+	return null
 
 static func load_image_from_path(path:String) -> Image:
 	# TODO - we should try the file before the resource to allow modding
-	var resource = load_resource(path)
-	if resource:
-		print("resource found")
-		return resource
+	var image:Image
+	image = load_resource(path)
 	var f = File.new()
 	var err = f.open(path, File.READ)
-	var image:Image
 	if err != OK:
 		image = load_resource(path)
 		if not image:
@@ -77,7 +77,23 @@ static func load_image_from_path(path:String) -> Image:
 	elif path.ends_with("jpg"):
 		error = image.load_jpg_from_buffer(buffer)
 	print("image found: ", image)
+	de_pink_image(image)
 	return image
+
+static func de_pink_image(img:Image):
+	if img.detect_alpha() == Image.ALPHA_NONE:
+		img.convert(Image.FORMAT_RGBA8)
+		img.lock()
+		for x in range(img.get_width()):
+			for y in range(img.get_height()):
+				var pixel = img.get_pixel(x, y)
+				if pixel.r > 0.95 and pixel.g < 0.05 and pixel.b > 0.95:
+					pixel.a = 0.0
+					pixel.r = 0.0
+					pixel.g = 0.0
+					pixel.b = 0.0
+		img.unlock()
+	return img
 
 static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -> Array:
 	print(path)
@@ -89,6 +105,7 @@ static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -
 	else:
 		texture = ImageTexture.new()
 		texture.create_from_image(image, 0)
+		texture.flags = 0
 		
 	if not texture or not image:
 		return []

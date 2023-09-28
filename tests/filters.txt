@@ -1,0 +1,3 @@
+char maya
+grey name=maya
+"I should be in greyscale"
