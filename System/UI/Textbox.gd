@@ -197,18 +197,27 @@ func play_sound(path=null):
 			path = override_sound
 	if path:
 		Commands.call_command("sfx", main.top_script(), [path])
-	
+
+var DEFAULT_SOUNDS = {
+	"blipmale.ogg": "4judge acro apollo armando armstrong atmey ben brother cody daian edgeworth edgeworthDA edgeworth-young ese gant godot grey grossberg grossberg-young gumshoe gumshoe-young hamigaki hobo hotti jake judge kagerou karma kawadzu killer kirihito kyouya kyouya-young larry maki matt max meekins moe mugitsura payne paynette payne-young phoenix phoenix-young redd romaine ron sahwit sal takita terry tigre tsunekatsu varan varan-young victor wellington will yanni zakku".split(" "),
+	"blipfemale.ogg": "adrian angel april bikini dahlia dee desiree elise ema franziska ini iris koume lamiroir lana lisa lotta maggey makoto makoto-young masaka maya mia mia-young minami minuki minuki-young morgan oldbag pearl penny regina skye viola yuumi".split(" ")
+}
 func get_char_sound():
 	var character = Commands.get_speaking_char()
+	var blipsound = null
 	if character:
-		# TODO need a better way of getting object namespaces
-		return character.variables._get_val("blipsound", null)
-	else:
-		var path = main.stack.variables.get_string(
+		blipsound = main.stack.variables.get_string(
+			"char_"+character.base_path+"_defsound")
+		if not blipsound:
+			for key in DEFAULT_SOUNDS:
+				if character.base_path in DEFAULT_SOUNDS[key]:
+					blipsound = key
+	if not blipsound:
+		blipsound = main.stack.variables.get_string(
 			"char_defsound")
-		if not path:
-			path = "blipmale.ogg"
-		return path
+	if not blipsound:
+		blipsound = "blipmale.ogg"
+	return blipsound
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
