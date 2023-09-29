@@ -178,8 +178,8 @@ func from_frame(frame):
 	material.shader = load("res://System/Graphics/image_filters.shader")
 	
 func rescale(size_x, size_y):
-	var sc_w = float(size_x)/float(width)
-	var sc_h = float(size_y)/float(height)
+	var sc_w = float(size_x)/float(max(1, width))
+	var sc_h = float(size_y)/float(max(1, height))
 	animated_sprite.scale.x = sc_w
 	animated_sprite.scale.y = sc_h
 	width = size_x

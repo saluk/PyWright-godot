@@ -58,7 +58,7 @@ func _on_cross_area_input_event(viewport, event, shape_idx):
 		#	click_option("region")
 		
 func set_crosshair_pos(x, y):
-	print("CROSS X Y ",x," ",y)
+	#print("CROSS X Y ",x," ",y)
 	crosshair.crosshair_position = Vector2(int(x), int(y))
 	update()
 			
@@ -69,7 +69,7 @@ class Region extends Area2D:
 		size = Vector2(width, height)
 		position = Vector2(x,y)
 	func is_point_inside(point):
-		print(point, ',', position, ',', size)
+		#print(point, ',', position, ',', size)
 		if (point.x >= position.x and point.x <= position.x+size.x and 
 			point.y >= position.y and point.y <= position.y+size.y):
 			return true
@@ -139,7 +139,7 @@ func update():
 
 	examine_button.visible = false
 	current_region = null
-	print("CLEAR CURRENT REGION")
+	#print("CLEAR CURRENT REGION")
 	if not reveal_regions:
 		examine_button.visible = true
 	for child in get_children():
@@ -148,7 +148,7 @@ func update():
 			if reveal_regions:
 				examine_button.visible = true
 			current_region = region
-			print("SET CURRENT REGION")
+			#print("SET CURRENT REGION")
 	.update()
 	crosshair.update()
 

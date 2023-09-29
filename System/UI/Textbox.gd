@@ -19,6 +19,8 @@ var ticks_per_update:float = 2.0
 var next_ticks_per_update:float = 1.0
 var override_sound = ""
 
+var MAX_WHILE = 400
+
 class TextPack:
 	var text = ""
 	var textbox
@@ -47,7 +49,9 @@ class TextPack:
 			leftover =  self.textbox.strip_bbcode(self.text).length()
 		
 		var delta # Number of characters to add to the display
-		while (not delta or delta > 1 and leftover):
+		var while_loops = 0
+		while (not delta or delta > 1 and leftover) and while_loops < textbox.MAX_WHILE:
+			while_loops += 1
 			var characters_per_tick = float(textbox.characters_per_update) / float(textbox.ticks_per_update * textbox.next_ticks_per_update)
 			if characters_per_tick < 0.01 or force:
 				delta = leftover
@@ -73,6 +77,8 @@ class TextPack:
 				textbox.next_ticks_per_update = 1.0
 			if force or characters_per_tick <= 0.01:
 				break
+		if while_loops >= textbox.MAX_WHILE:
+			pass
 			
 	# execute pack command and change the provided textbox accordingly
 	func consume(rich_text_label, dt:float, force = false):
@@ -290,8 +296,11 @@ func queue_free():
 	.queue_free()
 	
 func finish_text():
-	while text_to_print or packs:
+	var while_loops = 0
+	while (text_to_print or packs) and while_loops < MAX_WHILE:
 		update_textbox(0, true)
+	if while_loops >= MAX_WHILE:
+		pass
 			
 func click_continue(immediate_skip=false):
 	if not immediate_skip and (text_to_print or packs):
@@ -311,7 +320,8 @@ func get_next_pack(text_to_print, connect_signals=false):
 	var i = 0
 	var pack = ""
 	var found_bracket = false
-	while i < text_to_print.length():
+	var while_loops = 0
+	while (i < text_to_print.length() and while_loops < MAX_WHILE):
 		var c = text_to_print[i]
 		pack += c
 		if not found_bracket and i == 0 and c == '{':
@@ -323,6 +333,8 @@ func get_next_pack(text_to_print, connect_signals=false):
 		if not found_bracket and i > 0 and c == '{':
 			return [TextPack.new(pack.left(pack.length()-1), self, connect_signals),text_to_print.substr(i)]
 		i += 1
+	if while_loops >= MAX_WHILE:
+		pass
 	return [TextPack.new(pack, self, connect_signals), ""]
 	
 
@@ -333,11 +345,15 @@ func tokenize_text(text_to_print, connect_signals=false):
 	var v = get_next_pack(text_to_print, connect_signals)
 	next_pack = v[0]
 	text_to_print = v[1]
-	while text_to_print:
+	var while_loops = 0
+	while text_to_print and while_loops < MAX_WHILE:
+		while_loops += 1
 		packs.append(next_pack)
 		v = get_next_pack(text_to_print, connect_signals)
 		next_pack = v[0]
 		text_to_print = v[1]
+	if while_loops >= MAX_WHILE:
+		pass
 	packs.append(next_pack)
 	return packs
 
