@@ -39,7 +39,7 @@ tab_align = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
-margin_top = 30.0
+margin_top = 26.0
 margin_right = -4.0
 margin_bottom = -4.0
 size_flags_stretch_ratio = 0.75
@@ -51,51 +51,63 @@ syntax_highlighting = true
 show_line_numbers = true
 draw_tabs = true
 draw_spaces = true
+bookmark_gutter = true
 breakpoint_gutter = true
 context_menu_enabled = false
 smooth_scrolling = true
+wrap_enabled = true
+caret_blink = true
+caret_blink_speed = 0.5
 
 [node name="buttons" type="HBoxContainer" parent="vbox"]
 margin_top = 304.0
 margin_right = 250.0
-margin_bottom = 322.0
+margin_bottom = 318.0
 
 [node name="Reload" type="Button" parent="vbox/buttons"]
-margin_right = 48.0
-margin_bottom = 18.0
+margin_right = 36.0
+margin_bottom = 14.0
 text = "Reload"
 
 [node name="AllEv" type="Button" parent="vbox/buttons"]
-margin_left = 52.0
-margin_right = 94.0
-margin_bottom = 18.0
+margin_left = 40.0
+margin_right = 72.0
+margin_bottom = 14.0
 text = "AllEv"
 
 [node name="Pause" type="Button" parent="vbox/buttons"]
-margin_left = 98.0
-margin_right = 140.0
-margin_bottom = 18.0
+margin_left = 76.0
+margin_right = 108.0
+margin_bottom = 14.0
 text = "Pause"
 
 [node name="Step" type="Button" parent="vbox/buttons"]
-margin_left = 144.0
-margin_right = 180.0
-margin_bottom = 18.0
+margin_left = 112.0
+margin_right = 140.0
+margin_bottom = 14.0
 text = "Step"
 
 [node name="Timer" type="Label" parent="vbox/buttons"]
-margin_left = 184.0
+margin_left = 144.0
 margin_top = 3.0
-margin_right = 220.0
-margin_bottom = 15.0
+margin_right = 168.0
+margin_bottom = 11.0
 rect_pivot_offset = Vector2( 104, 33 )
 text = "Timer:"
 script = ExtResource( 4 )
 
 [node name="MousePos" type="Label" parent="vbox"]
-margin_top = 326.0
+margin_top = 322.0
 margin_right = 250.0
-margin_bottom = 338.0
+margin_bottom = 330.0
 rect_pivot_offset = Vector2( 104, 33 )
 text = "Mouse:"
 script = ExtResource( 3 )
+
+[node name="GotoLineButton" type="Button" parent="."]
+modulate = Color( 1, 1, 1, 0.592157 )
+margin_left = -1.0
+margin_top = 31.0
+margin_right = 15.0
+margin_bottom = 45.0
+text = ">"

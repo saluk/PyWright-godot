@@ -17,6 +17,8 @@ export(NodePath) var current_script
 var in_debugger = false
 var debug_last_state = null
 
+var goto_line_button_template:Button
+
 # {"script": WrightScript, "editor": TextEdit, "highlighted_line":int, "bookmark_line": int}
 
 func _ready():
@@ -34,6 +36,9 @@ func _ready():
 	pause.connect("button_up", self, "start_debugger")
 	allev.connect("button_up", self, "all_ev")
 	reload_button.connect("button_up", self, "reload")
+	
+	goto_line_button_template = get_node("GotoLineButton")
+	goto_line_button_template.get_parent().remove_child(goto_line_button_template)
 
 func reload():
 	if current_stack:
@@ -130,6 +135,8 @@ func update_current_stack(stack):
 		if scripts[i]["highlighted_line"] != to_line:
 			scripts[i]["highlighted_line"] = to_line
 			scripts[i]["editor"].cursor_set_line(to_line)
+			scripts[i]["editor"].cursor_set_column(0)
+			scripts[i]["editor"].center_viewport_to_cursor()
 		if scripts[i]["bookmark_line"]!=null and scripts[i]["editor"].is_line_set_as_bookmark(scripts[i]["bookmark_line"]):
 			scripts[i]["editor"].set_line_as_bookmark(scripts[i]["bookmark_line"], false)
 		scripts[i]["editor"].set_line_as_bookmark(to_line, true)
