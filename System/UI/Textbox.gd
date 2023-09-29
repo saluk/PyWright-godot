@@ -290,9 +290,7 @@ func _on_Area2D_input_event(viewport, event, shape_idx):
 		click_continue()
 		
 func queue_free():
-	# TODO Probably close enough to use "printed" which is already in bbcode format
-	# PYWRIGHT used the text that still had markup {c}, {n} etc in the text
-	main.stack.variables.set_val("_last_written_text", printed)
+	trigger_text_end_events()
 	.queue_free()
 	
 func finish_text():
@@ -377,15 +375,22 @@ func update_textbox(dt:float, force = false):
 		$Backdrop/Label.visible_characters = 0
 		text_to_print = ""
 	if packs:
+		# TODO we shouldn't set talking until actually printing out text
 		_set_speaking_animation("talk")
 		packs[0].consume($Backdrop/Label, dt, force)
 		if packs[0].delete:
 			packs.remove(0)
 	else:
 		if not has_finished:
-			has_finished = true
-			_set_speaking_animation("blink")
-			main.emit_signal("text_finished")
+			trigger_text_end_events()
+			
+func trigger_text_end_events():
+	has_finished = true
+	# TODO Probably close enough to use "printed" which is already in bbcode format
+	# PYWRIGHT used the text that still had markup {c}, {n} etc in the text
+	main.stack.variables.set_val("_last_written_text", printed)
+	_set_speaking_animation("blink")
+	main.emit_signal("text_finished")
 		
 func _process(dt):
 	update_nametag()
