@@ -55,3 +55,8 @@ func ws_investigate_option(script, args):
 		print("bad investigate menu")
 		assert(0)
 	queue_free()
+	
+func save_node(data):
+	# Return that we can't save
+	# TODO - enable saving of investigate menu
+	return true

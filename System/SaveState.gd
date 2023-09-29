@@ -42,13 +42,14 @@ static func save_game(tree:SceneTree, filename:String):
 static func _save_node(node):
 	if node.has_method("save_node"):
 		var save = {}
-		# Non nodes will have to be restored outisde this script
-		if node.has_method("get_path"):
-			save["original_node_path"] = node.get_path()
-		if "save_properties" in node:
-			save_properties(node, save)
-		node.save_node(save)
-		return save
+		var cannot_save = node.save_node(save)
+		if not cannot_save:
+			# Non nodes will have to be restored to the tree outisde this script
+			if node.has_method("get_path"):
+				save["original_node_path"] = node.get_path()
+			if "save_properties" in node:
+				save_properties(node, save)
+			return save
 	return null
 	
 static func _load_node(tree, ob, ob_data):
