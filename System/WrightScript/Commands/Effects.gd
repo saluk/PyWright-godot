@@ -143,7 +143,8 @@ func ws_flash(script, arguments):
 		["flash"] + arguments
 	)
 	yield(main.get_tree().create_timer(0.1), "timeout")
-	flash.queue_free()
+	if flash and is_instance_valid(flash):
+		flash.queue_free()
 	
 # TODO IMPLEMENT
 #@category([KEYWORD("mag","How many times to magnify","1 (will magnify 1 time, which is 2x magnification)"),

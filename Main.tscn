@@ -14,6 +14,7 @@ script = ExtResource( 3 )
 margin_right = 256.0
 margin_bottom = 384.0
 rect_clip_content = true
+mouse_filter = 2
 
 [node name="MainScreen" type="Node2D" parent="Control" groups=["MainScreen"]]
 script = ExtResource( 4 )

@@ -167,6 +167,8 @@ func clean_scripts():
 func new_state(state):
 	self.state = state
 
+# TODO script blockers feel overengineered.
+
 func blocked(scr):
 	if scr in blocked_scripts:
 		return true
