@@ -30,7 +30,7 @@ theme = ExtResource( 5 )
 
 [node name="ScriptDebugger" parent="TabContainer" instance=ExtResource( 1 )]
 margin_left = 4.0
-margin_top = 30.0
+margin_top = 26.0
 margin_right = -4.0
 margin_bottom = -4.0
 

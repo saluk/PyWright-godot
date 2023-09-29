@@ -66,7 +66,7 @@ func ws_tint(script, arguments):
 func ws_invert(script, arguments):
 	pass
 	
-# TODO IMPLEMENT
+# TODO IMPLEMENT ALL ARGUMENTS
 #    @category([VALUE("ttl","Time for shake to last in frames","30"),
 #    VALUE("offset","How many pixels away to move the screen (how violent)","15"),
 #    TOKEN("nowait","Continue executing script during shake"),
@@ -92,8 +92,58 @@ func ws_invert(script, arguments):
 #        self.add_object(sh)
 #        if sh.wait:
 #            return True
-func ws_shake(script, arguments):
-	pass
+class Shaker extends Node:
+	var screen
+	var ttl:float
+	var offset
+	var z
+	var wait = true
+	var wait_signal = "tree_exited"
+	func _init(screen, ttl, offset):
+		self.screen = screen
+		self.ttl = ttl
+		self.offset = offset
+		self.z = ZLayers.z_sort["shake"]
+	func _process(dt):
+		screen.position.x = rand_range(-offset, offset)
+		screen.position.y = rand_range(-offset, offset)
+		ttl -= dt
+		if ttl < 0:
+			screen.position = Vector2(0,0)
+			queue_free()
+func ws_shake(script, arguments:Array):
+	var wait = true
+	var both = false
+	var ttl = 15
+	var offset = 15
+	if "nowait" in arguments:
+		wait = false
+		arguments.erase("nowait")
+	if "both" in arguments:
+		both = true
+		arguments.erase("both")
+	if arguments.size() > 0 and arguments[0].is_valid_integer():
+		ttl = int(arguments[0])
+	if arguments.size() > 1 and arguments[1].is_valid_integer():
+		offset = int(arguments[1])
+	randomize()
+	var screen = main.get_tree().get_nodes_in_group("MainScreen")[0]
+	var shaker = Shaker.new(screen, ttl/60.0, offset)
+	shaker.wait = wait
+	Commands.main_screen.add_child(shaker)
+	return shaker
+
+func ws_flash(script, arguments):
+	# Create flash WrightObject
+	# TODO play flash sound effect (maybe)
+	var flash = ObjectFactory.create_from_template(
+		script,
+		"fg",
+		{"sort_with": "flash"},
+		["flash"] + arguments
+	)
+	yield(main.get_tree().create_timer(0.1), "timeout")
+	flash.queue_free()
 	
 # TODO IMPLEMENT
 #@category([KEYWORD("mag","How many times to magnify","1 (will magnify 1 time, which is 2x magnification)"),

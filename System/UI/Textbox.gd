@@ -182,9 +182,9 @@ class CommandPack extends TextPack:
 			"e":
 				pass
 			"f":
-				pass
+				Commands.call_command("flash", self.textbox.main.top_script(), args)
 			"s":
-				pass
+				Commands.call_command("shake", self.textbox.main.top_script(), args)
 			"p":
 				if not force:
 					self.textbox.pause(args, self)
