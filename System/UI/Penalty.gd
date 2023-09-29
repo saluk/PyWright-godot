@@ -74,7 +74,7 @@ func _physics_process(dt):
 		threat_section.scale = Vector2(threat_amount, 1)
 		threat_timer += dt*8
 		threat_section.material.set_shader_param("to_color_amount", (1.0+(sin(threat_timer)*0.5))/2.0)
-	if start_value != end_value:
+	if value != end_value:
 		if value < end_value:
 			value += min(30*dt, end_value-value)   # TODO - conver to pywright speed
 		elif value > end_value:
@@ -82,8 +82,8 @@ func _physics_process(dt):
 		else:
 			emit_signal("animation_done")
 		set_value(value)
-		#print("set value:", value)
-	elif delay:
+		print("set value:", value)
+	elif delay>0:
 		delay -= WrightScript.one_frame(dt)
 		if delay <= 0:
 			emit_signal("animation_done")
