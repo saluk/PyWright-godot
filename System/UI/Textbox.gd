@@ -231,6 +231,9 @@ func _ready():
 	tb_timer.one_shot = true
 	if not main:
 		return
+		
+	connect("tree_exited", Commands, "hide_arrows", [main.stack.scripts[-1]])
+
 	$NametagBackdrop/Label.text = ""
 	$Backdrop/Label.bbcode_text = ""
 	if main.stack.variables.get_int("_textbox_lines", 3) == 2:
@@ -284,7 +287,6 @@ func queue_free():
 	# TODO Probably close enough to use "printed" which is already in bbcode format
 	# PYWRIGHT used the text that still had markup {c}, {n} etc in the text
 	main.stack.variables.set_val("_last_written_text", printed)
-	connect("tree_exited", Commands, "hide_arrows", [main.stack.scripts[-1]])
 	.queue_free()
 	
 func finish_text():
