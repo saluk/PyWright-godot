@@ -171,12 +171,24 @@ func blocked(scr):
 	if scr in blocked_scripts:
 		return true
 
-func remove_blocker(frame):
-	if frame.sig in blockers:
-		blockers.erase(frame.sig)
-		if frame.scr in blocked_scripts:
-			frame.scr.next_line()
-			blocked_scripts.erase(frame.scr)
+func add_blocker(script, block_obj, next_line = true):
+	if block_obj in blockers:
+		return
+	blockers.append(block_obj)
+	if not script in blocked_scripts:
+		blocked_scripts.append(script)
+	var sig = "timeout"
+	if block_obj.get("wait_signal"):
+		sig = block_obj.get("wait_signal")
+	block_obj.connect(sig, self, "remove_blocker", [script, block_obj, next_line], CONNECT_ONESHOT)
+
+func remove_blocker(script, block_obj, next_line):
+	if block_obj in blockers:
+		blockers.erase(block_obj)
+		if script in blocked_scripts:
+			if next_line:
+				script.next_line()
+			blocked_scripts.erase(script)
 			
 func force_clear_blockers():
 	for obj in blockers:
@@ -274,13 +286,7 @@ func process():
 				frame.scr.next_line()
 				#return new_state(STACK_YIELD)
 		elif frame.sig is SceneTreeTimer or (frame.sig and frame.sig.get("wait_signal") and frame.sig.get("wait") in [null, true]):
-			blockers.append(frame.sig)
-			blocked_scripts.append(frame.scr)
-			var sig = "timeout"
-			if frame.sig.get("wait_signal"):
-				sig = frame.sig.get("wait_signal")
-			frame.sig.connect(sig, self, "remove_blocker", [frame], CONNECT_ONESHOT)
-			#return new_state(STACK_YIELD)
+			add_blocker(frame.scr, frame.sig, true)
 		elif frame.sig is GDScriptFunctionState:
 			show_in_debugger()
 			yields.append(frame)

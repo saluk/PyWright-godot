@@ -15,7 +15,7 @@ class Fader extends Node:
 	func _init(start, end, speed, wait):
 		self.start = float(start)
 		self.end = float(end)
-		speed = float(speed)
+		self.speed = float(speed)
 		name = "fade"
 		objects = Commands.get_objects(null, false)
 		if wait:
