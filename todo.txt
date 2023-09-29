@@ -1,2 +1,2 @@
-flash and shake
 bloop noise on continue text
+change _process to _physics_process where applicable
