@@ -1,2 +1,3 @@
 bloop noise on continue text
 change _process to _physics_process where applicable
+when penalty object was made with default name evidence_menu, it conflicted with present command. WHY!?

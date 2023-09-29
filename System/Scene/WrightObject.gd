@@ -316,14 +316,14 @@ static func create_node(saved_data:Dictionary):
 	return ob
 	
 func load_node(tree, saved_data:Dictionary):
+	main = tree.get_nodes_in_group("Main")[0]
+	stack = main.stack
 	tree.get_nodes_in_group("MainScreen")[0].add_child(self)
 	load_sprites(saved_data["template"])
 	set_sprite(sprite_key)
 	SaveState._load_node(tree, variables, saved_data["variables"])
 
 func after_load(tree:SceneTree, saved_data:Dictionary):
-	main = tree.get_nodes_in_group("Main")[0]
-	stack = main.stack
 	if "script_id" in saved_data:
 		for script in stack.scripts:
 			if script.u_id == saved_data["script_id"]:

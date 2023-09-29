@@ -29,6 +29,7 @@ var CLEAR_GROUP = "PWCLEAR"   # Any object that should be cleared when setting a
 var ARROW_GROUP = "PWARROWS"
 var TEXTBOX_GROUP = "TEXTBOX_GROUP"
 var PENALTY_GROUP = "PWPENALTY"
+var COURT_RECORD_GROUP = "CourtRecord"
 
 var external_commands = {}
 

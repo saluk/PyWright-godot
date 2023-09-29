@@ -77,7 +77,7 @@ class Scroller extends Node:
 		objects = new_objects
 		controlled = ["control_filter", screen]
 		pass	
-	func _process(dt):
+	func _physics_process(dt):
 		#tween.seek(total_time-time_left)
 		time_left -= dt
 		if time_left <= 0:

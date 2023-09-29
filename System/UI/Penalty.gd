@@ -60,7 +60,7 @@ func set_value(value):
 	stack.variables.set_val(variable, value)
 
 # TODO get sizes pixel perfect
-func _process(dt):
+func _physics_process(dt):
 	var value = get_value()
 	var ivalue = int(value)
 	position = Vector2(256-110+left.width/2, 2+left.height/2)
@@ -82,9 +82,16 @@ func _process(dt):
 		else:
 			emit_signal("animation_done")
 		set_value(value)
-		print("set value:", value)
+		#print("set value:", value)
 	elif delay:
 		delay -= WrightScript.one_frame(dt)
 		if delay <= 0:
 			emit_signal("animation_done")
 			queue_free()
+
+# TODO enable saving of penalty
+func save_node(data):
+	return "nosave"
+func load_node(tree, data):
+	queue_free()
+	return

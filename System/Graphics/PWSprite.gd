@@ -144,8 +144,10 @@ func load_animation(path:String, info=null, sub_rect=null):
 			for delay in info["delays"].get(frame_i, 6.0):
 				animated_sprite.frames.add_frame("default", frame)
 			frame_i += 1
-	else:
+	elif frames:
 		animated_sprite.frames.add_frame("default", frames[0])
+	else:
+		return
 	animated_sprite.frames.set_animation_speed("default", 60.0)
 	animated_sprite.play("default")
 	print("good")

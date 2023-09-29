@@ -208,7 +208,7 @@ var TEMPLATES = {
 			"centered": false,
 			"mirror": [1, 1],
 			"block_script": true,
-			"groups": [Commands.SPRITE_GROUP],
+			"groups": [Commands.SPRITE_GROUP, Commands.COURT_RECORD_GROUP],
 			"start_sprite": "",
 			"sort_with": "evidence_menu",
 			"default_variant": "",
@@ -282,7 +282,7 @@ var TEMPLATES = {
 		},
 	"penalty":
 		{
-			"default_name": "evidence_menu",
+			"default_name": "penalty",
 			"class": "Penalty",
 			"sprites": {},
 			"centered": false,

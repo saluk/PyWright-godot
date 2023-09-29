@@ -79,7 +79,7 @@ static func load_image_from_path(path:String) -> Image:
 	return image
 
 static func de_pink_image(img:Image):
-	if img.detect_alpha() == Image.ALPHA_NONE:
+	if img.detect_alpha() == Image.ALPHA_NONE and img.get_size().length():
 		img.convert(Image.FORMAT_RGBA8)
 		img.lock()
 		for x in range(img.get_width()):
@@ -101,12 +101,12 @@ static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -
 	var image = load_image_from_path(path)
 	if image is StreamTexture:
 		texture = image
-	else:
+	elif image.get_size().length() > 0:
 		texture = ImageTexture.new()
 		texture.create_from_image(image, 0)
 		texture.flags = 0
 		
-	if not texture or not image:
+	if not texture or not image.get_size().length() > 0:
 		return []
 	
 	# Build frames

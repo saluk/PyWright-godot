@@ -34,7 +34,7 @@ class Fader extends Node:
 		for object in objects:
 			if is_instance_valid(object):
 				object.modulate = Color(1, 1, 1, start/100.0)
-	func _process(dt):
+	func _physics_process(dt):
 		set_fade()
 		if start < end:
 			start += dt*speed*60

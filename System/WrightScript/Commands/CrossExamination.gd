@@ -62,6 +62,7 @@ func ws_callpress(script, arguments):
 # Show the court record to allow an evidence to be selected to present
 # Also used internally to trigger creating the court record ui
 func ws_present(script, arguments):
+	Commands.delete_object_group(Commands.COURT_RECORD_GROUP)
 	var present = not "nopresent" in arguments
 	arguments.erase("nopresent")
 	var cr = ObjectFactory.create_from_template(

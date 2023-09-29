@@ -104,7 +104,7 @@ class Shaker extends Node:
 		self.ttl = ttl
 		self.offset = offset
 		self.z = ZLayers.z_sort["shake"]
-	func _process(dt):
+	func _physics_process(dt):
 		screen.position.x = rand_range(-offset, offset)
 		screen.position.y = rand_range(-offset, offset)
 		ttl -= dt

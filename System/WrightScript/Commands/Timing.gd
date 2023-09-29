@@ -33,7 +33,7 @@ class PWTimer extends Node:
 		print("stray nodes")
 		print_stray_nodes()
 		Commands.call_macro(macro, scr, [])
-	func _process(dt):
+	func _physics_process(dt):
 		timeleft -= dt
 		scr.stack.variables.set_val("_timer_value_"+self.macro, str(timeleft * 60.0))
 		if timeleft <= 0:
