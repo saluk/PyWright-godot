@@ -19,6 +19,9 @@ var ticks_per_update:float = 2.0
 var next_ticks_per_update:float = 1.0
 var override_sound = ""
 
+var last_text_sound_played = 0.0
+var text_sound_rate = 0.2
+
 var MAX_WHILE = 400
 
 class TextPack:
@@ -35,7 +38,7 @@ class TextPack:
 		self.text = text
 		self.textbox = textbox
 		if connect_signals:
-			self.connect("text_printed", self.textbox, "play_sound")
+			self.connect("text_printed", self.textbox, "_on_text_printed")
 		
 	func _run(force = false): 
 		has_run = true
@@ -195,6 +198,11 @@ class CommandPack extends TextPack:
 				if not force:
 					self.textbox.pause(args, self)
 		has_run = true
+		
+func _on_text_printed():
+	if Time.get_ticks_msec()-last_text_sound_played > text_sound_rate:
+		play_sound()
+		last_text_sound_played = Time.get_ticks_msec()
 
 func play_sound(path=null):
 	if not path:
@@ -381,16 +389,17 @@ func update_textbox(dt:float, force = false):
 		if packs[0].delete:
 			packs.remove(0)
 	else:
-		if not has_finished:
-			trigger_text_end_events()
+		trigger_text_end_events()
 			
 func trigger_text_end_events():
-	has_finished = true
-	# TODO Probably close enough to use "printed" which is already in bbcode format
-	# PYWRIGHT used the text that still had markup {c}, {n} etc in the text
-	main.stack.variables.set_val("_last_written_text", printed)
-	_set_speaking_animation("blink")
-	main.emit_signal("text_finished")
+	return
+	if not has_finished:
+		has_finished = true
+		# TODO Probably close enough to use "printed" which is already in bbcode format
+		# PYWRIGHT used the text that still had markup {c}, {n} etc in the text
+		main.stack.variables.set_val("_last_written_text", printed)
+		_set_speaking_animation("blink")
+		main.emit_signal("text_finished")
 		
 func _process(dt):
 	update_nametag()

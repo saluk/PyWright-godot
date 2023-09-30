@@ -51,7 +51,7 @@ func load_script_from_path(path):
 	emit_signal("stack_initialized")
 	
 func set_resolution(res:Vector2, scale:float, show_debugger:bool=false):
-	Engine.target_fps = 60
+	#Engine.target_fps = 60
 	var w = res.x
 	if show_debugger:
 		w *= 2

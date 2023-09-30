@@ -18,12 +18,18 @@ static func path_split(path:String):
 	return parts
 	
 static func lookup_file(sub_path:String, current_path:String, exts=[]):
+	if FilePathCache.has_cached([sub_path, current_path]):
+		return FilePathCache.get_cached([sub_path, current_path])
+	var file = _lookup_file(sub_path, current_path, exts)
+	return FilePathCache.set_get_cached([sub_path, current_path], file)
+	
+static func _lookup_file(sub_path:String, current_path:String, exts=[]):
 	if exts:
 		for ext in exts:
 			if sub_path.ends_with("."+ext):
 				sub_path = sub_path.replace("."+ext, "")
 		for ext in exts:
-			var found_ext = lookup_file(sub_path+"."+ext, current_path)
+			var found_ext = _lookup_file(sub_path+"."+ext, current_path)
 			if found_ext:
 				return found_ext
 		return null

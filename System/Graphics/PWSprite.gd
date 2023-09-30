@@ -107,24 +107,29 @@ func load_animation(path:String, info=null, sub_rect=null):
 		path = "res://"+path
 	sprite_path = path
 	# Load pwv
+	
 	print("loading info:", path.rsplit(".", true, 1)[0]+'.txt')
 	if not info:
 		info = load_info(path.rsplit(".", true, 1)[0]+'.txt')
 	print("txt:", info)
-
-	# TODO - sub_rect only works with single frame animations!
-	if sub_rect:
-		frames = Filesystem.load_atlas_specific(
-			path,
-			[sub_rect]
-		)
+	
+	if AnimationFramesCache.has_cached([path, sub_rect]):
+		frames = AnimationFramesCache.get_cached([path, sub_rect])
 	else:
-		frames = Filesystem.load_atlas_frames(
-			path, 
-			int(info['horizontal']),
-			int(info['vertical']),
-			int(info['length'])
-		)
+		# TODO - sub_rect only works with single frame animations!
+		if sub_rect:
+			frames = Filesystem.load_atlas_specific(
+				path,
+				[sub_rect]
+			)
+		else:
+			frames = Filesystem.load_atlas_frames(
+				path, 
+				int(info['horizontal']),
+				int(info['vertical']),
+				int(info['length'])
+			)
+		AnimationFramesCache.set_get_cached([path, sub_rect], frames)
 	if frames:
 		width = frames[0].region.size.x
 		height = frames[0].region.size.y

@@ -27,7 +27,7 @@ func reset():
 	for child in get_children():
 		child.queue_free()
 	
-func _physics_process(dt):
+func _process(dt):
 	if has_objects:
 		return
 	has_objects = true

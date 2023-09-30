@@ -60,7 +60,7 @@ func set_value(value):
 	stack.variables.set_val(variable, value)
 
 # TODO get sizes pixel perfect
-func _physics_process(dt):
+func _process(dt):
 	var value = get_value()
 	var ivalue = int(value)
 	position = Vector2(256-110+left.width/2, 2+left.height/2)
