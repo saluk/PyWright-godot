@@ -19,13 +19,16 @@ func _ready():
 
 func _load_audio_stream(path):
 	var stream
-	var loader = AudioLoader.new()
-	#if path!=null:
-	#	stream = ResourceLoader.load(path)
-	#	pass
-	if not stream:
-		stream = loader.loadfile(path)
-		pass
+	if SoundFileCache.has_cached([path]):
+		stream = SoundFileCache.get_cached([path])
+	else:
+		#if path!=null:
+		#	stream = ResourceLoader.load(path)
+		#	pass
+		if not stream:
+			var loader = AudioLoader.new()
+			stream = loader.loadfile(path)
+		SoundFileCache.set_get_cached([path], stream)
 	if stream:
 		# Somewhere determine whether or not to loop the sound
 		var next_player:AudioStreamPlayer = get_free_player()

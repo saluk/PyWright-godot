@@ -392,7 +392,6 @@ func update_textbox(dt:float, force = false):
 		trigger_text_end_events()
 			
 func trigger_text_end_events():
-	return
 	if not has_finished:
 		has_finished = true
 		# TODO Probably close enough to use "printed" which is already in bbcode format

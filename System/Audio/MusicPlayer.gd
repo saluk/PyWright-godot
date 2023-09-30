@@ -24,13 +24,17 @@ func _load_music_data(path):
 		return buffer
 
 func _load_audio_stream(path):
-	var audio_data = _load_music_data(path)
 	var stream
-	if audio_data:
-		stream = AudioStreamOGGVorbis.new()
-		stream.data = audio_data
-	if not stream and path!=null:
-		stream = ResourceLoader.load(path)
+	if SoundFileCache.has_cached([path]):
+		stream = SoundFileCache.get_cached([path])
+	else:
+		var audio_data = _load_music_data(path)
+		if audio_data:
+			stream = AudioStreamOGGVorbis.new()
+			stream.data = audio_data
+		if not stream and path!=null:
+			stream = ResourceLoader.load(path)
+		SoundFileCache.set_get_cached([path], stream)
 	if stream:
 		audio_player.stream = stream
 		audio_player.volume_db = linear2db(MUSIC_VOLUME)

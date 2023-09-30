@@ -145,6 +145,7 @@ DirectoryCache="*res://System/Files/DirectoryCache.gd"
 ObjectFactory="*res://System/Scene/ObjectFactory.gd"
 FilePathCache="*res://System/LeastUsedCache.gd"
 AnimationFramesCache="*res://System/LeastUsedCache.gd"
+SoundFileCache="*res://System/LeastUsedCache.gd"
 
 [debug]
 
