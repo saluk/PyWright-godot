@@ -16,6 +16,8 @@ var loaded = false
 signal finished_playing
 signal size_changed
 
+var sound_frames = {}
+
 # TODO needs to handle different animation modes, loop, once, and blink mode at minimum
 
 func free_members():
@@ -97,6 +99,9 @@ func load_info(path:String):
 				data[key_value[0]] = key_value[1]
 			elif key_value[0] == "framedelay":
 				data["delays"][int(key_value[1])] = int(key_value[2])
+			elif key_value[0] == "sfx":
+				# TODO can only have one sound effect per frame
+				sound_frames[int(key_value[1])] = key_value[2]
 		f.close()
 	if data.get('length', null)==null:
 		data['length'] = int(data['horizontal']) * int(data['vertical'])
@@ -211,3 +216,10 @@ func get_animation_progress():
 		return 0
 	var count = animated_sprite.frames.get_frame_count(animated_sprite.animation)
 	return float(animated_sprite.frame/count)
+
+func _process(dt):
+	# TODO only plays sounds once, doesn't handle loops
+	for sound_frame in sound_frames.keys():
+		if animated_sprite.frame >= sound_frame:
+			Commands.call_command("sfx", Commands.main.top_script(), [sound_frames[sound_frame]])
+			sound_frames.erase(sound_frame)
