@@ -1,3 +1,4 @@
 bloop noise on continue text
 change _process to _physics_process where applicable
 when penalty object was made with default name evidence_menu, it conflicted with present command. WHY!?
+testimony blinker can be controlled with tbon/tboff. is not added for cross exams automatically
