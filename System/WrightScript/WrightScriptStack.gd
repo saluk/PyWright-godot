@@ -30,6 +30,7 @@ var blocked_scripts = []
 var yields = []  # functions to resume
 
 var REPEAT_MAX = 6  #If nonzero, and the same line is attempted to execute more than this value, drop to the debugger
+
 var repeated = {"line":null, "line_num": -1, "amount": 0}
 
 var testing
@@ -295,6 +296,8 @@ func process():
 			#return new_state(STACK_YIELD)
 		else:
 			frame.scr.next_line()
+			# TODO Leaving the script running every line in a single frame is
+			# leading to jerkiness. C#?
 			#return new_state(STACK_YIELD)
 
 

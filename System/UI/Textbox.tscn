@@ -22,7 +22,7 @@ texture = ExtResource( 1 )
 [node name="Label" type="RichTextLabel" parent="Backdrop"]
 margin_left = -124.0
 margin_top = -27.0
-margin_right = 125.0
+margin_right = 126.0
 margin_bottom = 27.0
 mouse_filter = 2
 bbcode_enabled = true

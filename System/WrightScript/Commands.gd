@@ -97,6 +97,7 @@ func create_textbox(line) -> Node:
 	return l
 	
 func refresh_arrows(script):
+	# TODO this is a pretty heavy bit of machinery
 	if script.get_prev_statement() == null:
 		main.stack.variables.set_val("_cross_exam_start", "true")
 	else:
@@ -116,6 +117,7 @@ func refresh_arrows(script):
 	call_macro("hide_main_button_all", script, [])
 		
 func hide_arrows(script):
+	# TODO this is a pretty heavy bit of machinery
 	call_macro("hide_main_button", script, [])
 	call_macro("hide_court_record_button", script, [])
 	call_macro("hide_present_button", script, [])

@@ -29,7 +29,7 @@ func apply_fader(script, obj, arguments):
 	var fader = FadeLib.Fader.new(start, end, speed, wait)
 	fader.control(obj.script_name)
 	Commands.main_screen.add_child(fader)
-	main.stack.add_blocker(script, fader, false)
+	return fader
 				
 func ws_obj(script, arguments):
 	if not main.get_tree():
@@ -40,7 +40,9 @@ func ws_obj(script, arguments):
 		{},
 		arguments
 	)
-	apply_fader(script, obj, arguments)
+	var fader = apply_fader(script, obj, arguments)
+	if fader:
+		return fader
 	return obj
 	
 func ws_bg(script, arguments):

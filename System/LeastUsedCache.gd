@@ -1,6 +1,6 @@
 extends Node
 
-var MAX_CACHE = 5
+var MAX_CACHE = 1000
 
 var cache = {}
 
