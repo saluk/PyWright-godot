@@ -312,7 +312,12 @@ func click_continue(immediate_skip=false):
 	if not immediate_skip and (text_to_print or packs):
 		finish_text()
 	else:
-		queue_free()
+		# when we advance text from script we:
+		# - click_continue
+		# - but if we only queue_free, it will block the script until a later frame
+		# - which means the script will process removing objects before new objects are created
+		# - So we force it to be removed from the tree which will signal to unblock the script
+		get_parent().remove_child(self)
 		
 func click_next():
 	main.stack.scripts[-1].next_statement()

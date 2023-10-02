@@ -18,9 +18,15 @@ margin_left = 5.0
 margin_top = 36.0
 margin_right = -3.0
 size_flags_stretch_ratio = 0.75
-readonly = true
 highlight_current_line = true
 syntax_highlighting = true
 show_line_numbers = true
 draw_tabs = true
 bookmark_gutter = true
+
+[node name="EnableButton" type="Button" parent="."]
+margin_left = 5.0
+margin_top = 12.0
+margin_right = 41.0
+margin_bottom = 26.0
+text = "Enable"

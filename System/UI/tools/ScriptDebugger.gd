@@ -8,6 +8,7 @@ var popup_menu
 
 var scripts = []
 export(NodePath) var reload_button
+export(NodePath) var disable_button
 export(NodePath) var step
 export(NodePath) var allev
 export(NodePath) var pause
@@ -29,6 +30,7 @@ func _ready():
 		pause = get_node(pause)
 		node_scripts = get_node(node_scripts)
 		reload_button = get_node(reload_button)
+		disable_button = get_node(disable_button)
 	
 	node_scripts.remove_child(script_tab)
 	# TODO conceal buttons if game is not playing to prevent error
@@ -36,10 +38,12 @@ func _ready():
 	pause.connect("button_up", self, "start_debugger")
 	allev.connect("button_up", self, "all_ev")
 	reload_button.connect("button_up", self, "reload")
+	disable_button.connect("button_up", self, "toggle_enabled")
 	
 	goto_line_button_template = get_node("GotoLineButton")
 	goto_line_button_template.get_parent().remove_child(goto_line_button_template)
 
+# TODO maybe this should be a "main" function
 func reload():
 	if current_stack:
 		current_stack.clear_scripts()
@@ -47,6 +51,11 @@ func reload():
 	MusicPlayer.stop_music()
 	SoundPlayer.stop_sounds()
 	get_tree().change_scene("res://Main.tscn")
+	
+func toggle_enabled():
+	var main = get_tree().get_nodes_in_group("Main")[0]
+	main.debugger_enabled = not main.debugger_enabled
+	disable_button.text = {true: "Disable", false: "Enable"}[main.debugger_enabled]
 	
 func start_debugger(force=false):
 	if in_debugger:
@@ -115,6 +124,9 @@ func edit_script(script_index):
 	d["script"].stack.show_in_debugger()
 
 func update_current_stack(stack):
+	var main = get_tree().get_nodes_in_group("Main")[0]
+	if not main.debugger_enabled:
+		return
 	if current_stack != stack:
 		current_stack = stack
 		current_stack.connect("enter_debugger", self, "start_debugger", [true])

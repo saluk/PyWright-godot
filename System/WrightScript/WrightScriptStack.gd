@@ -143,16 +143,21 @@ func clear_scripts():
 func show_in_debugger():
 	if not main or not main.get_tree():
 		return
+	if not main.debugger_enabled:
+		return
 	var debugger = main.get_tree().get_nodes_in_group("ScriptDebugger")
 	if debugger:
 		debugger[0].update_current_stack(self)
 		
-func show_frame(frame):
+func show_frame(frame, begin=false):
 	if not main or not main.get_tree():
 		return
 	var framelog = main.get_tree().get_nodes_in_group("FrameLog")
 	if framelog:
-		framelog[0].add_frame(frame)
+		if begin:
+			framelog[0].log_frame_begin()
+		else:
+			framelog[0].log_frame_end(frame)
 		
 func clean_scripts():
 	"""Remove any scripts that should be ended"""
@@ -240,6 +245,7 @@ func process():
 			yield(main.get_tree(), "idle_frame")
 			continue
 		# We may have a paused frame from before to keep processing
+		show_frame(null, true)
 		frame = scripts[-1].process_wrightscript()
 		if not frame.line.begins_with("ut_"):
 			show_frame(frame)

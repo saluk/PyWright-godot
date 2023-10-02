@@ -5,6 +5,8 @@ var stack: WrightScriptStack
 var timecounter: TimeCounter
 var current_game: String
 
+var debugger_enabled = true
+
 var init_script = """
 mus 02 - courtroom lounge ~ beginning prelude.ogg
 set _textbox_lines 2
@@ -60,6 +62,8 @@ func set_resolution(res:Vector2, scale:float, show_debugger:bool=false):
 	var screen_size:Vector2 = OS.get_screen_size()
 	OS.window_position = Vector2(screen_size.x/2-w*scale/2, screen_size.y/2-h*scale/2)
 	get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_2D, SceneTree.STRETCH_ASPECT_KEEP, Vector2(w, h), 1)
+	if not show_debugger:
+		$TabContainer.queue_free()
 
 func _ready():
 	timecounter = TimeCounter.new()
