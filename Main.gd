@@ -155,6 +155,8 @@ func _process(_delta):
 	if stack:
 		if stack.state in [stack.STACK_READY, stack.STACK_YIELD]:
 			stack.process()
+	if stack:
+		stack.show_in_debugger()
 	emit_signal("frame_drawn")
 
 func log_error(msg):

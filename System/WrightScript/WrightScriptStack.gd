@@ -168,7 +168,7 @@ func clean_scripts():
 		else:
 			newscripts.append(scr)
 	scripts = newscripts
-	show_in_debugger()
+	#show_in_debugger()
 	
 func new_state(state):
 	self.state = state
@@ -224,7 +224,7 @@ func process():
 		# Resume processing
 		state = STACK_PROCESSING
 	while yields:
-		show_in_debugger()
+		#show_in_debugger()
 		var new_yields = []
 		for f in yields:
 			if f.sig is GDScriptFunctionState and f.sig.is_valid():
@@ -249,7 +249,7 @@ func process():
 		frame = scripts[-1].process_wrightscript()
 		if not frame.line.begins_with("ut_"):
 			show_frame(frame)
-			show_in_debugger()
+			#show_in_debugger()
 			main.emit_signal("line_executed")
 		print("FRAME:", frame, ",", frame.line_num, ",<<", frame.line, ">>,", frame.sig)
 		if REPEAT_MAX > 0:
@@ -278,7 +278,7 @@ func process():
 				frame.scr.next_line()
 				#return new_state(STACK_YIELD)
 			elif frame.sig == Commands.DEBUG:
-				show_in_debugger()
+				#show_in_debugger()
 				print(" - debug - ")
 				frame.scr.next_line()
 				emit_signal("enter_debugger")
@@ -297,7 +297,7 @@ func process():
 		elif frame.sig is SceneTreeTimer or (frame.sig and frame.sig.get("wait_signal") and frame.sig.get("wait") in [null, true]):
 			add_blocker(frame.scr, frame.sig, true)
 		elif frame.sig is GDScriptFunctionState:
-			show_in_debugger()
+			#show_in_debugger()
 			yields.append(frame)
 			#return new_state(STACK_YIELD)
 		else:
@@ -338,7 +338,7 @@ func load_node(tree, saved_data:Dictionary):
 		SaveState._load_node(tree, script, script_data)
 		scripts.append(script)
 	SaveState._load_node(tree, variables, saved_data["variables"])
-	show_in_debugger()
+	#show_in_debugger()
 
 func after_load(tree, saved_data:Dictionary):
 	pass  # Not called
