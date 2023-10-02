@@ -184,10 +184,6 @@ class CommandPack extends TextPack:
 				pass
 			"next":
 				self.textbox.queue_free()
-			"tbon":
-				pass
-			"tboff":
-				pass
 			"e":
 				pass
 			"f":
@@ -197,6 +193,8 @@ class CommandPack extends TextPack:
 			"p":
 				if not force:
 					self.textbox.pause(args, self)
+			_:
+				Commands.call_command(self.command, self.textbox.main.top_script(), args)
 		has_run = true
 		
 func _on_text_printed():
@@ -298,8 +296,14 @@ func _on_Area2D_input_event(viewport, event, shape_idx):
 		click_continue()
 		
 func queue_free():
-	trigger_text_end_events()
+	clean_up()
 	.queue_free()
+	
+func clean_up():
+	trigger_text_end_events()
+	# TODO we could check whether tboff needs to be called or not
+	# In pywright, it's only called when _tb_on is true
+	Commands.call_command("tboff", main.top_script(), [])
 	
 func finish_text():
 	var while_loops = 0
@@ -317,6 +321,7 @@ func click_continue(immediate_skip=false):
 		# - but if we only queue_free, it will block the script until a later frame
 		# - which means the script will process removing objects before new objects are created
 		# - So we force it to be removed from the tree which will signal to unblock the script
+		clean_up()
 		get_parent().remove_child(self)
 		
 func click_next():
