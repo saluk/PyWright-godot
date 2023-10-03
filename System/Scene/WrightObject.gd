@@ -316,6 +316,15 @@ static func create_node(saved_data:Dictionary):
 	return ob
 	
 func load_node(tree, saved_data:Dictionary):
+	# TODO we should probably standardize saving dictionaries, vectors, and rects
+	if "rect" in saved_data["template"] and saved_data["template"]["rect"]:
+		var r = saved_data["template"]["rect"].substr(1,saved_data["template"]["rect"].length()-2).split(",")
+		saved_data["template"]["rect"] = Rect2(
+			int(r[0].strip_edges()),
+			int(r[1].strip_edges()),
+			int(r[2].strip_edges()),
+			int(r[3].strip_edges())
+		)
 	main = tree.get_nodes_in_group("Main")[0]
 	stack = main.stack
 	tree.get_nodes_in_group("MainScreen")[0].add_child(self)

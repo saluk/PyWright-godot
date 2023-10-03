@@ -50,12 +50,13 @@ func gui_wait(script, arguments):
 	return GuiWait.new(script)
 	
 func gui_back(script, arguments):
-	var macroname = arguments.pop_front()
+	var macroname = "Back"
 	var template = ObjectFactory.get_template("button")
 	template["click_macro"] = macroname
 	template["sprites"]["default"]["path"] = "art/general/back.png"
 	template["sprites"]["highlight"]["path"] = "art/general/back_high.png"
 	template["position"] = [0, 159]
+	print(template)
 	var button = ObjectFactory.create_from_template(
 		script,
 		template,
