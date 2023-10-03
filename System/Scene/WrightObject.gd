@@ -183,12 +183,16 @@ func process_combined():
 		var count = sprites["combined"].animated_sprite.frames.get_frame_count("default")
 		if not "talk" in sprites:
 			add_sprite("talk", template["sprites"]["combined"])
-			while sprites["talk"].animated_sprite.frames.get_frame_count("default") > count/2:
-				sprites["talk"].animated_sprite.frames.remove_frame("default", count/2)
+			# Remove blink frames
+			if count > 1:
+				while sprites["talk"].animated_sprite.frames.get_frame_count("default") > count/2:
+					sprites["talk"].animated_sprite.frames.remove_frame("default", count/2)
 		if not "blink" in sprites:
 			add_sprite("blink", template["sprites"]["combined"])
-			while sprites["blink"].animated_sprite.frames.get_frame_count("default") > count/2:
-				sprites["blink"].animated_sprite.frames.remove_frame("default", 0)
+			# Remove talk frames
+			if count > 1:
+				while sprites["blink"].animated_sprite.frames.get_frame_count("default") > count/2:
+					sprites["blink"].animated_sprite.frames.remove_frame("default", 0)
 
 
 func process_missing():
