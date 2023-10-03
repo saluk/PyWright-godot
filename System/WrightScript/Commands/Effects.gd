@@ -105,11 +105,11 @@ class Shaker extends Node:
 		self.offset = offset
 		self.z = ZLayers.z_sort["shake"]
 	func _process(dt):
-		screen.position.x = rand_range(-offset, offset)
-		screen.position.y = rand_range(-offset, offset)
+		screen.rect_position.x = rand_range(-offset, offset)
+		screen.rect_position.y = rand_range(-offset, offset)
 		ttl -= dt
 		if ttl < 0:
-			screen.position = Vector2(0,0)
+			screen.rect_position = Vector2(0,0)
 			queue_free()
 func ws_shake(script, arguments:Array):
 	var wait = true
