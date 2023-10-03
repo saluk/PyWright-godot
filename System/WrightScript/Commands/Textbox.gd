@@ -7,7 +7,10 @@ func _init(commands):
 	
 func ws_textbox(script, arguments):
 	var text = Commands.join(arguments)
-	text = text.substr(1,text.length()-2)
+	var quote_char = text.substr(0,1)
+	text = text.substr(1,text.length())
+	if text.ends_with(quote_char):
+		text = text.substr(0, text.length()-1)
 	return Commands.create_textbox(script, text)
 	
 func ws_text(script, arguments):
