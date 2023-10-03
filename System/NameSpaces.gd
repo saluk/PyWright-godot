@@ -171,6 +171,7 @@ class Accessor:
 func get_accessor(variable:String, namespace:Variables=null, setting=false):
 	var script = main.top_script()
 	var next = variable
+
 	if "." in variable:
 		var parts = Array(variable.split("."))
 		next = parts.pop_front()
@@ -182,7 +183,7 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 	if next.begins_with("$"):
 		next = get_accessor(next.substr(1), null, setting).get_val("string", "")
 		
-	if not namespace:
+	if not namespace and next and variable:
 		if next == "script":
 			return get_accessor(variable, script.variables, setting)
 		if next == "game":
@@ -190,6 +191,8 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 		# See if next is an object
 		for object in Commands.get_objects(next):
 			return get_accessor(variable, object.variables, setting)
+		
+	if not namespace:
 		namespace = global_namespace
 		
 	var accessor = Accessor.new(next, namespace, self)
