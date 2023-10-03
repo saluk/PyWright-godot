@@ -6,12 +6,12 @@ func _init(commands):
 	main = commands.main
 
 func ws_clear(script, arguments):
-	Commands.clear_main_screen()
+	script.screen.clear()
 func ws_delete(script, arguments):
 	var name = Commands.keywords(arguments).get("name", null)
 	if name != null:
-		Commands.main_screen.sort_children()
-		var children = Commands.main_screen.get_children()
+		script.screen.sort_children()
+		var children = script.screen.get_children()
 		for i in range(children.size()):
 			if not "script_name" in children[-i]:
 				continue
@@ -28,7 +28,7 @@ func apply_fader(script, obj, arguments):
 	var wait = true
 	var fader = FadeLib.Fader.new(start, end, speed, wait)
 	fader.control(obj.script_name)
-	Commands.main_screen.add_child(fader)
+	script.screen.add_child(fader)
 	return fader
 				
 func ws_obj(script, arguments):

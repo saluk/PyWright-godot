@@ -111,7 +111,7 @@ static func load_game(tree:SceneTree, filename:String):
 	var data = parse_json(json)
 	file.close()
 	
-	Commands.clear_main_screen()
+	ScreenManager.clear()
 	
 	var after_load = []
 

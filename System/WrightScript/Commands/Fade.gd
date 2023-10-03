@@ -75,5 +75,5 @@ static func ws_fade(script, arguments):
 		fader.control_last()
 	else:
 		fader.control_all()
-	Commands.main_screen.add_child(fader)
+	script.screen.add_child(fader)
 	return fader

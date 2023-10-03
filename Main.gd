@@ -23,9 +23,6 @@ signal frame_drawn
 signal line_executed
 signal text_finished
 
-func main_screen():
-	return get_tree().get_nodes_in_group("MainScreen")[0]
-
 func load_game_from_pack(path):
 	ProjectSettings.load_resource_pack("user://"+path)
 	
@@ -81,7 +78,7 @@ func _ready():
 	stack.variables.reset()
 	
 	var loader = load("res://System/UI/GamesMenu.tscn").instance()
-	main_screen().add_child(loader)
+	ScreenManager.main_screen.add_child(loader)
 	var array = yield(loader, "game_loaded")
 	var path = array[0]
 	var mode = array[1]

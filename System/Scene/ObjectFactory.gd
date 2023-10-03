@@ -1,13 +1,8 @@
 extends Node
 
 var _main
-var _main_screen
 
 var main setget , get_main
-var main_screen setget , get_main_screen
-
-func get_main_screen():
-	return get_tree().get_nodes_in_group("MainScreen")[0]
 	
 func get_main():
 	return get_tree().get_nodes_in_group("Main")[0]
@@ -322,6 +317,14 @@ func update_sprite(template, key, data={}):
 func update_template(template, data={}):
 	data = data.duplicate(true)
 	template.merge(data, true)
+	
+func consume_keyword(arguments, key, default=null):
+	var keyword_arguments = Commands.keywords(arguments)
+	if key in keyword_arguments:
+		var val = keyword_arguments[key]
+		arguments.erase(key+"="+val)
+		return val
+	return default
 
 # TODO we probably never need to pass any script other than the top script
 # should eliminate need for passing in the script
@@ -354,12 +357,12 @@ func create_from_template(
 	# Find parent and add object to it
 	var parent
 	if not parent_name:
-		parent = get_main_screen()
+		parent = script.screen
 	else:
 		parent = Commands.get_objects(parent_name)
 		if not parent:
-			parent = get_main_screen()
-			get_main_screen().log_error("Failed to find parent:"+parent_name)
+			parent = script.screen
+			script.screen.log_error("Failed to find parent:"+parent_name)
 		else:
 			parent = parent[0]
 	parent.add_child(object)
@@ -369,32 +372,30 @@ func create_from_template(
 	object.wrightscript = script
 	object.stack = get_main().stack
 
-	var keyword_arguments = Commands.keywords(arguments)
-	var x=int(keyword_arguments.get("x", template["position"][0]))
-	var y=int(keyword_arguments.get("y", template["position"][1]))
+	var x=int(consume_keyword(arguments, "x", template["position"][0]))
+	var y=int(consume_keyword(arguments, "y", template["position"][1]))
 	object.position = Vector2(x, y)
 	object.centered = template["centered"]
 	if arguments:
 		object.base_path = arguments[0]
-	object.variant_path = template["default_variant"]
-	if keyword_arguments.get("e", null):
-		object.variant_path = keyword_arguments["e"]
+	object.variant_path = consume_keyword(arguments, "e", template["default_variant"])
 	object.root_path = script.root_path
-	if keyword_arguments.get("rect", null):
-		var rc = keyword_arguments["rect"].split(",")
+	var rc = consume_keyword(arguments, "rect", null)
+	if rc:
+		rc = rc.split(",")
 		template["rect"] = Rect2(int(rc[0]), int(rc[1]), int(rc[2]), int(rc[3]))
 	if "flipx" in arguments:
 		template["mirror"][0] = -1
 	if "flipy" in arguments:
 		template["mirror"][1] = -1
-	if keyword_arguments.get("button_text", ""):
-		template["button_text"] = keyword_arguments.get("button_text")
+	var bt = consume_keyword(arguments, "button_text", null)
+	if bt:
+		template["button_text"] = bt
 		
 	object.load_sprites(template)
 	Commands.last_object = object
 	if arguments:
-		object.script_name = keyword_arguments.get("name", arguments[0])
-		object.add_to_group("name_"+object.script_name)
+		object.script_name = consume_keyword(arguments, "name", arguments[0])
 	else:
 		if object.base_path:
 			object.script_name = object.base_path
@@ -402,10 +403,9 @@ func create_from_template(
 			object.script_name = object.variant_path
 		else:
 			object.script_name = template["default_name"]
-	if keyword_arguments.get("z", null)!=null:
-		object.z = int(keyword_arguments["z"])
-	else:
-		object.z = ZLayers.z_sort[template["sort_with"]]
+	object.add_to_group("name_"+object.script_name)
+	object.z = int(consume_keyword(arguments, "z", ZLayers.z_sort[template["sort_with"]]))
+
 	for group in template["groups"]:
 		object.add_to_group(group)
 		

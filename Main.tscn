@@ -3,20 +3,20 @@
 [ext_resource path="res://System/UI/tools/ScriptDebugger.tscn" type="PackedScene" id=1]
 [ext_resource path="res://System/UI/tools/FrameLog.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Main.gd" type="Script" id=3]
-[ext_resource path="res://System/Scene/MainScreen.gd" type="Script" id=4]
+[ext_resource path="res://System/Scene/Screen.gd" type="Script" id=4]
 [ext_resource path="res://System/UI/ScriptDebugger.tres" type="Theme" id=5]
 [ext_resource path="res://System/Testing/DebugLayer.gd" type="Script" id=6]
 
 [node name="Main" type="Node2D" groups=["Main"]]
 script = ExtResource( 3 )
 
-[node name="Control" type="Control" parent="."]
+[node name="Screens" type="Control" parent="." groups=["Screens"]]
 margin_right = 256.0
 margin_bottom = 384.0
 rect_clip_content = true
 mouse_filter = 2
 
-[node name="MainScreen" type="Node2D" parent="Control" groups=["MainScreen"]]
+[node name="MainScreen" type="Control" parent="Screens" groups=["MainScreen"]]
 script = ExtResource( 4 )
 
 [node name="DebugLayer" type="Node2D" parent="."]

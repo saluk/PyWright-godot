@@ -210,8 +210,8 @@ func ws_casemenu(script, arguments):
 	var casemenu = load("res://System/UI/CaseMenu.tscn").instance()
 	casemenu.cases = cases
 	casemenu.wrightscript = script
-	Commands.clear_main_screen()
-	Commands.main_screen.add_child(casemenu)
+	script.screen.clear()
+	script.screen.add_child(casemenu)
 	return casemenu
 
 # TODO IMPLEMENT

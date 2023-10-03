@@ -8,7 +8,7 @@ func _init(commands):
 func ws_textbox(script, arguments):
 	var text = Commands.join(arguments)
 	text = text.substr(1,text.length()-2)
-	return Commands.create_textbox(text)
+	return Commands.create_textbox(script, text)
 	
 func ws_text(script, arguments):
 	return ws_textbox(script, arguments)

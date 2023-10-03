@@ -2,6 +2,7 @@ extends Reference
 class_name WrightScript
 
 var main:Node
+var screen:Screen
 var stack
 var root_path := ""
 var filename := ""
@@ -26,11 +27,15 @@ static func one_frame(dt:float) -> float:
 	#  Determine how many frames, at 60 frames per second, have passed over dt
 	return dt * 60.0
 
-func _init(main, stack):
+func _init(main, stack, screen:Screen=null):
 	assert(main)
 	assert(stack)
 	self.main = main
 	self.stack = stack
+	if screen:
+		self.screen = screen
+	else:
+		self.screen = ScreenManager.top_screen()
 	u_id = OS.get_system_time_msecs()
 	variables = Variables.new()
 		

@@ -96,7 +96,8 @@ class Scroller extends Node:
 			data["save_start_positions"].append([pos.x, pos.y])
 		
 	func load_node(tree, saved_data:Dictionary):
-		Commands.main_screen.add_child(self)
+		# TODO we should be added to correct scene. save load doesn't handle screens yet
+		ScreenManager.main_screen.add_child(self)
 		for pos in saved_data["save_start_positions"]:
 			save_start_positions.append(Vector2(pos[0], pos[1]))
 
@@ -136,6 +137,6 @@ static func ws_scroll(script, arguments):
 		scroller.control_last()
 	else:
 		scroller.control_filter(filter)
-	Commands.main_screen.add_child(scroller)
+	ScreenManager.top_screen().add_child(scroller)
 	scroller.make_tweens()
 	return scroller

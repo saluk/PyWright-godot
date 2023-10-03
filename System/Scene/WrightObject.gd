@@ -327,7 +327,8 @@ func load_node(tree, saved_data:Dictionary):
 		)
 	main = tree.get_nodes_in_group("Main")[0]
 	stack = main.stack
-	tree.get_nodes_in_group("MainScreen")[0].add_child(self)
+	# TODO we should include in save system which screen object is on
+	ScreenManager.top_screen().add_child(self)
 	load_sprites(saved_data["template"])
 	set_sprite(sprite_key)
 	SaveState._load_node(tree, variables, saved_data["variables"])

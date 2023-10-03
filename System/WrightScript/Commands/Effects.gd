@@ -127,10 +127,9 @@ func ws_shake(script, arguments:Array):
 	if arguments.size() > 1 and arguments[1].is_valid_integer():
 		offset = int(arguments[1])
 	randomize()
-	var screen = main.get_tree().get_nodes_in_group("MainScreen")[0]
-	var shaker = Shaker.new(screen, ttl/60.0, offset)
+	var shaker = Shaker.new(script.screen, ttl/60.0, offset)
 	shaker.wait = wait
-	Commands.main_screen.add_child(shaker)
+	script.screen.add_child(shaker)
 	return shaker
 
 func ws_flash(script, arguments):

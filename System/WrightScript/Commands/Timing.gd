@@ -49,4 +49,4 @@ func ws_timer(script, arguments):
 	var removed = Commands.keywords(arguments, true)
 	pwt.script_name = removed[0].get("name", "timer")
 	pwt.name = pwt.script_name
-	main.main_screen().add_child(pwt)
+	script.screen.add_child(pwt)

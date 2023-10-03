@@ -168,6 +168,7 @@ func clean_scripts():
 		else:
 			newscripts.append(scr)
 	scripts = newscripts
+	ScreenManager.clean(scripts)
 	#show_in_debugger()
 	
 func new_state(state):

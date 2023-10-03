@@ -393,7 +393,7 @@ func check(evname, check_script):
 		stack.scripts[-1],
 		[check_script, "stack", "noclear"]
 	)
-	visible = false
+	#visible = false
 	#queue_free()
 
 # TODO implement check
