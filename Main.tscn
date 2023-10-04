@@ -16,7 +16,7 @@ margin_bottom = 384.0
 rect_clip_content = true
 mouse_filter = 2
 
-[node name="MainScreen" type="Control" parent="Screens" groups=["MainScreen"]]
+[node name="MainScreen" type="Node2D" parent="Screens" groups=["MainScreen"]]
 script = ExtResource( 4 )
 
 [node name="DebugLayer" type="Node2D" parent="."]

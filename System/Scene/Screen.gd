@@ -1,9 +1,8 @@
-extends Control
+extends Node2D
 class_name Screen
 
 func _ready():
-	rect_position = Vector2(0,0)
-	rect_size = Vector2(256,192*2)
+	position = Vector2(0,0)
 
 func _process(dt):
 	sort_children()

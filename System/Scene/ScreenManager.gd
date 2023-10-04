@@ -1,7 +1,7 @@
 extends Node
 
 var screens:Node
-var main_screen:Control
+var main_screen:Node2D
 
 func _ready():
 	screens = get_tree().get_nodes_in_group("Screens")[0]
