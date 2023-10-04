@@ -107,6 +107,7 @@ func init():
 #  path: path of sprite to load
 #  animation_mode: loop, once, blink, talk, ...
 func add_sprite(sprite_key, sprite_template):
+	print("BEGIN SPRITE SEARCH: ", sprite_key, " ", sprite_template)
 	if not sprite_template["path"]:
 		return
 	var search_path = sprite_template["path"].format({
@@ -114,6 +115,8 @@ func add_sprite(sprite_key, sprite_template):
 		"variant": variant_path
 	})
 	var search_paths = [search_path]
+	if search_path.ends_with(".png"):
+		search_paths.append(search_path.substr(0,search_path.length()-4))
 	while "//" in search_path:
 		search_path = search_path.replace("//", "/")
 		search_paths.append(search_path)

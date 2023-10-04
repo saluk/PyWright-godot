@@ -1,4 +1,11 @@
+compatibility
 bloop noise on continue text
 change _process to _physics_process where applicable
 when penalty object was made with default name evidence_menu, it conflicted with present command. WHY!?
 testimony blinker should be added for cross exams automatically
+cut off known extensions when searching for files, because the engine adds the extension (we already handle .png)
+
+future
+music: multiple music channels
+music/sfx: able to cancel a playing sound/music
+temporarily change resolution?
