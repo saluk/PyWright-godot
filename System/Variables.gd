@@ -12,7 +12,7 @@ func reset():
 	self.store = {}
 
 func set_val(key, value):
-	if 0:  # Replace 0 with variable name to get a watch on a variable
+	if key == "_statement_line_num":  # Replace 0 with variable name to get a watch on a variable
 		print("setting", key, "to", value)
 		pass
 	if key in setters:
