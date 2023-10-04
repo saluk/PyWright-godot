@@ -47,15 +47,6 @@ func setup_crosshair():
 	cross_area.add_child(shape)
 	cross_area.position = Vector2(256/2, 192/2)
 	add_child(cross_area)
-	cross_area.connect("input_event", self, "_on_cross_area_input_event")
-	
-func _on_cross_area_input_event(viewport, event, shape_idx):
-	if event is InputEventMouseButton or event is InputEventMouseMotion:
-		if Input.get_mouse_button_mask() & BUTTON_LEFT:
-			var pos = event.position-position
-			set_crosshair_pos(pos.x, pos.y)
-		#if event is InputEventMouseButton and event.pressed == false:
-		#	click_option("region")
 		
 func set_crosshair_pos(x, y):
 	#print("CROSS X Y ",x," ",y)
@@ -99,6 +90,12 @@ func ws_check_from_examine(script, arguments):
 
 func ws_back_from_examine(script, arguments):
 	queue_free()
+	
+func _unhandled_input(event):
+	if Input.get_mouse_button_mask() & BUTTON_LEFT:
+		var pos = get_viewport().get_mouse_position()-position
+		set_crosshair_pos(pos.x, pos.y)
+		update()
 		
 func update():
 	if allow_back_button and not back_button:
