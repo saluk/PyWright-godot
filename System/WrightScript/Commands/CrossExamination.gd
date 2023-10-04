@@ -9,6 +9,7 @@ func ws_cross(script, arguments):
 	main.stack.variables.set_val("_statement", "")
 	main.stack.variables.set_val("_statement_line_num", "")
 	main.stack.variables.set_val("currentcross", script.line_num)
+	script.connect("GOTO_RESULT", self, "ws_endcross", [script, []])
 	
 func ws_endcross(script, arguments):
 	main.stack.variables.set_val("_statement", "")
