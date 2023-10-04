@@ -71,7 +71,7 @@ func ws_present(script, arguments):
 	arguments.erase("nopresent")
 	var clearcross = not "noclearcross" in arguments
 	arguments.erase("noclearcross")
-	if clearcross:
+	if clearcross and present:
 		ws_endcross(script, [])
 	var cr = ObjectFactory.create_from_template(
 		script,
