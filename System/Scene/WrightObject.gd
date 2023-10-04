@@ -222,7 +222,7 @@ func set_sprite(new_sprite_key):
 			current_sprite.connect("size_changed", click_area, "sync_area")
 		# TODO center and mirror should be controlled by the sprite
 		if centered:
-			current_sprite.position = Vector2(256/2-current_sprite.width/2, 192/2-current_sprite.height/2)
+			current_sprite.position = Vector2(int(256/2)-int(current_sprite.width/2), int(192/2)-int(current_sprite.height/2))
 		if mirror.x < 0:
 			current_sprite.scale.x = -1
 			current_sprite.position.x += current_sprite.width

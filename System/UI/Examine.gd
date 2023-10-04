@@ -1,40 +1,44 @@
-# TODO - eventually we want this to be managed by a wrightscript macro
-#  we need a few things to make that workable:
-# 		- need a way to define multiple regions
-#		- how to draw the crosshair and move it on mouse click/drag
-#		- how to determine when crosshair is over something
-#		(a lot of these hows can still be implenented in gdscript,
-#		 but the objects should derive from WrightObject and be templatable
-#		 and save/loadable)
-#  For now we have this as a stopgap 
-
 extends WrightObject
 
 var scene_name:String
 
 var bg_obs = []
+var bg_obs_original = []
 
-var back_button
-var examine_button
+var back_button:Node
+var examine_button:Node
+
+var scroll_button:Node
+var scroll_button_direction:int
+var x_offset = 0
+var scrolling = false
+
 var crosshair
 
 var cross_area:Area2D
 
-var allow_back_button = true
-var reveal_regions = true
-var fail = "none"
+var allow_back_button := true
+var reveal_regions := true
+var reloaded_scroll := false
+var fail := "none"
 
-var current_region
+var current_region:Area2D
 
 # TODO figure out how we decide whther to show the back button or not
-	
+# TODO build in scrolling the top bg down (but default to off)
+
 func _ready():
-	script_name = "examine_menu"
 	wait_signal = "tree_exited"
-	for bg_ob in Commands.get_objects(null, null, Commands.BG_GROUP):
-		bg_ob = bg_ob.duplicate()
-		bg_obs.append(bg_ob)
-		add_child(bg_ob)
+	bg_obs_original = Commands.get_objects(null, null, Commands.BG_GROUP)
+	var has_bottom_screen_bg = false
+	for bg_ob in bg_obs_original:
+		if bg_ob.position.y >= 192:
+			has_bottom_screen_bg = true
+	if not has_bottom_screen_bg:
+		for bg_ob in bg_obs_original:
+			bg_ob = bg_ob.duplicate()
+			bg_obs.append(bg_ob)
+			add_child(bg_ob)
 	setup_crosshair()
 	
 func setup_crosshair():
@@ -65,6 +69,22 @@ class Region extends Area2D:
 			point.y >= position.y and point.y <= position.y+size.y):
 			return true
 		return false
+		
+func _get_scroll_direction():
+	var scroll_left = false
+	var scroll_right = false
+	for region in get_children():
+		if region is Region:
+			if region.position.x < 0:
+				scroll_left = true
+			if region.position.x + region.size.x >256:
+				scroll_right = true
+	if scroll_left:
+		return -1
+	elif scroll_right:
+		return 1
+	else:
+		return 0
 	
 func add_region_args(arguments):
 	var x = int(arguments[0])
@@ -91,13 +111,56 @@ func ws_check_from_examine(script, arguments):
 func ws_back_from_examine(script, arguments):
 	queue_free()
 	
+func ws_scroll_from_examine(script, arguments):
+	scrolling = true
+	if arguments:
+		scroll_button_direction = arguments[0]
+	if scroll_button:
+		scroll_button.queue_free()
+		scroll_button = null
+	var scroll_amt = 256/32
+	for i in range(32):
+		for ob in get_children():
+			if ob is Region:
+				ob.position.x -= scroll_button_direction * scroll_amt
+		for ob in get_parent().get_children():
+			if "scrollable" in ob and ob.scrollable:
+				ob.position.x -= scroll_button_direction * scroll_amt
+		if not arguments:
+			yield(get_tree(), "idle_frame")
+	x_offset += scroll_button_direction
+	scrolling = false
+	if not arguments:
+		main.stack.variables.set_val(
+			"_xscroll_"+script_name,
+			str(x_offset)
+		)
+		update()
+	
+func reload_scroll_regions():
+	if reloaded_scroll:
+		return
+	reloaded_scroll = true
+	var saved_scroll = main.stack.variables.get_int(
+		"_xscroll_"+script_name,
+		0
+	)
+	while saved_scroll:
+		ws_scroll_from_examine(null, [saved_scroll/abs(saved_scroll)])
+		saved_scroll -= saved_scroll/abs(saved_scroll)
+	
 func _unhandled_input(event):
+	if scrolling: return
 	if Input.get_mouse_button_mask() & BUTTON_LEFT:
 		var pos = get_viewport().get_mouse_position()-position
 		set_crosshair_pos(pos.x, pos.y)
 		update()
 		
 func update():
+	if scrolling: return
+	script_name = "examine_menu+"+bg_obs_original[0].script_name
+	reload_scroll_regions()
+	name = script_name
 	if allow_back_button and not back_button:
 		back_button = ObjectFactory.create_from_template(
 			get_tree().root.get_node("Main").top_script(),
@@ -132,6 +195,28 @@ func update():
 		examine_button.position = Vector2(
 			256-examine_button.width,
 			192-examine_button.height
+		)
+	var scroll_direction = _get_scroll_direction()
+	if scroll_direction!=0 and scroll_button_direction != scroll_direction:
+		scroll_button_direction = scroll_direction
+		if scroll_button:
+			scroll_button.queue_free()
+		scroll_button = ObjectFactory.create_from_template(
+			get_tree().root.get_node("Main").top_script(),
+			"button",
+			{
+				"sprites": {
+					"default": {"path": "art/general/examine_scroll.png"}
+				},
+				"mirror": [-scroll_direction, 1],
+				"click_macro": "{scroll_from_examine}"
+			},
+			[],
+			script_name
+		)
+		scroll_button.position = Vector2(
+			256/2-scroll_button.width/2,
+			192-scroll_button.height
 		)
 
 	examine_button.visible = false
