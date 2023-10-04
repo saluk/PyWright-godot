@@ -78,6 +78,8 @@ class TextPack:
 				textbox.next_ticks_per_update = 0.1
 			else:
 				textbox.next_ticks_per_update = 1.0
+			if t:
+				textbox.visible = true
 			if force or characters_per_tick <= 0.01:
 				break
 		if while_loops >= textbox.MAX_WHILE:
@@ -233,6 +235,7 @@ func get_char_sound():
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	visible = false
 	var font_path = "res://fonts/pwinternational.ttf"
 	var font = DynamicFont.new()
 	font.font_data = load(font_path)

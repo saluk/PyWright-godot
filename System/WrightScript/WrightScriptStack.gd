@@ -201,7 +201,7 @@ func remove_blocker(script, block_obj, next_line):
 			
 func force_clear_blockers():
 	for obj in blockers:
-		if obj is SceneTreeTimer:
+		if is_instance_valid(obj) and obj is SceneTreeTimer:
 			pass
 		else:
 			obj.queue_free()
