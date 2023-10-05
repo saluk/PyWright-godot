@@ -71,14 +71,27 @@ class Region extends Area2D:
 		return false
 		
 func _get_scroll_direction():
+	# Enable scroll left if the RIGHT edge of any region or background is to the left
+	# Enable scroll right if the LEFT edge of any region or background is to the right
+	# Will have bad behavior if both of these conditions are true
 	var scroll_left = false
 	var scroll_right = false
 	for region in get_children():
 		if region is Region:
-			if region.position.x < 0:
+			if region.position.x + region.size.x < 0:
 				scroll_left = true
-			if region.position.x + region.size.x >256:
+				break
+			if region.position.x > 256:
 				scroll_right = true
+				break
+	if not (scroll_left or scroll_right):
+		for bg in bg_obs_original:
+			if bg.position.x + bg.width < 0:
+				scroll_left = true
+				break
+			if bg.position.x > 256:
+				scroll_right = true
+				break
 	if scroll_left:
 		return -1
 	elif scroll_right:
