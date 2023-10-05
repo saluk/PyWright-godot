@@ -169,6 +169,16 @@ func _unhandled_input(event):
 		set_crosshair_pos(pos.x, pos.y)
 		update()
 		
+func _select():
+	for child in get_children():
+		var region = child as Region
+		if region and region.is_point_inside(crosshair.crosshair_position):
+			if reveal_regions:
+				examine_button.visible = true
+			current_region = region
+			#print("SET CURRENT REGION")
+			return
+		
 func update():
 	if scrolling: return
 	script_name = "examine_menu+"+bg_obs_original[0].script_name
@@ -237,13 +247,7 @@ func update():
 	#print("CLEAR CURRENT REGION")
 	if not reveal_regions:
 		examine_button.visible = true
-	for child in get_children():
-		var region = child as Region
-		if region and region.is_point_inside(crosshair.crosshair_position):
-			if reveal_regions:
-				examine_button.visible = true
-			current_region = region
-			#print("SET CURRENT REGION")
+	_select()
 	.update()
 	crosshair.update()
 
@@ -259,4 +263,14 @@ class Crosshair extends Node2D:
 			Vector2(crosshair_position.x, 0),
 			Vector2(crosshair_position.x, 192),
 			Color.whitesmoke
+		)
+		draw_line(
+			Vector2(crosshair_position.x-5, crosshair_position.y-5),
+			Vector2(crosshair_position.x+5, crosshair_position.y+5),
+			Color.greenyellow
+		)
+		draw_line(
+			Vector2(crosshair_position.x+5, crosshair_position.y-5),
+			Vector2(crosshair_position.x-5, crosshair_position.y+5),
+			Color.greenyellow
 		)
