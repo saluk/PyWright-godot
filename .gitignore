@@ -6,6 +6,9 @@ export_presets.cfg
 *.apk.*
 *.import
 
+# vscode
+.vscode
+
 # GDUnit
 reports/
 
