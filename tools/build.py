@@ -3,35 +3,66 @@ import os
 import subprocess
 import shutil
 
-# Some files are not importing correctly so we ignore them. But we can't ignore
-# them while exporting or it skips the folders entirely. Add back at the end
-if os.path.exists("games/.gdignore"):
-    os.remove("games/.gdignore")
+def web_build():
+    subprocess.run(["cd export/web; zip ../web.zip *"], shell=True, executable='/bin/bash')
+    subprocess.run("scp export/web.zip saluk@kamatera1.tinycrease.com:", shell=True, executable='/bin/bash')
+    subprocess.run(
+        'ssh saluk@kamatera1.tinycrease.com "cd /opt/pywright/gdw;sudo unzip -u ~/web.zip;sudo chown www-data:www-data *"',
+        shell=True, executable='/bin/bash')
 
-# Because we changed the .gdignore, when godot loads to export, it
-# changes the project.godot file. We don't want to mess with that,
-# so let's save it (preserving modification time)
-shutil.move("project.godot", "project.godot.orig")
-shutil.copy("project.godot.orig", "project.godot")
+def do_export(profile=None):
+    # Some files are not importing correctly so we ignore them. But we can't ignore
+    # them while exporting or it skips the folders entirely. Add back at the end
+    if os.path.exists("games/.gdignore"):
+        os.remove("games/.gdignore")
 
-#Godot-3.53-Mac.app/Contents/MacOS/Godot --export "Mac OSX" export/godotwright.dmg
+    # Because we changed the .gdignore, when godot loads to export, it
+    # changes the project.godot file. We don't want to mess with that,
+    # so let's save it (preserving modification time)
+    shutil.move("project.godot", "project.godot.orig")
+    shutil.copy("project.godot.orig", "project.godot")
 
-godot_binary = "/Users/patrickm/Projects/Godot/Godot-3.53-Mac.app/Contents/MacOS/Godot"
+    #Godot-3.53-Mac.app/Contents/MacOS/Godot --export "Mac OSX" export/godotwright.dmg
 
-export_configs = {
-    "Mac OSX": {"profile_name": "Mac OSX", "output": "export/godotwright.dmg"}
-}
+    godot_binary = "/Users/patrickm/Projects/Godot/Godot-3.53-Mac.app/Contents/MacOS/Godot"
 
-for export in export_configs.values():
-    subprocess.run([
-        godot_binary,
-        "--no-window",
-        "--export",
-        export["profile_name"],
-        export["output"]
-    ])
+    export_configs = {
+        "Mac OSX": {"profile_name": "Mac OSX", "output": "export/godotwright.dmg"},
+        "HTML5": {
+            "profile_name": "HTML5", 
+            "output": "export/web/godotwright.html", 
+            "rmfolder": "export/web",
+            "after": web_build}
+    }
+    configs = export_configs.values()
+    if profile:
+        configs = [export_configs[profile]]
 
-# Restore initial state
-with open("games/.gdignore", "w") as f:
-    f.write("")
-shutil.move("project.godot.orig", "project.godot")
+    for export in configs:
+        if export.get("rmfolder", None):
+            if os.path.exists(export["rmfolder"]):
+                shutil.rmtree(export["rmfolder"])
+            if not os.path.exists(export["rmfolder"]):
+                os.mkdir(export["rmfolder"])
+        
+        subprocess.run([
+            godot_binary,
+            "--no-window",
+            "--export",
+            export["profile_name"],
+            export["output"]
+        ])
+
+        if export.get("after", None):
+            export["after"]()
+
+    # Restore initial state
+    with open("games/.gdignore", "w") as f:
+        f.write("")
+    shutil.move("project.godot.orig", "project.godot")
+
+if __name__ == "__main__":
+    profile = None
+    if len(sys.argv) > 1:
+        profile = sys.argv[1]
+    do_export(profile)
