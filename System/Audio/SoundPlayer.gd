@@ -26,8 +26,15 @@ func _load_audio_stream(path):
 		#	stream = ResourceLoader.load(path)
 		#	pass
 		if not stream:
-			var loader = AudioLoader.new()
-			stream = loader.loadfile(path)
+			if ResourceLoader.exists(path):
+				stream = load(path)
+				stream.loop = false
+			else:
+				# Uses an extension to load more audio types
+				# TODO not really needed if we are converting everything
+				var loader = AudioLoader.new()
+				print(" -- LOADING SOUND FILE --")
+				stream = loader.loadfile(path)
 		SoundFileCache.set_get_cached([path], stream)
 	if stream:
 		# Somewhere determine whether or not to loop the sound
@@ -49,7 +56,7 @@ func get_free_player() -> AudioStreamPlayer:
 	
 func play_sound(path, current_path):
 	#path = Filesystem.lookup_file(path, root_path)
-	path = Filesystem.lookup_file(path, current_path, ["oggi", "ogg", "mp3", "wav"])
+	path = Filesystem.lookup_file(path, current_path, ["ogg", "mp3", "wav", "oggi"])
 	if not path:
 		print("couldn't find path ", path)
 		return

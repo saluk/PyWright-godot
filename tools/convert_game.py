@@ -18,6 +18,9 @@ def convert_wave(dirpath, filename, extension):
 def clean_backup(directory, filename):
     os.remove(f"{directory}/{filename}")
 
+def remove_import(directory, filename):
+    os.remove(f"{directory}/{filename}")
+
 def fix_extension(dirpath, filename, extension):
     print(f"to lowercase: {filename}.{extension}")
     shutil.move(
@@ -38,6 +41,8 @@ def start_conversion(game_folder, clean=True):
                 convert_wave(dirpath, filename_only, extension)
             elif extension.lower() == "backup" and clean:
                 clean_backup(dirpath, filename)
+            elif extension.lower() == "import":
+                remove_import(dirpath, filename)
             elif extension != extension.lower():
                 fix_extension(dirpath, filename_only, extension)
 
