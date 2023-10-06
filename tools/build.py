@@ -17,6 +17,11 @@ export_configs = {
         "profile_name": "Android", 
         "output": "export/godotwright.apk",
         "after": "android_build"
+    },
+    "Windows Desktop": {
+        "profile_name": "Windows Desktop",
+        "output": "export/windows/godotwright.exe",
+        "rmfolder": "export/windows"
     }
 }
 
