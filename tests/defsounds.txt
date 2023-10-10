@@ -1,0 +1,14 @@
+"blipmale"
+set char_trucy2_defsound blipfemale.ogg
+set char_defsound bloop
+
+"blooping"
+char trucy2
+"female blip"
+char phoenix
+"male blip"
+char apollo
+"male blip"
+char unnamed
+"blooping"
+

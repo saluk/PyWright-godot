@@ -30,6 +30,7 @@ var blocked_scripts = []
 var yields = []  # functions to resume
 
 var REPEAT_MAX = 6  #If nonzero, and the same line is attempted to execute more than this value, drop to the debugger
+
 var repeated = {"line":null, "line_num": -1, "amount": 0}
 
 var testing
@@ -48,7 +49,24 @@ signal line_executed   # emit when any script executes a line
 
 var macro_scripts_found = 0
 
+var run_macros_on_game_start = [
+	"init_defaults",
+	"font_defaults",
+	"load_defaults",
+	"init_court_record_settings"
+]
+
+var run_macros_on_load_player_save = [
+	"load_defaults",
+	"init_court_record_settings"
+]
+
+var run_macros_on_scene_change = [
+	"defaults"
+]
+
 func load_macros_from_path(path):
+	var macro_scripts = []
 	if not "res://" in path:
 		path = "res://" + path 
 	print("SCANNING ", path)
@@ -65,24 +83,38 @@ func load_macros_from_path(path):
 				continue
 			elif file_name == "macros.txt" or file_name.ends_with(".mcro"):
 				var script = WrightScript.new(main, self)
-				print("MACRO LOADED: ", path, "/", file_name)
+				script.stack = self
 				script.load_txt_file(Filesystem.path_join(path, file_name))
-				scripts.append(script)
-				script.allowed_commands = ["macro", "endmacro"]
+				macro_scripts.insert(0, script)
 				macro_scripts_found += 1
 	else:
 		print("COULDN'T OPEN DIRECTORY")
-
-func init_game(path):
+	# We search from most child path to most parent,
+	# we want to execute the parents before the children
+	for script in macro_scripts:
+		print("MACRO LOADED: ", script.root_path, ":", script.filename)
+		script.preprocess_lines()
+		
+func run_macro_set(l):
+	if scripts:
+		for macro in l:
+			Commands.call_macro(macro, scripts[-1], [])
+		
+func init_game(path, init_script="intro.txt"):
 	DirectoryCache.init_game("res://"+path)
 	# Used to load a game and then a case inside the game
 	filesystem = load("res://System/Files/Filesystem.gd").new()
-	load_script(path+"/intro.txt")
+	print("load base macros")
+	load_macros_from_path("macros")
+	print("load script macros")
+	load_macros_from_path(path)
+	# TODO - if we are loading a subfolder of a game, we should load macros
+	#		 from the parent folder as well
+	load_script(path+"/"+init_script)
 	if not scripts[-1].lines.size():
 		add_script("casemenu")
 		scripts[-1].root_path = path
-	# Reverse order load the macro scripts so they run first
-	load_macros_from_path("macros")
+	run_macro_set(run_macros_on_game_start)
 	if not macro_scripts_found:
 		print("MACRO ERROR")
 	
@@ -96,8 +128,6 @@ func load_script(script_path):
 	var new_script = WrightScript.new(main, self)
 	new_script.load_txt_file(script_path)
 	scripts.append(new_script)
-	# TODO - pretty sure we dont want to reload the macros on every script change, but only when starting a game or case
-	load_macros_from_path(script_path.rsplit("/", true, 1)[0])
 	return new_script
 	
 func remove_script(script):
@@ -113,16 +143,21 @@ func clear_scripts():
 func show_in_debugger():
 	if not main or not main.get_tree():
 		return
+	if not main.debugger_enabled:
+		return
 	var debugger = main.get_tree().get_nodes_in_group("ScriptDebugger")
 	if debugger:
 		debugger[0].update_current_stack(self)
 		
-func show_frame(frame):
+func show_frame(frame, begin=false):
 	if not main or not main.get_tree():
 		return
 	var framelog = main.get_tree().get_nodes_in_group("FrameLog")
 	if framelog:
-		framelog[0].add_frame(frame)
+		if begin:
+			framelog[0].log_frame_begin()
+		else:
+			framelog[0].log_frame_end(frame)
 		
 func clean_scripts():
 	"""Remove any scripts that should be ended"""
@@ -133,25 +168,43 @@ func clean_scripts():
 		else:
 			newscripts.append(scr)
 	scripts = newscripts
-	show_in_debugger()
+	ScreenManager.clean(scripts)
+	#show_in_debugger()
 	
 func new_state(state):
 	self.state = state
+
+# TODO script blockers feel overengineered.
 
 func blocked(scr):
 	if scr in blocked_scripts:
 		return true
 
-func remove_blocker(frame):
-	if frame.sig in blockers:
-		blockers.erase(frame.sig)
-		if frame.scr in blocked_scripts:
-			frame.scr.next_line()
-			blocked_scripts.erase(frame.scr)
+func add_blocker(script, block_obj, next_line = true):
+	if block_obj in blockers:
+		return
+	blockers.append(block_obj)
+	if not script in blocked_scripts:
+		blocked_scripts.append(script)
+	var sig = "timeout"
+	if block_obj.get("wait_signal"):
+		sig = block_obj.get("wait_signal")
+	block_obj.connect(sig, self, "remove_blocker", [script, block_obj, next_line], CONNECT_ONESHOT)
+
+func remove_blocker(script, block_obj, next_line):
+	if block_obj in blockers:
+		blockers.erase(block_obj)
+		if script in blocked_scripts:
+			if next_line:
+				script.next_line()
+			blocked_scripts.erase(script)
 			
 func force_clear_blockers():
 	for obj in blockers:
-		obj.queue_free()
+		if is_instance_valid(obj) and obj is SceneTreeTimer:
+			pass
+		else:
+			obj.queue_free()
 	blockers = []
 	for scr in blocked_scripts:
 		scr.next_line()
@@ -172,7 +225,7 @@ func process():
 		# Resume processing
 		state = STACK_PROCESSING
 	while yields:
-		show_in_debugger()
+		#show_in_debugger()
 		var new_yields = []
 		for f in yields:
 			if f.sig is GDScriptFunctionState and f.sig.is_valid():
@@ -193,10 +246,11 @@ func process():
 			yield(main.get_tree(), "idle_frame")
 			continue
 		# We may have a paused frame from before to keep processing
+		show_frame(null, true)
 		frame = scripts[-1].process_wrightscript()
 		if not frame.line.begins_with("ut_"):
 			show_frame(frame)
-			show_in_debugger()
+			#show_in_debugger()
 			main.emit_signal("line_executed")
 		print("FRAME:", frame, ",", frame.line_num, ",<<", frame.line, ">>,", frame.sig)
 		if REPEAT_MAX > 0:
@@ -225,7 +279,7 @@ func process():
 				frame.scr.next_line()
 				#return new_state(STACK_YIELD)
 			elif frame.sig == Commands.DEBUG:
-				show_in_debugger()
+				#show_in_debugger()
 				print(" - debug - ")
 				frame.scr.next_line()
 				emit_signal("enter_debugger")
@@ -242,17 +296,50 @@ func process():
 				frame.scr.next_line()
 				#return new_state(STACK_YIELD)
 		elif frame.sig is SceneTreeTimer or (frame.sig and frame.sig.get("wait_signal") and frame.sig.get("wait") in [null, true]):
-			blockers.append(frame.sig)
-			blocked_scripts.append(frame.scr)
-			var sig = "timeout"
-			if frame.sig.get("wait_signal"):
-				sig = frame.sig.get("wait_signal")
-			frame.sig.connect(sig, self, "remove_blocker", [frame], CONNECT_ONESHOT)
-			#return new_state(STACK_YIELD)
+			add_blocker(frame.scr, frame.sig, true)
 		elif frame.sig is GDScriptFunctionState:
-			show_in_debugger()
+			#show_in_debugger()
 			yields.append(frame)
 			#return new_state(STACK_YIELD)
 		else:
 			frame.scr.next_line()
+			# TODO Leaving the script running every line in a single frame is
+			# leading to jerkiness. C#?
 			#return new_state(STACK_YIELD)
+
+
+
+# SAVE/LOAD
+var save_properties = [
+	"evidence_pages",
+	"macros",
+	"state",
+	"mode",
+	# "blockers", 
+	# "blocked_scripts",
+	#  "yields",
+	"macro_scripts_found"
+]
+func save_node(data):
+	# Save script text and state for each script
+	var saved_scripts = []
+	for script in scripts:
+		saved_scripts.append(SaveState._save_node(script))
+	data["scripts"] = saved_scripts
+	data["variables"] = SaveState._save_node(variables)
+
+static func create_node(saved_data:Dictionary):
+	pass
+	
+func load_node(tree, saved_data:Dictionary):
+	scripts.clear()
+	# Add a script and copy its state
+	for script_data in saved_data["scripts"]:
+		var script = WrightScript.new(main, self)
+		SaveState._load_node(tree, script, script_data)
+		scripts.append(script)
+	SaveState._load_node(tree, variables, saved_data["variables"])
+	#show_in_debugger()
+
+func after_load(tree, saved_data:Dictionary):
+	pass  # Not called

@@ -25,9 +25,19 @@ _global_script_classes=[ {
 "path": "res://System/Colors.gd"
 }, {
 "base": "Reference",
+"class": "FadeLib",
+"language": "GDScript",
+"path": "res://System/WrightScript/Commands/Fade.gd"
+}, {
+"base": "Reference",
 "class": "Filesystem",
 "language": "GDScript",
 "path": "res://System/Files/Filesystem.gd"
+}, {
+"base": "Resource",
+"class": "Fonts",
+"language": "GDScript",
+"path": "res://System/UI/Fonts/Fonts.gd"
 }, {
 "base": "Node2D",
 "class": "MainScene",
@@ -50,9 +60,29 @@ _global_script_classes=[ {
 "path": "res://System/UI/Penalty.gd"
 }, {
 "base": "Reference",
+"class": "SaveState",
+"language": "GDScript",
+"path": "res://System/SaveState.gd"
+}, {
+"base": "Node2D",
+"class": "Screen",
+"language": "GDScript",
+"path": "res://System/Scene/Screen.gd"
+}, {
+"base": "Reference",
+"class": "SignalUtils",
+"language": "GDScript",
+"path": "res://System/SignalUtils.gd"
+}, {
+"base": "Reference",
 "class": "Testing",
 "language": "GDScript",
 "path": "res://System/Testing/Testing.gd"
+}, {
+"base": "Reference",
+"class": "TimeCounter",
+"language": "GDScript",
+"path": "res://System/TimeCounter.gd"
 }, {
 "base": "Reference",
 "class": "Values",
@@ -83,12 +113,18 @@ _global_script_class_icons={
 "AudioLoader": "",
 "ClickArea": "",
 "Colors": "",
+"FadeLib": "",
 "Filesystem": "",
+"Fonts": "",
 "MainScene": "",
 "NameSpaces": "",
 "PWSprite": "",
 "Penalty": "",
+"SaveState": "",
+"Screen": "",
+"SignalUtils": "",
 "Testing": "",
+"TimeCounter": "",
 "Values": "",
 "Variables": "",
 "WrightObject": "",
@@ -113,6 +149,10 @@ SoundPlayer="*res://System/Audio/SoundPlayer.gd"
 WSExpression="*res://System/WrightScript/WSExpression.gd"
 DirectoryCache="*res://System/Files/DirectoryCache.gd"
 ObjectFactory="*res://System/Scene/ObjectFactory.gd"
+FilePathCache="*res://System/LeastUsedCache.gd"
+AnimationFramesCache="*res://System/LeastUsedCache.gd"
+SoundFileCache="*res://System/LeastUsedCache.gd"
+ScreenManager="*res://System/Scene/ScreenManager.gd"
 
 [debug]
 
@@ -147,7 +187,68 @@ texture={
 
 quickload={
 "deadzone": 0.5,
-"events": [  ]
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":76,"unicode":0,"echo":false,"script":null)
+ ]
+}
+quicksave={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":83,"unicode":0,"echo":false,"script":null)
+ ]
+}
+button_press={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":90,"unicode":0,"echo":false,"script":null)
+ ]
+}
+button_present={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":88,"unicode":0,"echo":false,"script":null)
+ ]
+}
+button_courtrecord={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777218,"unicode":0,"echo":false,"script":null)
+ ]
+}
+button_advance={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777221,"unicode":0,"echo":false,"script":null)
+ ]
+}
+button_next_statement={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777233,"unicode":0,"echo":false,"script":null)
+ ]
+}
+button_previous_statement={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777231,"unicode":0,"echo":false,"script":null)
+ ]
+}
+button_back={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":32,"unicode":0,"echo":false,"script":null)
+ ]
+}
+button_left={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777231,"unicode":0,"echo":false,"script":null)
+ ]
+}
+button_right={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777233,"unicode":0,"echo":false,"script":null)
+ ]
+}
+button_up={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777232,"unicode":0,"echo":false,"script":null)
+ ]
+}
+button_down={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777234,"unicode":0,"echo":false,"script":null)
+ ]
 }
 
 [network]
@@ -157,6 +258,7 @@ limits/debugger_stdout/max_messages_per_frame=10000
 
 [physics]
 
+common/physics_fps=10
 common/enable_pause_aware_picking=true
 
 [rendering]

@@ -52,13 +52,21 @@ func _process(dt):
 	z = ZLayers.z_sort[script_name]
 	
 	name_label = Label.new()
+	Fonts.set_element_font(name_label, "itemname", stack)
 	name_label.name = "Name Label"
-	name_label.rect_position = Vector2(28,41)
+	name_label.rect_position = Vector2(
+		stack.variables.get_int("ev_currentname_x"),
+		stack.variables.get_int("ev_currentname_y")
+	)
 	name_label.text = ""
 	
 	page_label = Label.new()
+	Fonts.set_element_font(page_label, "itemset", stack)
 	page_label.name = "Page Label"
-	page_label.rect_position = Vector2(1,14)
+	page_label.rect_position = Vector2(
+		stack.variables.get_int("ev_mode_x"),
+		stack.variables.get_int("ev_mode_y")
+	)
 	page_label.text = ""
 
 	add_child(page_label)
@@ -122,10 +130,13 @@ func load_page_button():
 	)
 	b.position = Vector2(256-b.width, 0)
 	var l = Label.new()
-	l.rect_position += Vector2(18,8)
-	l.text = next_page
+	Fonts.set_element_font(l, "itemset_big", stack)
+	l.rect_position += Vector2(
+		stack.variables.get_int("ev_modebutton_x", 0),
+		stack.variables.get_int("ev_modebutton_y", 0)
+	) - b.position
+	l.text = next_page.capitalize()
 	b.add_child(l)
-	add_child(b)
 	
 func load_arrow(direction):
 	var pos = Vector2(3, 58)
@@ -154,7 +165,7 @@ func ws_record_click_direction(script, arguments):
 	return
 	
 func load_page():
-	page_label.text = page
+	page_label.text = page.capitalize()
 	name_label.text = ""
 	load_page_button()
 	if not zoom:
@@ -213,10 +224,22 @@ func load_page_zoom():
 		
 		name_label.text = key_name
 		
+		# TODO make this a textblock after textblock is implemented
 		var desc = Label.new()
-		desc.rect_position = Vector2(106, 66)
-		desc.text = key_desc
-		desc.rect_size = Vector2(130, 128)
+		Fonts.set_element_font(desc, "block", stack)
+		desc.rect_position = Vector2(
+			stack.variables.get_int("ev_z_textbox_x", 0),  # zero so we can ensure it loads the variable
+			stack.variables.get_int("ev_z_textbox_y", 0)
+		)
+		desc.rect_size = Vector2(
+			stack.variables.get_int("ev_z_textbox_w", 0),  # zero so we can ensure it loads the variable
+			stack.variables.get_int("ev_z_textbox_h", 0)
+		)
+		desc.set("custom_constants/line_spacing", 
+			stack.variables.get_int("textblock_line_height", 10)
+		)
+		desc.text = key_desc.replace("{n}","\n")
+		desc.clip_text = true
 		desc.autowrap = true
 		add_child(desc)
 		
@@ -237,10 +260,34 @@ func load_page_zoom():
 				script_name
 			)
 			present_button.position = Vector2(100,0)
+		
+		load_check_button(evname)
 	if left_arrow:
 		load_arrow("L")
 	if right_arrow:
 		load_arrow("R")
+	
+func load_check_button(evname):
+	var check_script = stack.variables.get_string(evname+"_check")
+	if not check_script:
+		return
+	var check_img = stack.variables.get_string("ev_check_img")
+	var check_button = ObjectFactory.create_from_template(
+		main.top_script(),
+		"button",
+		{
+			"sprites": {
+				"default": {"path": "art/"+check_img+".png"},
+				"highlight": {"path": "art/"+check_img+"_high.png"}
+			},
+			"click_macro": "{record_click_check}",
+			"click_args": [evname, check_script]
+		},
+		[],
+		script_name
+	)
+	check_button.position = Vector2(256-check_button.width, 192-check_button.height)
+	pass
 
 func select(evname):
 	stack.variables.set_val("_selected", evname)
@@ -295,8 +342,8 @@ func load_page_overview():
 		ev_button.position = Vector2(x, y)
 		if ev_button.current_sprite:
 			ev_button.current_sprite.rescale(
-				stack.variables.get_int("ev_small_width")+1,
-				stack.variables.get_int("ev_small_height")+1
+				stack.variables.get_int("ev_small_width"),
+				stack.variables.get_int("ev_small_height")
 			)
 		ev_button.click_area.connect("mouse_entered", self, "highlight_evidence", [evname])
 		
@@ -323,6 +370,9 @@ func ws_record_zoom_evidence(script, arguments):
 func ws_record_click_present(script, arguments):
 	present(arguments[0])
 	
+func ws_record_click_check(script, arguments):
+	check(arguments[0], arguments[1])
+	
 func ws_click_page_from_court_record(script, arguments):
 	page = arguments[0]
 	offset = 0
@@ -335,5 +385,15 @@ func present(option):
 		[option]
 	)
 	queue_free()
+	
+func check(evname, check_script):
+	select(evname)
+	Commands.call_command(
+		"script",
+		stack.scripts[-1],
+		[check_script, "stack", "noclear"]
+	)
+	#visible = false
+	#queue_free()
 
 # TODO implement check

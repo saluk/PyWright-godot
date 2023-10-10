@@ -1,4 +1,8 @@
 extends Node2D
+class_name Screen
+
+func _ready():
+	position = Vector2(0,0)
 
 func _process(dt):
 	sort_children()
@@ -22,6 +26,12 @@ func sort_children():
 			children.remove(i+1)
 	for i in range(children.size()):
 		move_child(children[i], i)
+		
+func clear():
+	for child in get_children():
+		remove_child(child)
+		# Forces custom queue_free to be called when we clear
+		child.queue_free()
 
 #func sort_children():
 #	var children = get_children()

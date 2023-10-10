@@ -18,12 +18,18 @@ static func path_split(path:String):
 	return parts
 	
 static func lookup_file(sub_path:String, current_path:String, exts=[]):
+	if FilePathCache.has_cached([sub_path, current_path]):
+		return FilePathCache.get_cached([sub_path, current_path])
+	var file = _lookup_file(sub_path, current_path, exts)
+	return FilePathCache.set_get_cached([sub_path, current_path], file)
+	
+static func _lookup_file(sub_path:String, current_path:String, exts=[]):
 	if exts:
 		for ext in exts:
 			if sub_path.ends_with("."+ext):
 				sub_path = sub_path.replace("."+ext, "")
 		for ext in exts:
-			var found_ext = lookup_file(sub_path+"."+ext, current_path)
+			var found_ext = _lookup_file(sub_path+"."+ext, current_path)
 			if found_ext:
 				return found_ext
 		return null
@@ -48,36 +54,51 @@ static func lookup_file(sub_path:String, current_path:String, exts=[]):
 			current_path = "res://"
 		
 static func load_resource(path:String):
-	var resource = ResourceLoader.load(path)
-	return resource
+	if ResourceLoader.exists(path):
+		var resource = ResourceLoader.load(path, "", true)
+		if resource:
+			return resource.get_data()
+	return null
 
 static func load_image_from_path(path:String) -> Image:
-	# TODO - we should try the file before the resource to allow modding
-	var resource = load_resource(path)
-	if resource:
-		print("resource found")
-		return resource
-	var f = File.new()
-	var err = f.open(path, File.READ)
 	var image:Image
-	if err != OK:
-		image = load_resource(path)
-		if not image:
+	image = load_resource(path)
+	if not image:
+		var f = File.new()
+		var err = f.open(path, File.READ)
+		if err != OK:
 			print("Error loading file: ", path)
 			return null
-	var buffer:PoolByteArray
-	buffer = f.get_buffer(f.get_len())
-	f.close()
-	image = Image.new()
-	var error
-	if path.ends_with("png"):
-		error = image.load_png_from_buffer(buffer)
-	elif path.ends_with("bmp"):
-		error = image.load_bmp_from_buffer(buffer)
-	elif path.ends_with("jpg"):
-		error = image.load_jpg_from_buffer(buffer)
+		var buffer:PoolByteArray
+		buffer = f.get_buffer(f.get_len())
+		f.close()
+		image = Image.new()
+		var error
+		if path.ends_with("png"):
+			error = image.load_png_from_buffer(buffer)
+		elif path.ends_with("bmp"):
+			error = image.load_bmp_from_buffer(buffer)
+		elif path.ends_with("jpg"):
+			error = image.load_jpg_from_buffer(buffer)
 	print("image found: ", image)
+	de_pink_image(image)
 	return image
+
+static func de_pink_image(img:Image):
+	if img.detect_alpha() == Image.ALPHA_NONE and img.get_size().length():
+		img.convert(Image.FORMAT_RGBA8)
+		img.lock()
+		for x in range(img.get_width()):
+			for y in range(img.get_height()):
+				var pixel = img.get_pixel(x, y)
+				if pixel.r > 0.99 and pixel.g < 0.05 and pixel.b > 0.99:
+					pixel.a = 0.0
+					pixel.r = 0.0
+					pixel.g = 0.0
+					pixel.b = 0.0
+					img.set_pixel(x, y, pixel)
+		img.unlock()
+	return img
 
 static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -> Array:
 	print(path)
@@ -86,11 +107,12 @@ static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -
 	var image = load_image_from_path(path)
 	if image is StreamTexture:
 		texture = image
-	else:
+	elif image.get_size().length() > 0:
 		texture = ImageTexture.new()
 		texture.create_from_image(image, 0)
+		texture.flags = 0
 		
-	if not texture or not image:
+	if not texture or not image.get_size().length() > 0:
 		return []
 	
 	# Build frames

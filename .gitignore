@@ -1,12 +1,13 @@
 # Godot-specific ignores
 .import/
-export.cfg
-export_presets.cfg
 *.apk
 *.apk.*
 *.import
 .godot/imported/*
 .godot/shader_cache
+
+# vscode
+.vscode
 
 # GDUnit
 reports/
@@ -15,7 +16,7 @@ reports/
 *.translation
 
 export/*
-
+*.swp
 
 #PyWright specific
 PyWright/*
@@ -25,3 +26,7 @@ dir.index
 PyWright 0.989 Beta - copy FINAL/*
 files.index
 System/Playing/*
+
+
+MacOS
+*.DS_Store

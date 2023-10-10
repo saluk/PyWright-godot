@@ -1,4 +1,5 @@
 extends Reference
+class_name FadeLib
 
 func _init(commands):
 	pass
@@ -14,7 +15,7 @@ class Fader extends Node:
 	func _init(start, end, speed, wait):
 		self.start = float(start)
 		self.end = float(end)
-		speed = float(speed)
+		self.speed = float(speed)
 		name = "fade"
 		objects = Commands.get_objects(null, false)
 		if wait:
@@ -74,5 +75,5 @@ static func ws_fade(script, arguments):
 		fader.control_last()
 	else:
 		fader.control_all()
-	Commands.main_screen.add_child(fader)
+	script.screen.add_child(fader)
 	return fader

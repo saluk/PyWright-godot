@@ -25,4 +25,5 @@ func launch_game(path):
 		path+"/intro"
 	])
 	queue_free()
+	Commands.main.timecounter.reset()
 	emit_signal("CASE_SELECTED")

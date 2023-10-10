@@ -1,3 +1,5 @@
+addev test
+
 "start"
 cross top
 statement a
@@ -11,7 +13,7 @@ endcross
 cross_restart
 
 label press a
-"press a, resume"
+"press or present a"
 resume
 
 label press b
@@ -20,8 +22,21 @@ clearcross
 goto next
 
 label press c
-"press c, dont clear crossexam"
+"press c, dont clear crossexam. present test"
+present
 goto next
+
+label test
+"jumped to 'test'"
+resume
+
+label test a
+"jumped to 'test a'
+resume
 
 label next
 "Current cross should be empty: {$currentcross}"
+resume
+
+label none
+"error"

@@ -1,14 +1,13 @@
 extends Node
 
 var main:Node
-var main_screen:Node
 var z:int
 
 var textboxScene = preload("res://System/UI/Textbox.tscn")
 
 var last_object
 
-export var PAUSE_MULTIPLIER = 0.10
+export var PAUSE_MULTIPLIER = 1.0
 
 enum {
 	YIELD,              # Pause wrightscript for user input or animation
@@ -29,41 +28,49 @@ var CLEAR_GROUP = "PWCLEAR"   # Any object that should be cleared when setting a
 var ARROW_GROUP = "PWARROWS"
 var TEXTBOX_GROUP = "TEXTBOX_GROUP"
 var PENALTY_GROUP = "PWPENALTY"
+var COURT_RECORD_GROUP = "CourtRecord"
 
 var external_commands = {}
 
 signal button_clicked
 
 # Helper functions
-		
-func get_objects(script_name, last=null, group=SPRITE_GROUP):
+func on_screen(screen, nodes):
+	# Return nodes that are in a given screen
+	var onscreen = []
+	var children = screen.get_children()
+	for n in nodes:
+		if n in children:
+			onscreen.append(n)
+	return onscreen
+func get_objects(script_name, last=null, group=SPRITE_GROUP, screen=null):
+	# TODO not sure if this is the right way to handle getting objects
+	if not screen:
+		screen = ScreenManager.top_screen()
 	if not get_tree():
-		return []
+		return on_screen(screen, [])
 	if last:
 		if last_object and not last_object.is_queued_for_deletion():
-			return [last_object]
-		return []
+			return on_screen(screen, [last_object])
+		return on_screen(screen, [])
 	var objects = []
 	for object in get_tree().get_nodes_in_group(group):
 		if object.is_queued_for_deletion():
-			print(" ! "+object.name+" IS queued for deletion")
 			continue
-		print(object.name+" is not queued for deletion")
 		if not script_name or object.script_name == script_name:
 			objects.append(object)
-	return objects
+	return on_screen(screen, objects)
 	
-func delete_object_group(group):
-	get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, group, "queue_free")
-
-func clear_main_screen():
-	for child in main_screen.get_children():
-		main_screen.remove_child(child)
-		child.queue_free()
+func delete_object_group(group, screen=null):
+	if not screen:
+		screen = ScreenManager.top_screen()
+	var nodes = on_screen(screen, get_tree().get_nodes_in_group(group))
+	for n in nodes:
+		n.queue_free()
+	#get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, group, "queue_free")
 		
 func load_command_engine():
 	main = get_tree().get_nodes_in_group("Main")[0]
-	main_screen = get_tree().get_nodes_in_group("MainScreen")[0]
 	index_commands()
 	
 func value_replace(value):
@@ -90,11 +97,11 @@ func keywords(arguments, remove=false):
 func join(l, sep=" "):
 	return PoolStringArray(l).join(sep)
 
-func create_textbox(line) -> Node:
+func create_textbox(script, line) -> Node:
 	var l = textboxScene.instance()
 	l.main = main
 	l.text_to_print = line
-	main_screen.add_child(l)
+	script.screen.add_child(l)
 	return l
 	
 func refresh_arrows(script):
@@ -149,61 +156,12 @@ func get_nametag():
 		nametag = character.char_name
 	return nametag
 	
-# Save/Load
-func save_scripts():
-	var data = {
-		"variables": {}, # TODO Redo how variables get saved
-		"macros": main.stack.macros,
-		"evidence_pages": main.stack.evidence_pages,
-		"stack": []
-	}
-	for script in main.stack.scripts:
-		var save_script = {
-			"root_path": script.root_path,
-			"filename": script.filename
-		}
-		data["stack"].append(save_script)
-	var file = File.new()
-	file.open("user://save.txt", File.WRITE)
-	file.store_string(
-		to_json(data)
-	)
-	file.close()
-	
 func _input(event):
 	if event and event.is_action_pressed("quickload"):
-		load_scripts()
-	
-func load_scripts():
-	var file = File.new()
-	var err = file.open("user://save.txt", File.READ)
-	if err != OK:
-		return false
-	var json = file.get_as_text()
-	var data = parse_json(json)
-	file.close()
-	
-	clear_main_screen()
-	main.stack.clear_scripts()
-	#main.stack.variables.store = data["variables"]  # TODO Redo how variables get loaded
-	main.stack.evidence_pages = data["evidence_pages"]
-	main.stack.macros = data["macros"]
-	
-	for script_data in data["stack"]:
-		main.stack.load_script(
-			Filesystem.path_join(script_data["root_path"], script_data["filename"])
-		)
-		var script = main.stack.scripts[-1]
-		#var script = load("WrightScript/WrightScript.gd").new()
-		#script.main = main
-		#main.stack.scripts.append(script)
-		#script.root_path = script_data["root_path"]
-		#script.filename = script_data["filename"]
-		#script.lines = script_data["lines"]
-		#script.labels = script_data["labels"]
-		#script.line_num = script_data["line_num"]
-		#script.line = script_data["line"]
-	return true
+		SaveState.load_game(get_tree(), "user://mysave.txt")
+	if event and event.is_action_pressed("quicksave"):
+		SaveState.save_game(get_tree(), "user://mysave.txt")
+
 # Call interface
 
 func generate_command_map(version=""):
@@ -273,11 +231,19 @@ func is_macro(command):
 		return command
 	return ""
 	
+func watched(command):
+	if 0: # Replace 0 to watch for a specific command
+		return true
+	return false
+	
 # TODO - may need to support actually replacing macro text with the arguments passed, 
 # but wont implement till we actually need to
-func call_macro(command, script, arguments):
-	command = is_macro(command)
+func call_macro(macro_name, script, arguments):
+	var command = is_macro(macro_name)
 	if not command:
+		if watched(macro_name):
+			print("macro not found:"+command)
+			return DEBUG
 		return
 	var i = 1
 	for arg in arguments:
@@ -295,6 +261,9 @@ func call_macro(command, script, arguments):
 	new_script.filename = "{"+command+"}"
 	# TODO not sure if this is how to handle macros that try to goto
 	new_script.allow_goto_parent_script = true
+	if watched(macro_name):
+		print("macro ran:"+macro_name)
+		return DEBUG
 	return YIELD
 	
 func macro_or_label(key, script, arguments):
@@ -316,3 +285,16 @@ func ws_draw_on(script, arguments):
 func ws_godotdebug(script, arguments):
 	# You can use this command to enter the godot debugger
 	pass
+
+
+func save_node(data):
+	print(last_object)
+	data["last_object"] = SaveState.to_node_path(last_object)
+
+func load_node(tree, saved_data:Dictionary):
+	pass
+
+func after_load(tree, saved_data:Dictionary):
+	if saved_data["last_object"]:
+		if get_tree().root.has_node(saved_data["last_object"]):
+			last_object = get_tree().root.get_node(saved_data["last_object"])

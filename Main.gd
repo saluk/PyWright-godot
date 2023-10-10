@@ -1,7 +1,11 @@
 extends Node2D
 class_name MainScene
 
-var stack
+var stack: WrightScriptStack
+var timecounter: TimeCounter
+var current_game: String
+
+var debugger_enabled = true
 
 var init_script = """
 mus 02 - courtroom lounge ~ beginning prelude.ogg
@@ -19,9 +23,6 @@ signal frame_drawn
 signal line_executed
 signal text_finished
 
-func main_screen():
-	return get_tree().get_nodes_in_group("MainScreen")[0]
-
 func load_game_from_pack(path):
 	ProjectSettings.load_resource_pack("user://"+path)
 	
@@ -36,33 +37,40 @@ func load_game_from_pack(path):
 		load_game("res://games/"+game)
 	else:
 		assert(false)
-		
+
 func load_game(path):
+	current_game = path
 	stack.init_game(path)
-	stack.connect("stack_empty", self, "reload")
 	emit_signal("stack_initialized")
+	timecounter.reset()
 		
 func load_script_from_path(path):
 	stack.load_script("res://tests/"+path)
 	stack.load_macros_from_path("macros")
-	stack.connect("stack_empty", self, "reload")
 	emit_signal("stack_initialized")
 	
 func set_resolution(res:Vector2, scale:float, show_debugger:bool=false):
+	Engine.target_fps = 60
 	var w = res.x
 	if show_debugger:
 		w *= 2
 	var h = res.y
 	OS.set_window_size(Vector2(w*scale, h*scale))
+	var screen_size:Vector2 = OS.get_screen_size()
+	OS.window_position = Vector2(screen_size.x/2-w*scale/2, screen_size.y/2-h*scale/2)
 	get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_2D, SceneTree.STRETCH_ASPECT_KEEP, Vector2(w, h), 1)
+	if not show_debugger:
+		$TabContainer.queue_free()
 
 func _ready():
+	timecounter = TimeCounter.new()
 	if OS.has_feature("standalone") or OS.has_feature("HTML5"):
 		set_resolution(Vector2(256,384), 2.0, false)
 	else:
 		set_resolution(Vector2(256,384), 2.0, true)
 	
 	stack = WrightScriptStack.new(self)
+	stack.connect("stack_empty", self, "reload")
 	Commands.load_command_engine()
 	
 	# TODO move tests for this elsewhere
@@ -70,7 +78,7 @@ func _ready():
 	stack.variables.reset()
 	
 	var loader = load("res://System/UI/GamesMenu.tscn").instance()
-	main_screen().add_child(loader)
+	ScreenManager.main_screen.add_child(loader)
 	var array = yield(loader, "game_loaded")
 	var path = array[0]
 	var mode = array[1]
@@ -144,6 +152,8 @@ func _process(_delta):
 	if stack:
 		if stack.state in [stack.STACK_READY, stack.STACK_YIELD]:
 			stack.process()
+	if stack:
+		stack.show_in_debugger()
 	emit_signal("frame_drawn")
 
 func log_error(msg):
@@ -175,6 +185,8 @@ func reload():
 func pause(paused=true, toggle=false):
 	if toggle:
 		paused = not is_processing()
+	else:
+		paused = paused
 	var nodes = [self]
 	var node:Node
 	while nodes:
@@ -182,3 +194,23 @@ func pause(paused=true, toggle=false):
 		node.set_process(paused)
 		for child in node.get_children():
 			nodes.append(child)
+
+
+# SAVE/LOAD
+var save_properties = [
+	"current_game"
+]
+func save_node(data):
+	data["timecounter.elapsed"] = timecounter.get_current_elapsed_time()
+	data["stack"] = SaveState._save_node(stack)
+
+static func create_node(saved_data:Dictionary):
+	pass
+	
+func load_node(tree, saved_data:Dictionary):
+	load_game(current_game)
+	timecounter.set_elapsed_time(saved_data["timecounter.elapsed"])
+	SaveState._load_node(tree, stack, saved_data["stack"])
+
+func after_load(tree, saved_data:Dictionary):
+	stack.state = stack.STACK_READY

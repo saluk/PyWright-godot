@@ -1,6 +1,7 @@
 extends Node
 
 signal game_loaded
+var z := 0
 
 func add_pck_button(path):
 	var txt = path.replace("_"," ").replace(".pck","")
@@ -13,7 +14,7 @@ func add_game_button(path):
 	var hbox = HBoxContainer.new()
 	var txt = path.replace("_"," ")
 	var b = Button.new()
-	b.text = "P"
+	b.text = ">"
 	b.align = Button.ALIGN_LEFT
 	b.connect("pressed", self, "launch_game", ["games/"+path])
 	hbox.add_child(b)
@@ -25,12 +26,12 @@ func add_game_button(path):
 func add_test_button(path):
 	var hbox = HBoxContainer.new()
 	var b = Button.new()
-	b.text = "P"
+	b.text = ">"
 	b.align = Button.ALIGN_LEFT
 	b.connect("pressed", self, "launch_game", [path, "play"])
 	hbox.add_child(b)
 	b = Button.new()
-	b.text = "T"
+	b.text = "{}"
 	b.align = Button.ALIGN_LEFT
 	b.connect("pressed", self, "launch_game", [path, "test"])
 	hbox.add_child(b)
@@ -52,12 +53,16 @@ func _ready():
 		
 	var game_listing = Directory.new()
 	if game_listing.open("res://games/") == OK:
+		print("Found games directory, looking for games")
 		game_listing.list_dir_begin()
 		next_file_name = game_listing.get_next()
 		while next_file_name != "":
-			if not next_file_name in [".", ".."]:
+			print("try to add game ", next_file_name)
+			if not next_file_name.begins_with("."):
 				add_game_button(next_file_name)
 			next_file_name = game_listing.get_next()
+	else:
+		print(game_listing.open("res://games/"))
 
 	var test_listing = Directory.new()
 	if test_listing.open("res://tests/") == OK:

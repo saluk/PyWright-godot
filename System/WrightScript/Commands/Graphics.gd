@@ -6,18 +6,30 @@ func _init(commands):
 	main = commands.main
 
 func ws_clear(script, arguments):
-	Commands.clear_main_screen()
+	script.screen.clear()
 func ws_delete(script, arguments):
 	var name = Commands.keywords(arguments).get("name", null)
 	if name != null:
-		Commands.main_screen.sort_children()
-		var children = Commands.main_screen.get_children()
+		script.screen.sort_children()
+		var children = script.screen.get_children()
 		for i in range(children.size()):
 			if not "script_name" in children[-i]:
 				continue
 			if children[-i].script_name == name:
 				children[-i].queue_free()
 				children[-i].name = "DELETED_"+children[-1].name
+				
+func apply_fader(script, obj, arguments):
+	if not "fade" in arguments:
+		return
+	var start = 0.0
+	var end = 100.0
+	var speed = 5.0
+	var wait = true
+	var fader = FadeLib.Fader.new(start, end, speed, wait)
+	fader.control(obj.script_name)
+	script.screen.add_child(fader)
+	return fader
 				
 func ws_obj(script, arguments):
 	if not main.get_tree():
@@ -28,6 +40,9 @@ func ws_obj(script, arguments):
 		{},
 		arguments
 	)
+	var fader = apply_fader(script, obj, arguments)
+	if fader:
+		return fader
 	return obj
 	
 func ws_bg(script, arguments):
@@ -36,12 +51,14 @@ func ws_bg(script, arguments):
 	if not "stack" in arguments:
 		Commands.delete_object_group(Commands.CLEAR_GROUP)
 	var bg:Node = ObjectFactory.create_from_template(script, "bg", {}, arguments)
+	apply_fader(script, bg, arguments)
 	return bg
 	
 func ws_fg(script, arguments):
 	if not main.get_tree():
 		return
 	var fg:Node = ObjectFactory.create_from_template(script, "fg", {}, arguments)
+	apply_fader(script, fg, arguments)
 	return fg
 
 # TODO support more commands
@@ -72,6 +89,7 @@ func ws_char(script, arguments):
 		character.char_name = kw["nametag"]
 	# Called last because _speaking has a setter that sets _speaking_name
 	main.stack.variables.set_val("_speaking", character.base_path)
+	apply_fader(script, character, arguments)
 	return character
 	
 func ws_emo(script, arguments):
@@ -116,6 +134,7 @@ func ws_ev(script, arguments):
 		},
 		arguments
 	)
+	apply_fader(script, ev, arguments)
 	return ev
 
 func ws_addev(script, arguments):

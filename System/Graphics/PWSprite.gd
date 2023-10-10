@@ -14,6 +14,9 @@ var wait = false   # Pause script until animation has finished playing
 var wait_signal = "finished_playing"
 var loaded = false
 signal finished_playing
+signal size_changed
+
+var sound_frames = {}
 
 # TODO needs to handle different animation modes, loop, once, and blink mode at minimum
 
@@ -96,6 +99,9 @@ func load_info(path:String):
 				data[key_value[0]] = key_value[1]
 			elif key_value[0] == "framedelay":
 				data["delays"][int(key_value[1])] = int(key_value[2])
+			elif key_value[0] == "sfx":
+				# TODO can only have one sound effect per frame
+				sound_frames[int(key_value[1])] = key_value[2]
 		f.close()
 	if data.get('length', null)==null:
 		data['length'] = int(data['horizontal']) * int(data['vertical'])
@@ -106,24 +112,29 @@ func load_animation(path:String, info=null, sub_rect=null):
 		path = "res://"+path
 	sprite_path = path
 	# Load pwv
+	
 	print("loading info:", path.rsplit(".", true, 1)[0]+'.txt')
 	if not info:
 		info = load_info(path.rsplit(".", true, 1)[0]+'.txt')
 	print("txt:", info)
-
-	# TODO - sub_rect only works with single frame animations!
-	if sub_rect:
-		frames = Filesystem.load_atlas_specific(
-			path,
-			[sub_rect]
-		)
+	
+	if AnimationFramesCache.has_cached([path, sub_rect]):
+		frames = AnimationFramesCache.get_cached([path, sub_rect])
 	else:
-		frames = Filesystem.load_atlas_frames(
-			path, 
-			int(info['horizontal']),
-			int(info['vertical']),
-			int(info['length'])
-		)
+		# TODO - sub_rect only works with single frame animations!
+		if sub_rect:
+			frames = Filesystem.load_atlas_specific(
+				path,
+				[sub_rect]
+			)
+		else:
+			frames = Filesystem.load_atlas_frames(
+				path, 
+				int(info['horizontal']),
+				int(info['vertical']),
+				int(info['length'])
+			)
+		AnimationFramesCache.set_get_cached([path, sub_rect], frames)
 	if frames:
 		width = frames[0].region.size.x
 		height = frames[0].region.size.y
@@ -143,8 +154,10 @@ func load_animation(path:String, info=null, sub_rect=null):
 			for delay in info["delays"].get(frame_i, 6.0):
 				animated_sprite.frames.add_frame("default", frame)
 			frame_i += 1
-	else:
+	elif frames:
 		animated_sprite.frames.add_frame("default", frames[0])
+	else:
+		return
 	animated_sprite.frames.set_animation_speed("default", 60.0)
 	animated_sprite.play("default")
 	print("good")
@@ -155,7 +168,7 @@ func load_animation(path:String, info=null, sub_rect=null):
 	rescale(width, height)
 	
 	material = ShaderMaterial.new()
-	material.shader = load("res://System/Graphics/clear_pink.shader")
+	material.shader = load("res://System/Graphics/image_filters.shader")
 	
 	animated_sprite.connect("animation_finished", self, "finish_playing")
 	if "wbench" in sprite_path:
@@ -174,17 +187,19 @@ func from_frame(frame):
 	animated_sprite.frames = SpriteFrames.new()
 	animated_sprite.frames.add_frame("default", frame)
 	material = ShaderMaterial.new()
-	material.shader = load("res://System/Graphics/clear_pink.shader")
+	material.shader = load("res://System/Graphics/image_filters.shader")
 	
 func rescale(size_x, size_y):
-	var sc_w = float(size_x)/float(width)
-	var sc_h = float(size_y)/float(height)
+	var sc_w = float(size_x)/float(max(1, width))
+	var sc_h = float(size_y)/float(max(1, height))
 	animated_sprite.scale.x = sc_w
 	animated_sprite.scale.y = sc_h
 	width = size_x
 	height = size_y
 	animated_sprite.position = Vector2(width/2, height/2)
 	animated_sprite.position = Vector2(width/2, height/2)
+	self.emit_signal("size_changed")
+	
 
 func set_grey(value):
 	if material:
@@ -201,3 +216,10 @@ func get_animation_progress():
 		return 0
 	var count = animated_sprite.frames.get_frame_count(animated_sprite.animation)
 	return float(animated_sprite.frame/count)
+
+func _process(dt):
+	# TODO only plays sounds once, doesn't handle loops
+	for sound_frame in sound_frames.keys():
+		if animated_sprite.frame >= sound_frame:
+			Commands.call_command("sfx", Commands.main.top_script(), [sound_frames[sound_frame]])
+			sound_frames.erase(sound_frame)

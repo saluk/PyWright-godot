@@ -12,6 +12,9 @@ func reset():
 	self.store = {}
 
 func set_val(key, value):
+	if key == "_statement_line_num":  # Replace 0 with variable name to get a watch on a variable
+		print("setting", key, "to", value)
+		pass
 	if key in setters:
 		call("setter_"+key, value)
 	store[key] = str(value)
@@ -27,3 +30,20 @@ func setter__speaking(val):
 	store["_speaking_name"] = Commands.get_nametag()
 
 # Functions to access a namespace as a list
+
+
+# SAVE/LOAD
+var save_properties = [
+	"store", "setters"
+]
+func save_node(data):
+	pass
+
+static func create_node(saved_data:Dictionary):
+	pass # Not called
+	
+func load_node(tree, saved_data:Dictionary):
+	pass
+
+func after_load(tree:SceneTree, saved_data:Dictionary):
+	pass # Not called

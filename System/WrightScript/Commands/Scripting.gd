@@ -85,11 +85,14 @@ func ws_script(script, arguments, script_text=null):
 	var args = Commands.keywords(arguments, true)
 	var label = args[0].get("label",null)
 	arguments = args[1]
+	var stack = false
 	if not "stack" in arguments:
 		main.stack.clear_scripts()
+	else:
+		stack = true
+		arguments.erase("stack")
 	if not "noclear" in arguments:
-		Commands.clear_main_screen()
-		pass
+		script.screen.clear()
 	else:
 		arguments.erase("noclear")
 	var path = Commands.join(arguments)
@@ -101,10 +104,11 @@ func ws_script(script, arguments, script_text=null):
 		if path:
 			print("loading path:", path)
 			scr = main.stack.load_script(path)
+	if stack:
+		scr.screen = ScreenManager.add_screen()
 	if scr and label:
 		scr.goto_label(label)
-	Commands.save_scripts()
-	Commands.call_macro("defaults", script, arguments)
+	main.stack.run_macro_set(main.stack.run_macros_on_scene_change)
 	return Commands.YIELD
 	
 # TODO IMPLEMENT

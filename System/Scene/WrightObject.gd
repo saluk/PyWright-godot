@@ -27,7 +27,8 @@ var _width_override = null
 var _height_override = null
 var width setget set_width_override, get_width
 var height setget set_height_override, get_height
-var click_area
+var click_area  # S 
+var button # S
 
 var template:Dictionary # Remember the template we were initialized with, useful for save/load
 
@@ -49,6 +50,8 @@ var sprites:Dictionary = {
 
 var main
 var wrightscript  # Keeps a reference to the script that created us TODO ability for objects to be cleared when a script ends
+# TODO not sure that wrightscript really needs to be a specific script
+# if wrightscript doesn't exist (often happens after a load) we should just get the top script
 var stack
 var sprite_root
 
@@ -104,15 +107,29 @@ func init():
 #  path: path of sprite to load
 #  animation_mode: loop, once, blink, talk, ...
 func add_sprite(sprite_key, sprite_template):
+	print("BEGIN SPRITE SEARCH: ", sprite_key, " ", sprite_template)
 	if not sprite_template["path"]:
 		return
-	var filename = Filesystem.lookup_file(
-		sprite_template["path"].format({
-			"base": base_path,
-			"variant": variant_path
-		}),
-		root_path
-	)
+	var search_path = sprite_template["path"].format({
+		"base": base_path,
+		"variant": variant_path
+	})
+	var search_paths = [search_path]
+	if search_path.ends_with(".png"):
+		search_paths.append(search_path.substr(0,search_path.length()-4))
+	while "//" in search_path:
+		search_path = search_path.replace("//", "/")
+		search_paths.append(search_path)
+	var filename
+	for path in search_paths:
+		print(path)
+		filename = Filesystem.lookup_file(
+			path,
+			root_path
+		)
+		if not filename:
+			continue
+		break
 	if not filename:
 		return
 	var sprite = PWSpriteC.new()
@@ -148,6 +165,14 @@ func load_sprites(template, sprite_key=null):
 		click_area.macroname = template["click_macro"]
 		click_area.macroargs = template["click_args"]
 		add_child(click_area)
+	
+	# Just the visual of the button, use click area to drive the game
+	if template["button_text"]:
+		button = Button.new()
+		button.text = template["button_text"]
+		button.name = "Button:"+template["button_text"]
+		button.connect("button_up", click_area, "perform_action")
+		add_child(button)
 		
 	set_sprite(sprite_key)
 		
@@ -161,12 +186,16 @@ func process_combined():
 		var count = sprites["combined"].animated_sprite.frames.get_frame_count("default")
 		if not "talk" in sprites:
 			add_sprite("talk", template["sprites"]["combined"])
-			while sprites["talk"].animated_sprite.frames.get_frame_count("default") > count/2:
-				sprites["talk"].animated_sprite.frames.remove_frame("default", count/2)
+			# Remove blink frames
+			if count > 1:
+				while sprites["talk"].animated_sprite.frames.get_frame_count("default") > count/2:
+					sprites["talk"].animated_sprite.frames.remove_frame("default", count/2)
 		if not "blink" in sprites:
 			add_sprite("blink", template["sprites"]["combined"])
-			while sprites["blink"].animated_sprite.frames.get_frame_count("default") > count/2:
-				sprites["blink"].animated_sprite.frames.remove_frame("default", 0)
+			# Remove talk frames
+			if count > 1:
+				while sprites["blink"].animated_sprite.frames.get_frame_count("default") > count/2:
+					sprites["blink"].animated_sprite.frames.remove_frame("default", 0)
 
 
 func process_missing():
@@ -182,19 +211,21 @@ func set_sprite(new_sprite_key):
 		return
 	if sprite_key != new_sprite_key:
 		if current_sprite:
-			if current_sprite.is_connected("finished_playing", self, "sprite_finished_playing"):
-				current_sprite.disconnect("finished_playing", self, "sprite_finished_playing")
+			SignalUtils.remove_all(current_sprite)
 			sprite_root.remove_child(current_sprite)
 		sprite_key = new_sprite_key
 		current_sprite = sprites[sprite_key]
+		current_sprite.set_block_signals(false)
 
 		sprite_root.add_child(current_sprite)
 		set_wait(wait)
 		emit_signal("started_playing")
 		current_sprite.connect("finished_playing", self, "sprite_finished_playing")
+		if click_area:
+			current_sprite.connect("size_changed", click_area, "sync_area")
 		# TODO center and mirror should be controlled by the sprite
 		if centered:
-			current_sprite.position = Vector2(256/2-current_sprite.width/2, 192/2-current_sprite.height/2)
+			current_sprite.position = Vector2(int(256/2)-int(current_sprite.width/2), int(192/2)-int(current_sprite.height/2))
 		if mirror.x < 0:
 			current_sprite.scale.x = -1
 			current_sprite.position.x += current_sprite.width
@@ -267,3 +298,52 @@ func visible_within(collide_rect:Rect2):
 	yield(get_tree(), "idle_frame")
 	main.pause(false)
 	return false
+
+
+
+# SAVE/LOAD
+var save_properties = [
+	"root_path", "base_path", "variant_path", "script_name",
+	"char_name", "sprite_key", "centered",
+	"_width_override", "_height_override", "template",
+	"z", "scrollable", "wait", "wait_signal",
+	"rotation_degrees",
+	"visible", "position", "scale"
+]
+func save_node(data):
+	data["mirror"] = [mirror.x, mirror.y]
+	data["loader_class"] = "res://System/Scene/WrightObject.gd"
+	data["parent_path"] = get_parent().get_path()
+	if wrightscript:
+		data["script_id"] = wrightscript.u_id
+	data["variables"] = SaveState._save_node(variables)
+
+static func create_node(saved_data:Dictionary):
+	var ob = load(ObjectFactory.classes[saved_data["template"]["class"]]).new()
+	return ob
+	
+func load_node(tree, saved_data:Dictionary):
+	# TODO we should probably standardize saving dictionaries, vectors, and rects
+	if "rect" in saved_data["template"] and saved_data["template"]["rect"]:
+		var r = saved_data["template"]["rect"].substr(1,saved_data["template"]["rect"].length()-2).split(",")
+		saved_data["template"]["rect"] = Rect2(
+			int(r[0].strip_edges()),
+			int(r[1].strip_edges()),
+			int(r[2].strip_edges()),
+			int(r[3].strip_edges())
+		)
+	main = tree.get_nodes_in_group("Main")[0]
+	stack = main.stack
+	# TODO we should include in save system which screen object is on
+	ScreenManager.top_screen().add_child(self)
+	load_sprites(saved_data["template"])
+	set_sprite(sprite_key)
+	SaveState._load_node(tree, variables, saved_data["variables"])
+
+func after_load(tree:SceneTree, saved_data:Dictionary):
+	if "script_id" in saved_data:
+		for script in stack.scripts:
+			if script.u_id == saved_data["script_id"]:
+				wrightscript = script
+				return
+	print("error no script id found")

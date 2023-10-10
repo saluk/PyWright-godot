@@ -8,6 +8,7 @@ var popup_menu
 
 var scripts = []
 export(NodePath) var reload_button
+export(NodePath) var disable_button
 export(NodePath) var step
 export(NodePath) var allev
 export(NodePath) var pause
@@ -17,15 +18,19 @@ export(NodePath) var current_script
 var in_debugger = false
 var debug_last_state = null
 
+var goto_line_button_template:Button
+
 # {"script": WrightScript, "editor": TextEdit, "highlighted_line":int, "bookmark_line": int}
 
 func _ready():
-	script_tab = get_node(current_script)
-	step = get_node(step)
-	allev = get_node(allev)
-	pause = get_node(pause)
-	node_scripts = get_node(node_scripts)
-	reload_button = get_node(reload_button)
+	if step is NodePath:
+		script_tab = get_node(current_script)
+		step = get_node(step)
+		allev = get_node(allev)
+		pause = get_node(pause)
+		node_scripts = get_node(node_scripts)
+		reload_button = get_node(reload_button)
+		disable_button = get_node(disable_button)
 	
 	node_scripts.remove_child(script_tab)
 	# TODO conceal buttons if game is not playing to prevent error
@@ -33,12 +38,24 @@ func _ready():
 	pause.connect("button_up", self, "start_debugger")
 	allev.connect("button_up", self, "all_ev")
 	reload_button.connect("button_up", self, "reload")
+	disable_button.connect("button_up", self, "toggle_enabled")
+	
+	goto_line_button_template = get_node("GotoLineButton")
+	goto_line_button_template.get_parent().remove_child(goto_line_button_template)
 
+# TODO maybe this should be a "main" function
 func reload():
 	if current_stack:
 		current_stack.clear_scripts()
 		current_stack.blockers = []
-		get_tree().change_scene("res://Main.tscn")
+	MusicPlayer.stop_music()
+	SoundPlayer.stop_sounds()
+	get_tree().change_scene("res://Main.tscn")
+	
+func toggle_enabled():
+	var main = get_tree().get_nodes_in_group("Main")[0]
+	main.debugger_enabled = not main.debugger_enabled
+	disable_button.text = {true: "Disable", false: "Enable"}[main.debugger_enabled]
 	
 func start_debugger(force=false):
 	if in_debugger:
@@ -98,7 +115,8 @@ func rebuild():
 		var last = scripts.pop_back()
 		node_scripts.remove_child(last["editor"])
 		last["editor"].queue_free()
-	node_scripts.current_tab = 0
+	if scripts:
+		node_scripts.current_tab = 0
 	
 func edit_script(script_index):
 	var d = scripts[script_index]
@@ -106,6 +124,9 @@ func edit_script(script_index):
 	d["script"].stack.show_in_debugger()
 
 func update_current_stack(stack):
+	var main = get_tree().get_nodes_in_group("Main")[0]
+	if not main.debugger_enabled:
+		return
 	if current_stack != stack:
 		current_stack = stack
 		current_stack.connect("enter_debugger", self, "start_debugger", [true])
@@ -126,6 +147,8 @@ func update_current_stack(stack):
 		if scripts[i]["highlighted_line"] != to_line:
 			scripts[i]["highlighted_line"] = to_line
 			scripts[i]["editor"].cursor_set_line(to_line)
+			scripts[i]["editor"].cursor_set_column(0)
+			scripts[i]["editor"].center_viewport_to_cursor()
 		if scripts[i]["bookmark_line"]!=null and scripts[i]["editor"].is_line_set_as_bookmark(scripts[i]["bookmark_line"]):
 			scripts[i]["editor"].set_line_as_bookmark(scripts[i]["bookmark_line"], false)
 		scripts[i]["editor"].set_line_as_bookmark(to_line, true)

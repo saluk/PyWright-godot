@@ -49,9 +49,24 @@ class GuiWait:
 func gui_wait(script, arguments):
 	return GuiWait.new(script)
 	
-# TODO IMPLEMENT
 func gui_back(script, arguments):
-	pass
+	var macroname = "{delete_gui_back}"
+	var template = ObjectFactory.get_template("button")
+	template["click_macro"] = macroname
+	template["sprites"]["default"]["path"] = "art/general/back.png"
+	template["sprites"]["highlight"]["path"] = "art/general/back_high.png"
+	template["position"] = [0, 192+159]
+	template["default_name"] = "Back"
+	print(template)
+	var button = ObjectFactory.create_from_template(
+		script,
+		template,
+		{},
+		arguments
+	)
+	button.wait = true
+	button.wait_signal = "tree_exited"
+	return button
 	
 # TODO IMPLEMENT
 func gui_input(script, arguments):
@@ -64,6 +79,14 @@ func ws_gui(script, arguments):
 	if not has_method("gui_"+guitype.to_lower()):
 		return main.log_error("Invalid type for gui - "+guitype)
 	return callv("gui_"+guitype.to_lower(), [script, arguments])
+
+# NEW (internal)
+func ws_delete_gui_back(script, arguments):
+	for node in ScreenManager.top_screen().get_children():
+		if "template" in node:
+			if node["template"]["default_name"] == "Back":
+				node.queue_free()
+				return
 
 func click_option(option):
 	Commands.macro_or_label(option, main.stack.scripts[-1], [])

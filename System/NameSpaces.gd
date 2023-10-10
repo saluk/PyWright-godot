@@ -13,12 +13,18 @@ var DEFAULTS := {
 	"ev_items_y": "63",
 	"ev_spacing_x": "48",
 	"ev_spacing_y": "46",
-	"ev_small_width": "35",
-	"ev_small_height": "35",
+	"ev_small_width": "40",
+	"ev_small_height": "40",
 	"ev_big_width": "70",
 	"ev_big_height": "70",
 	"ev_modebutton_x": "196",
-	"ev_modebutton_y": "7"
+	"ev_modebutton_y": "7",
+	"ev_z_textbox_x": "100",
+	"ev_z_textbox_y": "70",
+	"ev_z_textbox_w": "130",
+	"ev_z_textbox_h": "100",
+	"ev_check_img": "general/check",
+	"textblock_line_height": "-1"
 }
 
 var global_namespace:Variables
@@ -165,6 +171,7 @@ class Accessor:
 func get_accessor(variable:String, namespace:Variables=null, setting=false):
 	var script = main.top_script()
 	var next = variable
+
 	if "." in variable:
 		var parts = Array(variable.split("."))
 		next = parts.pop_front()
@@ -176,7 +183,7 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 	if next.begins_with("$"):
 		next = get_accessor(next.substr(1), null, setting).get_val("string", "")
 		
-	if not namespace:
+	if not namespace and next and variable:
 		if next == "script":
 			return get_accessor(variable, script.variables, setting)
 		if next == "game":
@@ -184,6 +191,8 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 		# See if next is an object
 		for object in Commands.get_objects(next):
 			return get_accessor(variable, object.variables, setting)
+		
+	if not namespace:
 		namespace = global_namespace
 		
 	var accessor = Accessor.new(next, namespace, self)
@@ -240,3 +249,21 @@ func evidence_keys():
 		if key.ends_with("_name") or key.ends_with("_pic") or key.ends_with("_desc"):
 			ev_keys[key.split("_")[0]] = 1
 	return ev_keys.keys()
+
+
+# SAVE/LOAD
+var save_properties = [
+]
+func save_node(data):
+	data["global_namespace"] = SaveState._save_node(global_namespace)
+	data["game_namespace"] = SaveState._save_node(game_namespace)
+
+static func create_node(saved_data:Dictionary):
+	pass # Not called
+	
+func load_node(tree, saved_data:Dictionary):
+	SaveState._load_node(tree, global_namespace, saved_data["global_namespace"])
+	SaveState._load_node(tree, game_namespace, saved_data["game_namespace"])
+
+func after_load(tree:SceneTree, saved_data:Dictionary):
+	pass # Not called

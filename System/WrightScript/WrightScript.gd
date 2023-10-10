@@ -2,6 +2,7 @@ extends Reference
 class_name WrightScript
 
 var main:Node
+var screen:Screen
 var stack
 var root_path := ""
 var filename := ""
@@ -11,12 +12,14 @@ var variables:Variables  # local variables accessed with script.x
 var line_num := 0
 var line:String
 
+var u_id # For saving
+
 var allow_goto_parent_script := false
 var allowed_commands := []  #If any commands are in this list, only process those commands
 
 var allow_next_line = true
 
-var processing
+var processing   # TODO unsure if used
 
 signal GOTO_RESULT
 
@@ -24,11 +27,16 @@ static func one_frame(dt:float) -> float:
 	#  Determine how many frames, at 60 frames per second, have passed over dt
 	return dt * 60.0
 
-func _init(main, stack):
+func _init(main, stack, screen:Screen=null):
 	assert(main)
 	assert(stack)
 	self.main = main
 	self.stack = stack
+	if screen:
+		self.screen = screen
+	else:
+		self.screen = ScreenManager.top_screen()
+	u_id = OS.get_system_time_msecs()
 	variables = Variables.new()
 		
 func has_script(scene_name) -> String:
@@ -348,3 +356,23 @@ func end():
 	#processing = null
 	lines.append("")
 	line_num = len(lines)-1
+
+
+
+var save_properties = [
+	"root_path", "filename", "lines", "labels",
+	# "variables",
+	"line_num", "line", "allow_goto_parent_script",
+	"allowed_commands", "allow_next_line", "label_statements","u_id"
+]
+func save_node(data):
+	data["variables"] = SaveState._save_node(variables)
+
+static func create_node(saved_data:Dictionary):
+	pass
+	
+func load_node(tree, saved_data:Dictionary):
+	SaveState._load_node(tree, variables, saved_data["variables"])
+
+func after_load(tree, saved_data:Dictionary):
+	pass

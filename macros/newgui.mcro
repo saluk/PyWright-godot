@@ -125,6 +125,8 @@ endmacro
 macro tbon
 delete name=_tb_blinker_ suppress
 set _tb_on 1
+delete name=tboff_timer suppress
+delete name=tbon_timer suppress 
 timer 60 flicker_tb_off name=tboff_timer
 is _testimony_blinker?
 fg testimony name=_tb_blinker_ x=-90 y=-76
