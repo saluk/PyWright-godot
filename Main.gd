@@ -19,6 +19,7 @@ char phoenix
 """
 
 signal stack_initialized
+signal before_frame_drawn
 signal frame_drawn
 signal line_executed
 signal text_finished
@@ -149,6 +150,7 @@ func test_eval():
 	assert(x == true)
 
 func _process(_delta):
+	emit_signal("before_frame_drawn")
 	if stack:
 		if stack.state in [stack.STACK_READY, stack.STACK_YIELD]:
 			stack.process()
@@ -179,7 +181,10 @@ func cross_exam_script():
 
 func reload():
 	MusicPlayer.stop_music()
-	# TODO stop running sounds
+	SoundPlayer.stop_sounds()
+	stack.clear_scripts()
+	stack.blockers = []
+	ScreenManager.clear()
 	get_tree().reload_current_scene()
 
 func pause(paused=true, toggle=false):

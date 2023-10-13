@@ -45,12 +45,8 @@ func _ready():
 
 # TODO maybe this should be a "main" function
 func reload():
-	if current_stack:
-		current_stack.clear_scripts()
-		current_stack.blockers = []
-	MusicPlayer.stop_music()
-	SoundPlayer.stop_sounds()
-	get_tree().change_scene("res://Main.tscn")
+	if current_stack and current_stack.main:
+		current_stack.main.reload()
 	
 func toggle_enabled():
 	var main = get_tree().get_nodes_in_group("Main")[0]
