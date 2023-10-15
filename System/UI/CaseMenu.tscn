@@ -9,7 +9,7 @@ script = ExtResource( 1 )
 margin_right = 256.0
 margin_bottom = 384.0
 
-[node name="Label" type="Label" parent="Control"]
+[node name="GameTitle" type="Label" parent="Control"]
 margin_left = 71.0
 margin_top = 6.0
 margin_right = 188.0

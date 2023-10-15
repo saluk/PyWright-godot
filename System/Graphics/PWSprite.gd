@@ -108,8 +108,6 @@ func load_info(path:String):
 	return data
 
 func load_animation(path:String, info=null, sub_rect=null):
-	if not path.begins_with("res://"):
-		path = "res://"+path
 	sprite_path = path
 	# Load pwv
 	

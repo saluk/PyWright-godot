@@ -12,6 +12,7 @@ var evidence_pages := {
 
 var macros := {}
 
+# TODO not actually used, as filesystem is all static
 var filesystem
 
 enum {
@@ -67,8 +68,6 @@ var run_macros_on_scene_change = [
 
 func load_macros_from_path(path):
 	var macro_scripts = []
-	if not "res://" in path:
-		path = "res://" + path 
 	print("SCANNING ", path)
 	var dir = Directory.new()
 	if dir.open(path) == OK:
@@ -101,13 +100,11 @@ func run_macro_set(l):
 			Commands.call_macro(macro, scripts[-1], [])
 		
 func init_game(path, init_script="intro.txt"):
-	DirectoryCache.init_game("res://"+path)
+	DirectoryCache.init_game(path)
 	# Used to load a game and then a case inside the game
 	filesystem = load("res://System/Files/Filesystem.gd").new()
 	print("load base macros")
 	load_macros_from_path("macros")
-	print("load script macros")
-	load_macros_from_path(path)
 	# TODO - if we are loading a subfolder of a game, we should load macros
 	#		 from the parent folder as well
 	load_script(path+"/"+init_script)
@@ -125,6 +122,9 @@ func add_script(script_text):
 	return new_script
 	
 func load_script(script_path):
+	# TODO not sure if this is the "correct" time to load the macros
+	print("load script macros")
+	load_macros_from_path(script_path.rsplit("/", true, 1)[0])
 	var new_script = WrightScript.new(main, self)
 	new_script.load_txt_file(script_path)
 	scripts.append(new_script)
