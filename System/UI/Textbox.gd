@@ -17,7 +17,7 @@ var diffcolor = false
 var characters_per_update:float = 1.0
 var ticks_per_update:float = 2.0
 var next_ticks_per_update:float = 1.0
-var override_sound = ""
+var override_sound = null
 
 var last_text_sound_played = 0.0
 var text_sound_rate = 0.2
@@ -161,7 +161,9 @@ class CommandPack extends TextPack:
 			"sfx":
 				textbox.play_sound(args[0])
 			"sound":
-				textbox.override_sound = args[0]
+				textbox.override_sound = ""
+				if args and args[0].strip_edges():
+					textbox.override_sound = args[0]
 			"delay":
 				# the number of frames between UPDATE
 				# default 2
@@ -205,11 +207,11 @@ func _on_text_printed():
 		last_text_sound_played = Time.get_ticks_msec()
 
 func play_sound(path=null):
-	if not path:
+	if path == null:
 		path = get_char_sound()
-		if override_sound:
+		if override_sound != null:
 			path = override_sound
-	if path:
+	if path and path.strip_edges():
 		Commands.call_command("sfx", main.top_script(), [path])
 
 var DEFAULT_SOUNDS = {
