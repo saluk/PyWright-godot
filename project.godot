@@ -14,6 +14,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://System/Files/GDScriptAudioImport.gd"
 }, {
+"base": "Resource",
+"class": "BuiltinConfig",
+"language": "GDScript",
+"path": "res://System/Config/BuiltinConfig.gd"
+}, {
 "base": "Control",
 "class": "ClickArea",
 "language": "GDScript",
@@ -42,7 +47,7 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "MainScene",
 "language": "GDScript",
-"path": "res://Main.gd"
+"path": "res://System/Main.gd"
 }, {
 "base": "Reference",
 "class": "NameSpaces",
@@ -84,6 +89,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://System/TimeCounter.gd"
 }, {
+"base": "Resource",
+"class": "UserConfig",
+"language": "GDScript",
+"path": "res://System/Config/UserConfig.gd"
+}, {
 "base": "Reference",
 "class": "Values",
 "language": "GDScript",
@@ -111,6 +121,7 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "AudioLoader": "",
+"BuiltinConfig": "",
 "ClickArea": "",
 "Colors": "",
 "FadeLib": "",
@@ -125,6 +136,7 @@ _global_script_class_icons={
 "SignalUtils": "",
 "Testing": "",
 "TimeCounter": "",
+"UserConfig": "",
 "Values": "",
 "Variables": "",
 "WrightObject": "",
@@ -153,6 +165,7 @@ FilePathCache="*res://System/LeastUsedCache.gd"
 AnimationFramesCache="*res://System/LeastUsedCache.gd"
 SoundFileCache="*res://System/LeastUsedCache.gd"
 ScreenManager="*res://System/Scene/ScreenManager.gd"
+Configuration="*res://System/Config/Configuration.gd"
 
 [debug]
 
@@ -187,12 +200,12 @@ texture={
 
 quickload={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":76,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":76,"unicode":0,"echo":false,"script":null)
  ]
 }
 quicksave={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":83,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":83,"unicode":0,"echo":false,"script":null)
  ]
 }
 button_press={

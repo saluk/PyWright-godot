@@ -4,9 +4,11 @@ signal game_loaded
 var z := 0
 var choose_game_dir_dialog:FileDialog
 
+var focused = false
+
 func add_pck_button(path):
 	var txt = path.replace("_"," ").replace(".pck","")
-	var b = Button.new()
+	var b := Button.new()
 	b.text = txt
 	b.connect("pressed", self, "launch_game", [path])
 	$Control/ScrollContainer/VBoxContainer.add_child(b)
@@ -28,6 +30,9 @@ func add_game_button(path:String, game:String):
 	l.text = txt
 	hbox.add_child(l)
 	$Control/ScrollContainer/VBoxContainer.add_child(hbox)
+	if not focused:
+		b.grab_focus()
+		focused = true
 	
 func add_test_button(path):
 	var hbox = HBoxContainer.new()
@@ -47,6 +52,7 @@ func add_test_button(path):
 	$Control/ScrollContainer2/VBoxContainer.add_child(hbox)
 
 func _clear_games():
+	focused = false
 	var game_list = $Control/ScrollContainer/VBoxContainer
 	for child in game_list.get_children():
 		child.queue_free()
@@ -70,9 +76,18 @@ func _populate_games(folder, types):
 	
 	
 func _ready():
+	get_node("%MainLabel").text = "GodotWright version "+Configuration.builtin.version
+	
 	choose_game_dir_dialog = $Control/ChooseGameDirDialog
 	choose_game_dir_dialog.connect("dir_selected", self, "_game_dir_selected")
-	choose_builtin_games()
+	
+	_clear_games()
+	
+	if Configuration.user.game_list == "internal":
+		choose_builtin_games()
+	else:
+		_populate_games(Configuration.user.game_folder, "folder")
+
 	_populate_games("res://tests/", "test")
 	
 	$Control/ScrollContainer/VBoxContainer/GameDir.text = "Current Dir: builtin"
@@ -82,6 +97,8 @@ func _ready():
 func choose_game_dir():
 	var d := choose_game_dir_dialog
 	d.current_path = "/"
+	if Configuration.user.game_folder:
+		d.current_path = Configuration.user.game_folder+"/"
 	d.show()
 	d.invalidate()
 	
@@ -89,9 +106,14 @@ func choose_builtin_games():
 	_clear_games()
 	_populate_games("user://", "pack")
 	_populate_games("res://games/", "folder")
+	Configuration.user.game_list = "internal"
+	Configuration.save_config()
 	
 func _game_dir_selected(dir):
 	_clear_games()
+	Configuration.user.game_list = "external"
+	Configuration.user.game_folder = dir
+	Configuration.save_config()
 	_populate_games(dir, "folder")
 	
 func launch_game(path, mode="play"):

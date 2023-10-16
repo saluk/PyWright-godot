@@ -5,6 +5,8 @@ var wrightscript
 
 signal CASE_SELECTED
 var wait_signal = "CASE_SELECTED"
+
+var focused = false
 	
 func add_case_button(path):
 	var txt = path.replace("_"," ")
@@ -12,6 +14,9 @@ func add_case_button(path):
 	b.text = path.rsplit("/")[-1]
 	b.connect("pressed", self, "launch_game", [path])
 	$Control/ScrollContainer2/VBoxContainer.add_child(b)
+	if not focused:
+		b.grab_focus()
+		focused = true
 	
 func _ready():
 	for path in cases:
