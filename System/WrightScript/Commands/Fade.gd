@@ -9,7 +9,7 @@ class Fader extends Node:
 	var wait_signal = ""
 	var start = 0.0
 	var end = 100.0
-	var speed = 1   # Percent to fade in 1 frame
+	var speed = 1.0   # Percent to fade in 1 frame
 	var script_name = "fade"
 	var z = 0
 	func _init(start, end, speed, wait):
@@ -64,7 +64,7 @@ static func ws_fade(script, arguments):
 	var x = int(kw.get("x", 0))
 	var y = int(kw.get("y", 0))
 	var z = int(kw.get("z", 0))
-	var speed = int(kw.get("speed", 1))
+	var speed = float(kw.get("speed", 1))
 	var last = "last" in arguments
 	var wait = not "nowait" in arguments
 	var script_name = kw.get("name", null)
