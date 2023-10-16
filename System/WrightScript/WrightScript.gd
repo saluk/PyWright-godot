@@ -53,10 +53,13 @@ func load_txt_file(path:String):
 	filename = path.get_file()
 	var f = File.new()
 	var err = f.open(path, File.READ)
+	var buffer := ""
 	if err == OK:
-		while not f.eof_reached():
-			lines.append(f.get_line())
+		buffer = f.get_as_text(false)
 		f.close()
+		buffer = buffer.replace("\r\n", "\n")
+		buffer = buffer.replace("\r", "\n")
+		lines = buffer.split("\n")
 		preprocess_lines()
 	else:
 		print("Error loading wrightscript file ", path)
