@@ -7,7 +7,6 @@ var script_tab
 var popup_menu
 
 var scripts = []
-export(NodePath) var reload_button
 export(NodePath) var disable_button
 export(NodePath) var step
 export(NodePath) var allev
@@ -29,7 +28,6 @@ func _ready():
 		allev = get_node(allev)
 		pause = get_node(pause)
 		node_scripts = get_node(node_scripts)
-		reload_button = get_node(reload_button)
 		disable_button = get_node(disable_button)
 	
 	node_scripts.remove_child(script_tab)
@@ -37,16 +35,10 @@ func _ready():
 	step.connect("button_up", self, "step")
 	pause.connect("button_up", self, "start_debugger")
 	allev.connect("button_up", self, "all_ev")
-	reload_button.connect("button_up", self, "reload")
 	disable_button.connect("button_up", self, "toggle_enabled")
 	
 	goto_line_button_template = get_node("GotoLineButton")
 	goto_line_button_template.get_parent().remove_child(goto_line_button_template)
-
-# TODO maybe this should be a "main" function
-func reload():
-	if current_stack and current_stack.main:
-		current_stack.main.reload()
 	
 func toggle_enabled():
 	var main = get_tree().get_nodes_in_group("Main")[0]

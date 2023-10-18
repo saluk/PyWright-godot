@@ -34,10 +34,10 @@ class Scroller extends Node:
 			if start_positions:
 				next_pos = start_positions.pop_front()
 			else:
-				next_pos = o.global_position
+				next_pos = o.position
 			tween.interpolate_property(
 				o, 
-				"global_position", 
+				"position", 
 				next_pos, 
 				next_pos+total, 
 				total_time, 

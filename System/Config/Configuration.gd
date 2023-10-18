@@ -4,7 +4,7 @@ var builtin:BuiltinConfig
 var user:UserConfig
 
 func init_config():
-	builtin = BuiltinConfig.new()
+	builtin = preload("res://System/Config/BuiltinConfig.tres")
 	if File.new().file_exists("user://config.tres"):
 		user = load("user://config.tres")
 	if not user:

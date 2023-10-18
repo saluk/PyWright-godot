@@ -6,6 +6,7 @@ var timecounter: TimeCounter
 var current_game: String
 
 var debugger_enabled = true
+var tab_button:Button
 
 var init_script = """
 mus 02 - courtroom lounge ~ beginning prelude.ogg
@@ -50,25 +51,29 @@ func load_script_from_path(path):
 	stack.load_macros_from_path("macros")
 	emit_signal("stack_initialized")
 	
-func set_resolution(res:Vector2, scale:float, show_debugger:bool=false):
+func set_resolution(res:Vector2, scale:float):
 	Engine.target_fps = 60
-	var w = res.x
-	if show_debugger:
-		w *= 2
 	var h = res.y
+	var w = res.x
 	OS.set_window_size(Vector2(w*scale, h*scale))
 	var screen_size:Vector2 = OS.get_screen_size()
 	OS.window_position = Vector2(screen_size.x/2-w*scale/2, screen_size.y/2-h*scale/2)
 	get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_2D, SceneTree.STRETCH_ASPECT_KEEP, Vector2(w, h), 1)
-	if not show_debugger:
-		$TabContainer.queue_free()
 
 func _ready():
 	timecounter = TimeCounter.new()
-	if OS.has_feature("standalone") or OS.has_feature("HTML5"):
-		set_resolution(Vector2(256,384), 2.0, false)
-	else:
-		set_resolution(Vector2(256,384), 2.0, true)
+	
+	tab_button = get_tree().get_nodes_in_group("TabButton")[0]
+	tab_button.connect("toggled", self, "_toggle_button")
+	hide_tabs()
+
+	if Configuration.builtin.screen_format == "vertical":
+		set_resolution(Vector2(256,384 + 32), 2.0)
+		$Screens.rect_position = Vector2(0, 16)
+		tab_button.rect_position = Vector2(0, 0)
+		$TabContainer.rect_position = Vector2(0, 16)
+	elif Configuration.builtin.screen_format == "horizontal":
+		set_resolution(Vector2(256 * 2,384), 2.0)
 	
 	stack = WrightScriptStack.new(self)
 	stack.connect("stack_empty", self, "reload")
@@ -219,3 +224,22 @@ func load_node(tree, saved_data:Dictionary):
 
 func after_load(tree, saved_data:Dictionary):
 	stack.state = stack.STACK_READY
+
+func _toggle_button(state):
+	if state:
+		show_tabs()
+	else:
+		hide_tabs()
+
+func show_tabs():
+	$TabContainer.show()
+	if Configuration.builtin.screen_format == "horizontal":
+		$Screens.rect_position.x = 0
+		tab_button.rect_position.x = $Screens.rect_position.x+$Screens.rect_size.x
+
+func hide_tabs():
+	$TabContainer.hide()
+	if Configuration.builtin.screen_format == "horizontal":
+		var x = get_viewport_rect().size.x/2
+		$Screens.rect_position.x = x-$Screens.rect_size.x/2
+		tab_button.rect_position.x = $Screens.rect_position.x+$Screens.rect_size.x
