@@ -24,7 +24,7 @@ func log_frame_end(frame):
 		t += "o:" + frame.sig.name + "\n"
 	elif frame.sig is SceneTreeTimer:
 		t += "timer\n"
-	t += ">>>\n"
+	t += ">>>\n\n"
 	t = $TextLog.text + t
 	t = t.substr(0, MAX_LENGTH)
 	$TextLog.text = t
