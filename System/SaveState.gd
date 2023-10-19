@@ -22,6 +22,7 @@ class_name SaveState
 
 
 static func save_game(tree:SceneTree, filename:String):
+	GlobalErrors.log_info("Saving game: %s" % filename)
 	var objects = []
 	var nodes = [tree.root]
 	while nodes:
@@ -103,6 +104,7 @@ static func load_properties(node, data):
 			node.add_to_group(group)
 	
 static func load_game(tree:SceneTree, filename:String):
+	GlobalErrors.log_info("Loading game: %s" % filename)
 	var file = File.new()
 	var err = file.open(filename, File.READ)
 	if err != OK:

@@ -89,6 +89,8 @@ func has_file(file:String):
 		game = "res://"
 	if not game in indexes:
 		print("WARNING: no game ", game)
+		print(file)
+		print(indexes.keys())
 		return null
 	var index = indexes[game]
 	if not file.to_lower() in index:

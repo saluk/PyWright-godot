@@ -163,14 +163,6 @@ func _process(_delta):
 		stack.show_in_debugger()
 	emit_signal("frame_drawn")
 
-func log_error(msg):
-	stack.show_in_debugger()
-	print("ERROR:", msg)
-	#var txt = load("res://System/UI/Textbox.tscn").instance()
-	#txt.text_to_print = msg
-	#txt.main = self
-	#add_child(txt)
-
 func top_script():
 	if stack.scripts.size() > 0:
 		return stack.scripts[-1]

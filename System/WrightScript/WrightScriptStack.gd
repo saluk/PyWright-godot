@@ -271,7 +271,7 @@ func process():
 				frame.scr.next_line()
 				#return new_state(STACK_YIELD)
 			elif frame.sig == Commands.UNDEFINED:
-				main.log_error("No command for "+frame.command)
+				GlobalErrors.log_error("No command for '"+frame.command+"'", {"frame": frame})
 				frame.scr.next_line()
 				#return new_state(STACK_YIELD)
 			elif frame.sig == Commands.NOTIMPLEMENTED:
