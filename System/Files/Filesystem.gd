@@ -86,6 +86,8 @@ static func load_image_from_path(path:String) -> Image:
 			error = image.load_bmp_from_buffer(buffer)
 		elif path.ends_with("jpg"):
 			error = image.load_jpg_from_buffer(buffer)
+		if error != OK:
+			GlobalErrors.log_error("%s error: %s" % [path, error])
 	print("image found: ", image)
 	de_pink_image(image)
 	return image

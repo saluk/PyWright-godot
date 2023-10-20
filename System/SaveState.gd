@@ -65,6 +65,8 @@ static func save_properties(node, save):
 				val = {"Vector3":[val.x,val.y,val.z]}
 			elif val is Vector2:
 				val = {"Vector2":[val.x,val.y]}
+			elif val is Color:
+				val = {"Color":[val.r,val.g,val.b,val.a]}
 			elif val is Node:
 				val = 0
 			elif val is bool:
@@ -98,6 +100,8 @@ static func load_properties(node, data):
 					val = Vector3(val["Vector3"][0],val["Vector3"][1],val["Vector3"][2])
 				elif "Vector2" in val:
 					val = Vector2(val["Vector2"][0],val["Vector2"][1])
+				elif "Color" in val:
+					val = Color(val["Color"][0], val["Color"][1], val["Color"][2], val["Color"][3])
 			node.set(prop, val)
 	if "_groups_" in data:
 		for group in data["_groups_"]:
@@ -105,6 +109,8 @@ static func load_properties(node, data):
 	
 static func load_game(tree:SceneTree, filename:String):
 	GlobalErrors.log_info("Loading game: %s" % filename)
+	DirectoryCache.clear()
+	
 	var file = File.new()
 	var err = file.open(filename, File.READ)
 	if err != OK:
@@ -118,6 +124,7 @@ static func load_game(tree:SceneTree, filename:String):
 	var after_load = []
 
 	for ob_data in data:
+		GlobalErrors.log_info("Load Object %s" % ob_data["original_node_path"])
 		print(ob_data)
 		var ob
 		if tree.root.has_node(ob_data["original_node_path"]):

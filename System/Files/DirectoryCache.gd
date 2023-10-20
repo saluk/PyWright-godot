@@ -2,7 +2,7 @@ extends Node
 
 # Caches game folder indexes of known filenames
 
-var indexes = {}
+var indexes := {}
 
 func _ready():
 	if OS.has_feature("standalone") or OS.has_feature("HTML5"):
@@ -10,8 +10,12 @@ func _ready():
 			print("WARNING: could not load file index res://")
 			return
 	else:
-		create_game_cache("res://", ["res://art", "res://music", "res://sfx", "res://fonts"])
-		save_game_file_index("res://")
+		clear()
+		
+func clear():
+	indexes.clear()
+	create_game_cache("res://", ["res://art", "res://music", "res://sfx", "res://fonts"])
+	save_game_file_index("res://")
 	
 func init_game(game_path):
 	if OS.has_feature("standalone") or OS.has_feature("HTML5"):

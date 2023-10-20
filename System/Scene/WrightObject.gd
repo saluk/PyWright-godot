@@ -103,6 +103,9 @@ func init():
 		sprite_root.name = "SpriteRoot"
 		add_child(sprite_root)
 
+# Just used for logging
+var sprite_paths_searched = []
+
 #Sprite template:
 #  path: path of sprite to load
 #  animation_mode: loop, once, blink, talk, ...
@@ -128,6 +131,7 @@ func add_sprite(sprite_key, sprite_template):
 			root_path
 		)
 		if not filename:
+			sprite_paths_searched.append(path)
 			continue
 		break
 	if not filename:
@@ -139,6 +143,8 @@ func add_sprite(sprite_key, sprite_template):
 	return sprite
 	
 func load_sprites(template, sprite_key=null):
+	sprite_paths_searched = []
+
 	init()
 	self.template = template
 	free_members()
@@ -175,7 +181,10 @@ func load_sprites(template, sprite_key=null):
 		add_child(button)
 		
 	set_sprite(sprite_key)
-		
+	if not sprites:
+		var search_str = "'" + "', '".join(sprite_paths_searched) + "'"
+		GlobalErrors.log_error("Unable to find or load a valid graphic file, searched [%s] at root path %s" % [search_str, root_path])	
+
 func has_sprite(sprite_key):
 	return sprite_key in sprites
 	
@@ -253,6 +262,7 @@ func set_wait(value):
 	# We will never finish playing if we don't have a sprite
 	if wait_signal == "finished_playing":
 		wait = false
+		return
 
 	wait = value
 
@@ -308,7 +318,8 @@ var save_properties = [
 	"_width_override", "_height_override", "template",
 	"z", "scrollable", "wait", "wait_signal",
 	"rotation_degrees",
-	"visible", "position", "scale"
+	"visible", "position", "scale",
+	"modulate"
 ]
 func save_node(data):
 	data["mirror"] = [mirror.x, mirror.y]
