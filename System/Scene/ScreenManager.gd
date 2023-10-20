@@ -19,6 +19,8 @@ func get_main_screen():
 	# If main screen is gone, we should get our handles again
 	if _main_screen and is_instance_valid(_main_screen):
 		return _main_screen
+	if not screens.get_children():
+		return null
 	_main_screen = screens.get_children()[0]
 	return _main_screen
 	

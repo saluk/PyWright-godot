@@ -90,7 +90,7 @@ func ws_region(script, arguments):
 # NEW
 func ws_showexamine(script, arguments):
 	if not next_examine:
-		main.log_error("Examine must first be created with examine and region commands before it can be shown.")
+		GlobalErrors.log_error("Examine must first be created with examine and region commands before it can be shown.", {"script": script})
 		return
 	var examine_menu = ObjectFactory.create_from_template(
 		script,
@@ -134,7 +134,7 @@ func ws_list(script, arguments):
 func ws_li(script, arguments):
 	var list_menu = main.get_tree().get_nodes_in_group(Commands.LIST_GROUP)
 	if not list_menu:
-		main.log_error("Couldn't find list menu to add item to")
+		GlobalErrors.log_error("Couldn't find list menu to add item to", {"script": script})
 		return
 	list_menu = list_menu[0]
 	var result = Commands.keywords(arguments).get("result", null)
@@ -163,7 +163,7 @@ func ws_lo(script, arguments):
 func ws_showlist(script, arguments):
 	var list_menu = main.get_tree().get_nodes_in_group(Commands.LIST_GROUP)
 	if not list_menu:
-		main.log_error("Couldn't find list menu to show")
+		GlobalErrors.log_error("Couldn't find list menu to show", {"script": script})
 		return
 	return list_menu[0]
 	

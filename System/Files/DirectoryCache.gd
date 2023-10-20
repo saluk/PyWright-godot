@@ -68,13 +68,20 @@ func create_game_cache(game_path, paths=[]):
 	
 func save_game_file_index(game_path):
 	var game_file_index = File.new()
-	game_file_index.open(Filesystem.path_join(game_path,"files.index"), File.WRITE)
+	if game_file_index.open(Filesystem.path_join(game_path,"files.index"), File.WRITE) != OK:
+		return "no index can be saved"
 	game_file_index.store_line(to_json(indexes[game_path]))
 	game_file_index.close()
 
 func has_file(file:String):
 	var game
-	if "res://tests" in file:
+	if file.begins_with("/"):
+		# Determine game by which index matches
+		for game_key in indexes:
+			if file.begins_with(game_key):
+				game = game_key
+				break
+	elif "res://tests" in file:
 		game = "res://tests"
 	elif "res://games" in file:
 		game = "res://games/"+file.split("res://games/")[1].split("/")[0]
@@ -82,6 +89,8 @@ func has_file(file:String):
 		game = "res://"
 	if not game in indexes:
 		print("WARNING: no game ", game)
+		print(file)
+		print(indexes.keys())
 		return null
 	var index = indexes[game]
 	if not file.to_lower() in index:

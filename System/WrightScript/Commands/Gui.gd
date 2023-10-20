@@ -33,7 +33,7 @@ func gui_button(script, arguments):
 		arguments
 	)
 	if not button:
-		main.log_error("Couldn't create button")
+		GlobalErrors.log_error("Couldn't create button", {"script": script})
 
 class GuiWait:
 	var wait_signal = "DONE_WAITING"
@@ -77,7 +77,7 @@ func ws_gui(script, arguments):
 		return
 	var guitype = arguments.pop_front()
 	if not has_method("gui_"+guitype.to_lower()):
-		return main.log_error("Invalid type for gui - "+guitype)
+		return GlobalErrors.log_error("Invalid type for gui - "+guitype, {"script": script})
 	return callv("gui_"+guitype.to_lower(), [script, arguments])
 
 # NEW (internal)

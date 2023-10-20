@@ -362,7 +362,7 @@ func create_from_template(
 		parent = Commands.get_objects(parent_name)
 		if not parent:
 			parent = script.screen
-			script.screen.log_error("Failed to find parent:"+parent_name)
+			GlobalErrors.log_error("Failed to find parent:"+parent_name, {"frame": script.get_frame(null)})
 		else:
 			parent = parent[0]
 	parent.add_child(object)

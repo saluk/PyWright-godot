@@ -46,19 +46,23 @@ func has_script(scene_name) -> String:
 		if found:
 			return found
 	return ""
+	
+func fullpath() -> String:
+	return Filesystem.path_join(root_path, filename)
 
 func load_txt_file(path:String):
 	lines = []
-	if not "res://" in path:
-		path = "res://" + path
 	root_path = path.get_base_dir()+"/"
 	filename = path.get_file()
 	var f = File.new()
 	var err = f.open(path, File.READ)
+	var buffer := ""
 	if err == OK:
-		while not f.eof_reached():
-			lines.append(f.get_line())
+		buffer = f.get_as_text(false)
 		f.close()
+		buffer = buffer.replace("\r\n", "\n")
+		buffer = buffer.replace("\r", "\n")
+		lines = buffer.split("\n")
 		preprocess_lines()
 	else:
 		print("Error loading wrightscript file ", path)
@@ -183,7 +187,7 @@ func goto_label(label, fail=null):
 			if stack.scripts:
 				emit_signal("GOTO_RESULT")
 				return stack.scripts[-1].goto_label(label, fail)
-		main.log_error("Tried to go somewhere non existent "+label)
+		GlobalErrors.log_error("Tried to go somewhere non existent "+label, {"script": self})
 		allow_next_line = true
 		return
 	# Try to go to next line number
@@ -281,7 +285,7 @@ func read_macro():
 	# Start macro
 	var macro_name = lines[line_num].split(" ", true, 1)[1]
 	if macro_name.length() <= 0:
-		main.log_error("Macro has no name")
+		GlobalErrors.log_error("Macro has no name", {"script": self})
 		return
 	var macro_lines = []
 	line_num += 1
@@ -315,6 +319,9 @@ class Frame:
 			var spl = Array(line.split(" "))
 			command = spl.pop_front()
 			args = spl
+			
+func get_frame(sig):
+	return Frame.new(self, line_num, line, sig)
 		
 func process_wrightscript() -> Frame:
 	allow_next_line = true
@@ -342,7 +349,7 @@ func process_wrightscript() -> Frame:
 	print("SIGNAL:", sig)
 	if sig == null:
 		sig = Commands.NEXTLINE
-	return Frame.new(self, line_num, line, sig)
+	return get_frame(sig)
 	
 func to_string():
 	var l = ""

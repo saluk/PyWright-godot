@@ -34,8 +34,8 @@ static func _lookup_file(sub_path:String, current_path:String, exts=[]):
 				return found_ext
 		return null
 
-	# find sub_path in current path OR up the folders
-	if not current_path.begins_with("res://"):
+	# find sub_path in current path OR up the folders, or look in res://
+	if not (current_path.begins_with("res://") or current_path.begins_with("/")):
 		current_path = "res://"+current_path
 	while 1:
 		print("DEBUG search ", sub_path, " at ", current_path)
@@ -43,14 +43,20 @@ static func _lookup_file(sub_path:String, current_path:String, exts=[]):
 		if joined_exists:
 			print("returning found:", joined_exists)
 			return joined_exists
+		# TODO if current path isn't keyed off of res, we will search the whole filesystem
+		# Really, we need 3 paths - the base folder, the current folder search, and the filename
+		# And don't search earlier than the base folder
 		if not "/" in current_path and current_path and current_path!=".":
 			current_path = "res://"
 			continue
-		if not current_path or current_path == "res://":
+		#if current_path == "/":
+		#	current_path = "res://"
+		#	continue
+		if current_path == "res://":
 			print("returning not found")
 			return null
 		current_path = current_path.rsplit("/", true, 1)[0]
-		if current_path in ["res", "res:", "res:/"]:
+		if current_path in ["res", "res:", "res:/", ""]:
 			current_path = "res://"
 		
 static func load_resource(path:String):
