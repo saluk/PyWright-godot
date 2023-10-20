@@ -75,7 +75,13 @@ func ws_setprop(script, arguments):
 #        value = random.randint(int(start),int(end))
 #        assets.variables[variable]=str(value)
 func ws_random(script, arguments):
-	pass
+  var custom_seed = randi() % 1000000
+  var key = arguments.pop_front()
+  var minimum = arguments.pop_front()
+  var maximum = arguments.pop_front()
+  seed(custom_seed)
+  var random_integer = randi() % (maximum - minimum  + 1) + minimum 
+  main.stack.variables.set_val(key, random_integer)
 
 func ws_joinvar(script, arguments):
 	var key = arguments.pop_front()
