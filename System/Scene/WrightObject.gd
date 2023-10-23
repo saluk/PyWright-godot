@@ -81,10 +81,14 @@ func get_height():
 
 func free_members():
 	sprite_key = ""
+	# Current sprite *should* be cleared as its in the tree but just in case
+	if current_sprite:
+		current_sprite.queue_free()
+		current_sprite = null
 	for sprite in sprites.values():
-		sprite.queue_free()
+		if not sprite.is_queued_for_deletion():
+			sprite.queue_free()
 	sprites.clear()
-	current_sprite = null
 
 func queue_free():
 	print("queuing pwchar "+name)
@@ -111,6 +115,10 @@ var sprite_paths_searched = []
 #  animation_mode: loop, once, blink, talk, ...
 func add_sprite(sprite_key, sprite_template):
 	print("BEGIN SPRITE SEARCH: ", sprite_key, " ", sprite_template)
+	# Ensure if we call add_sprite again for the same key we don't leave a reference
+	if sprite_key in sprites:
+		sprites[sprite_key].free()
+
 	if not sprite_template["path"]:
 		return
 	var search_path = sprite_template["path"].format({

@@ -79,7 +79,6 @@ func step():
 		
 func rebuild():
 	for child in node_scripts.get_children():
-		node_scripts.remove_child(child)
 		child.queue_free()
 	scripts = []
 	var i = 0
@@ -101,7 +100,6 @@ func rebuild():
 		i += 1
 	while scripts.size() > current_stack.scripts.size():
 		var last = scripts.pop_back()
-		node_scripts.remove_child(last["editor"])
 		last["editor"].queue_free()
 	if scripts:
 		node_scripts.current_tab = 0

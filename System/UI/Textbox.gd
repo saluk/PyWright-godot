@@ -111,6 +111,7 @@ class CommandPack extends TextPack:
 			"wait", "center", "type", "next", "tbon", "tboff", 
 			"e", "f", "s", "p", "c", "$"
 		]:
+			# TODO because of single letter items, we may not allow macros that start with those letters
 			if self.command_args.begins_with(command):
 				args = self.command_args.substr(command.length()).strip_edges()
 				if args:
@@ -327,7 +328,7 @@ func click_continue(immediate_skip=false):
 		# - which means the script will process removing objects before new objects are created
 		# - So we force it to be removed from the tree which will signal to unblock the script
 		clean_up()
-		get_parent().remove_child(self)
+		queue_free()
 		
 func click_next():
 	main.stack.scripts[-1].next_statement()
