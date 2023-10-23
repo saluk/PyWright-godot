@@ -40,11 +40,16 @@ func _load_audio_stream(path):
 		# Somewhere determine whether or not to loop the sound
 		var next_player:AudioStreamPlayer = get_free_player()
 		next_player.stream = stream
-		next_player.volume_db = linear2db(SOUND_VOLUME)
+		next_player.volume_db = linear2db(SOUND_VOLUME * Configuration.user.global_volume)
 		next_player.play(0)
 		next_player.name = path
 		next_player.path = path
 		return next_player
+
+func alter_volume():
+	for player in players:
+		if player.playing:
+			player.volume_db = linear2db(SOUND_VOLUME * Configuration.user.global_volume)
 		
 func get_free_player() -> AudioStreamPlayer:
 	for check_player in players:

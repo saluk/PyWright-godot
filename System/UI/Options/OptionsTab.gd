@@ -8,6 +8,10 @@ func _ready():
 	$vbox/Debugger.connect("button_up", self, "_debugger")
 	$vbox/Framelog.connect("button_up", self, "_framelog")
 	
+	$vbox/HBoxContainer/VolumeSlider.value = Configuration.user.global_volume * 100
+	$vbox/HBoxContainer/VolumeSlider.connect("value_changed", self, "_volume_changed")
+	
+	
 func _main_menu():
 	main.reload()
 
@@ -39,3 +43,8 @@ func _framelog():
 		$vbox/Framelog.text = "Disable Framelog"
 	else:
 		$vbox/Framelog.text = "Enable Framelog"
+
+func _volume_changed(val):
+	Configuration.user.global_volume = float(val/100.0)
+	Configuration.save_config()
+	MusicPlayer.alter_volume()

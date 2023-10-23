@@ -37,8 +37,11 @@ func _load_audio_stream(path):
 		SoundFileCache.set_get_cached([path], stream)
 	if stream:
 		audio_player.stream = stream
-		audio_player.volume_db = linear2db(MUSIC_VOLUME)
+		audio_player.volume_db = linear2db(MUSIC_VOLUME * Configuration.user.global_volume)
 		audio_player.play(0)
+		
+func alter_volume():
+	audio_player.volume_db = linear2db(MUSIC_VOLUME * Configuration.user.global_volume)
 
 func stop_music():
 	playing = false
