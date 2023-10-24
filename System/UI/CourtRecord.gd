@@ -14,10 +14,12 @@ var page_label:Label
 
 var has_objects = false
 
+func _init():
+	save_properties.append("in_presentation_context")
+
 func _ready():
 	script_name = "evidence_menu"
 	wait_signal = "tree_exited"
-	cannot_save = true
 
 func can_present():
 	# TODO tie this to variables
@@ -405,3 +407,9 @@ func check(evname, check_script):
 	#queue_free()
 
 # TODO implement check
+
+
+#SAVE/LOAD
+func load_node(tree:SceneTree, saved_data:Dictionary):
+	reset()
+	.load_node(tree, saved_data)

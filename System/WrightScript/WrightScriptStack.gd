@@ -375,7 +375,7 @@ func after_load(tree, saved_data:Dictionary):
 			elif blocker["type"] == "Node":
 				var n = main.get_tree().root.get_node(blocker["node_path"])
 				if n:
-					blockers.append(n)
+					add_blocker(main.top_script(), n, true)
 	if "blocked_scripts" in saved_data:
 		for script in scripts:
 			if script.u_id in saved_data["blocked_scripts"]:

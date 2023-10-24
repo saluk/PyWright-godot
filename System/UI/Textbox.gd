@@ -3,6 +3,7 @@ extends Node2D
 var main
 var nametag := ""
 var text_to_print := ""
+var created_packs = false
 var packs := []
 var printed := ""
 var has_finished := false
@@ -313,13 +314,13 @@ func clean_up():
 	
 func finish_text():
 	var while_loops = 0
-	while (text_to_print or packs) and while_loops < MAX_WHILE:
+	while (not created_packs or packs) and while_loops < MAX_WHILE:
 		update_textbox(0, true)
 	if while_loops >= MAX_WHILE:
 		pass
 			
 func click_continue(immediate_skip=false):
-	if not immediate_skip and (text_to_print or packs):
+	if not immediate_skip and packs:
 		finish_text()
 	else:
 		# when we advance text from script we:
@@ -328,6 +329,7 @@ func click_continue(immediate_skip=false):
 		# - which means the script will process removing objects before new objects are created
 		# - So we force it to be removed from the tree which will signal to unblock the script
 		clean_up()
+		get_parent().remove_child(self)
 		queue_free()
 		
 func click_next():
@@ -338,22 +340,22 @@ func click_prev():
 	main.stack.scripts[-1].prev_statement()
 	click_continue(true)
 		
-func get_next_pack(text_to_print, connect_signals=false):
+func get_next_pack(text, connect_signals=false):
 	var i = 0
 	var pack = ""
 	var found_bracket = false
 	var while_loops = 0
-	while (i < text_to_print.length() and while_loops < MAX_WHILE):
-		var c = text_to_print[i]
+	while (i < text.length() and while_loops < MAX_WHILE):
+		var c = text[i]
 		pack += c
 		if not found_bracket and i == 0 and c == '{':
 			found_bracket = true
 			i += 1
 			continue
 		if found_bracket and i != 0 and c == '}':
-			return [CommandPack.new(pack.substr(1, pack.length()-2), self, connect_signals),text_to_print.substr(i+1)]
+			return [CommandPack.new(pack.substr(1, pack.length()-2), self, connect_signals),text.substr(i+1)]
 		if not found_bracket and i > 0 and c == '{':
-			return [TextPack.new(pack.left(pack.length()-1), self, connect_signals),text_to_print.substr(i)]
+			return [TextPack.new(pack.left(pack.length()-1), self, connect_signals),text.substr(i)]
 		i += 1
 	if while_loops >= MAX_WHILE:
 		pass
@@ -361,19 +363,19 @@ func get_next_pack(text_to_print, connect_signals=false):
 	
 
 
-func tokenize_text(text_to_print, connect_signals=false):
+func tokenize_text(text, connect_signals=false):
 	var next_pack
 	var packs = []
-	var v = get_next_pack(text_to_print, connect_signals)
+	var v = get_next_pack(text, connect_signals)
 	next_pack = v[0]
-	text_to_print = v[1]
+	text = v[1]
 	var while_loops = 0
-	while text_to_print and while_loops < MAX_WHILE:
+	while text and while_loops < MAX_WHILE:
 		while_loops += 1
 		packs.append(next_pack)
-		v = get_next_pack(text_to_print, connect_signals)
+		v = get_next_pack(text, connect_signals)
 		next_pack = v[0]
-		text_to_print = v[1]
+		text = v[1]
 	if while_loops >= MAX_WHILE:
 		pass
 	packs.append(next_pack)
@@ -394,10 +396,10 @@ func strip_bbcode(source:String) -> String:
 	return ret
 
 func update_textbox(dt:float, force = false):
-	if not packs and text_to_print:
+	if not packs and not created_packs:
 		packs = tokenize_text(text_to_print, true)
 		$Backdrop/Label.visible_characters = 0
-		text_to_print = ""
+		created_packs = true
 	if packs:
 		# TODO we shouldn't set talking until actually printing out text
 		_set_speaking_animation("talk")
@@ -419,3 +421,28 @@ func trigger_text_end_events():
 func _process(dt):
 	update_nametag()
 	update_textbox(dt)
+
+
+
+# SAVE/LOAD
+var save_properties = [
+	"text_to_print",
+	"z",
+	"characters_per_update",
+	"ticks_per_update",
+	"override_sound"
+]
+func save_node(data):
+	data["loader_class"] = "res://System/UI/Textbox.gd"
+
+static func create_node(saved_data:Dictionary):
+	var ob = load("res://System/UI/Textbox.tscn").instance()
+	ob.text_to_print = saved_data["text_to_print"]
+	return ob
+	
+func load_node(tree, saved_data:Dictionary):
+	main = tree.get_nodes_in_group("Main")[0]
+	ScreenManager.top_screen().add_child(self)
+
+func after_load(tree:SceneTree, saved_data:Dictionary):
+	pass
