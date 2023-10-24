@@ -366,7 +366,7 @@ func end():
 	line_num = len(lines)-1
 
 
-
+#Save/Load
 var save_properties = [
 	"root_path", "filename", "lines", "labels",
 	# "variables",

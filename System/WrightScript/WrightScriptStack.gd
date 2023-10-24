@@ -213,7 +213,7 @@ func force_clear_blockers():
 	for obj in blockers:
 		if is_instance_valid(obj) and obj is SceneTreeTimer:
 			pass
-		else:
+		elif obj:
 			obj.queue_free()
 	blockers = []
 	for scr in blocked_scripts:
@@ -374,8 +374,11 @@ func after_load(tree, saved_data:Dictionary):
 				pass # todo implement
 			elif blocker["type"] == "Node":
 				var n = main.get_tree().root.get_node(blocker["node_path"])
-				blockers.append(n)
+				if n:
+					blockers.append(n)
 	if "blocked_scripts" in saved_data:
 		for script in scripts:
 			if script.u_id in saved_data["blocked_scripts"]:
 				blocked_scripts.append(script)
+	if blocked_scripts and not blockers:
+		force_clear_blockers()

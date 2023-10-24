@@ -17,6 +17,7 @@ var has_objects = false
 func _ready():
 	script_name = "evidence_menu"
 	wait_signal = "tree_exited"
+	cannot_save = true
 
 func can_present():
 	# TODO tie this to variables
@@ -39,6 +40,7 @@ func _process(dt):
 		[evbg_path],
 		script_name
 	)
+	bg.cannot_save = true
 	
 	# Ensure interface doesn't allow clicks below it
 	# TODO - it's weird to have to make guis to block things off, should be
@@ -89,6 +91,7 @@ func load_back_button():
 		[],
 		script_name
 	)
+	back_button.cannot_save = true
 	back_button.position = Vector2(
 		0,
 		192-back_button.height
@@ -128,6 +131,7 @@ func load_page_button():
 		[], 
 		script_name
 	)
+	b.cannot_save = true
 	b.position = Vector2(256-b.width, 0)
 	var l = Label.new()
 	Fonts.set_element_font(l, "itemset_big", stack)
@@ -156,6 +160,7 @@ func load_arrow(direction):
 		[], 
 		script_name
 	)
+	b.cannot_save = true
 	b.position = pos
 	
 func ws_record_click_direction(script, arguments):
@@ -259,6 +264,7 @@ func load_page_zoom():
 				[], 
 				script_name
 			)
+			present_button.cannot_save = true
 			present_button.position = Vector2(100,0)
 		
 		load_check_button(evname)
@@ -286,6 +292,7 @@ func load_check_button(evname):
 		[],
 		script_name
 	)
+	check_button.cannot_save = true
 	check_button.position = Vector2(256-check_button.width, 192-check_button.height)
 	pass
 
@@ -339,6 +346,7 @@ func load_page_overview():
 			[], 
 			script_name
 		)
+		ev_button.cannot_save = true
 		ev_button.position = Vector2(x, y)
 		if ev_button.current_sprite:
 			ev_button.current_sprite.rescale(
