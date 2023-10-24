@@ -47,6 +47,8 @@ func _init(main):
 signal stack_empty
 signal enter_debugger
 signal line_executed   # emit when any script executes a line
+signal script_added
+signal script_removed
 
 var macro_scripts_found = 0
 
@@ -109,16 +111,17 @@ func init_game(path, init_script="intro.txt"):
 	#		 from the parent folder as well
 	load_script(path+"/"+init_script)
 	if not scripts[-1].lines.size():
-		add_script("casemenu")
-		scripts[-1].root_path = path
+		add_script("casemenu", path)
 	run_macro_set(run_macros_on_game_start)
 	if not macro_scripts_found:
 		print("MACRO ERROR")
 	
-func add_script(script_text):
+func add_script(script_text, root_path="res://"):
 	var new_script = WrightScript.new(main, self)
 	new_script.load_string(script_text)
+	new_script.root_path = root_path
 	scripts.append(new_script)
+	emit_signal("script_added")
 	return new_script
 	
 func load_script(script_path):
@@ -128,17 +131,20 @@ func load_script(script_path):
 	var new_script = WrightScript.new(main, self)
 	new_script.load_txt_file(script_path)
 	scripts.append(new_script)
+	emit_signal("script_added")
 	return new_script
 	
 func remove_script(script):
 	if script in scripts:
 		scripts.erase(script)
+		emit_signal("script_removed")
 		script.end()
 		
 func clear_scripts():
 	while scripts:
 		scripts[0].end()
 		scripts.erase(scripts[0])
+		emit_signal("script_removed")
 		
 func show_in_debugger():
 	if not main or not main.get_tree():
@@ -162,13 +168,17 @@ func show_frame(frame, begin=false):
 func clean_scripts():
 	"""Remove any scripts that should be ended"""
 	var newscripts = []
+	var removal = false
 	for scr in scripts:
 		if scr.line_num >= scr.lines.size():
 			print("remove script ", scr.filename)
+			removal = true
 		else:
 			newscripts.append(scr)
 	scripts = newscripts
 	ScreenManager.clean(scripts)
+	if removal:
+		emit_signal("script_removed")
 	#show_in_debugger()
 	
 func new_state(state):
@@ -287,6 +297,7 @@ func process():
 			elif frame.sig == Commands.END:
 				if frame.scr in scripts:
 					scripts.erase(frame.scr)
+					emit_signal("script_removed")
 				return new_state(STACK_YIELD)
 			elif frame.sig == Commands.NEXTLINE:
 				frame.scr.next_line()

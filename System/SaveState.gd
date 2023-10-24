@@ -34,7 +34,8 @@ static func save_game(tree:SceneTree, filename:String):
 			nodes.append(child)
 	var file = File.new()
 	print("saving:", objects)
-	file.open(filename, File.WRITE)
+	if file.open(filename, File.WRITE) != OK:
+		print("Couldn't open file for saving")
 	file.store_string(
 		to_json(objects)
 	)
@@ -145,3 +146,63 @@ static func to_node_path(ob:Object):
 	
 static func from_node_path(tree:SceneTree, path:String):
 	return tree.root.get_node(path)
+
+# User facing save functions
+
+static func _get_save_path_name(main):
+	var c_game = main.current_game
+	var root_folder = main.top_script().root_path
+	var game_name = c_game.rsplit("/", true, 1)[1].replace("/","")
+	var script_path_name = root_folder.replace(c_game, "").replace("/","")
+	var save_path_name = ".".join([game_name, script_path_name])
+	if save_path_name.ends_with("."):
+		save_path_name = save_path_name.substr(0, save_path_name.length()-1)
+	return save_path_name
+
+static func load_selected_save_file(main, filename):
+	var save_path_name = _get_save_path_name(main)
+	var full_save_path = "user://game_saves/"+"/".join([save_path_name, filename])
+	load_game(main.get_tree(), full_save_path)
+	
+static func delete_selected_save_file(main, filename):
+	var save_path_name = _get_save_path_name(main)
+	var full_save_path = "user://game_saves/"+"/".join([save_path_name, filename])
+	var d = Directory.new()
+	d.remove(full_save_path)
+	
+static func save_new_file(main):
+	var save_path_name = _get_save_path_name(main)
+	var date = Time.get_datetime_dict_from_system()
+	var new_filename = Time.get_datetime_string_from_datetime_dict(date, true)
+	var full_save_path = "user://game_saves/"+"/".join([save_path_name, new_filename+".save"])
+	save_game(main.get_tree(), full_save_path)
+
+static func get_saved_games_for_current(main):
+	var save_path_name = _get_save_path_name(main)
+	var d
+	d = Directory.new()
+	var path = "user://game_saves"
+	# Ensure save folder exists
+	if not d.dir_exists(path):
+		d.make_dir(path)
+		
+	# Ensure save folder exists for this game
+	path += "/" + save_path_name
+	if not d.dir_exists(path):
+		d.make_dir(path)
+		
+	var save_files = []
+	d = Directory.new()
+	if d.open(path) == OK:
+		d.list_dir_begin()
+		var file_name = d.get_next()
+		while file_name != "":
+			if file_name.begins_with(".") or d.current_is_dir():
+				pass
+			else:
+				save_files.append(file_name)
+			file_name = d.get_next()
+	else:
+		print("An error occurred when trying to access the path %s." % path)
+	save_files.sort()
+	return save_files

@@ -70,7 +70,8 @@ func load_txt_file(path:String):
 func load_string(string:String):
 	lines = []
 	if not root_path:
-		root_path = "res://"
+		#root_path = "res://"
+		root_path = main.current_game+"/"
 	for line in string.split("\n"):
 		lines.append(line)
 	preprocess_lines()

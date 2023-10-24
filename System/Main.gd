@@ -24,6 +24,7 @@ signal before_frame_drawn
 signal frame_drawn
 signal line_executed
 signal text_finished
+signal enable_saveload_buttons
 
 func load_game_from_pack(path):
 	ProjectSettings.load_resource_pack("user://"+path)
@@ -95,6 +96,9 @@ func _ready():
 	else:
 		load_game(path)
 	stack.mode = mode
+	
+	stack.connect("script_added", self, "check_saving_enabled")
+	stack.connect("script_removed", self, "check_saving_enabled")
 		
 func test_eval():
 	stack.variables.set_val("is_true", "true")
@@ -197,25 +201,25 @@ func pause(paused=true, toggle=false):
 		for child in node.get_children():
 			nodes.append(child)
 
-
-# SAVE/LOAD
-var save_properties = [
-	"current_game"
-]
-func save_node(data):
-	data["timecounter.elapsed"] = timecounter.get_current_elapsed_time()
-	data["stack"] = SaveState._save_node(stack)
-
-static func create_node(saved_data:Dictionary):
-	pass
+# Determine whether we are in a savable case
+func is_saving_enabled():
+	if not stack:
+		return false
+	var script:WrightScript = top_script()
+	if not script:
+		return false
+	for line in script.lines:
+		if "casemenu" in line.strip_edges():
+			return false
+	return true
 	
-func load_node(tree, saved_data:Dictionary):
-	load_game(current_game)
-	timecounter.set_elapsed_time(saved_data["timecounter.elapsed"])
-	SaveState._load_node(tree, stack, saved_data["stack"])
+func check_saving_enabled():
+	if is_saving_enabled():
+		emit_signal("enable_saveload_buttons", true)
+	else:
+		emit_signal("enable_saveload_buttons", false)
 
-func after_load(tree, saved_data:Dictionary):
-	stack.state = stack.STACK_READY
+# OPTIONS
 
 func _toggle_button(state):
 	if state:
@@ -235,3 +239,22 @@ func hide_tabs():
 		var x = get_viewport_rect().size.x/2
 		$Screens.rect_position.x = x-$Screens.rect_size.x/2
 		tab_button.rect_position.x = $Screens.rect_position.x+$Screens.rect_size.x
+
+# SAVE/LOAD
+var save_properties = [
+	"current_game"
+]
+func save_node(data):
+	data["timecounter.elapsed"] = timecounter.get_current_elapsed_time()
+	data["stack"] = SaveState._save_node(stack)
+
+static func create_node(saved_data:Dictionary):
+	pass
+	
+func load_node(tree, saved_data:Dictionary):
+	load_game(current_game)
+	timecounter.set_elapsed_time(saved_data["timecounter.elapsed"])
+	SaveState._load_node(tree, stack, saved_data["stack"])
+
+func after_load(tree, saved_data:Dictionary):
+	stack.state = stack.STACK_READY

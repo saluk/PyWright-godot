@@ -98,7 +98,7 @@ func ws_script(script, arguments, script_text=null):
 	var path = Commands.join(arguments)
 	var scr
 	if script_text:
-		scr = main.stack.add_script(script_text)
+		scr = main.stack.add_script(script_text, script.root_path)
 	else:
 		path = script.has_script(path)
 		if path:

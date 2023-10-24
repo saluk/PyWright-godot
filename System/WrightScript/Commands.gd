@@ -256,8 +256,7 @@ func call_macro(macro_name, script, arguments):
 			main.stack.variables.set_val(str(i), arg)
 		i += 1
 	var script_lines = main.stack.macros[command]
-	var new_script = main.stack.add_script(PoolStringArray(script_lines).join("\n"))
-	new_script.root_path = script.root_path
+	var new_script = main.stack.add_script(PoolStringArray(script_lines).join("\n"), script.root_path)
 	new_script.filename = "{"+command+"}"
 	# TODO not sure if this is how to handle macros that try to goto
 	new_script.allow_goto_parent_script = true

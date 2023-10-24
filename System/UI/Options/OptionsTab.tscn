@@ -12,26 +12,26 @@ theme = ExtResource( 1 )
 script = ExtResource( 2 )
 
 [node name="vbox" type="VBoxContainer" parent="."]
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-margin_top = -49.0
-margin_bottom = 49.0
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -91.0
+margin_right = 91.0
 
 [node name="Main options" type="Label" parent="vbox"]
-margin_right = 250.0
+margin_right = 182.0
 margin_bottom = 8.0
 text = "Main Options"
 
 [node name="MainMenu" type="Button" parent="vbox"]
 margin_top = 12.0
-margin_right = 250.0
+margin_right = 182.0
 margin_bottom = 26.0
 text = "Main Menu (abandon current game)"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="vbox"]
 margin_top = 30.0
-margin_right = 250.0
+margin_right = 182.0
 margin_bottom = 46.0
 
 [node name="Label" type="Label" parent="vbox/HBoxContainer"]
@@ -48,24 +48,74 @@ rect_min_size = Vector2( 150, 0 )
 
 [node name="MarginContainer" type="MarginContainer" parent="vbox"]
 margin_top = 50.0
-margin_right = 250.0
+margin_right = 182.0
 margin_bottom = 60.0
 rect_min_size = Vector2( 0, 10 )
 
-[node name="Tools" type="Label" parent="vbox"]
+[node name="SaveLoad" type="VBoxContainer" parent="vbox"]
 margin_top = 64.0
-margin_right = 250.0
-margin_bottom = 72.0
+margin_right = 182.0
+margin_bottom = 172.0
+alignment = 1
+
+[node name="Saves" type="Label" parent="vbox/SaveLoad"]
+margin_right = 182.0
+margin_bottom = 8.0
+text = "Saved Games"
+
+[node name="New Save" type="Button" parent="vbox/SaveLoad"]
+margin_top = 12.0
+margin_right = 182.0
+margin_bottom = 26.0
+disabled = true
+text = "Save New State"
+
+[node name="AvailableSaves" type="ItemList" parent="vbox/SaveLoad"]
+margin_top = 30.0
+margin_right = 182.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 0, 60 )
+size_flags_vertical = 3
+size_flags_stretch_ratio = 7.31
+items = [ "test1", null, false, "test 2", null, false ]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="vbox/SaveLoad"]
+margin_top = 94.0
+margin_right = 182.0
+margin_bottom = 108.0
+
+[node name="Load Selected Save" type="Button" parent="vbox/SaveLoad/HBoxContainer"]
+margin_right = 82.0
+margin_bottom = 14.0
+disabled = true
+text = "Load Selected Save"
+
+[node name="Delete Selected Save" type="Button" parent="vbox/SaveLoad/HBoxContainer"]
+margin_left = 86.0
+margin_right = 122.0
+margin_bottom = 14.0
+text = "Delete"
+
+[node name="MarginContainer2" type="MarginContainer" parent="vbox"]
+margin_top = 176.0
+margin_right = 182.0
+margin_bottom = 186.0
+rect_min_size = Vector2( 0, 10 )
+
+[node name="Tools" type="Label" parent="vbox"]
+margin_top = 190.0
+margin_right = 182.0
+margin_bottom = 198.0
 text = "Tools"
 
 [node name="Debugger" type="Button" parent="vbox"]
-margin_top = 76.0
-margin_right = 250.0
-margin_bottom = 90.0
+margin_top = 202.0
+margin_right = 182.0
+margin_bottom = 216.0
 text = "Enable Debugger"
 
 [node name="Framelog" type="Button" parent="vbox"]
-margin_top = 94.0
-margin_right = 250.0
-margin_bottom = 108.0
+margin_top = 220.0
+margin_right = 182.0
+margin_bottom = 234.0
 text = "Enable Framelog"
