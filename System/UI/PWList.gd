@@ -5,6 +5,7 @@ var scene_name:String
 var back_button
 var choice_art
 var choice_high_art
+var _items = []
 
 var button_y = 30
 
@@ -12,6 +13,9 @@ var allow_back_button = true
 var fail = "none"
 
 # TODO figure out how we decide whther to show the back button or not
+
+func _init():
+	save_properties += ["scene_name", "allow_back_button", "fail", "_items"]
 
 func _ready():
 	script_name = "listmenu"
@@ -32,6 +36,7 @@ func update():
 			["name=back"],
 			script_name
 		)
+		back_button.cannot_save = true
 		back_button.position = Vector2(
 			0,
 			192-back_button.height
@@ -39,6 +44,7 @@ func update():
 	.update()
 	
 func add_item(text, result):
+	_items.append([text, result])
 	var button = ObjectFactory.create_from_template(
 		get_tree().root.get_node("Main").top_script(),
 		"button",
@@ -53,6 +59,7 @@ func add_item(text, result):
 		["name="+text],
 		script_name
 	)
+	button.cannot_save = true
 	button.position = Vector2((256-button.width)/2, button_y)
 	button_y += button.height+5
 	var button_label := Label.new()
@@ -76,3 +83,13 @@ func ws_click_list_item(script, arguments):
 			]
 		)
 		queue_free()
+
+
+#SAVE/LOAD
+func after_load(tree:SceneTree, saved_data:Dictionary):
+	var copy_items = _items.duplicate()
+	_items = []
+	for item in copy_items:
+		add_item(item[0], item[1])
+	.after_load(tree, saved_data)
+	update()
