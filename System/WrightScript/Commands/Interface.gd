@@ -20,7 +20,7 @@ func ws_menu(script, arguments):
 			(not kw and script.has_script(menu_name+"."+option))
 			or option in kw
 		):
-			menu.add_option(option)
+			menu.enabled_options.append(option)
 	# As we end the current script, the scene is changing
 	main.stack.run_macro_set(main.stack.run_macros_on_scene_change)
 	script.end()
@@ -61,7 +61,7 @@ func ws_localmenu(script, arguments):
 	)
 	for option in ["examine", "move", "talk", "present"]:
 		if WSExpression.string_to_bool(kw.get(option, "false")):
-			menu.add_option(option)
+			menu.enabled_options.append(option)
 	menu.fail_label = kw.get("fail", "none")
 	return menu
 

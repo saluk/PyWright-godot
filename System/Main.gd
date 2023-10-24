@@ -258,3 +258,4 @@ func load_node(tree, saved_data:Dictionary):
 
 func after_load(tree, saved_data:Dictionary):
 	stack.state = stack.STACK_READY
+	stack.after_load(tree, saved_data["stack"])

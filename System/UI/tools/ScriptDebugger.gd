@@ -139,6 +139,7 @@ func update_current_stack(stack):
 			scripts[i]["editor"].set_line_as_bookmark(scripts[i]["bookmark_line"], false)
 		scripts[i]["editor"].set_line_as_bookmark(to_line, true)
 		scripts[i]["bookmark_line"] = to_line
+		node_scripts.set_tab_title(i, scripts[i]["script"].filename)
 
 
 # TODO Whoops, I'm hooking up an event to control rather than to the script editor

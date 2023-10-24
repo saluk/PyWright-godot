@@ -31,6 +31,7 @@ var click_area  # S
 var button # S
 
 var template:Dictionary # Remember the template we were initialized with, useful for save/load
+var cannot_save = false
 
 # Positioning
 var z:int
@@ -366,3 +367,8 @@ func after_load(tree:SceneTree, saved_data:Dictionary):
 				wrightscript = script
 				return
 	print("error no script id found")
+	# TODO we really should be air-tight in associating scripts correctly
+	# but we can ensure things dont break by adding us to the top script
+	# I think this happens because "wrightscript" is a reference, 
+	# and that script can actually be gone from the stack when the object is saved
+	wrightscript = tree.get_nodes_in_group("Main")[0].top_script()

@@ -155,12 +155,6 @@ func get_nametag():
 	if character:
 		nametag = character.char_name
 	return nametag
-	
-func _input(event):
-	if event and event.is_action_pressed("quickload"):
-		SaveState.load_game(get_tree(), "user://mysave.txt")
-	if event and event.is_action_pressed("quicksave"):
-		SaveState.save_game(get_tree(), "user://mysave.txt")
 
 # Call interface
 

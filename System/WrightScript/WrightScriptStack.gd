@@ -179,7 +179,7 @@ func clean_scripts():
 	ScreenManager.clean(scripts)
 	if removal:
 		emit_signal("script_removed")
-	#show_in_debugger()
+	show_in_debugger()
 	
 func new_state(state):
 	self.state = state
@@ -338,12 +338,29 @@ func save_node(data):
 		saved_scripts.append(SaveState._save_node(script))
 	data["scripts"] = saved_scripts
 	data["variables"] = SaveState._save_node(variables)
+	# blocked scripts
+	data["blockers"] = []
+	for blocker in blockers:
+		if not is_instance_valid(blocker):
+			continue
+		if blocker is SceneTreeTimer:
+			data["blockers"].append({"type": "SceneTreeTimer", "time_left":blocker.time_left})
+		else:
+			data["blockers"].append({"type": "Node", "node_path": blocker.get_path()})
+	data["blocked_scripts"] = []
+	for script in blocked_scripts:
+		data["blocked_scripts"].append(script.u_id)
 
 static func create_node(saved_data:Dictionary):
 	pass
 	
 func load_node(tree, saved_data:Dictionary):
+	pass
+
+func after_load(tree, saved_data:Dictionary):
 	scripts.clear()
+	blockers = []
+	blocked_scripts = []
 	# Add a script and copy its state
 	for script_data in saved_data["scripts"]:
 		var script = WrightScript.new(main, self)
@@ -351,6 +368,14 @@ func load_node(tree, saved_data:Dictionary):
 		scripts.append(script)
 	SaveState._load_node(tree, variables, saved_data["variables"])
 	#show_in_debugger()
-
-func after_load(tree, saved_data:Dictionary):
-	pass  # Not called
+	if "blockers" in saved_data:
+		for blocker in saved_data["blockers"]:
+			if blocker["type"] == "SceneTreeTimer":
+				pass # todo implement
+			elif blocker["type"] == "Node":
+				var n = main.get_tree().root.get_node(blocker["node_path"])
+				blockers.append(n)
+	if "blocked_scripts" in saved_data:
+		for script in scripts:
+			if script.u_id in saved_data["blocked_scripts"]:
+				blocked_scripts.append(script)

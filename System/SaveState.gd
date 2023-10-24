@@ -44,7 +44,9 @@ static func save_game(tree:SceneTree, filename:String):
 static func _save_node(node):
 	if node.has_method("save_node"):
 		var save = {}
-		var cannot_save = node.save_node(save)
+		var cannot_save = node.get("cannot_save")
+		if not cannot_save:
+			cannot_save = node.save_node(save)
 		if not cannot_save:
 			# Non nodes will have to be restored to the tree outisde this script
 			if node.has_method("get_path"):
@@ -136,8 +138,10 @@ static func load_game(tree:SceneTree, filename:String):
 		else:
 			continue
 		_load_node(tree, ob, ob_data)
-		after_load.append(ob)
+		after_load.append([ob, ob_data])
 		tree.connect("idle_frame", ob, "after_load", [tree, ob_data], tree.CONNECT_ONESHOT)
+	#for ob_data_arr in after_load:
+	#	ob_data_arr[0].after_load(tree, ob_data_arr[1])
 
 static func to_node_path(ob:Object):
 	if not ob:
