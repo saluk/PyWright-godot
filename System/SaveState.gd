@@ -156,7 +156,11 @@ static func from_node_path(tree:SceneTree, path:String):
 static func _get_save_path_name(main):
 	var c_game = main.current_game
 	var root_folder = main.top_script().root_path
-	var game_name = c_game.rsplit("/", true, 1)[1].replace("/","")
+	var game_name
+	if "/" in c_game:
+		game_name = c_game.rsplit("/", true, 1)[1].replace("/","")
+	else:
+		game_name = "res://"
 	var script_path_name = root_folder.replace(c_game, "").replace("/","")
 	var save_path_name = ".".join([game_name, script_path_name])
 	if save_path_name.ends_with("."):

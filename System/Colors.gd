@@ -16,7 +16,8 @@ static func string_to_color(text):
 				float(("0x"+text.substr(i*2, 2)).hex_to_int())/255.0
 			)
 	else:
-		assert(false)
+		GlobalErrors.log_error("Invalid color: %s" % text)
+		return Color(1,1,1)
 	return Color(parts[0], parts[1], parts[2])
 
 static func string_to_hex(text):

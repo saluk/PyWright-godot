@@ -48,9 +48,12 @@ func load_game(path):
 	timecounter.reset()
 		
 func load_script_from_path(path):
-	stack.load_script("res://tests/"+path)
-	stack.load_macros_from_path("macros")
+	#stack.load_script("res://tests/"+path)
+	#stack.load_macros_from_path("macros")
+	current_game = "res://tests/"
+	stack.init_game(current_game, path)
 	emit_signal("stack_initialized")
+	timecounter.reset()
 	
 func set_resolution(res:Vector2, scale:float):
 	Engine.target_fps = 60

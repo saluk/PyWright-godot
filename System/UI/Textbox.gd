@@ -14,11 +14,16 @@ var z:int
 # states while printing
 var center = false
 var diffcolor = false
+var lastspeed = null
+var in_paren = ""
 
 var characters_per_update:float = 1.0
 var ticks_per_update:float = 2.0
 var next_ticks_per_update:float = 1.0
 var override_sound = null
+var wait_mode = "auto"   
+# auto - character delay is at full speed for normal characters and half speed for punctuation
+# manual - character delay is always at full speed
 
 var last_text_sound_played = 0.0
 var text_sound_rate = 0.2
@@ -55,6 +60,8 @@ class TextPack:
 		var delta # Number of characters to add to the display
 		var while_loops = 0
 		while (not delta or delta > 1 and leftover) and while_loops < textbox.MAX_WHILE:
+			if not textbox.is_processing() and not force:
+				return
 			while_loops += 1
 			var characters_per_tick = float(textbox.characters_per_update) / float(textbox.ticks_per_update * textbox.next_ticks_per_update)
 			if characters_per_tick < 0.01 or force:
@@ -75,12 +82,9 @@ class TextPack:
 			leftover -= delta
 			# TODO this is pretty hacky - Textbox really needs another rewrite
 			var t = self.textbox.strip_bbcode(self.textbox.printed)
-			if t and t[min(rich_text_label.visible_characters-1,t.length()-1)] == " ":
-				textbox.next_ticks_per_update = 0.1
-			else:
-				textbox.next_ticks_per_update = 1.0
 			if t:
-				textbox.visible = true
+				var c = t[min(rich_text_label.visible_characters-1,t.length()-1)]
+				textbox.process_text_character(c)
 			if force or characters_per_tick <= 0.01:
 				break
 		if while_loops >= textbox.MAX_WHILE:
@@ -172,26 +176,37 @@ class CommandPack extends TextPack:
 				# MULTIPLIED by punctuation delays
 				# -> ticks_per_update
 				# ALSO sets wait mode to manual, which makes actual delay 5 times what was set
-				textbox.ticks_per_update = 5 * float(args[0])
-				print(textbox.ticks_per_update)
+				if not force:
+					textbox.ticks_per_update = 5 * float(args[0])
+					textbox.wait_mode = "manual"
 			"spd":
 				# Set to 0 to make text print instantly
 				# Set to anything else as the number of characters per UPDATE
 				# default 1
 				# -> characters_per_update
-				textbox.characters_per_update = float(args[0])
+				if not force:
+					textbox.characters_per_update = float(args[0])
+			# Mainly intended to be a way for a macro running inside a textbox to return to the textbox
+			# and print out the text again.
+			# TODO Might be able to deprecate fullspeed and endfullspeed
 			"_fullspeed":
-				pass
+				if not force:
+					textbox.lastspeed = textbox.characters_per_update
+					textbox.characters_per_update = 0.0   # will force speed to be instant
 			"_endfullspeed":
-				pass
+				if not force:
+					if textbox.lastspeed != null:
+						textbox.characters_per_update = textbox.lastspeed
 			"wait":  # set wait mode to auto or manual
-				pass
+				if not force:
+					if args[0] in ["auto","manual"]:
+						textbox.wait_mode = args[0]
 			"type":
-				pass
+				textbox.override_sound = "typewriter.ogg"
+				textbox.ticks_per_update = 10
+				textbox.wait_mode = "manual"
 			"next":
 				self.textbox.queue_free()
-			"e":
-				pass
 			"f":
 				Commands.call_command("flash", self.textbox.main.top_script(), args)
 			"s":
@@ -207,6 +222,24 @@ func _on_text_printed():
 	if Time.get_ticks_msec()-last_text_sound_played > text_sound_rate:
 		play_sound()
 		last_text_sound_played = Time.get_ticks_msec()
+		
+func process_text_character(c):
+	var punctuation = main.stack.variables.get_string("_punctuation")
+	if c and not in_paren:
+		_set_speaking_animation("talk")
+	if c == " ":
+		next_ticks_per_update = 0.1
+	elif c in punctuation and wait_mode == "auto":
+		next_ticks_per_update = 2.0
+	elif c in "([":
+		_set_speaking_animation("blink")
+		in_paren = c
+	elif c in "])":
+		_set_speaking_animation("talk")
+		in_paren = ""
+	else:
+		next_ticks_per_update = 1.0
+	visible = true
 
 func play_sound(path=null):
 	if path == null:
@@ -289,7 +322,6 @@ func update_nametag_size():
 func stop_timer():
 	set_process(true)
 	tb_timer.disconnect("timeout", self, "stop_timer")
-	_set_speaking_animation("talk")
 		
 func pause(args, pack):
 	_set_speaking_animation("blink")
@@ -401,8 +433,6 @@ func update_textbox(dt:float, force = false):
 		$Backdrop/Label.visible_characters = 0
 		created_packs = true
 	if packs:
-		# TODO we shouldn't set talking until actually printing out text
-		_set_speaking_animation("talk")
 		packs[0].consume($Backdrop/Label, dt, force)
 		if packs[0].delete:
 			packs.remove(0)
