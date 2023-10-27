@@ -36,8 +36,9 @@ enable_court_record_button
 
 
 label second
-"disable documents page. present profile1 to continue"
+"disable documents page. present profile1 to continue. no back button."
 set _documents_enabled false
+set _cr_back_button false
 showpresent
 label none
 "label none. presented={$_selected}"

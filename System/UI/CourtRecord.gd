@@ -101,7 +101,10 @@ func _process(dt):
 	load_back_button()
 	
 func load_back_button():
-	# TODO only load this if we are allowed
+	# Disable back button in zoomed out view
+	if not zoom:
+		if not stack.variables.get_truth("_cr_back_button", true):
+			return
 	var back_button = ObjectFactory.create_from_template(
 		main.top_script(), 
 		"button",
@@ -124,7 +127,7 @@ func load_back_button():
 func ws_click_back_from_court_record(script, arguments):
 	if zoom:
 		zoom = false
-		offset = int(offset/8)
+		offset = int(offset/8) * 8
 		reset()
 		return
 	stack.variables.set_val("_selected", "")
