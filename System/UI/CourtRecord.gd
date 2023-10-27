@@ -326,21 +326,19 @@ func load_page_overview():
 		ev_db[evname] = {
 			"name": key_name, "desc": key_desc, "pic": key_pic, "check": key_check
 		}
+		var lookup_path = "art/ev/"+key_pic+".png"
 		var ev_path = Filesystem.lookup_file(
 			"art/ev/"+key_pic+".png",
 			self.root_path
 		)
 		if not ev_path:
-			ev_path = Filesystem.lookup_file(
-				"art/ev/envelope.png",
-				self.root_path
-			)
+			lookup_path = "art/ev/envelope.png"
 		var ev_button = ObjectFactory.create_from_template(
 			main.top_script(), 
 			"button", 
 			{
 				"sprites": {
-					"default": {"path":ev_path.replace("res://", "")}
+					"default": {"path":lookup_path}
 				},
 				"click_macro": "{record_zoom_evidence}",
 				"click_args": [evname]
