@@ -24,8 +24,8 @@ var DEFAULTS := {
 	"ev_z_textbox_w": "130",
 	"ev_z_textbox_h": "100",
 	"ev_check_img": "general/check",
+	"ev_arrow_button_img": "general/evidence_arrow_right",
 	"textblock_line_height": "-1",
-	
 	"_ev_pages": "evidence profiles"
 }
 

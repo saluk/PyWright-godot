@@ -1,4 +1,5 @@
 label top
+set ev_arrow_button_img general/new_arrow_right
 set _ev_pages documents profiles
 #set _profiles_present false
 set _allow_present_profiles false

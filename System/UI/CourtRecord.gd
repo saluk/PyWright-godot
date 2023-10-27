@@ -193,7 +193,7 @@ func load_arrow(direction):
 		"button", 
 		{
 				"sprites": {
-					"default": {"path":"art/general/evidence_arrow_right.png"}
+					"default": {"path":"art/%s.png" % stack.variables.get_string("ev_arrow_button_img")}
 				},
 				"mirror": [{"L":-1, "R": 1}[direction], 1],
 				"click_macro": "{record_click_direction}",
