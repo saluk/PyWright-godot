@@ -1,9 +1,11 @@
 label top
 set _ev_pages documents profiles
+#set _profiles_present false
+set _allow_present_profiles false
 set ev_mode_bg_profiles bg/lobby
-"present evidence 2"
 addev evidence1 documents
 set evidence1_desc This is a piece of evidence
+set evidence1_presentable false
 addev evidence2 documents
 set evidence2_desc THE SECOND PIECE OF EVIDENCE
 addev evidence3 documents
@@ -24,6 +26,7 @@ addev profile6$
 addev profile7$
 addev profile8$
 addev profile9$
+"present evidence 2. evidence 1 not presentable."
 showpresent
 label none
 "no label. presented={$_selected}"

@@ -36,8 +36,11 @@ func _ready():
 	verify_pages()
 
 func can_present():
-	# TODO tie this to variables
-	return in_presentation_context
+	var can_present_page_1 = stack.variables.get_truth("_%s_present" % page, true)
+	var can_present_page_2 = stack.variables.get_truth("_allow_present_%s" % page, true)
+	if can_present_page_1 and can_present_page_2:
+		return in_presentation_context
+	return false
 	
 func get_available_pages():
 	var pages = main.stack.variables.get_string("_ev_pages").split(" ")
@@ -287,7 +290,7 @@ func load_page_zoom():
 		desc.autowrap = true
 		add_child(desc)
 		
-		if can_present():
+		if can_present() and stack.variables.get_truth(evname+"_presentable", true):
 			select(evname)
 			var present_button = ObjectFactory.create_from_template(
 				main.top_script(), 
