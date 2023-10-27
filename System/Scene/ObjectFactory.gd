@@ -365,12 +365,13 @@ func create_from_template(
 			GlobalErrors.log_error("Failed to find parent:"+parent_name, {"frame": script.get_frame(null)})
 		else:
 			parent = parent[0]
-	parent.add_child(object)
 	
 	# Initialize object values
 	object.main = get_main()
 	object.wrightscript = script
 	object.stack = get_main().stack
+	
+	parent.add_child(object)
 
 	var x=int(consume_keyword(arguments, "x", template["position"][0]))
 	var y=int(consume_keyword(arguments, "y", template["position"][1]))

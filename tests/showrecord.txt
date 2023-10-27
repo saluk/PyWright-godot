@@ -1,18 +1,20 @@
 label top
+set _ev_pages documents profiles
+set ev_mode_bg_profiles bg/lobby
 "present evidence 2"
-addev evidence1
+addev evidence1 documents
 set evidence1_desc This is a piece of evidence
-addev evidence2
+addev evidence2 documents
 set evidence2_desc THE SECOND PIECE OF EVIDENCE
-addev evidence3
-addev evidence4
-addev evidence5
-addev evidence6
-addev evidence7
-addev evidence8
-addev evidence9
+addev evidence3 documents
+addev evidence4 documents
+addev evidence5 documents
+addev evidence6 documents
+addev evidence7 documents
+addev evidence8 documents
+addev evidence9 documents
 set evidence9_desc this is number nine
-addev evidence10
+addev evidence10 documents
 addev profile1$
 addev profile2$
 addev profile3$
@@ -24,12 +26,22 @@ addev profile8$
 addev profile9$
 showpresent
 label none
-"no label"
+"no label. presented={$_selected}"
 goto top
 
 label evidence2
 enable_court_record_button
 "{$_cr_button}"
 {show_court_record_button}
-"test"
-"test2"
+
+
+label second
+"disable documents page. present profile1 to continue"
+set _documents_enabled false
+showpresent
+label none
+"label none. presented={$_selected}"
+goto second
+
+label profile1$
+"finished

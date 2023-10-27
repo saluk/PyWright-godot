@@ -24,7 +24,9 @@ var DEFAULTS := {
 	"ev_z_textbox_w": "130",
 	"ev_z_textbox_h": "100",
 	"ev_check_img": "general/check",
-	"textblock_line_height": "-1"
+	"textblock_line_height": "-1",
+	
+	"_ev_pages": "evidence profiles"
 }
 
 var global_namespace:Variables

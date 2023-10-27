@@ -17,6 +17,9 @@ var diffcolor = false
 var lastspeed = null
 var in_paren = ""
 
+var last_speaking_character = null
+var last_speaking = ""
+
 var characters_per_update:float = 1.0
 var ticks_per_update:float = 2.0
 var next_ticks_per_update:float = 1.0
@@ -415,8 +418,13 @@ func tokenize_text(text, connect_signals=false):
 
 func _set_speaking_animation(name):
 	var character = Commands.get_speaking_char()
-	if character:
-		character.set_sprite(name)
+	if character != last_speaking_character:
+		last_speaking_character = character
+		last_speaking = ""
+	if name != last_speaking:
+		last_speaking = name
+		if character:
+			character.set_sprite(name)
 		
 func strip_bbcode(source:String) -> String:
 	var regex = RegEx.new()

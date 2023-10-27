@@ -15,16 +15,36 @@ var page_label:Label
 var has_objects = false
 
 func _init():
+	._init()
 	save_properties.append("in_presentation_context")
 
 func _ready():
+	._ready()
 	script_name = "evidence_menu"
 	wait_signal = "tree_exited"
+	verify_pages()
 
 func can_present():
 	# TODO tie this to variables
 	return in_presentation_context
+	
+func get_available_pages():
+	var pages = main.stack.variables.get_string("_ev_pages").split(" ")
+	var pages_return = []
+	for p in pages:
+		if main.stack.variables.get_truth("_%s_enabled" % p, true):
+			pages_return.append(p)
+	return pages_return
+	
+func evidence_name(evidence_tag):
+	return evidence_tag.trim_suffix("$")
 
+func verify_pages():
+	var pages = get_available_pages()
+	if not page in pages:
+		page = pages[0]
+		reset()
+		
 func reset():
 	has_objects = false
 	for child in get_children():
@@ -34,7 +54,9 @@ func _process(dt):
 	if has_objects:
 		return
 	has_objects = true
-	var evbg_path = stack.variables.get_string("ev_mode_bg_evidence")
+	var evbg_path = stack.variables.get_string("ev_mode_bg_"+page)
+	if not evbg_path:
+		evbg_path = stack.variables.get_string("ev_mode_bg_evidence")
 	var bg = ObjectFactory.create_from_template(
 		main.top_script(),
 		"graphic",
@@ -105,10 +127,11 @@ func ws_click_back_from_court_record(script, arguments):
 		offset = int(offset/8)
 		reset()
 		return
+	stack.variables.set_val("_selected", "")
 	queue_free()
 	
 func load_page_button():
-	var pages = stack.evidence_pages.keys()
+	var pages = get_available_pages()
 	if pages.size() == 1:
 		return
 	var cur_i = pages.find(page)
@@ -229,7 +252,7 @@ func load_page_zoom():
 		pic.position = Vector2(x, y)
 		add_child(pic)
 		
-		name_label.text = key_name
+		name_label.text = evidence_name(key_name)
 		
 		# TODO make this a textblock after textblock is implemented
 		var desc = Label.new()
@@ -347,7 +370,7 @@ func load_page_overview():
 			script_name
 		)
 		ev_button.cannot_save = true
-		ev_button.position = Vector2(x, y)
+		ev_button.position = Vector2(x-2, y-2)
 		if ev_button.current_sprite:
 			ev_button.current_sprite.rescale(
 				stack.variables.get_int("ev_small_width"),
@@ -367,7 +390,7 @@ func load_page_overview():
 		
 func highlight_evidence(evname):
 	if not zoom:
-		name_label.text = ev_db[evname]["name"]
+		name_label.text = evidence_name(ev_db[evname]["name"])
 		
 func ws_record_zoom_evidence(script, arguments):
 	var evname = arguments[0]
