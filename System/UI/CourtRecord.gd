@@ -1,8 +1,17 @@
 # TODO - make it save your place, implement the ability to check
 extends WrightObject
 
+var PAGE_SIZE = 8
 var page = "evidence"
+func set_page(new_page):
+	page = new_page
+	stack.variables.set_val("_cr_current_item_set", new_page)
+
 var offset = 0
+func set_offset(new_offset):
+	offset = new_offset
+	stack.variables.set_val("_cr_current_page", str(int(offset / PAGE_SIZE)))
+
 var zoom = false
 
 var ev_db = {}
@@ -22,6 +31,8 @@ func _ready():
 	._ready()
 	script_name = "evidence_menu"
 	wait_signal = "tree_exited"
+	page = stack.variables.get_string("_cr_current_item_set", "evidence")
+	offset = stack.variables.get_int("_cr_current_page", 0) * PAGE_SIZE
 	verify_pages()
 
 func can_present():
@@ -42,7 +53,7 @@ func evidence_name(evidence_tag):
 func verify_pages():
 	var pages = get_available_pages()
 	if not page in pages:
-		page = pages[0]
+		set_page(pages[0])
 		reset()
 		
 func reset():
@@ -127,7 +138,7 @@ func load_back_button():
 func ws_click_back_from_court_record(script, arguments):
 	if zoom:
 		zoom = false
-		offset = int(offset/8) * 8
+		set_offset(int(offset/8) * PAGE_SIZE)
 		reset()
 		return
 	stack.variables.set_val("_selected", "")
@@ -193,7 +204,7 @@ func load_arrow(direction):
 	
 func ws_record_click_direction(script, arguments):
 	var direction = {"L":-1, "R":1}[arguments[0]]
-	offset += direction*{true:1, false:8}[zoom]
+	set_offset(offset + direction*{true:1, false:PAGE_SIZE}[zoom])
 	reset()
 	return
 	
@@ -340,7 +351,7 @@ func load_page_overview():
 			# We're trying to draw before the offset, show left arrow
 			left_arrow = true
 			continue
-		if count >= 8:
+		if count >= PAGE_SIZE:
 			# We're trying to draw past limit, show right arrow
 			right_arrow = true
 			break
@@ -398,7 +409,7 @@ func highlight_evidence(evname):
 func ws_record_zoom_evidence(script, arguments):
 	var evname = arguments[0]
 	zoom = true
-	offset = stack.evidence_pages.get(page, []).find(evname)
+	set_offset(stack.evidence_pages.get(page, []).find(evname))
 	reset()
 	
 func ws_record_click_present(script, arguments):
@@ -408,8 +419,8 @@ func ws_record_click_check(script, arguments):
 	check(arguments[0], arguments[1])
 	
 func ws_click_page_from_court_record(script, arguments):
-	page = arguments[0]
-	offset = 0
+	set_page(arguments[0])
+	set_offset(0)
 	reset()
 	
 func present(option):
