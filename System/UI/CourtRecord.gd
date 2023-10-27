@@ -212,7 +212,9 @@ func ws_record_click_direction(script, arguments):
 	return
 	
 func load_page():
-	page_label.text = page.capitalize()
+	page_label.text = ""
+	if stack.variables.get_truth("ev_show_mode_text", true):
+		page_label.text = page.capitalize()
 	name_label.text = ""
 	load_page_button()
 	if not zoom:

@@ -1,8 +1,9 @@
 label top
+#set ev_show_mode_text false
 set ev_arrow_button_img general/new_arrow_right
 set _ev_pages documents profiles
-#set _profiles_present false
-set _allow_present_profiles false
+set _profiles_present false
+#set _allow_present_profiles false
 set ev_mode_bg_profiles bg/lobby
 addev evidence1 documents
 set evidence1_desc This is a piece of evidence
@@ -43,6 +44,7 @@ label second
 "disable documents page. present profile1 to continue. no back button."
 set _documents_enabled false
 set _cr_back_button false
+set _profiles_present true
 showpresent
 label none
 "label none. presented={$_selected}"
