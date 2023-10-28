@@ -153,9 +153,10 @@ static func from_node_path(tree:SceneTree, path:String):
 
 # User facing save functions
 
-static func _get_save_path_name(main):
+static func _get_save_path_name(main, root_folder=null):
 	var c_game = main.current_game
-	var root_folder = main.top_script().root_path
+	if not root_folder:
+		root_folder = main.top_script().root_path
 	var game_name
 	if "/" in c_game:
 		game_name = c_game.rsplit("/", true, 1)[1].replace("/","")
@@ -185,8 +186,8 @@ static func save_new_file(main):
 	var full_save_path = "user://game_saves/"+"/".join([save_path_name, new_filename+".save"])
 	save_game(main.get_tree(), full_save_path)
 
-static func get_saved_games_for_current(main):
-	var save_path_name = _get_save_path_name(main)
+static func get_saved_games_for_current(main, save_path_name=null):
+	save_path_name = _get_save_path_name(main, save_path_name)
 	var d
 	d = Directory.new()
 	var path = "user://game_saves"

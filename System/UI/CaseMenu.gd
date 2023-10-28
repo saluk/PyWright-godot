@@ -1,4 +1,4 @@
-extends Node
+extends Node2D
 
 var cases = []
 var wrightscript
@@ -59,11 +59,13 @@ func build_scene():
 	SignalUtils.remove_all($Control/ScrollContainer2/VBoxContainer/NewGameButton)
 	SignalUtils.remove_all($Control/ArrowLeft)
 	SignalUtils.remove_all($Control/ArrowRight)
+	SignalUtils.remove_all($Control/ScrollContainer2/VBoxContainer/ResumeButton)
 	$Control/ScrollContainer2/VBoxContainer/CaseBox/CaseTitle.bbcode_text = "[center][b]%s[/b][/center]"%current_case()
 	$Control/ArrowLeft.visible = false
 	$Control/ArrowRight.visible = false
 	$Control/ScrollContainer2/VBoxContainer/NewGameButton.connect("pressed", self, "launch_game")
 	$Control/ScrollContainer2/VBoxContainer/ResumeButton.visible = false
+	connect_resume()
 	
 func connect_arrows():
 	if case_chosen < cases.size()-1:
@@ -72,47 +74,30 @@ func connect_arrows():
 	if case_chosen > 0:
 		$Control/ArrowLeft.visible = true
 		$Control/ArrowLeft.connect("pressed", self, "prev_case")
+		
+func connect_resume():
+	var main = get_tree().get_nodes_in_group("Main")[0]
+	var saves = SaveState.get_saved_games_for_current(main, wrightscript.root_path+current_case())
+	if saves:
+		$Control/ScrollContainer2/VBoxContainer/ResumeButton.visible = true
+		$Control/ScrollContainer2/VBoxContainer/ResumeButton.connect("pressed", self, "launch_game", [null, saves[-1]])
 	
-# TODO cleanup casemenu code reuse
-func next_case():
+func _scroll(direction):
 	SignalUtils.remove_all($Control/ArrowLeft)
 	SignalUtils.remove_all($Control/ArrowRight)
-	case_chosen += 1
+	case_chosen += direction
 	var tween = Tween.new()
 	add_child(tween)
 	var start_pos = $Control/ScrollContainer2.rect_position
 	tween.interpolate_property($Control/ScrollContainer2, "rect_position",
 			start_pos, 
-			start_pos - Vector2(256,0), 0.2,
+			start_pos - Vector2(256,0) * direction, 0.2,
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()
 	yield(tween,"tween_completed")
 	build_scene()
 	tween.interpolate_property($Control/ScrollContainer2, "rect_position",
-			start_pos + Vector2(256, 0), 
-			start_pos, 0.2,
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
-	tween.start()
-	yield(tween,"tween_completed")
-	remove_child(tween)
-	connect_arrows()
-	
-func prev_case():
-	SignalUtils.remove_all($Control/ArrowLeft)
-	SignalUtils.remove_all($Control/ArrowRight)
-	case_chosen -= 1
-	var tween = Tween.new()
-	add_child(tween)
-	var start_pos = $Control/ScrollContainer2.rect_position
-	tween.interpolate_property($Control/ScrollContainer2, "rect_position",
-			start_pos, 
-			start_pos + Vector2(256, 0), 0.2,
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
-	tween.start()
-	yield(tween,"tween_completed")
-	build_scene()
-	tween.interpolate_property($Control/ScrollContainer2, "rect_position",
-			start_pos - Vector2(256,0), 
+			start_pos + Vector2(256, 0) * direction,
 			start_pos, 0.2,
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()
@@ -120,7 +105,14 @@ func prev_case():
 	remove_child(tween)
 	connect_arrows()
 
-func launch_game(path=null):
+func next_case():
+	_scroll(1)
+	
+func prev_case():
+	_scroll(-1)
+
+func launch_game(path=null, save=null):
+	var tree = get_tree()
 	if not path:
 		path = current_case()
 	print("launching case ", path)
@@ -129,6 +121,9 @@ func launch_game(path=null):
 		wrightscript, [
 		path+"/intro"
 	])
+	if save:
+		SaveState.load_selected_save_file(tree.get_nodes_in_group("Main")[0], save)
 	queue_free()
 	Commands.main.timecounter.reset()
 	emit_signal("CASE_SELECTED")
+
