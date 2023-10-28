@@ -224,12 +224,16 @@ func load_page():
 
 # TODO use variables for positioning and art assets
 func load_page_zoom():
-	var zoombg_path = Filesystem.lookup_file("art/general/evidence_zoom.png", root_path)
+	var zoombg_path = Filesystem.lookup_file("art/%s.png" % stack.variables.get_string("ev_z_bg"), root_path)
 	var zoombg = PWSprite.new()
 	zoombg.load_animation(zoombg_path)
 	add_child(zoombg)
-	var x = 27
-	var y = 59
+	zoombg.position = Vector2(
+		stack.variables.get_int("ev_z_bg_x"),
+		stack.variables.get_int("ev_z_bg_y")
+	)
+	var x = stack.variables.get_int("ev_z_icon_x")
+	var y = stack.variables.get_int("ev_z_icon_y")
 	var i = -1
 	var count = 0
 	var left_arrow = false
@@ -274,7 +278,7 @@ func load_page_zoom():
 		name_label.text = evidence_name(key_name)
 		
 		# TODO make this a textblock after textblock is implemented
-		var desc = Label.new()
+		var desc:Label = Label.new()
 		Fonts.set_element_font(desc, "block", stack)
 		desc.rect_position = Vector2(
 			stack.variables.get_int("ev_z_textbox_x", 0),  # zero so we can ensure it loads the variable
@@ -287,6 +291,7 @@ func load_page_zoom():
 		desc.set("custom_constants/line_spacing", 
 			stack.variables.get_int("textblock_line_height", 10)
 		)
+		desc.set("custom_colors/font_color", Colors.string_to_color(stack.variables.get_string("ev_z_text_col")))
 		desc.text = key_desc.replace("{n}","\n")
 		desc.clip_text = true
 		desc.autowrap = true
