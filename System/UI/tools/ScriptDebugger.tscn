@@ -13,7 +13,6 @@ margin_right = -262.0
 margin_bottom = -46.0
 theme = ExtResource( 1 )
 script = ExtResource( 2 )
-disable_button = NodePath("vbox/buttons/Disable")
 step = NodePath("vbox/buttons/Step")
 allev = NodePath("vbox/buttons/AllEv")
 pause = NodePath("vbox/buttons/Pause")
@@ -65,26 +64,20 @@ margin_top = 304.0
 margin_right = 250.0
 margin_bottom = 318.0
 
-[node name="Disable" type="Button" parent="vbox/buttons"]
-margin_right = 40.0
-margin_bottom = 14.0
-text = "Disable"
-
 [node name="AllEv" type="Button" parent="vbox/buttons"]
-margin_left = 44.0
-margin_right = 76.0
+margin_right = 32.0
 margin_bottom = 14.0
 text = "AllEv"
 
 [node name="Pause" type="Button" parent="vbox/buttons"]
-margin_left = 80.0
-margin_right = 112.0
+margin_left = 36.0
+margin_right = 68.0
 margin_bottom = 14.0
 text = "Pause"
 
 [node name="Step" type="Button" parent="vbox/buttons"]
-margin_left = 116.0
-margin_right = 144.0
+margin_left = 72.0
+margin_right = 100.0
 margin_bottom = 14.0
 text = "Step"
 

@@ -5,7 +5,7 @@ var stack: WrightScriptStack
 var timecounter: TimeCounter
 var current_game: String
 
-var debugger_enabled = true
+var debugger_enabled = false
 var tab_button:Button
 
 var init_script = """

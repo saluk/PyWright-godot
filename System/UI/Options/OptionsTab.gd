@@ -40,8 +40,10 @@ func disable_tab(n):
 func _debugger():
 	if toggle_tab("ScriptDebugger") == "enabled":
 		$vbox/Debugger.text = "Disable Debugger"
+		main.debugger_enabled = true
 	else:
 		$vbox/Debugger.text = "Enable Debugger"
+		main.debugger_enabled = false
 	
 func _framelog():
 	if toggle_tab("FrameLog") == "enabled":
