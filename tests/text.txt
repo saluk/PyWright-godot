@@ -13,6 +13,12 @@ char maya
 set james_name {c009}James{c}
 "Oh look, it's {$james_name}! (in blue)"
 
+set color_green 050
+"This is {cgreen}green!"
+
+set green 050
+"This is {cgreen}green!"
+
 "{center}centered{center}{n}new line, not centered"
 "{c900}red{c} not red"
 

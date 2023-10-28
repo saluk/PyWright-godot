@@ -3,7 +3,7 @@ class_name Colors
 
 static func string_to_color(text):
 	if Commands.main:
-		var var_text = Commands.main.stack.variables.get_string(text, null)
+		var var_text = Commands.main.stack.variables.get_string("color_%s"%text, null)
 		if var_text:
 			text = var_text
 	var parts = []
