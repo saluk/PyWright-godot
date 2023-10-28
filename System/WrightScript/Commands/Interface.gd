@@ -206,9 +206,16 @@ func ws_casemenu(script, arguments):
 		case_listing.list_dir_begin()
 		var next_file_name = case_listing.get_next()
 		while next_file_name != "":
-			if not next_file_name in [".", ".."]:
+			if next_file_name.begins_with("."):
+				next_file_name = case_listing.get_next()
+				continue
+			if next_file_name in ["art", "music", "sfx", "fonts", "movies"]:
+				next_file_name = case_listing.get_next()
+				continue
+			if case_listing.current_is_dir():
 				cases.append(next_file_name)
 			next_file_name = case_listing.get_next()
+		cases.sort()
 	var casemenu = load("res://System/UI/CaseMenu.tscn").instance()
 	casemenu.cases = cases
 	casemenu.wrightscript = script

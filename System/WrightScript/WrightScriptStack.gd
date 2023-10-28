@@ -156,7 +156,7 @@ func show_in_debugger():
 		debugger[0].update_current_stack(self)
 		
 func show_frame(frame, begin=false):
-	if not main or not main.get_tree():
+	if not main or not is_instance_valid(main) or not main.get_tree():
 		return
 	var framelog = main.get_tree().get_nodes_in_group("FrameLog")
 	if framelog:
