@@ -32,7 +32,8 @@ var DEFAULTS := {
 	"ev_check_img": "general/check",
 	"ev_arrow_button_img": "general/evidence_arrow_right",
 	"textblock_line_height": "-1",
-	"_ev_pages": "evidence profiles"
+	"_ev_pages": "evidence profiles",
+	"_list_back_button": "true"
 }
 
 var global_namespace:Variables

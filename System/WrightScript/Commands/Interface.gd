@@ -128,7 +128,9 @@ func ws_list(script, arguments):
 		"list_menu"
 	)
 	list_menu.position = Vector2(0, 192)
-	list_menu.allow_back_button = not noback
+	list_menu.allow_back_button = true
+	if noback or not main.stack.variables.get_truth("_list_back_button"):
+		list_menu.allow_back_button = false
 	list_menu.update()
 	
 func ws_li(script, arguments):
