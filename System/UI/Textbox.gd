@@ -32,6 +32,7 @@ var last_text_sound_played = 0.0
 var text_sound_rate = 0.2
 
 var MAX_WHILE = 400
+signal run_returned
 
 class TextPack:
 	var text = ""
@@ -51,6 +52,7 @@ class TextPack:
 		
 	func _run(force = false): 
 		has_run = true
+		return null
 		
 	# add all text to label, then increase visible characters each frame
 	# if characters per frame is INF, will print text immediately
@@ -95,8 +97,13 @@ class TextPack:
 			
 	# execute pack command and change the provided textbox accordingly
 	func consume(rich_text_label, dt:float, force = false):
+		var run_return
 		if not has_run:
-			self._run(force)
+			run_return = self._run(force)
+		if run_return:
+			if run_return is GDScriptFunctionState:
+				run_return = yield(run_return, "completed")
+			self.text = run_return + self.text
 		_print_text(dt, rich_text_label, force)
 		if not leftover or leftover <= 0: self.delete = true
 
@@ -164,6 +171,7 @@ class CommandPack extends TextPack:
 	# TODO execute macros
 	func _run(force = false):
 		var args = self.args
+		var run_return = null
 		match self.command:
 			"e":
 				Commands.call_command("emo", self.textbox.main.top_script(), args)
@@ -218,8 +226,18 @@ class CommandPack extends TextPack:
 				if not force:
 					self.textbox.pause(args, self)
 			_:
+				var old_script = self.textbox.main.top_script()
 				Commands.call_command(self.command, self.textbox.main.top_script(), args)
+				
+				# TODO macros in text is still very broken
+				#textbox.set_process(false)
+				#while self.textbox.main.top_script() != old_script:
+				#	yield(self.textbox.get_tree(), "idle_frame")
+				#textbox.set_process(true)
+				#run_return = self.textbox.main.stack.variables.get_string("_return", "")
+				#self.textbox.main.stack.variables.del_val("_return")
 		has_run = true
+		return run_return
 		
 func _on_text_printed():
 	if Time.get_ticks_msec()-last_text_sound_played > text_sound_rate:

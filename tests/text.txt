@@ -1,5 +1,11 @@
 "{type}{center}{c090}Thursday October 26, 2023{n}Godot development environment."
 
+macro text_in_text
+set _return hi
+endmacro
+
+"Run macro. Macro results: {text_in_text}."
+
 char maya
 "{tbon}This is a statement of some kind"
 "{tboff} No more statement"
@@ -30,6 +36,7 @@ macro this_is_a_macro
 bg lobby
 char phoenix hide
 "we are in the lobby"
+pause 300
 endmacro
 
 bg detention
