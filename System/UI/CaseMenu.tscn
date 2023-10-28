@@ -1,9 +1,8 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://System/UI/CaseMenu.gd" type="Script" id=1]
 [ext_resource path="res://art/general/arrow_right.png" type="Texture" id=2]
 [ext_resource path="res://art/general/selection_chapter.png" type="Texture" id=3]
-[ext_resource path="res://fonts/VeraSe.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://art/general/talkchoice.png" type="Texture" id=5]
 [ext_resource path="res://fonts/Vera.ttf" type="DynamicFontData" id=6]
 
@@ -13,13 +12,6 @@ outline_size = 1
 use_mipmaps = true
 use_filter = true
 font_data = ExtResource( 6 )
-
-[sub_resource type="DynamicFont" id=1]
-size = 13
-outline_size = 1
-use_mipmaps = true
-use_filter = true
-font_data = ExtResource( 4 )
 
 [node name="CaseMenu" type="Node2D"]
 script = ExtResource( 1 )
@@ -58,22 +50,16 @@ margin_bottom = 58.0
 size_flags_horizontal = 4
 texture = ExtResource( 3 )
 
-[node name="CaseTitle" type="Label" parent="Control/ScrollContainer2/VBoxContainer/CaseBox"]
+[node name="CaseTitle" type="RichTextLabel" parent="Control/ScrollContainer2/VBoxContainer/CaseBox"]
 margin_left = 1.0
-margin_top = 1.0
+margin_top = 22.0
 margin_right = 174.0
-margin_bottom = 56.0
+margin_bottom = 57.0
 size_flags_horizontal = 3
-custom_colors/font_color = Color( 0.92549, 0.572549, 0.572549, 1 )
-custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_offset_x = 1
-custom_constants/shadow_offset_y = 1
-custom_fonts/font = SubResource( 1 )
+custom_colors/default_color = Color( 0.631373, 0.286275, 0.286275, 1 )
+bbcode_enabled = true
+bbcode_text = "[center][b]Turnabout Scapegoat[/b][/center]"
 text = "Turnabout Scapegoat"
-align = 1
-valign = 1
-autowrap = true
 
 [node name="NewGameButton" type="TextureButton" parent="Control/ScrollContainer2/VBoxContainer"]
 margin_left = 13.0
@@ -83,22 +69,16 @@ margin_bottom = 88.0
 size_flags_horizontal = 4
 texture_normal = ExtResource( 5 )
 
-[node name="NewGame" type="Label" parent="Control/ScrollContainer2/VBoxContainer/NewGameButton"]
-margin_left = 3.0
-margin_top = 2.0
-margin_right = 221.0
-margin_bottom = 23.0
+[node name="NewGame" type="RichTextLabel" parent="Control/ScrollContainer2/VBoxContainer/NewGameButton"]
+margin_left = 2.0
+margin_top = 6.0
+margin_right = 220.0
+margin_bottom = 27.0
 size_flags_horizontal = 3
-custom_colors/font_color = Color( 0.92549, 0.572549, 0.572549, 1 )
-custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_offset_x = 1
-custom_constants/shadow_offset_y = 1
-custom_fonts/font = SubResource( 1 )
+custom_colors/default_color = Color( 0.631373, 0.286275, 0.286275, 1 )
+bbcode_enabled = true
+bbcode_text = "[center][b]New Game[/b][/center]"
 text = "New Game"
-align = 1
-valign = 1
-autowrap = true
 
 [node name="ResumeButton" type="TextureButton" parent="Control/ScrollContainer2/VBoxContainer"]
 margin_left = 13.0
@@ -108,22 +88,16 @@ margin_bottom = 118.0
 size_flags_horizontal = 4
 texture_normal = ExtResource( 5 )
 
-[node name="Resume" type="Label" parent="Control/ScrollContainer2/VBoxContainer/ResumeButton"]
-margin_left = 3.0
-margin_top = 2.0
-margin_right = 221.0
-margin_bottom = 23.0
+[node name="Resume" type="RichTextLabel" parent="Control/ScrollContainer2/VBoxContainer/ResumeButton"]
+margin_left = 2.0
+margin_top = 6.0
+margin_right = 220.0
+margin_bottom = 27.0
 size_flags_horizontal = 3
-custom_colors/font_color = Color( 0.92549, 0.572549, 0.572549, 1 )
-custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_offset_x = 1
-custom_constants/shadow_offset_y = 1
-custom_fonts/font = SubResource( 1 )
+custom_colors/default_color = Color( 0.631373, 0.286275, 0.286275, 1 )
+bbcode_enabled = true
+bbcode_text = "[center][b]Resume Game[/b][/center]"
 text = "Resume Game"
-align = 1
-valign = 1
-autowrap = true
 
 [node name="ArrowLeft" type="TextureButton" parent="Control"]
 margin_left = 4.0
