@@ -5,7 +5,7 @@ var playing = false
 var loop = true
 var playing_path
 
-var SOUND_VOLUME = 0.01
+var SOUND_VOLUME = 1.0
 var NUM_PLAYERS = 100
 
 class AudioStreamProgress extends AudioStreamPlayer:

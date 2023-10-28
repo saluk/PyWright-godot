@@ -147,7 +147,7 @@ func clear_scripts():
 		emit_signal("script_removed")
 		
 func show_in_debugger():
-	if not main or not main.get_tree():
+	if not main or not is_instance_valid(main) or not main.get_tree():
 		return
 	if not main.debugger_enabled:
 		return

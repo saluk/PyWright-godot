@@ -2,10 +2,10 @@ extends Node
 
 var audio_player:AudioStreamPlayer
 var playing = false
-var loop = true
 var playing_path
+var root_path = ""
 
-var MUSIC_VOLUME = 0.01
+var music_volume:float
 
 func _ready():
 	audio_player = AudioStreamPlayer.new()
@@ -37,35 +37,49 @@ func _load_audio_stream(path):
 		SoundFileCache.set_get_cached([path], stream)
 	if stream:
 		audio_player.stream = stream
-		audio_player.volume_db = linear2db(MUSIC_VOLUME * Configuration.user.global_volume)
+		music_volume = get_volume()
+		audio_player.volume_db = linear2db(music_volume * Configuration.user.global_volume)
 		audio_player.play(0)
-		
+
+func get_volume():
+	var main = get_tree().get_nodes_in_group("Main")[0]
+	var music_volume = float(main.stack.variables.get_int("_music_fade",100))
+	music_volume = float(music_volume/100.0)
+	return music_volume
+
 func alter_volume():
-	audio_player.volume_db = linear2db(MUSIC_VOLUME * Configuration.user.global_volume)
+	get_volume()
+	audio_player.volume_db = linear2db(music_volume * Configuration.user.global_volume)
 
 func stop_music():
 	playing = false
 	audio_player.stop()
 	
 func play_music(path, root_path):
-	path = Filesystem.lookup_file(path, root_path)
-	if not path:
-		print("couldn't find path ", path)
+	self.root_path = root_path
+	var found_path = Filesystem.lookup_file(path, root_path, ["ogg"])
+	if not found_path:
+		GlobalErrors.log_error("Couldn't find music file %s" % path)
 		stop_music()
-	if playing and playing_path == path:
+	if playing and playing_path == found_path:
 		print("already playing this song")
 		return
 	playing = true
-	playing_path = path
-	var audio_stream = _load_audio_stream(path)
+	playing_path = found_path
+	var audio_stream = _load_audio_stream(found_path)
 
 func _player_finished():
-	if loop and playing:
+	var main = get_tree().get_nodes_in_group("Main")[0]
+	var music_loop_track = main.stack.variables.get_string("_music_loop","")
+	if music_loop_track:
+		music_loop_track = Filesystem.path_join("music", music_loop_track)
+		play_music(music_loop_track, root_path)
+	if playing:
 		audio_player.play(0)
 
 # SAVE/LOAD
 var save_properties = [
-	"playing", "loop", "playing_path"
+	"playing", "root_path", "playing_path"
 ]
 func save_node(data):
 	if playing:
