@@ -1,6 +1,25 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://System/UI/CaseMenu.gd" type="Script" id=1]
+[ext_resource path="res://art/general/arrow_right.png" type="Texture" id=2]
+[ext_resource path="res://art/general/selection_chapter.png" type="Texture" id=3]
+[ext_resource path="res://fonts/VeraSe.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://art/general/talkchoice.png" type="Texture" id=5]
+[ext_resource path="res://fonts/Vera.ttf" type="DynamicFontData" id=6]
+
+[sub_resource type="DynamicFont" id=2]
+size = 14
+outline_size = 1
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 6 )
+
+[sub_resource type="DynamicFont" id=1]
+size = 13
+outline_size = 1
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 4 )
 
 [node name="CaseMenu" type="Node2D"]
 script = ExtResource( 1 )
@@ -10,31 +29,115 @@ margin_right = 256.0
 margin_bottom = 384.0
 
 [node name="GameTitle" type="Label" parent="Control"]
-margin_left = 71.0
-margin_top = 6.0
-margin_right = 188.0
-margin_bottom = 34.0
+margin_top = 7.0
+margin_right = 256.0
+margin_bottom = 49.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 2 )
 text = "Game Title"
-
-[node name="ScrollContainer" type="ScrollContainer" parent="Control"]
-margin_left = 5.0
-margin_top = 58.0
-margin_right = 254.0
-margin_bottom = 203.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/ScrollContainer"]
-
-[node name="Label3" type="Label" parent="Control"]
-margin_left = 38.0
-margin_top = 211.0
-margin_right = 155.0
-margin_bottom = 239.0
-text = "Choose a Case"
+align = 1
+autowrap = true
 
 [node name="ScrollContainer2" type="ScrollContainer" parent="Control"]
 margin_left = 5.0
-margin_top = 232.0
+margin_top = 242.0
 margin_right = 254.0
 margin_bottom = 377.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/ScrollContainer2"]
+margin_right = 249.0
+margin_bottom = 118.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+
+[node name="CaseBox" type="TextureRect" parent="Control/ScrollContainer2/VBoxContainer"]
+margin_left = 36.0
+margin_right = 212.0
+margin_bottom = 58.0
+size_flags_horizontal = 4
+texture = ExtResource( 3 )
+
+[node name="CaseTitle" type="Label" parent="Control/ScrollContainer2/VBoxContainer/CaseBox"]
+margin_left = 1.0
+margin_top = 1.0
+margin_right = 174.0
+margin_bottom = 56.0
+size_flags_horizontal = 3
+custom_colors/font_color = Color( 0.92549, 0.572549, 0.572549, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 1
+custom_constants/shadow_offset_y = 1
+custom_fonts/font = SubResource( 1 )
+text = "Turnabout Scapegoat"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="NewGameButton" type="TextureButton" parent="Control/ScrollContainer2/VBoxContainer"]
+margin_left = 13.0
+margin_top = 62.0
+margin_right = 236.0
+margin_bottom = 88.0
+size_flags_horizontal = 4
+texture_normal = ExtResource( 5 )
+
+[node name="NewGame" type="Label" parent="Control/ScrollContainer2/VBoxContainer/NewGameButton"]
+margin_left = 3.0
+margin_top = 2.0
+margin_right = 221.0
+margin_bottom = 23.0
+size_flags_horizontal = 3
+custom_colors/font_color = Color( 0.92549, 0.572549, 0.572549, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 1
+custom_constants/shadow_offset_y = 1
+custom_fonts/font = SubResource( 1 )
+text = "New Game"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="ResumeButton" type="TextureButton" parent="Control/ScrollContainer2/VBoxContainer"]
+margin_left = 13.0
+margin_top = 92.0
+margin_right = 236.0
+margin_bottom = 118.0
+size_flags_horizontal = 4
+texture_normal = ExtResource( 5 )
+
+[node name="Resume" type="Label" parent="Control/ScrollContainer2/VBoxContainer/ResumeButton"]
+margin_left = 3.0
+margin_top = 2.0
+margin_right = 221.0
+margin_bottom = 23.0
+size_flags_horizontal = 3
+custom_colors/font_color = Color( 0.92549, 0.572549, 0.572549, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 1
+custom_constants/shadow_offset_y = 1
+custom_fonts/font = SubResource( 1 )
+text = "Resume Game"
+align = 1
+valign = 1
+autowrap = true
+
+[node name="ArrowLeft" type="TextureButton" parent="Control"]
+margin_left = 4.0
+margin_top = 258.0
+margin_right = 32.0
+margin_bottom = 284.0
+texture_normal = ExtResource( 2 )
+expand = true
+flip_h = true
+
+[node name="ArrowRight" type="TextureButton" parent="Control"]
+margin_left = 224.0
+margin_top = 261.0
+margin_right = 252.0
+margin_bottom = 287.0
+texture_normal = ExtResource( 2 )
+expand = true
