@@ -137,7 +137,9 @@ func add_sprite(sprite_key, sprite_template):
 		print(path)
 		filename = Filesystem.lookup_file(
 			path,
-			root_path
+			root_path,
+			[],
+			false
 		)
 		if not filename:
 			sprite_paths_searched.append(path)
@@ -190,9 +192,9 @@ func load_sprites(template, sprite_key=null):
 		add_child(button)
 		
 	set_sprite(sprite_key)
-	if not sprites:
+	if template["sprites"] and not sprites:
 		var search_str = "'" + "', '".join(sprite_paths_searched) + "'"
-		GlobalErrors.log_error("Unable to find or load a valid graphic file, searched [%s] at root path %s" % [search_str, root_path])	
+		GlobalErrors.log_error("File Error: Unable to find or load a valid graphic file, searched [%s] at root path %s" % [search_str, root_path])	
 
 func has_sprite(sprite_key):
 	return sprite_key in sprites

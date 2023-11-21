@@ -38,7 +38,7 @@ margin_right = 254.0
 margin_bottom = 377.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/ScrollContainer2"]
-margin_right = 249.0
+margin_right = 223.0
 margin_bottom = 118.0
 grow_horizontal = 2
 size_flags_horizontal = 3

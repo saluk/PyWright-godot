@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://System/UI/ScriptDebugger.tres" type="Theme" id=1]
+[ext_resource path="res://System/UI/tools/DirectoryCacheList.gd" type="Script" id=2]
+
+[node name="DirectoryCacheList" type="Control" groups=["DirectoryCacheList"]]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -262.0
+margin_bottom = -40.0
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
+
+[node name="Button" type="Button" parent="."]
+margin_right = 12.0
+margin_bottom = 14.0
+text = "Refresh"
+
+[node name="Text" type="TextEdit" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 36.0
+margin_right = -3.0
+size_flags_stretch_ratio = 0.75
+highlight_current_line = true
+syntax_highlighting = true
+show_line_numbers = true
+draw_tabs = true
+bookmark_gutter = true
+
+[connection signal="button_up" from="Button" to="." method="_on_Button_button_up"]

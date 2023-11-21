@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://System/UI/tools/ScriptDebugger.tscn" type="PackedScene" id=1]
 [ext_resource path="res://System/UI/tools/FrameLog.tscn" type="PackedScene" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://System/UI/Options/OptionsTab.tscn" type="PackedScene" id=7]
 [ext_resource path="res://art/general/arrow_right.png" type="Texture" id=8]
 [ext_resource path="res://System/UI/tools/ErrorLog.tscn" type="PackedScene" id=9]
+[ext_resource path="res://System/UI/tools/DirectoryCacheList.tscn" type="PackedScene" id=10]
 
 [node name="Main" type="Node2D" groups=["Main"]]
 script = ExtResource( 3 )
@@ -43,6 +44,8 @@ visible = false
 
 [node name="DisabledTabs" type="Node2D" parent="." groups=["DisabledTabs"]]
 visible = false
+
+[node name="DirectoryCacheList" parent="DisabledTabs" instance=ExtResource( 10 )]
 
 [node name="ScriptDebugger" parent="DisabledTabs" instance=ExtResource( 1 )]
 visible = false

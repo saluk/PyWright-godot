@@ -83,6 +83,7 @@ func load_macros_from_path(path):
 			elif dir.current_is_dir():
 				continue
 			elif file_name == "macros.txt" or file_name.ends_with(".mcro"):
+				print("Info: Adding macros from %s" % file_name)
 				var script = WrightScript.new(main, self)
 				script.stack = self
 				script.load_txt_file(Filesystem.path_join(path, file_name))
@@ -106,7 +107,7 @@ func init_game(path, init_script="intro.txt"):
 	# Used to load a game and then a case inside the game
 	filesystem = load("res://System/Files/Filesystem.gd").new()
 	print("load base macros")
-	load_macros_from_path("macros")
+	load_macros_from_path("res://macros")
 	# TODO - if we are loading a subfolder of a game, we should load macros
 	#		 from the parent folder as well
 	load_script(path+"/"+init_script)

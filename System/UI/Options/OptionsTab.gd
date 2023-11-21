@@ -7,6 +7,7 @@ func _ready():
 	$vbox/MainMenu.connect("button_up", self, "_main_menu")
 	$vbox/Debugger.connect("button_up", self, "_debugger")
 	$vbox/Framelog.connect("button_up", self, "_framelog")
+	$"vbox/DirectoryCacheList Toggle".connect("button_up", self, "_dcl")
 	
 	$vbox/HBoxContainer/VolumeSlider.value = Configuration.user.global_volume * 100
 	$vbox/HBoxContainer/VolumeSlider.connect("value_changed", self, "_volume_changed")
@@ -50,6 +51,12 @@ func _framelog():
 		$vbox/Framelog.text = "Disable Framelog"
 	else:
 		$vbox/Framelog.text = "Enable Framelog"
+		
+func _dcl():
+	if toggle_tab("DirectoryCacheList") == "enabled":
+		$"vbox/DirectoryCacheList Toggle".text = "Disable DirectoryCacheList"
+	else:
+		$"vbox/DirectoryCacheList Toggle".text = "Enable DirectoryCacheList"
 
 func _volume_changed(val):
 	Configuration.user.global_volume = float(val/100.0)

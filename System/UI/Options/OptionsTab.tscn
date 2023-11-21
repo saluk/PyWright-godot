@@ -119,3 +119,9 @@ margin_top = 220.0
 margin_right = 182.0
 margin_bottom = 234.0
 text = "Enable Framelog"
+
+[node name="DirectoryCacheList Toggle" type="Button" parent="vbox"]
+margin_top = 238.0
+margin_right = 182.0
+margin_bottom = 252.0
+text = "Enable DirectoryCacheList"

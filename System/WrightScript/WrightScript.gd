@@ -40,11 +40,13 @@ func _init(main, stack, screen:Screen=null):
 	variables = Variables.new()
 		
 func has_script(scene_name) -> String:
-	for name in [scene_name+".script.txt", scene_name+".txt"]:
+	var names = [scene_name+".script.txt", scene_name+".txt"]
+	for name in names:
 		print(root_path+"; "+name)
 		var found = Filesystem.lookup_file(name, root_path)
 		if found:
 			return found
+	GlobalErrors.log_error("File Error: Unable to find or load script, searched [%s] at root path %s" % [",".join(names), root_path])	
 	return ""
 	
 func fullpath() -> String:

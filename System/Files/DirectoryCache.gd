@@ -5,7 +5,7 @@ extends Node
 var indexes := {}
 
 func _ready():
-	if OS.has_feature("standalone") or OS.has_feature("HTML5"):
+	if 0:#OS.has_feature("standalone") or OS.has_feature("HTML5"):
 		if not load_game_file_index("res://"):
 			print("WARNING: could not load file index res://")
 			return
@@ -18,7 +18,7 @@ func clear():
 	save_game_file_index("res://")
 	
 func init_game(game_path):
-	if OS.has_feature("standalone") or OS.has_feature("HTML5"):
+	if 0:#OS.has_feature("standalone") or OS.has_feature("HTML5"):
 		if not load_game_file_index(game_path):
 			print("WARNING: could not load file index ", game_path)
 			return
@@ -31,7 +31,7 @@ func load_game_file_index(game_path):
 	var game_file_index = File.new()
 	var file_path = Filesystem.path_join(game_path, "files.index")
 	if not game_file_index.file_exists(file_path):
-		print("CANNOT FIND: ", file_path)
+		print("CANNOT LOAD INDEX: ", file_path)
 		return false
 	game_file_index.open(file_path, File.READ)
 	indexes[game_path] = parse_json(game_file_index.get_line())
@@ -46,6 +46,7 @@ func create_game_cache(game_path, paths=[]):
 		var path = paths.pop_front()
 		var dir = Directory.new()
 		if dir.open(path) != OK:
+			print("ERROR OPENING ",path)
 			continue
 		dir.list_dir_begin()
 		while true:
@@ -56,7 +57,7 @@ func create_game_cache(game_path, paths=[]):
 				continue
 			if file_name.begins_with("."):
 				continue
-			if file_name.ends_with(".import"):
+			if file_name == ".import":
 				continue
 			var next_path = Filesystem.path_join(path, file_name)
 			if dir.current_is_dir():
@@ -64,9 +65,8 @@ func create_game_cache(game_path, paths=[]):
 			else:
 				# Exported games may not have the raw .png files anymore
 				if next_path.ends_with(".import"):
-					index[next_path.to_lower().replace(".import","")] = next_path
-				else:
-					index[next_path.to_lower()] = next_path
+					next_path = next_path.substr(0,next_path.length()-".import".length())
+				index[next_path.to_lower()] = next_path
 
 	indexes[game_path] = index
 	
@@ -78,26 +78,19 @@ func save_game_file_index(game_path):
 	game_file_index.close()
 
 func has_file(file:String):
-	var game
-	if file.begins_with("/"):
-		# Determine game by which index matches
-		for game_key in indexes:
-			if file.begins_with(game_key):
-				game = game_key
-				break
-	elif "res://tests" in file:
-		game = "res://tests"
-	elif "res://games" in file:
-		game = "res://games/"+file.split("res://games/")[1].split("/")[0]
-	else:
-		game = "res://"
+	var game = ""
+	# Determine best game by greedy index match
+	for game_key in indexes:
+		if file.begins_with(game_key) and game_key.length() > game.length():
+			game = game_key
+	if game == null or game == "":
+		GlobalErrors.log_error("NO GAME FOUND! game:%s file:%s" % [game, file])
 	if not game in indexes:
-		print("WARNING: no game ", game)
+		print("WARNING: no game %s, file:%s" % [game, file])
 		print(file)
-		print(indexes.keys())
 		return null
 	var index = indexes[game]
 	if not file.to_lower() in index:
-		print("  file not in cache: ", file)
+		print("  file not in cache: '%s', looked in game '%s'" % [file, game])
 		return null
 	return index[file.to_lower()]
