@@ -29,7 +29,7 @@ var wait_mode = "auto"
 # manual - character delay is always at full speed
 
 var last_text_sound_played = 0.0
-var text_sound_rate = 0.2
+var text_sound_rate = 0.04
 
 var MAX_WHILE = 400
 signal run_returned
@@ -240,7 +240,7 @@ class CommandPack extends TextPack:
 		return run_return
 		
 func _on_text_printed():
-	if Time.get_ticks_msec()-last_text_sound_played > text_sound_rate:
+	if Time.get_ticks_msec()-last_text_sound_played > text_sound_rate * 1000:
 		play_sound()
 		last_text_sound_played = Time.get_ticks_msec()
 		
