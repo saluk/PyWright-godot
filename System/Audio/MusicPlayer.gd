@@ -43,13 +43,18 @@ func _load_audio_stream(path):
 
 func get_volume():
 	var main = get_tree().get_nodes_in_group("Main")[0]
-	var music_volume = float(main.stack.variables.get_int("_music_fade",100))
+	music_volume = float(main.stack.variables.get_int("_music_fade",100))
 	music_volume = float(music_volume/100.0)
 	return music_volume
 
 func alter_volume():
 	get_volume()
+	var pos = audio_player.get_playback_position()
+	playing = false
+	audio_player.stop()
 	audio_player.volume_db = linear2db(music_volume * Configuration.user.global_volume)
+	audio_player.play(pos)
+	playing = true
 
 func stop_music():
 	playing = false
