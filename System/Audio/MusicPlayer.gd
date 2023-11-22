@@ -70,11 +70,12 @@ func play_music(path, root_path):
 
 func _player_finished():
 	var main = get_tree().get_nodes_in_group("Main")[0]
-	var music_loop_track = main.stack.variables.get_string("_music_loop","")
-	if music_loop_track:
-		music_loop_track = Filesystem.path_join("music", music_loop_track)
-		play_music(music_loop_track, root_path)
 	if playing:
+		var music_loop_track = main.stack.variables.get_string("_music_loop","")
+		if music_loop_track:
+			music_loop_track = Filesystem.path_join("music", music_loop_track)
+			play_music(music_loop_track, root_path)
+			return
 		audio_player.play(0)
 
 # SAVE/LOAD
