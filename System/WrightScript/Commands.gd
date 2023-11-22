@@ -226,7 +226,7 @@ func is_macro(command):
 	return ""
 	
 func watched(command):
-	if 0: # Replace 0 to watch for a specific command
+	if command == "show_main_button": # Replace 0 to watch for a specific command
 		return true
 	return false
 	

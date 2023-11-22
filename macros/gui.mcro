@@ -5,7 +5,6 @@ endmacro
 
 macro _default_court_record_button
 gui Button {_crbut} name=_crbut_ graphic=general/record graphichigh=general/record_high x=177 y=192 hotkey=k_tab z=6 try_bottom
-debug
 endmacro
 
 macro show_court_record_button
