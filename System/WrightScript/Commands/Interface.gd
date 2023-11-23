@@ -54,6 +54,8 @@ func ws_menu(script, arguments):
 func ws_localmenu(script, arguments):
 	var menu_name = arguments[0]
 	var kw = Commands.keywords(arguments)
+	#if kw.get("bg","NOT SET") == "NOT SET":
+	#	Commands.call_command("bg", script, ["main2", "y=192", "stack"])
 	var menu = ObjectFactory.create_from_template(
 		script,
 		"investigate",
@@ -64,6 +66,9 @@ func ws_localmenu(script, arguments):
 			menu.enabled_options.append(option)
 	menu.fail_label = kw.get("fail", "none")
 	return menu
+	
+func ws_lmenu(script, arguments):
+	return ws_localmenu(script, arguments)
 
 # Note - we handle region definitions in a bit of a weird way
 #  - in pywright, we create the examine interface, and then 
@@ -114,7 +119,6 @@ func ws_region3d(script, arguments):
 func ws_examine3d(script, arguments):
 	return Commands.NOTIMPLEMENTED
 
-# TODO support noback
 func ws_list(script, arguments):
 	Commands.delete_object_group(Commands.LIST_GROUP)
 	var noback = "noback" in arguments

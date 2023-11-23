@@ -88,6 +88,12 @@ func add_label(label, line_num):
 var label_statements = [
 	"label", "list", "statement", "result", "cross"
 ]
+var statement_args = {
+	"label": [],
+	"list": ["noback"],
+	"statement": [],
+	"cross": []
+}
 	
 func preprocess_lines():
 	var line:String
@@ -134,12 +140,12 @@ func preprocess_lines():
 				
 		if segments and segments[0] in label_statements and segments.size()>1:
 			var tag = segments[1].strip_edges()
-			if tag:
-				if segments[0] == "list" and "noback" in tag:
-					var args = Array(tag.split(" "))
-					args.erase("noback")
-					tag = " ".join(args)
-				add_label(tag, i)
+			var args = Array(tag.split(" "))
+			for arg in args.slice(1, args.size()-1):
+				if "=" in arg or arg in statement_args[segments[0]]:
+					args.erase(arg)
+			tag = " ".join(args)
+			add_label(tag, i)
 			i += 1
 			continue
 		elif segments and segments[0] == "include":
