@@ -12,11 +12,13 @@ var relative_positions = {
 	"talk": Vector2(0, 1),
 	"present": Vector2(1, 1)
 }
+var bg:Node
 
 func _init():
 	save_properties.append("enabled_options")
 	save_properties.append("scene_name")
 	save_properties.append("order")
+	save_properties.append("fail_label")
 
 func _ready():
 	script_name = "invest_menu"
@@ -25,6 +27,19 @@ func _ready():
 	
 func _process(dt):
 	if not options_added:
+		var bg_script = main.stack.variables.get_string("script._override_bg", null)
+		if not bg_script:
+			bg_script = main.stack.variables.get_string("_investigate_bg", null)
+		if not bg_script:
+			bg_script = "main2"
+		bg = ObjectFactory.create_from_template(
+			wrightscript,
+			"bg",
+			{},
+			[bg_script, "y=192"],
+			script_name
+		)
+		bg.cannot_save = true
 		for option in enabled_options:
 			add_option(option)
 		options_added = true
@@ -54,6 +69,7 @@ func add_option(option):
 	)
 
 func ws_investigate_option(script, args):
+	#bg.free()
 	var option = args[0]
 	if scene_name:
 		Commands.call_command(

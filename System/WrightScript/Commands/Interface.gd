@@ -25,37 +25,14 @@ func ws_menu(script, arguments):
 	main.stack.run_macro_set(main.stack.run_macros_on_scene_change)
 	script.end()
 	return menu
-	
-# TODO IMPLEMENT
-#@category([KEYWORD('examine','whether to show the examine button','false'),
-#    KEYWORD('talk','whether to show the talk button','false'),
-#    KEYWORD('present','whether to show the present button','false'),
-#    KEYWORD('move','whether to show the move button','false'),
-#    KEYWORD('fail','label to jump to if the label for an action was not found','none')],type="interface")
-#    def _localmenu(self,command,*args):
-#        """Show an investigation menu of options. Should be run after the background of a scene is loaded. When an option
-#        is clicked, PyWright will jump to the label of the action, such as "label examine" or "label talk". You can control which options
-#        are shown through the keywords described."""
-#        for o in self.obs:
-#            if o.__class__ in delete_on_menu:
-#                o.delete()
-#        m = menu()
-#        for a in args:
-#            if "=" in a:
-#                arg,val = a.split("=")
-#                if arg=="fail":
-#                    m.fail = val
-#                elif vtrue(val):
-#                    m.addm(arg)
-#        m.open_script = False
-#        self.add_object(m,True)
-#        m.init_normal()
-#        return True
+
 func ws_localmenu(script, arguments):
 	var menu_name = arguments[0]
 	var kw = Commands.keywords(arguments)
 	#if kw.get("bg","NOT SET") == "NOT SET":
 	#	Commands.call_command("bg", script, ["main2", "y=192", "stack"])
+	if "bg" in kw:
+		main.stack.variables.set_val("script._override_bg", kw["bg"])
 	var menu = ObjectFactory.create_from_template(
 		script,
 		"investigate",

@@ -128,6 +128,7 @@ func hide_arrows(script):
 	call_macro("hide_court_record_button", script, [])
 	call_macro("hide_present_button", script, [])
 	call_macro("hide_press_button", script, [])
+	call_macro("hide_main_button_all", script, [])
 	
 func get_speaking_char(speaking=null):
 	if not speaking:

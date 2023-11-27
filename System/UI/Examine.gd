@@ -34,11 +34,12 @@ func _ready():
 	for bg_ob in bg_obs_original:
 		if bg_ob.position.y >= 192:
 			has_bottom_screen_bg = true
-	if not has_bottom_screen_bg:
-		for bg_ob in bg_obs_original:
-			bg_ob = bg_ob.duplicate()
-			bg_obs.append(bg_ob)
-			add_child(bg_ob)
+	# TODO don't do this if someone has scrolled a screen down?
+	# On the other hand, while it's excessive copying it shouldn't hurt anything
+	for bg_ob in bg_obs_original:
+		bg_ob = bg_ob.duplicate()
+		bg_obs.append(bg_ob)
+		add_child(bg_ob)
 	setup_crosshair()
 	
 func setup_crosshair():
@@ -185,7 +186,9 @@ func _select():
 		
 func update():
 	if scrolling: return
-	script_name = "examine_menu+"+bg_obs_original[0].script_name
+	script_name = "examine_menu"
+	if bg_obs_original:
+		script_name += "+"+bg_obs_original[0].script_name
 	reload_scroll_regions()
 	name = script_name
 	if allow_back_button and not back_button:
