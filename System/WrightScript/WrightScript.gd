@@ -40,25 +40,31 @@ func _init(main, stack, screen:Screen=null):
 	variables = Variables.new()
 		
 func has_script(scene_name) -> String:
-	for name in [scene_name+".script.txt", scene_name+".txt"]:
+	var names = [scene_name+".script.txt", scene_name+".txt"]
+	for name in names:
 		print(root_path+"; "+name)
 		var found = Filesystem.lookup_file(name, root_path)
 		if found:
 			return found
+	GlobalErrors.log_error("File Error: Unable to find or load script, searched [%s] at root path %s" % [",".join(names), root_path])	
 	return ""
+	
+func fullpath() -> String:
+	return Filesystem.path_join(root_path, filename)
 
 func load_txt_file(path:String):
 	lines = []
-	if not "res://" in path:
-		path = "res://" + path
 	root_path = path.get_base_dir()+"/"
 	filename = path.get_file()
 	var f = File.new()
 	var err = f.open(path, File.READ)
+	var buffer := ""
 	if err == OK:
-		while not f.eof_reached():
-			lines.append(f.get_line())
+		buffer = f.get_as_text(false)
 		f.close()
+		buffer = buffer.replace("\r\n", "\n")
+		buffer = buffer.replace("\r", "\n")
+		lines = buffer.split("\n")
 		preprocess_lines()
 	else:
 		print("Error loading wrightscript file ", path)
@@ -66,7 +72,8 @@ func load_txt_file(path:String):
 func load_string(string:String):
 	lines = []
 	if not root_path:
-		root_path = "res://"
+		#root_path = "res://"
+		root_path = main.current_game+"/"
 	for line in string.split("\n"):
 		lines.append(line)
 	preprocess_lines()
@@ -81,6 +88,12 @@ func add_label(label, line_num):
 var label_statements = [
 	"label", "list", "statement", "result", "cross"
 ]
+var statement_args = {
+	"label": [],
+	"list": ["noback"],
+	"statement": [],
+	"cross": []
+}
 	
 func preprocess_lines():
 	var line:String
@@ -127,12 +140,12 @@ func preprocess_lines():
 				
 		if segments and segments[0] in label_statements and segments.size()>1:
 			var tag = segments[1].strip_edges()
-			if tag:
-				if segments[0] == "list" and "noback" in tag:
-					var args = Array(tag.split(" "))
-					args.erase("noback")
-					tag = " ".join(args)
-				add_label(tag, i)
+			var args = Array(tag.split(" "))
+			for arg in args.slice(1, args.size()-1):
+				if "=" in arg or arg in statement_args[segments[0]]:
+					args.erase(arg)
+			tag = " ".join(args)
+			add_label(tag, i)
 			i += 1
 			continue
 		elif segments and segments[0] == "include":
@@ -183,7 +196,7 @@ func goto_label(label, fail=null):
 			if stack.scripts:
 				emit_signal("GOTO_RESULT")
 				return stack.scripts[-1].goto_label(label, fail)
-		main.log_error("Tried to go somewhere non existent "+label)
+		GlobalErrors.log_error("Tried to go somewhere non existent "+label, {"script": self})
 		allow_next_line = true
 		return
 	# Try to go to next line number
@@ -281,7 +294,7 @@ func read_macro():
 	# Start macro
 	var macro_name = lines[line_num].split(" ", true, 1)[1]
 	if macro_name.length() <= 0:
-		main.log_error("Macro has no name")
+		GlobalErrors.log_error("Macro has no name", {"script": self})
 		return
 	var macro_lines = []
 	line_num += 1
@@ -315,6 +328,9 @@ class Frame:
 			var spl = Array(line.split(" "))
 			command = spl.pop_front()
 			args = spl
+			
+func get_frame(sig):
+	return Frame.new(self, line_num, line, sig)
 		
 func process_wrightscript() -> Frame:
 	allow_next_line = true
@@ -342,7 +358,7 @@ func process_wrightscript() -> Frame:
 	print("SIGNAL:", sig)
 	if sig == null:
 		sig = Commands.NEXTLINE
-	return Frame.new(self, line_num, line, sig)
+	return get_frame(sig)
 	
 func to_string():
 	var l = ""
@@ -358,7 +374,7 @@ func end():
 	line_num = len(lines)-1
 
 
-
+#Save/Load
 var save_properties = [
 	"root_path", "filename", "lines", "labels",
 	# "variables",

@@ -31,6 +31,7 @@ var click_area  # S
 var button # S
 
 var template:Dictionary # Remember the template we were initialized with, useful for save/load
+var cannot_save = false
 
 # Positioning
 var z:int
@@ -81,10 +82,14 @@ func get_height():
 
 func free_members():
 	sprite_key = ""
+	# Current sprite *should* be cleared as its in the tree but just in case
+	if current_sprite:
+		current_sprite.queue_free()
+		current_sprite = null
 	for sprite in sprites.values():
-		sprite.queue_free()
+		if not sprite.is_queued_for_deletion():
+			sprite.queue_free()
 	sprites.clear()
-	current_sprite = null
 
 func queue_free():
 	print("queuing pwchar "+name)
@@ -103,11 +108,18 @@ func init():
 		sprite_root.name = "SpriteRoot"
 		add_child(sprite_root)
 
+# Just used for logging
+var sprite_paths_searched = []
+
 #Sprite template:
 #  path: path of sprite to load
 #  animation_mode: loop, once, blink, talk, ...
 func add_sprite(sprite_key, sprite_template):
 	print("BEGIN SPRITE SEARCH: ", sprite_key, " ", sprite_template)
+	# Ensure if we call add_sprite again for the same key we don't leave a reference
+	if sprite_key in sprites:
+		sprites[sprite_key].free()
+
 	if not sprite_template["path"]:
 		return
 	var search_path = sprite_template["path"].format({
@@ -125,9 +137,12 @@ func add_sprite(sprite_key, sprite_template):
 		print(path)
 		filename = Filesystem.lookup_file(
 			path,
-			root_path
+			root_path,
+			[],
+			false
 		)
 		if not filename:
+			sprite_paths_searched.append(path)
 			continue
 		break
 	if not filename:
@@ -139,6 +154,8 @@ func add_sprite(sprite_key, sprite_template):
 	return sprite
 	
 func load_sprites(template, sprite_key=null):
+	sprite_paths_searched = []
+
 	init()
 	self.template = template
 	free_members()
@@ -175,7 +192,10 @@ func load_sprites(template, sprite_key=null):
 		add_child(button)
 		
 	set_sprite(sprite_key)
-		
+	if template["sprites"] and not sprites:
+		var search_str = "'" + "', '".join(sprite_paths_searched) + "'"
+		GlobalErrors.log_error("File Error: Unable to find or load a valid graphic file, searched [%s] at root path %s" % [search_str, root_path])	
+
 func has_sprite(sprite_key):
 	return sprite_key in sprites
 	
@@ -253,6 +273,7 @@ func set_wait(value):
 	# We will never finish playing if we don't have a sprite
 	if wait_signal == "finished_playing":
 		wait = false
+		return
 
 	wait = value
 
@@ -308,7 +329,8 @@ var save_properties = [
 	"_width_override", "_height_override", "template",
 	"z", "scrollable", "wait", "wait_signal",
 	"rotation_degrees",
-	"visible", "position", "scale"
+	"visible", "position", "scale",
+	"modulate"
 ]
 func save_node(data):
 	data["mirror"] = [mirror.x, mirror.y]
@@ -347,3 +369,8 @@ func after_load(tree:SceneTree, saved_data:Dictionary):
 				wrightscript = script
 				return
 	print("error no script id found")
+	# TODO we really should be air-tight in associating scripts correctly
+	# but we can ensure things dont break by adding us to the top script
+	# I think this happens because "wrightscript" is a reference, 
+	# and that script can actually be gone from the stack when the object is saved
+	wrightscript = tree.get_nodes_in_group("Main")[0].top_script()

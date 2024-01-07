@@ -11,9 +11,12 @@ next_statement
 endmacro
 
 macro show_main_button
+isnot _textbox_show_button?
+goto end_show_main_button
 bg main2 y=192 try_bottom stack z=0 name=_main_button_bg
 gui Button {main_button_advance_text} graphic=general/buttonpress graphichigh=general/buttonpress_high name=_main_button_fg x=17 y=232 z=0 try_bottom
 obj general/arrow_big name=_main_button_arrow x=96 y=273 z=0
+label end_show_main_button
 endmacro
 
 

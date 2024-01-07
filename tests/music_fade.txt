@@ -1,0 +1,7 @@
+set _music_fade 0
+mus 02 - courtroom lounge ~ beginning prelude.ogg
+music_fade_in
+set _music_fade 100
+"fade music in: {$_music_fade}"
+music_fade_out
+"fade music out {$_music_fade}"

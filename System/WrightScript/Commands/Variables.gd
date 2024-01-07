@@ -85,34 +85,34 @@ func ws_addvar(script, arguments):
 	var numa = main.stack.variables.get_num(arguments[0])
 	var numb = Values.to_num(arguments[1])
 	if numa==null:
-		return main.log_error(arguments[0]+"="+str(numa)+" not a number")
+		return GlobalErrors.log_error(arguments[0]+"="+str(numa)+" not a number", {"script": script})
 	main.stack.variables.set_val(arguments[0], numa + numb)
 
 func ws_subvar(script, arguments):
 	var numa = main.stack.variables.get_num(arguments[0])
 	var numb = Values.to_num(arguments[1])
 	if numa==null:
-		return main.log_error(arguments[0]+"="+str(numa)+" not a number")
+		return GlobalErrors.log_error(arguments[0]+"="+str(numa)+" not a number", {"script": script})
 	main.stack.variables.set_val(arguments[0], numa - numb)
 
 func ws_mulvar(script, arguments):
 	var numa = main.stack.variables.get_num(arguments[0])
 	var numb = Values.to_num(arguments[1])
 	if numa==null:
-		return main.log_error(arguments[0]+"="+str(numa)+" not a number")
+		return GlobalErrors.log_error(arguments[0]+"="+str(numa)+" not a number", {"script": script})
 	main.stack.variables.set_val(arguments[0], numa * numb)
 	
 func ws_divvar(script, arguments):
 	var numa = main.stack.variables.get_num(arguments[0])
 	var numb = Values.to_num(arguments[1])
 	if numa==null:
-		return main.log_error(arguments[0]+"="+str(numa)+" not a number")
+		return GlobalErrors.log_error(arguments[0]+"="+str(numa)+" not a number", {"script": script})
 	main.stack.variables.set_val(arguments[0], numa / numb)
 
 func ws_absvar(script, arguments):
 	var inta = main.stack.variables.get_num(arguments[0])
 	if inta==null:
-		return main.log_error(arguments[0]+"="+str(inta)+" not a number")
+		return GlobalErrors.log_error(arguments[0]+"="+str(inta)+" not a number", {"script": script})
 	main.stack.variables.set_val(arguments[0], abs(inta))
 	
 # TODO IMPLEMENT

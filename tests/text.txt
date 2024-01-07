@@ -1,5 +1,29 @@
+"{type}{center}{c090}Thursday October 26, 2023{n}Godot development environment."
+
+macro text_in_text
+set _return hi
+endmacro
+
+"Run macro. Macro results: {text_in_text}."
+
+char maya
+"{tbon}This is a statement of some kind"
+"{tboff} No more statement"
+"I'm not surprised.{n}{esurprised}I'm surprised!"
+"Some text. {p200}(Some text). Some more text! Some, text."
+
+
+"{spd0.1}Slow typing {_fullspeed} super fast typing all the way{_endfullspeed}back to slow typing"
+
+
 set james_name {c009}James{c}
 "Oh look, it's {$james_name}! (in blue)"
+
+set color_green 050
+"This is {cgreen}green!"
+
+set green 050
+"This is {cgreen}green!"
 
 "{center}centered{center}{n}new line, not centered"
 "{c900}red{c} not red"
@@ -7,3 +31,14 @@ set james_name {c009}James{c}
 "This is {c090}some{c} text.{next}"
 #bg black
 "{spd0}{$_last_written_text}{spd1} And some more text."
+
+macro this_is_a_macro
+bg lobby
+char phoenix hide
+"we are in the lobby"
+pause 300
+endmacro
+
+bg detention
+char maya hide
+"we are in detention... {this_is_a_macro} Returned."

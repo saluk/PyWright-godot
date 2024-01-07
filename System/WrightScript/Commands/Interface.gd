@@ -20,40 +20,19 @@ func ws_menu(script, arguments):
 			(not kw and script.has_script(menu_name+"."+option))
 			or option in kw
 		):
-			menu.add_option(option)
+			menu.enabled_options.append(option)
 	# As we end the current script, the scene is changing
 	main.stack.run_macro_set(main.stack.run_macros_on_scene_change)
 	script.end()
 	return menu
-	
-# TODO IMPLEMENT
-#@category([KEYWORD('examine','whether to show the examine button','false'),
-#    KEYWORD('talk','whether to show the talk button','false'),
-#    KEYWORD('present','whether to show the present button','false'),
-#    KEYWORD('move','whether to show the move button','false'),
-#    KEYWORD('fail','label to jump to if the label for an action was not found','none')],type="interface")
-#    def _localmenu(self,command,*args):
-#        """Show an investigation menu of options. Should be run after the background of a scene is loaded. When an option
-#        is clicked, PyWright will jump to the label of the action, such as "label examine" or "label talk". You can control which options
-#        are shown through the keywords described."""
-#        for o in self.obs:
-#            if o.__class__ in delete_on_menu:
-#                o.delete()
-#        m = menu()
-#        for a in args:
-#            if "=" in a:
-#                arg,val = a.split("=")
-#                if arg=="fail":
-#                    m.fail = val
-#                elif vtrue(val):
-#                    m.addm(arg)
-#        m.open_script = False
-#        self.add_object(m,True)
-#        m.init_normal()
-#        return True
+
 func ws_localmenu(script, arguments):
 	var menu_name = arguments[0]
 	var kw = Commands.keywords(arguments)
+	#if kw.get("bg","NOT SET") == "NOT SET":
+	#	Commands.call_command("bg", script, ["main2", "y=192", "stack"])
+	if "bg" in kw:
+		main.stack.variables.set_val("script._override_bg", kw["bg"])
 	var menu = ObjectFactory.create_from_template(
 		script,
 		"investigate",
@@ -61,9 +40,12 @@ func ws_localmenu(script, arguments):
 	)
 	for option in ["examine", "move", "talk", "present"]:
 		if WSExpression.string_to_bool(kw.get(option, "false")):
-			menu.add_option(option)
+			menu.enabled_options.append(option)
 	menu.fail_label = kw.get("fail", "none")
 	return menu
+	
+func ws_lmenu(script, arguments):
+	return ws_localmenu(script, arguments)
 
 # Note - we handle region definitions in a bit of a weird way
 #  - in pywright, we create the examine interface, and then 
@@ -90,7 +72,7 @@ func ws_region(script, arguments):
 # NEW
 func ws_showexamine(script, arguments):
 	if not next_examine:
-		main.log_error("Examine must first be created with examine and region commands before it can be shown.")
+		GlobalErrors.log_error("Examine must first be created with examine and region commands before it can be shown.", {"script": script})
 		return
 	var examine_menu = ObjectFactory.create_from_template(
 		script,
@@ -114,7 +96,6 @@ func ws_region3d(script, arguments):
 func ws_examine3d(script, arguments):
 	return Commands.NOTIMPLEMENTED
 
-# TODO support noback
 func ws_list(script, arguments):
 	Commands.delete_object_group(Commands.LIST_GROUP)
 	var noback = "noback" in arguments
@@ -128,13 +109,15 @@ func ws_list(script, arguments):
 		"list_menu"
 	)
 	list_menu.position = Vector2(0, 192)
-	list_menu.allow_back_button = not noback
+	list_menu.allow_back_button = true
+	if noback or not main.stack.variables.get_truth("_list_back_button"):
+		list_menu.allow_back_button = false
 	list_menu.update()
 	
 func ws_li(script, arguments):
 	var list_menu = main.get_tree().get_nodes_in_group(Commands.LIST_GROUP)
 	if not list_menu:
-		main.log_error("Couldn't find list menu to add item to")
+		GlobalErrors.log_error("Couldn't find list menu to add item to", {"script": script})
 		return
 	list_menu = list_menu[0]
 	var result = Commands.keywords(arguments).get("result", null)
@@ -163,7 +146,7 @@ func ws_lo(script, arguments):
 func ws_showlist(script, arguments):
 	var list_menu = main.get_tree().get_nodes_in_group(Commands.LIST_GROUP)
 	if not list_menu:
-		main.log_error("Couldn't find list menu to show")
+		GlobalErrors.log_error("Couldn't find list menu to show", {"script": script})
 		return
 	return list_menu[0]
 	
@@ -204,9 +187,16 @@ func ws_casemenu(script, arguments):
 		case_listing.list_dir_begin()
 		var next_file_name = case_listing.get_next()
 		while next_file_name != "":
-			if not next_file_name in [".", ".."]:
+			if next_file_name.begins_with("."):
+				next_file_name = case_listing.get_next()
+				continue
+			if next_file_name in ["art", "music", "sfx", "fonts", "movies"]:
+				next_file_name = case_listing.get_next()
+				continue
+			if case_listing.current_is_dir():
 				cases.append(next_file_name)
 			next_file_name = case_listing.get_next()
+		cases.sort()
 	var casemenu = load("res://System/UI/CaseMenu.tscn").instance()
 	casemenu.cases = cases
 	casemenu.wrightscript = script

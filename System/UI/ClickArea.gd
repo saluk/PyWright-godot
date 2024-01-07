@@ -16,10 +16,10 @@ var macroargs:Array
 var debuglabel:Label
 
 func _ready():
-	debuglabel = Label.new()
 	if get_tree().debug_collisions_hint:
+		debuglabel = Label.new()
 		add_child(debuglabel)
-	Fonts.set_element_font(debuglabel, "block", get_tree().get_nodes_in_group("Main")[0].top_script().stack)
+	#Fonts.set_element_font(debuglabel, "block", get_tree().get_nodes_in_group("Main")[0].top_script().stack)
 	set_debug_text()
 
 func _enter_tree():
@@ -31,7 +31,8 @@ func _enter_tree():
 	sync_area()
 	
 func set_debug_text():
-	debuglabel.text = "o:"+str(over)+" c:"+str(clicked)
+	if debuglabel:
+		debuglabel.text = "o:"+str(over)+" c:"+str(clicked)
 	
 func sync_area():
 	var current_sprite:PWSprite = parent.current_sprite

@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://System/UI/tools/ErrorLog.gd" type="Script" id=2]
+
+[node name="ErrorLog" type="Control" groups=["ErrorLog"]]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -268.0
+margin_bottom = -40.0
+script = ExtResource( 2 )
+textlog_path = NodePath("TextLog")
+
+[node name="TextLog" type="TextEdit" parent="."]
+margin_right = 240.0
+margin_bottom = 340.0
+rect_min_size = Vector2( 240, 340 )
+size_flags_stretch_ratio = 0.75
+wrap_enabled = true

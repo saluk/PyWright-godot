@@ -9,6 +9,7 @@ func ws_textbox(script, arguments):
 	var text = Commands.join(arguments)
 	var quote_char = text.substr(0,1)
 	text = text.substr(1,text.length())
+	# Allow lines that don't terminate the quote
 	if text.ends_with(quote_char):
 		text = text.substr(0, text.length()-1)
 	# Default to green text in cross examine

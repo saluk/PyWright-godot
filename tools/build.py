@@ -3,12 +3,37 @@ import os
 import subprocess
 import shutil
 
+godot_binary = "/Users/patrickm/Projects/Godot/Godot-3.53-Mac.app/Contents/MacOS/Godot"
+
+export_configs = {
+    "Mac OSX": {"profile_name": "Mac OSX", "output": "export/godotwright.dmg"},
+    "HTML5": {
+        "profile_name": "HTML5", 
+        "output": "export/web/godotwright.html", 
+        "rmfolder": "export/web",
+        "after": "web_build"
+    },
+    "Android": {
+        "profile_name": "Android", 
+        "output": "export/godotwright.apk",
+        "after": "android_build"
+    },
+    "Windows Desktop": {
+        "profile_name": "Windows Desktop",
+        "output": "export/windows/godotwright.exe",
+        "rmfolder": "export/windows"
+    }
+}
+
 def web_build():
     subprocess.run(["cd export/web; zip ../web.zip *"], shell=True, executable='/bin/bash')
     subprocess.run("scp export/web.zip saluk@kamatera1.tinycrease.com:", shell=True, executable='/bin/bash')
     subprocess.run(
         'ssh saluk@kamatera1.tinycrease.com "cd /opt/pywright/gdw;sudo unzip -u ~/web.zip;sudo chown www-data:www-data *"',
         shell=True, executable='/bin/bash')
+
+def android_build():
+    subprocess.run("adb install -r export/godotwright.apk", shell=True, executable='/bin/bash')
 
 def do_export(profile=None):
     # Some files are not importing correctly so we ignore them. But we can't ignore
@@ -24,16 +49,6 @@ def do_export(profile=None):
 
     #Godot-3.53-Mac.app/Contents/MacOS/Godot --export "Mac OSX" export/godotwright.dmg
 
-    godot_binary = "/Users/patrickm/Projects/Godot/Godot-3.53-Mac.app/Contents/MacOS/Godot"
-
-    export_configs = {
-        "Mac OSX": {"profile_name": "Mac OSX", "output": "export/godotwright.dmg"},
-        "HTML5": {
-            "profile_name": "HTML5", 
-            "output": "export/web/godotwright.html", 
-            "rmfolder": "export/web",
-            "after": web_build}
-    }
     configs = export_configs.values()
     if profile:
         configs = [export_configs[profile]]
@@ -54,7 +69,7 @@ def do_export(profile=None):
         ])
 
         if export.get("after", None):
-            export["after"]()
+            eval(export["after"])()
 
     # Restore initial state
     with open("games/.gdignore", "w") as f:
@@ -65,4 +80,8 @@ if __name__ == "__main__":
     profile = None
     if len(sys.argv) > 1:
         profile = sys.argv[1]
-    do_export(profile)
+        do_export(profile)
+    else:
+        print("build.py [profile]")
+        for profile in export_configs:
+            print(repr(profile))

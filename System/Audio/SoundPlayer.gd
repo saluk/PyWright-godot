@@ -5,7 +5,7 @@ var playing = false
 var loop = true
 var playing_path
 
-var SOUND_VOLUME = 0.01
+var SOUND_VOLUME = 1.0
 var NUM_PLAYERS = 100
 
 class AudioStreamProgress extends AudioStreamPlayer:
@@ -28,23 +28,29 @@ func _load_audio_stream(path):
 		if not stream:
 			if ResourceLoader.exists(path):
 				stream = load(path)
-				stream.loop = false
-			else:
-				# Uses an extension to load more audio types
-				# TODO not really needed if we are converting everything
-				var loader = AudioLoader.new()
-				print(" -- LOADING SOUND FILE --")
-				stream = loader.loadfile(path)
+				if stream:
+					stream.loop = false
+		if not stream:
+			# Uses an extension to load more audio types
+			# TODO not really needed if we are converting everything
+			var loader = AudioLoader.new()
+			print(" -- LOADING SOUND FILE --")
+			stream = loader.loadfile(path)
 		SoundFileCache.set_get_cached([path], stream)
 	if stream:
 		# Somewhere determine whether or not to loop the sound
 		var next_player:AudioStreamPlayer = get_free_player()
 		next_player.stream = stream
-		next_player.volume_db = linear2db(SOUND_VOLUME)
+		next_player.volume_db = linear2db(SOUND_VOLUME * Configuration.user.global_volume)
 		next_player.play(0)
 		next_player.name = path
 		next_player.path = path
 		return next_player
+
+func alter_volume():
+	for player in players:
+		if player.playing:
+			player.volume_db = linear2db(SOUND_VOLUME * Configuration.user.global_volume)
 		
 func get_free_player() -> AudioStreamPlayer:
 	for check_player in players:
@@ -64,6 +70,7 @@ func play_sound(path, current_path):
 	playing_path = path
 	var audio_stream = _load_audio_stream(path)
 
+# TODO implement stop_sounds
 func stop_sounds():
 	pass
 

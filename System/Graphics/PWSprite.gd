@@ -108,8 +108,6 @@ func load_info(path:String):
 	return data
 
 func load_animation(path:String, info=null, sub_rect=null):
-	if not path.begins_with("res://"):
-		path = "res://"+path
 	sprite_path = path
 	# Load pwv
 	
@@ -138,6 +136,9 @@ func load_animation(path:String, info=null, sub_rect=null):
 	if frames:
 		width = frames[0].region.size.x
 		height = frames[0].region.size.y
+		if width == 0 or height == 0:
+			GlobalErrors.log_error("Sprite frames has no size: %s" % path)
+			return
 		loaded = true
 	
 	# Build animated sprite

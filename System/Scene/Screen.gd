@@ -29,6 +29,7 @@ func sort_children():
 		
 func clear():
 	for child in get_children():
+		# TODO probably unnecesary to remove the child AND free it
 		remove_child(child)
 		# Forces custom queue_free to be called when we clear
 		child.queue_free()

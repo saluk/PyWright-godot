@@ -1,0 +1,31 @@
+"Back button allowed"
+list mylist
+li Hello this is an option
+li option 2
+li option 3
+showlist
+
+label none
+"back button not allowed"
+list mylist noback
+li Hello this is an option
+li option 2
+li option 3
+showlist
+
+label none
+"back button allowed"
+list mylist
+li Hello this is an option
+li option 2
+li option 3
+showlist
+
+label none
+"back button not allowed"
+set _list_back_button false
+list mylist
+li Hello this is an option
+li option 2
+li option 3
+showlist
