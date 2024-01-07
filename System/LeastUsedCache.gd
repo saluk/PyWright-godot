@@ -27,7 +27,7 @@ func set_get_cached(key_elements, value):
 	var key = to_key(key_elements)
 	var current_value = null
 	if has_cached(key_elements):
-		current_value = get_cached(key_elements)
+		current_value = cache[key]
 		current_value[0] += 1
 		current_value[1] = value
 	else:

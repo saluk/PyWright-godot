@@ -1,8 +1,17 @@
 # TODO - make it save your place, implement the ability to check
 extends WrightObject
 
+var PAGE_SIZE = 8
 var page = "evidence"
+func set_page(new_page):
+	page = new_page
+	stack.variables.set_val("_cr_current_item_set", new_page)
+
 var offset = 0
+func set_offset(new_offset):
+	offset = new_offset
+	stack.variables.set_val("_cr_current_page", str(int(offset / PAGE_SIZE)))
+
 var zoom = false
 
 var ev_db = {}
@@ -14,14 +23,42 @@ var page_label:Label
 
 var has_objects = false
 
+func _init():
+	._init()
+	save_properties.append("in_presentation_context")
+
 func _ready():
+	._ready()
 	script_name = "evidence_menu"
 	wait_signal = "tree_exited"
+	page = stack.variables.get_string("_cr_current_item_set", "evidence")
+	offset = stack.variables.get_int("_cr_current_page", 0) * PAGE_SIZE
+	verify_pages()
 
 func can_present():
-	# TODO tie this to variables
-	return in_presentation_context
+	var can_present_page_1 = stack.variables.get_truth("_%s_present" % page, true)
+	var can_present_page_2 = stack.variables.get_truth("_allow_present_%s" % page, true)
+	if can_present_page_1 and can_present_page_2:
+		return in_presentation_context
+	return false
+	
+func get_available_pages():
+	var pages = main.stack.variables.get_string("_ev_pages").split(" ")
+	var pages_return = []
+	for p in pages:
+		if main.stack.variables.get_truth("_%s_enabled" % p, true):
+			pages_return.append(p)
+	return pages_return
+	
+func evidence_name(evidence_tag):
+	return evidence_tag.trim_suffix("$")
 
+func verify_pages():
+	var pages = get_available_pages()
+	if not page in pages:
+		set_page(pages[0])
+		reset()
+		
 func reset():
 	has_objects = false
 	for child in get_children():
@@ -31,7 +68,9 @@ func _process(dt):
 	if has_objects:
 		return
 	has_objects = true
-	var evbg_path = stack.variables.get_string("ev_mode_bg_evidence")
+	var evbg_path = stack.variables.get_string("ev_mode_bg_"+page)
+	if not evbg_path:
+		evbg_path = stack.variables.get_string("ev_mode_bg_evidence")
 	var bg = ObjectFactory.create_from_template(
 		main.top_script(),
 		"graphic",
@@ -39,6 +78,7 @@ func _process(dt):
 		[evbg_path],
 		script_name
 	)
+	bg.cannot_save = true
 	
 	# Ensure interface doesn't allow clicks below it
 	# TODO - it's weird to have to make guis to block things off, should be
@@ -75,7 +115,10 @@ func _process(dt):
 	load_back_button()
 	
 func load_back_button():
-	# TODO only load this if we are allowed
+	# Disable back button in zoomed out view
+	if not zoom:
+		if not stack.variables.get_truth("_cr_back_button", true):
+			return
 	var back_button = ObjectFactory.create_from_template(
 		main.top_script(), 
 		"button",
@@ -89,6 +132,7 @@ func load_back_button():
 		[],
 		script_name
 	)
+	back_button.cannot_save = true
 	back_button.position = Vector2(
 		0,
 		192-back_button.height
@@ -97,13 +141,14 @@ func load_back_button():
 func ws_click_back_from_court_record(script, arguments):
 	if zoom:
 		zoom = false
-		offset = int(offset/8)
+		set_offset(int(offset/8) * PAGE_SIZE)
 		reset()
 		return
+	stack.variables.set_val("_selected", "")
 	queue_free()
 	
 func load_page_button():
-	var pages = stack.evidence_pages.keys()
+	var pages = get_available_pages()
 	if pages.size() == 1:
 		return
 	var cur_i = pages.find(page)
@@ -128,6 +173,7 @@ func load_page_button():
 		[], 
 		script_name
 	)
+	b.cannot_save = true
 	b.position = Vector2(256-b.width, 0)
 	var l = Label.new()
 	Fonts.set_element_font(l, "itemset_big", stack)
@@ -147,7 +193,7 @@ func load_arrow(direction):
 		"button", 
 		{
 				"sprites": {
-					"default": {"path":"art/general/evidence_arrow_right.png"}
+					"default": {"path":"art/%s.png" % stack.variables.get_string("ev_arrow_button_img")}
 				},
 				"mirror": [{"L":-1, "R": 1}[direction], 1],
 				"click_macro": "{record_click_direction}",
@@ -156,16 +202,19 @@ func load_arrow(direction):
 		[], 
 		script_name
 	)
+	b.cannot_save = true
 	b.position = pos
 	
 func ws_record_click_direction(script, arguments):
 	var direction = {"L":-1, "R":1}[arguments[0]]
-	offset += direction*{true:1, false:8}[zoom]
+	set_offset(offset + direction*{true:1, false:PAGE_SIZE}[zoom])
 	reset()
 	return
 	
 func load_page():
-	page_label.text = page.capitalize()
+	page_label.text = ""
+	if stack.variables.get_truth("ev_show_mode_text", true):
+		page_label.text = page.capitalize()
 	name_label.text = ""
 	load_page_button()
 	if not zoom:
@@ -175,12 +224,16 @@ func load_page():
 
 # TODO use variables for positioning and art assets
 func load_page_zoom():
-	var zoombg_path = Filesystem.lookup_file("art/general/evidence_zoom.png", root_path)
+	var zoombg_path = Filesystem.lookup_file("art/%s.png" % stack.variables.get_string("ev_z_bg"), root_path)
 	var zoombg = PWSprite.new()
 	zoombg.load_animation(zoombg_path)
 	add_child(zoombg)
-	var x = 27
-	var y = 59
+	zoombg.position = Vector2(
+		stack.variables.get_int("ev_z_bg_x"),
+		stack.variables.get_int("ev_z_bg_y")
+	)
+	var x = stack.variables.get_int("ev_z_icon_x")
+	var y = stack.variables.get_int("ev_z_icon_y")
 	var i = -1
 	var count = 0
 	var left_arrow = false
@@ -222,10 +275,10 @@ func load_page_zoom():
 		pic.position = Vector2(x, y)
 		add_child(pic)
 		
-		name_label.text = key_name
+		name_label.text = evidence_name(key_name)
 		
 		# TODO make this a textblock after textblock is implemented
-		var desc = Label.new()
+		var desc:Label = Label.new()
 		Fonts.set_element_font(desc, "block", stack)
 		desc.rect_position = Vector2(
 			stack.variables.get_int("ev_z_textbox_x", 0),  # zero so we can ensure it loads the variable
@@ -238,12 +291,13 @@ func load_page_zoom():
 		desc.set("custom_constants/line_spacing", 
 			stack.variables.get_int("textblock_line_height", 10)
 		)
+		desc.set("custom_colors/font_color", Colors.string_to_color(stack.variables.get_string("ev_z_text_col")))
 		desc.text = key_desc.replace("{n}","\n")
 		desc.clip_text = true
 		desc.autowrap = true
 		add_child(desc)
 		
-		if can_present():
+		if can_present() and stack.variables.get_truth(evname+"_presentable", true):
 			select(evname)
 			var present_button = ObjectFactory.create_from_template(
 				main.top_script(), 
@@ -259,6 +313,7 @@ func load_page_zoom():
 				[], 
 				script_name
 			)
+			present_button.cannot_save = true
 			present_button.position = Vector2(100,0)
 		
 		load_check_button(evname)
@@ -286,6 +341,7 @@ func load_check_button(evname):
 		[],
 		script_name
 	)
+	check_button.cannot_save = true
 	check_button.position = Vector2(256-check_button.width, 192-check_button.height)
 	pass
 
@@ -305,7 +361,7 @@ func load_page_overview():
 			# We're trying to draw before the offset, show left arrow
 			left_arrow = true
 			continue
-		if count >= 8:
+		if count >= PAGE_SIZE:
 			# We're trying to draw past limit, show right arrow
 			right_arrow = true
 			break
@@ -317,21 +373,19 @@ func load_page_overview():
 		ev_db[evname] = {
 			"name": key_name, "desc": key_desc, "pic": key_pic, "check": key_check
 		}
+		var lookup_path = "art/ev/"+key_pic+".png"
 		var ev_path = Filesystem.lookup_file(
 			"art/ev/"+key_pic+".png",
 			self.root_path
 		)
 		if not ev_path:
-			ev_path = Filesystem.lookup_file(
-				"art/ev/envelope.png",
-				self.root_path
-			)
+			lookup_path = "art/ev/envelope.png"
 		var ev_button = ObjectFactory.create_from_template(
 			main.top_script(), 
 			"button", 
 			{
 				"sprites": {
-					"default": {"path":ev_path.replace("res://", "")}
+					"default": {"path":lookup_path}
 				},
 				"click_macro": "{record_zoom_evidence}",
 				"click_args": [evname]
@@ -339,7 +393,8 @@ func load_page_overview():
 			[], 
 			script_name
 		)
-		ev_button.position = Vector2(x, y)
+		ev_button.cannot_save = true
+		ev_button.position = Vector2(x-2, y-2)
 		if ev_button.current_sprite:
 			ev_button.current_sprite.rescale(
 				stack.variables.get_int("ev_small_width"),
@@ -359,12 +414,12 @@ func load_page_overview():
 		
 func highlight_evidence(evname):
 	if not zoom:
-		name_label.text = ev_db[evname]["name"]
+		name_label.text = evidence_name(ev_db[evname]["name"])
 		
 func ws_record_zoom_evidence(script, arguments):
 	var evname = arguments[0]
 	zoom = true
-	offset = stack.evidence_pages.get(page, []).find(evname)
+	set_offset(stack.evidence_pages.get(page, []).find(evname))
 	reset()
 	
 func ws_record_click_present(script, arguments):
@@ -374,8 +429,8 @@ func ws_record_click_check(script, arguments):
 	check(arguments[0], arguments[1])
 	
 func ws_click_page_from_court_record(script, arguments):
-	page = arguments[0]
-	offset = 0
+	set_page(arguments[0])
+	set_offset(0)
 	reset()
 	
 func present(option):
@@ -397,3 +452,9 @@ func check(evname, check_script):
 	#queue_free()
 
 # TODO implement check
+
+
+#SAVE/LOAD
+func load_node(tree:SceneTree, saved_data:Dictionary):
+	reset()
+	.load_node(tree, saved_data)

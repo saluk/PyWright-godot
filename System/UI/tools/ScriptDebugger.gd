@@ -7,7 +7,6 @@ var script_tab
 var popup_menu
 
 var scripts = []
-export(NodePath) var disable_button
 export(NodePath) var step
 export(NodePath) var allev
 export(NodePath) var pause
@@ -28,23 +27,16 @@ func _ready():
 		allev = get_node(allev)
 		pause = get_node(pause)
 		node_scripts = get_node(node_scripts)
-		disable_button = get_node(disable_button)
 	
 	node_scripts.remove_child(script_tab)
 	# TODO conceal buttons if game is not playing to prevent error
 	step.connect("button_up", self, "step")
 	pause.connect("button_up", self, "start_debugger")
 	allev.connect("button_up", self, "all_ev")
-	disable_button.connect("button_up", self, "toggle_enabled")
 	
 	goto_line_button_template = get_node("GotoLineButton")
 	goto_line_button_template.get_parent().remove_child(goto_line_button_template)
-	
-func toggle_enabled():
-	var main = get_tree().get_nodes_in_group("Main")[0]
-	main.debugger_enabled = not main.debugger_enabled
-	disable_button.text = {true: "Disable", false: "Enable"}[main.debugger_enabled]
-	
+
 func start_debugger(force=false):
 	if in_debugger:
 		if force == false:
@@ -79,7 +71,6 @@ func step():
 		
 func rebuild():
 	for child in node_scripts.get_children():
-		node_scripts.remove_child(child)
 		child.queue_free()
 	scripts = []
 	var i = 0
@@ -101,7 +92,6 @@ func rebuild():
 		i += 1
 	while scripts.size() > current_stack.scripts.size():
 		var last = scripts.pop_back()
-		node_scripts.remove_child(last["editor"])
 		last["editor"].queue_free()
 	if scripts:
 		node_scripts.current_tab = 0
@@ -141,6 +131,7 @@ func update_current_stack(stack):
 			scripts[i]["editor"].set_line_as_bookmark(scripts[i]["bookmark_line"], false)
 		scripts[i]["editor"].set_line_as_bookmark(to_line, true)
 		scripts[i]["bookmark_line"] = to_line
+		node_scripts.set_tab_title(i, scripts[i]["script"].filename)
 
 
 # TODO Whoops, I'm hooking up an event to control rather than to the script editor

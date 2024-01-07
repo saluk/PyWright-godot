@@ -34,7 +34,8 @@ static func save_game(tree:SceneTree, filename:String):
 			nodes.append(child)
 	var file = File.new()
 	print("saving:", objects)
-	file.open(filename, File.WRITE)
+	if file.open(filename, File.WRITE) != OK:
+		print("Couldn't open file for saving")
 	file.store_string(
 		to_json(objects)
 	)
@@ -43,7 +44,9 @@ static func save_game(tree:SceneTree, filename:String):
 static func _save_node(node):
 	if node.has_method("save_node"):
 		var save = {}
-		var cannot_save = node.save_node(save)
+		var cannot_save = node.get("cannot_save")
+		if not cannot_save:
+			cannot_save = node.save_node(save)
 		if not cannot_save:
 			# Non nodes will have to be restored to the tree outisde this script
 			if node.has_method("get_path"):
@@ -65,6 +68,8 @@ static func save_properties(node, save):
 				val = {"Vector3":[val.x,val.y,val.z]}
 			elif val is Vector2:
 				val = {"Vector2":[val.x,val.y]}
+			elif val is Color:
+				val = {"Color":[val.r,val.g,val.b,val.a]}
 			elif val is Node:
 				val = 0
 			elif val is bool:
@@ -98,6 +103,8 @@ static func load_properties(node, data):
 					val = Vector3(val["Vector3"][0],val["Vector3"][1],val["Vector3"][2])
 				elif "Vector2" in val:
 					val = Vector2(val["Vector2"][0],val["Vector2"][1])
+				elif "Color" in val:
+					val = Color(val["Color"][0], val["Color"][1], val["Color"][2], val["Color"][3])
 			node.set(prop, val)
 	if "_groups_" in data:
 		for group in data["_groups_"]:
@@ -105,6 +112,8 @@ static func load_properties(node, data):
 	
 static func load_game(tree:SceneTree, filename:String):
 	GlobalErrors.log_info("Loading game: %s" % filename)
+	DirectoryCache.clear()
+	
 	var file = File.new()
 	var err = file.open(filename, File.READ)
 	if err != OK:
@@ -118,6 +127,7 @@ static func load_game(tree:SceneTree, filename:String):
 	var after_load = []
 
 	for ob_data in data:
+		GlobalErrors.log_info("Load Object %s" % ob_data["original_node_path"])
 		print(ob_data)
 		var ob
 		if tree.root.has_node(ob_data["original_node_path"]):
@@ -128,8 +138,10 @@ static func load_game(tree:SceneTree, filename:String):
 		else:
 			continue
 		_load_node(tree, ob, ob_data)
-		after_load.append(ob)
+		after_load.append([ob, ob_data])
 		tree.connect("idle_frame", ob, "after_load", [tree, ob_data], tree.CONNECT_ONESHOT)
+	#for ob_data_arr in after_load:
+	#	ob_data_arr[0].after_load(tree, ob_data_arr[1])
 
 static func to_node_path(ob:Object):
 	if not ob:
@@ -138,3 +150,68 @@ static func to_node_path(ob:Object):
 	
 static func from_node_path(tree:SceneTree, path:String):
 	return tree.root.get_node(path)
+
+# User facing save functions
+
+static func _get_save_path_name(main, root_folder=null):
+	var c_game = main.current_game
+	if not root_folder:
+		root_folder = main.top_script().root_path
+	var game_name
+	if "/" in c_game:
+		game_name = c_game.rsplit("/", true, 1)[1].replace("/","")
+	else:
+		game_name = "res://"
+	var script_path_name = root_folder.replace(c_game, "").replace("/","")
+	var save_path_name = ".".join([game_name, script_path_name])
+	if save_path_name.ends_with("."):
+		save_path_name = save_path_name.substr(0, save_path_name.length()-1)
+	return save_path_name
+
+static func load_selected_save_file(main, filename):
+	var save_path_name = _get_save_path_name(main)
+	var full_save_path = "user://game_saves/"+"/".join([save_path_name, filename])
+	load_game(main.get_tree(), full_save_path)
+	
+static func delete_selected_save_file(main, filename):
+	var save_path_name = _get_save_path_name(main)
+	var full_save_path = "user://game_saves/"+"/".join([save_path_name, filename])
+	var d = Directory.new()
+	d.remove(full_save_path)
+	
+static func save_new_file(main):
+	var save_path_name = _get_save_path_name(main)
+	var date = Time.get_datetime_dict_from_system()
+	var new_filename = Time.get_datetime_string_from_datetime_dict(date, true)
+	var full_save_path = "user://game_saves/"+"/".join([save_path_name, new_filename+".save"])
+	save_game(main.get_tree(), full_save_path)
+
+static func get_saved_games_for_current(main, save_path_name=null):
+	save_path_name = _get_save_path_name(main, save_path_name)
+	var d
+	d = Directory.new()
+	var path = "user://game_saves"
+	# Ensure save folder exists
+	if not d.dir_exists(path):
+		d.make_dir(path)
+		
+	# Ensure save folder exists for this game
+	path += "/" + save_path_name
+	if not d.dir_exists(path):
+		d.make_dir(path)
+		
+	var save_files = []
+	d = Directory.new()
+	if d.open(path) == OK:
+		d.list_dir_begin()
+		var file_name = d.get_next()
+		while file_name != "":
+			if file_name.begins_with(".") or d.current_is_dir():
+				pass
+			else:
+				save_files.append(file_name)
+			file_name = d.get_next()
+	else:
+		print("An error occurred when trying to access the path %s." % path)
+	save_files.sort()
+	return save_files

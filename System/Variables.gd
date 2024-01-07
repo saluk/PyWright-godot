@@ -3,7 +3,7 @@ class_name Variables
 
 var store := {}
 
-var setters := ["_speaking"]
+var setters := ["_speaking", "_music_fade"]
 
 func _init():
 	reset()
@@ -28,6 +28,10 @@ func _get_val(key, default):
 func setter__speaking(val):
 	store["_speaking"] = val
 	store["_speaking_name"] = Commands.get_nametag()
+	
+func setter__music_fade(val):
+	store["_music_fade"] = val
+	MusicPlayer.alter_volume()
 
 # Functions to access a namespace as a list
 

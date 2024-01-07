@@ -17,47 +17,58 @@ static func path_split(path:String):
 		parts.append(segment)
 	return parts
 	
-static func lookup_file(sub_path:String, current_path:String, exts=[]):
+static func lookup_file(sub_path:String, current_path:String, exts=[], print_errors=true):
 	if FilePathCache.has_cached([sub_path, current_path]):
 		return FilePathCache.get_cached([sub_path, current_path])
-	var file = _lookup_file(sub_path, current_path, exts)
+	var file = _lookup_file(sub_path, current_path, exts, print_errors)
 	return FilePathCache.set_get_cached([sub_path, current_path], file)
 	
-static func _lookup_file(sub_path:String, current_path:String, exts=[]):
+static func _lookup_file(sub_path:String, current_path:String, exts=[], print_errors=true):
+	var searched_paths = []
+	
+	# Searching for a specific extension
+	# Remove the extension from the sub_path and search
+	# for all possible versions of the file
 	if exts:
 		for ext in exts:
 			if sub_path.ends_with("."+ext):
 				sub_path = sub_path.replace("."+ext, "")
 		for ext in exts:
-			var found_ext = _lookup_file(sub_path+"."+ext, current_path)
+			var found_ext = _lookup_file(sub_path+"."+ext, current_path, [], false)
 			if found_ext:
 				return found_ext
 		return null
 
-	# find sub_path in current path OR up the folders, or look in res://
-	if not (current_path.begins_with("res://") or current_path.begins_with("/")):
-		current_path = "res://"+current_path
+	# TODO - some cases may need this to be more advanced
+	# For now we will search the path that was given, the parent path, and the res:// folder
+	
+	var state = "given_path"
 	while 1:
 		print("DEBUG search ", sub_path, " at ", current_path)
-		var joined_exists = DirectoryCache.has_file(path_join(current_path, sub_path))
+		var joined_path = path_join(current_path, sub_path)
+		searched_paths.append(joined_path)
+		print("JOINED PATH ", joined_path)
+		var joined_exists = DirectoryCache.has_file(joined_path)
 		if joined_exists:
 			print("returning found:", joined_exists)
 			return joined_exists
-		# TODO if current path isn't keyed off of res, we will search the whole filesystem
-		# Really, we need 3 paths - the base folder, the current folder search, and the filename
-		# And don't search earlier than the base folder
-		if not "/" in current_path and current_path and current_path!=".":
+		
+		if state == "given_path":
+			state = "game_path"
+			while current_path.ends_with("/"):
+				current_path = current_path.substr(0, current_path.length()-1)
+			current_path = current_path.rsplit("/", true, 1)[0]
+			continue
+			
+		elif state == "game_path":
+			state = "res"
 			current_path = "res://"
 			continue
-		#if current_path == "/":
-		#	current_path = "res://"
-		#	continue
-		if current_path == "res://":
-			print("returning not found")
-			return null
-		current_path = current_path.rsplit("/", true, 1)[0]
-		if current_path in ["res", "res:", "res:/", ""]:
-			current_path = "res://"
+			
+		elif state == "res":
+			if 1:#print_errors:
+				GlobalErrors.log_error("File Error Root: Unable to find or load file, searched [%s]" % [",".join(searched_paths)])	
+			break
 		
 static func load_resource(path:String):
 	if ResourceLoader.exists(path):
@@ -86,6 +97,8 @@ static func load_image_from_path(path:String) -> Image:
 			error = image.load_bmp_from_buffer(buffer)
 		elif path.ends_with("jpg"):
 			error = image.load_jpg_from_buffer(buffer)
+		if error != OK:
+			GlobalErrors.log_error("%s error: %s" % [path, error])
 	print("image found: ", image)
 	de_pink_image(image)
 	return image

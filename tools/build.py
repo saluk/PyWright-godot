@@ -80,4 +80,8 @@ if __name__ == "__main__":
     profile = None
     if len(sys.argv) > 1:
         profile = sys.argv[1]
-    do_export(profile)
+        do_export(profile)
+    else:
+        print("build.py [profile]")
+        for profile in export_configs:
+            print(repr(profile))

@@ -131,11 +131,11 @@ examine hide
 region 0 0 50 50 next2
 "you clicked the back button"
 label none
-"nothing found"
+"nothing found x:{$_examine_clickx} y:{$_examine_clicky}"
 goto examine_menu_hidden
 
 label next2
-"something found"
+"something found. x:{$_examine_clickx} y:{$_examine_clicky}"
 
 ut_after frames=1 objects("examine_menu")[0].examine_button.visible == false
 ut_after frames=1 objects("examine_menu")[0].ws_back_from_examine(null,null)

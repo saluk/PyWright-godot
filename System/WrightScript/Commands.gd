@@ -128,6 +128,7 @@ func hide_arrows(script):
 	call_macro("hide_court_record_button", script, [])
 	call_macro("hide_present_button", script, [])
 	call_macro("hide_press_button", script, [])
+	call_macro("hide_main_button_all", script, [])
 	
 func get_speaking_char(speaking=null):
 	if not speaking:
@@ -155,12 +156,6 @@ func get_nametag():
 	if character:
 		nametag = character.char_name
 	return nametag
-	
-func _input(event):
-	if event and event.is_action_pressed("quickload"):
-		SaveState.load_game(get_tree(), "user://mysave.txt")
-	if event and event.is_action_pressed("quicksave"):
-		SaveState.save_game(get_tree(), "user://mysave.txt")
 
 # Call interface
 
@@ -232,7 +227,7 @@ func is_macro(command):
 	return ""
 	
 func watched(command):
-	if 0: # Replace 0 to watch for a specific command
+	if command == "show_main_button": # Replace 0 to watch for a specific command
 		return true
 	return false
 	
@@ -256,8 +251,7 @@ func call_macro(macro_name, script, arguments):
 			main.stack.variables.set_val(str(i), arg)
 		i += 1
 	var script_lines = main.stack.macros[command]
-	var new_script = main.stack.add_script(PoolStringArray(script_lines).join("\n"))
-	new_script.root_path = script.root_path
+	var new_script = main.stack.add_script(PoolStringArray(script_lines).join("\n"), script.root_path)
 	new_script.filename = "{"+command+"}"
 	# TODO not sure if this is how to handle macros that try to goto
 	new_script.allow_goto_parent_script = true

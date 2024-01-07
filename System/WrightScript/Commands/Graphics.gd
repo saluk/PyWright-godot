@@ -5,6 +5,7 @@ var main
 func _init(commands):
 	main = commands.main
 
+# TODO clear bottom/top
 func ws_clear(script, arguments):
 	script.screen.clear()
 func ws_delete(script, arguments):

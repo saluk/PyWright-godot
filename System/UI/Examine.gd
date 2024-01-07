@@ -34,15 +34,17 @@ func _ready():
 	for bg_ob in bg_obs_original:
 		if bg_ob.position.y >= 192:
 			has_bottom_screen_bg = true
-	if not has_bottom_screen_bg:
-		for bg_ob in bg_obs_original:
-			bg_ob = bg_ob.duplicate()
-			bg_obs.append(bg_ob)
-			add_child(bg_ob)
+	# TODO don't do this if someone has scrolled a screen down?
+	# On the other hand, while it's excessive copying it shouldn't hurt anything
+	for bg_ob in bg_obs_original:
+		bg_ob = bg_ob.duplicate()
+		bg_obs.append(bg_ob)
+		add_child(bg_ob)
 	setup_crosshair()
 	
 func setup_crosshair():
 	crosshair = Crosshair.new()
+	crosshair.parent = self
 	add_child(crosshair)
 	cross_area = Area2D.new()
 	var shape := CollisionShape2D.new()
@@ -113,6 +115,8 @@ func ws_check_from_examine(script, arguments):
 	var label = fail
 	if current_region:
 		label = current_region.label
+	stack.variables.set_val("_examine_clickx", str(crosshair.real_position().x))
+	stack.variables.set_val("_examine_clicky", str(crosshair.real_position().y))
 	return Commands.call_command(
 		"goto",
 		stack.scripts[-1],
@@ -172,7 +176,8 @@ func _unhandled_input(event):
 func _select():
 	for child in get_children():
 		var region = child as Region
-		if region and region.is_point_inside(crosshair.crosshair_position):
+		var cp = crosshair.real_position()
+		if region and region.is_point_inside(cp):
 			if reveal_regions:
 				examine_button.visible = true
 			current_region = region
@@ -181,7 +186,9 @@ func _select():
 		
 func update():
 	if scrolling: return
-	script_name = "examine_menu+"+bg_obs_original[0].script_name
+	script_name = "examine_menu"
+	if bg_obs_original:
+		script_name += "+"+bg_obs_original[0].script_name
 	reload_scroll_regions()
 	name = script_name
 	if allow_back_button and not back_button:
@@ -252,25 +259,29 @@ func update():
 	crosshair.update()
 
 class Crosshair extends Node2D:
-	var crosshair_position = Vector2(int(256/2), int(192/2))
+	var crosshair_position := Vector2(int(256/2), int(192/2))
+	var parent:Node2D
+	func real_position():
+		return crosshair_position - parent.global_position + Vector2(0,192)
 	func _draw():
+		var cp = real_position()
 		draw_line(
-			Vector2(0, crosshair_position.y),
-			Vector2(256, crosshair_position.y),
+			Vector2(0, cp.y),
+			Vector2(256, cp.y),
 			Color.whitesmoke
 		)
 		draw_line(
-			Vector2(crosshair_position.x, 0),
-			Vector2(crosshair_position.x, 192),
+			Vector2(cp.x, 0),
+			Vector2(cp.x, 192),
 			Color.whitesmoke
 		)
 		draw_line(
-			Vector2(crosshair_position.x-5, crosshair_position.y-5),
-			Vector2(crosshair_position.x+5, crosshair_position.y+5),
+			Vector2(cp.x-5, cp.y-5),
+			Vector2(cp.x+5, cp.y+5),
 			Color.greenyellow
 		)
 		draw_line(
-			Vector2(crosshair_position.x+5, crosshair_position.y-5),
-			Vector2(crosshair_position.x-5, crosshair_position.y+5),
+			Vector2(cp.x+5, cp.y-5),
+			Vector2(cp.x-5, cp.y+5),
 			Color.greenyellow
 		)
