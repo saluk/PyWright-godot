@@ -28,7 +28,7 @@ func _process(dt):
 func load_text():
 	var desc:Label = Label.new()
 	Fonts.set_element_font(desc, "block", stack)
-	desc.rect_position = Vector2(0,0)
+	desc.rect_position = Vector2(1,1)
 	desc.rect_size = Vector2(
 		text_width,
 		text_height
