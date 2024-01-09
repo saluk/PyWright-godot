@@ -183,6 +183,7 @@ static func save_new_file(main):
 	var save_path_name = _get_save_path_name(main)
 	var date = Time.get_datetime_dict_from_system()
 	var new_filename = Time.get_datetime_string_from_datetime_dict(date, true)
+	new_filename = new_filename.replace(":","-")
 	var full_save_path = "user://game_saves/"+"/".join([save_path_name, new_filename+".save"])
 	save_game(main.get_tree(), full_save_path)
 
