@@ -58,5 +58,24 @@ func ws_advance_text(script, arguments):
 #        else: tb.id_name = "$$"+str(id(tb))+"$$"
 #        if color:
 #            tb.color = color
-func ws_textblock(script, arguments):
-	pass
+func ws_textblock(script, arguments:Array):
+	if not main.get_tree():
+		return
+	var ret = Commands.keywords(arguments, true)
+	var keywords = ret[0]
+	var ret_args = ret[1]
+	var pos = [ret_args[0], ret_args[1]]
+	var obj:Node = ObjectFactory.create_from_template(
+		script,
+		"textblock",
+		{},
+		["name="+keywords.get("name", "textblock"),
+		"x="+pos[0],
+		"y="+pos[1]]
+	)
+	obj.text_contents = String.join(ret_args.slice(4,ret_args.size()))
+	obj.text_width = int(ret_args[2])
+	obj.text_height = int(ret_args[3])
+	obj.text_color = keywords.get("color", "000")
+	obj.script_name = keywords.get("name", "textblock")
+	return obj

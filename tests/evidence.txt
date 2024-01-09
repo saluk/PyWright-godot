@@ -1,0 +1,8 @@
+# Create evidence
+set glock_name Glock
+set glock_pic gun
+
+set _ev glock
+set _description A very smoking gun
+set _name A gun of some kind
+addevanim glock

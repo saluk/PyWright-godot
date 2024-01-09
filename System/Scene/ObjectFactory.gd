@@ -7,13 +7,15 @@ var main setget , get_main
 func get_main():
 	return get_tree().get_nodes_in_group("Main")[0]
 	
+# TODO make these auto discoverable
 var classes = {
 	"WrightObject": "res://System/Scene/WrightObject.gd",
 	"CourtRecord": "res://System/UI/CourtRecord.gd",
 	"Investigate": "res://System/UI/Investigate.gd",
 	"Penalty": "res://System/UI/Penalty.gd",
 	"Examine": "res://System/UI/Examine.gd",
-	"PWList": "res://System/UI/PWList.gd"
+	"PWList": "res://System/UI/PWList.gd",
+	"TextBlock": "res://System/Scene/TextBlock.gd"
 }
 	
 var TEMPLATES = {
@@ -112,6 +114,26 @@ var TEMPLATES = {
 			"groups": [Commands.SPRITE_GROUP],
 			"start_sprite": "default",
 			"sort_with": "fg",
+			"default_variant": "",
+			"rect": null,
+			"clickable": false,
+			"button_text": false,
+			"scrollable": true,
+			"click_macro": "",
+			"click_args": [],
+			"position": [0,0]
+		},
+	"textblock":
+		{
+			"default_name": "textblock",
+			"class": "TextBlock",
+			"sprites": {},
+			"centered": false,
+			"mirror": [1, 1],
+			"block_script": false,
+			"groups": [Commands.SPRITE_GROUP],
+			"start_sprite": "default",
+			"sort_with": "textblock",
 			"default_variant": "",
 			"rect": null,
 			"clickable": false,

@@ -62,13 +62,13 @@ func get_free_player() -> AudioStreamPlayer:
 	
 func play_sound(path, current_path):
 	#path = Filesystem.lookup_file(path, root_path)
-	path = Filesystem.lookup_file(path, current_path, ["ogg", "mp3", "wav", "oggi"])
-	if not path:
-		print("couldn't find path ", path)
+	var found = Filesystem.lookup_file(path, current_path, ["ogg", "mp3", "wav", "oggi"])
+	if not found:
+		print("couldn't find path ", path, ">", current_path)
 		return
 	playing = true
 	playing_path = path
-	var audio_stream = _load_audio_stream(path)
+	var audio_stream = _load_audio_stream(found)
 
 # TODO implement stop_sounds
 func stop_sounds():
