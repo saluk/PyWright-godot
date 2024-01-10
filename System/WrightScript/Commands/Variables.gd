@@ -77,8 +77,8 @@ func ws_setprop(script, arguments):
 func ws_random(script, arguments):
   var custom_seed = randi() % 1000000
   var key = arguments.pop_front()
-  var minimum = arguments.pop_front()
-  var maximum = arguments.pop_front()
+  var minimum = Values.to_num(arguments.pop_front())
+  var maximum = Values.to_num(arguments.pop_front())
   seed(custom_seed)
   var random_integer = randi() % (maximum - minimum  + 1) + minimum 
   main.stack.variables.set_val(key, random_integer)
