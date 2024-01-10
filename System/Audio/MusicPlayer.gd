@@ -49,24 +49,25 @@ func get_volume():
 
 func alter_volume():
 	get_volume()
-	var pos = audio_player.get_playback_position()
-	playing = false
-	audio_player.stop()
-	audio_player.volume_db = linear2db(music_volume * Configuration.user.global_volume)
-	audio_player.play(pos)
-	playing = true
+	if playing:
+		var pos = audio_player.get_playback_position()
+		playing = false
+		audio_player.stop()
+		audio_player.volume_db = linear2db(music_volume * Configuration.user.global_volume)
+		audio_player.play(pos)
+		playing = true
 
 func stop_music():
 	playing = false
 	audio_player.stop()
 	
-func play_music(path, root_path):
+func play_music(path, root_path, force=false):
 	self.root_path = root_path
 	var found_path = Filesystem.lookup_file(path, root_path, ["ogg"])
 	if not found_path:
 		GlobalErrors.log_error("Couldn't find music file %s" % path)
 		stop_music()
-	if playing and playing_path == found_path:
+	if playing and playing_path == found_path and not force:
 		print("already playing this song")
 		return
 	playing = true
@@ -79,7 +80,7 @@ func _player_finished():
 		var music_loop_track = main.stack.variables.get_string("_music_loop","")
 		if music_loop_track:
 			music_loop_track = Filesystem.path_join("music", music_loop_track)
-			play_music(music_loop_track, root_path)
+			play_music(music_loop_track, root_path, true)
 			return
 		audio_player.play(0)
 
