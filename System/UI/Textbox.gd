@@ -129,8 +129,9 @@ class CommandPack extends TextPack:
 		args = Array(self.command_args.split(" "))
 		if Commands.is_macro_or_command(args[0]):
 			self.command = args[0]
-			self.command_args = args.slice(1,args.size())
+			self.args = args.slice(1,args.size())
 			return
+		args = []
 		for command in [
 			"sfx", "sound", "delay", "spd", "_fullspeed", "_endfullspeed",
 			"wait", "center", "type", "next", "tbon", "tboff", 
