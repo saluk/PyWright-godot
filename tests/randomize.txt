@@ -1,0 +1,2 @@
+random randVar 0 10
+"{$randVar } >= 0 && {$randVar} < 10"
