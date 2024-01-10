@@ -1,9 +1,12 @@
 extends Reference
 
 var main
+var rng
 
 func _init(commands):
 	main = commands.main
+	rng = RandomNumberGenerator.new()
+	rng.randomize()
 
 func ws_set(script, arguments):
 	var key = arguments.pop_front()
@@ -75,13 +78,11 @@ func ws_setprop(script, arguments):
 #        value = random.randint(int(start),int(end))
 #        assets.variables[variable]=str(value)
 func ws_random(script, arguments):
-  var custom_seed = randi() % 1000000
-  var key = arguments.pop_front()
-  var minimum = Values.to_num(arguments.pop_front())
-  var maximum = Values.to_num(arguments.pop_front())
-  seed(custom_seed)
-  var random_integer = randi() % (maximum - minimum  + 1) + minimum 
-  main.stack.variables.set_val(key, random_integer)
+	var key = arguments.pop_front()
+	var minimum = Values.to_num(arguments.pop_front())
+	var maximum = Values.to_num(arguments.pop_front())
+	var random_integer = rng.randi() % (maximum - minimum  + 1) + minimum 
+	main.stack.variables.set_val(key, random_integer)
 
 func ws_joinvar(script, arguments):
 	var key = arguments.pop_front()
