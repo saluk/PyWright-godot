@@ -21,7 +21,8 @@ export_configs = {
     "Windows Desktop": {
         "profile_name": "Windows Desktop",
         "output": "export/windows/godotwright.exe",
-        "rmfolder": "export/windows"
+        "rmfolder": "export/windows",
+        "after": 'lambda:upload_zips("win")'
     }
 }
 
@@ -30,6 +31,17 @@ def web_build():
     subprocess.run("scp export/web.zip saluk@kamatera1.tinycrease.com:", shell=True, executable='/bin/bash')
     subprocess.run(
         'ssh saluk@kamatera1.tinycrease.com "cd /opt/pywright/gdw;sudo unzip -u ~/web.zip;sudo chown www-data:www-data *"',
+        shell=True, executable='/bin/bash')
+
+current_version = "demo_3"
+
+# only does windows
+def upload_zips(system="win"):
+    filename = f"GodotWright_{system}_{current_version}.zip"
+    subprocess.run([f"cd export/windows; zip ../{filename} *"], shell=True, executable="/bin/bash")
+    subprocess.run(f"scp export/{filename} saluk@kamatera1.tinycrease.com:", shell=True, executable='/bin/bash')
+    subprocess.run(
+        f'ssh saluk@kamatera1.tinycrease.com "cd /opt/pywright/gdw;sudo cp ~/{filename} {filename};sudo chown www-data:www-data *"',
         shell=True, executable='/bin/bash')
 
 def android_build():
