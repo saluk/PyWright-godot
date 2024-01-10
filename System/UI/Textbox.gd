@@ -31,6 +31,10 @@ var wait_mode = "auto"
 var last_text_sound_played = 0.0
 var text_sound_rate = 0.04
 
+
+# Signal that we may need to refresh the arrows
+var refresh_arrows_on_next_pack = false
+
 var MAX_WHILE = 400
 signal run_returned
 
@@ -121,6 +125,12 @@ class CommandPack extends TextPack:
 	func parse_command():
 		# parse pack text
 		var args
+		# First read macro with arguments to see if it is a command
+		args = Array(self.command_args.split(" "))
+		if Commands.is_macro_or_command(args[0]):
+			self.command = args[0]
+			self.command_args = args.slice(1,args.size())
+			return
 		for command in [
 			"sfx", "sound", "delay", "spd", "_fullspeed", "_endfullspeed",
 			"wait", "center", "type", "next", "tbon", "tboff", 
@@ -226,6 +236,7 @@ class CommandPack extends TextPack:
 				if not force:
 					self.textbox.pause(args, self)
 			_:
+				self.textbox.refresh_arrows_on_next_pack = true
 				var old_script = self.textbox.main.top_script()
 				Commands.call_command(self.command, self.textbox.main.top_script(), args)
 				
@@ -302,6 +313,9 @@ func _ready():
 	
 	tb_timer = get_node(tb_timer)
 	tb_timer.one_shot = true
+	
+	if main.stack.variables.get_truth("_textbox_skipupdate",false):
+		wait_signal = ""
 	if not main:
 		return
 		
@@ -315,12 +329,13 @@ func _ready():
 	$Backdrop/Label.set("custom_fonts/normal_font", font)
 	z = ZLayers.z_sort["textbox"]
 	add_to_group(Commands.TEXTBOX_GROUP)
-	Commands.refresh_arrows(main.stack.scripts[-1])
 	update_nametag()
 	
 	# Debug mode immediately prints text
 	if main.stack.variables.get_truth("_debug", false):
 		finish_text()
+		
+	Commands.refresh_arrows(main.stack.scripts[-1])
 
 func update_nametag():
 	# Lookup character name
@@ -458,7 +473,11 @@ func update_textbox(dt:float, force = false):
 		packs = tokenize_text(text_to_print, true)
 		$Backdrop/Label.visible_characters = 0
 		created_packs = true
+		Commands.refresh_arrows(main.stack.scripts[-1])
 	if packs:
+		if refresh_arrows_on_next_pack:
+			Commands.refresh_arrows(main.stack.scripts[-1])
+			refresh_arrows_on_next_pack = false
 		packs[0].consume($Backdrop/Label, dt, force)
 		if packs[0].delete:
 			packs.remove(0)

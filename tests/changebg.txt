@@ -1,0 +1,25 @@
+bg detention
+char april e=normal
+set _textbox_skipupdate true
+"This is a test of changing bgs"
+pause 100
+bg witness
+char april e=normal
+set _textbox_skipupdate false
+"{spd 0}This is a test of changing bgs{spd 1} mid-sentance."
+
+bg detention
+char april e=normal
+"This is a test of changing bgs{next}"
+bg witness
+char april e=normal
+"{spd 0}This is a test of changing bgs{spd 1} mid-sentance."
+
+macro set_bg_b
+bg witness
+char april e=normal
+endmacro
+
+bg detention
+char april e=normal
+"This is a test of changing bgs{set_bg_b} mid-sentance"

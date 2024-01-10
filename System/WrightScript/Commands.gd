@@ -193,6 +193,9 @@ func index_commands():
 		var extern = load(command_file).new(self)
 		for command in get_call_methods(extern):
 			external_commands[command] = extern
+			
+func is_macro_or_command(command):
+	return is_macro(command) or has_method("ws_"+command) or "ws_"+command in external_commands
 
 func call_command(command, script, arguments):
 	command = value_replace(command)
