@@ -18,3 +18,8 @@ mulvar i 3
 "{$i}=7.8"
 subvar i 0.6
 "{$i}=7.2"
+
+setvar_ex i 5+5
+"{$i}=10"
+setvar_ex i 1 == 1
+"{$i}=true"
