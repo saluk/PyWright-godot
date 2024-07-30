@@ -108,8 +108,9 @@ def do_export(profile=None):
             eval(export["after"])()
 
     # Restore initial state
-    with open("games/.gdignore", "w") as f:
-        f.write("")
+    if os.path.exists("games/"):
+        with open("games/.gdignore", "w") as f:
+            f.write("")
     shutil.move("project.godot.orig", "project.godot")
 
 if __name__ == "__main__":
