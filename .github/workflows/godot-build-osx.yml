@@ -4,10 +4,11 @@
 name: Godot Build Mac OS
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_call:
+#   push:
+#     branches: [ "main" ]
+#   pull_request:
+#     branches: [ "main" ]
 
 jobs:
   build:
@@ -32,7 +33,7 @@ jobs:
       run: |
         wget https://downloads.tuxfamily.org/godotengine/3.5.3/Godot_v3.5.3-stable_linux_headless.64.zip
         wget https://downloads.tuxfamily.org/godotengine/3.5.3/Godot_v3.5.3-stable_export_templates.tpz
-        mkdir ~/.cache
+        mkdir -p ~/.cache
         mkdir -p ~/.config/godot
         mkdir -p ~/.local/share/godot/export_templates/3.5.3.stable
         unzip Godot_v3.5.3-stable_linux_headless.64.zip
