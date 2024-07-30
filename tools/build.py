@@ -10,7 +10,7 @@ zips_by_host = {
     "mac": "https://github.com/godotengine/godot-builds/releases/download/3.5.3-stable/Godot_v3.5.3-stable_osx.universal.zip"
 }
 binary_by_host = {
-    "limux": "Godot_v3.5.3-stable_x11.64",
+    "linux": "Godot_v3.5.3-stable_x11.64",
     "mac": "Godot.app/Contents/MacOS/Godot"
 }
 
