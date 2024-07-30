@@ -27,7 +27,9 @@ func ws_delvar(script, arguments):
 #        value = EVAL_EXPR(EXPR(" ".join(args)))
 #        assets.variables[variable]=value
 func ws_set_ex(script, arguments):
-	pass
+	var variableName = arguments.pop_front()
+	var value = WSExpression.EVAL_STR(Commands.join(arguments))
+	main.stack.variables.set_val(variableName, value)
 	
 func ws_setvar_ex(script, arguments):
 	return ws_set_ex(script, arguments)
