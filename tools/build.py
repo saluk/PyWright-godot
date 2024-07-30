@@ -69,6 +69,10 @@ def android_build():
     subprocess.run("adb install -r export/godotwright.apk", shell=True, executable='/bin/bash')
 
 def do_export(profile=None):
+    # ensure required folders exist
+    if not os.path.exists("export"):
+        os.mkdir("export")
+
     # Download godot binary (for github action)
     download_godot()
 
