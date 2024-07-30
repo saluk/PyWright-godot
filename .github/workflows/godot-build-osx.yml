@@ -41,6 +41,13 @@ jobs:
         unzip Godot_v3.5.3-stable_export_templates.tpz
         mv templates/* ~/.local/share/godot/export_templates/3.5.3.stable
         rm -f Godot_v3.5.3-stable_export_templates.tpz Godot_v3.5.3-stable_linux_headless.64.zip
+    - name: install X11 libraries so godot runs
+      run: |
+        sudo apt install libxcursor-dev
+        sudo apt install libxinerama-dev
+        sudo apt install libxrandr-dev
+        sudo apt install libxi6
+        sudo apt install libgl1
     - name: Run godot build for Mac OS
       run: |
         python tools/build.py "Mac OSX"
