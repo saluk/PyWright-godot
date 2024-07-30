@@ -110,10 +110,10 @@ def do_export(profile=None):
             "--export",
             "--verbose",
             export["profile_name"],
-            export["output"],
+            export["output"]]
             shell=True,
             executable="/bin/bash"
-        ])
+        )
 
         if export.get("after", None):
             eval(export["after"])()
