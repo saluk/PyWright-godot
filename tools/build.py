@@ -100,11 +100,13 @@ def do_export(profile=None):
             if not os.path.exists(export["rmfolder"]):
                 os.mkdir(export["rmfolder"])
         
+        print("running godot build...")
         subprocess.run([
             binary_by_host[HOST],
             "--no-window",
-            "--headless"
+            "--headless",
             "--export",
+            "--verbose",
             export["profile_name"],
             export["output"]
         ])
