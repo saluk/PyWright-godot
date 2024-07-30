@@ -10,13 +10,13 @@ zips_by_host = {
     "mac": "https://github.com/godotengine/godot-builds/releases/download/3.5.3-stable/Godot_v3.5.3-stable_osx.universal.zip"
 }
 binary_by_host = {
-    "linux": "Godot_v3.5.3-stable_x11.64",
+    "linux": "./Godot_v3.5.3-stable_x11.64",
     "mac": "Godot.app/Contents/MacOS/Godot"
 }
 
 print(platform.platform())
 HOST = "mac" if "mac" in platform.platform().lower() else ("linux" if "linux" in platform.platform().lower() else "unknown")
-
+HOST="linux"
 def download_godot():
     if not os.path.exists(binary_by_host[HOST]):
         url, filename = zips_by_host[HOST], zips_by_host[HOST].split("/")[-1]
