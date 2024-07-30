@@ -27,13 +27,14 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Run godot build for Mac OS
       run: |
         python tools/build.py "Mac OSX"
+        ls
+        ls export
     - name: Archive build
       uses: actions/upload-artifact@v4
       with:
-        name: godot osx binaruy
+        name: godot osx binary
         path: export/godotwright.dmg

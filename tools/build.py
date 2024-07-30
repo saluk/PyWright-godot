@@ -99,6 +99,7 @@ def do_export(profile=None):
         subprocess.run([
             binary_by_host[HOST],
             "--no-window",
+            "--headless"
             "--export",
             export["profile_name"],
             export["output"]
