@@ -15,7 +15,7 @@ binary_by_host = {
 }
 
 print(platform.platform())
-HOST = "mac" if "mac" in platform.platform() else ("linux" if "linux" in platform.platform() else "unknown")
+HOST = "mac" if "mac" in platform.platform().lower() else ("linux" if "linux" in platform.platform().lower() else "unknown")
 
 def download_godot():
     if not os.path.exists(binary_by_host[HOST]):
