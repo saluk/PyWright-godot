@@ -85,8 +85,8 @@ class TextPack:
 				delta = int(delta)
 				delta = 1
 				time_elapsed -= delta/characters_per_second
-
-			emit_signal("text_printed")
+			if delta >= 1:
+				emit_signal("text_printed")
 			rich_text_label.visible_characters += delta
 			leftover -= delta
 			# TODO this is pretty hacky - Textbox really needs another rewrite

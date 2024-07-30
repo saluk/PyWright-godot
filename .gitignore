@@ -28,5 +28,8 @@ files.index
 System/Playing/*
 
 
-MacOS
+#MacOS
 *.DS_Store
+
+#Windows
+*/Thumbs.db

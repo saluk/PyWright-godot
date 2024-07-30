@@ -1,0 +1,7 @@
+macro mychar1
+set _nt_image general/nt_middle
+char phoenix e=$1
+endmacro
+
+mychar1 coffee
+"Hello I'm phoenix"

@@ -1,3 +1,11 @@
+mus dark-pad.ogg
+set _music_loop dark-piano.ogg
+"start with pad, transition to piano"
+music_fade_out
+mus
+"no music is playing"
+
+
 set _music_fade 0
 mus 02 - courtroom lounge ~ beginning prelude.ogg
 music_fade_in

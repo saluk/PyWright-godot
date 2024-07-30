@@ -86,7 +86,7 @@ func _player_finished():
 
 # SAVE/LOAD
 var save_properties = [
-	"playing", "root_path", "playing_path"
+	"playing", "root_path", "playing_path", "music_volume"
 ]
 func save_node(data):
 	if playing:
