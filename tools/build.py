@@ -24,6 +24,8 @@ def download_godot():
         urlretrieve(url, filename)
         print(f"Unzip {filename}")
         subprocess.run(f"unzip {filename}", shell=True, executable='/bin/bash')
+        if HOST == "linux":
+            subprocess.run(f"chmod a+x {filename}", shell=True, executable='/bin/bash')
 
 
 export_configs = {
