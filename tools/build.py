@@ -109,6 +109,7 @@ def do_export(profile=None):
             "--headless",
             "--export",
             "--verbose",
+            "--display-server headless",
             export["profile_name"],
             export["output"]],
             shell=True,
