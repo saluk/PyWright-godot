@@ -5,6 +5,7 @@
 *.import
 .godot/imported/*
 .godot/shader_cache
+*.orig
 
 # vscode
 .vscode
@@ -15,7 +16,11 @@ reports/
 # Imported translations (automatically generated from CSV files)
 *.translation
 
+#Build related
 export/*
+*.zip
+*.app
+*x11.64
 *.swp
 
 #PyWright specific
@@ -32,4 +37,4 @@ System/Playing/*
 *.DS_Store
 
 #Windows
-*/Thumbs.db
+*Thumbs.db

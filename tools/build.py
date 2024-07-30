@@ -2,8 +2,29 @@ import sys
 import os
 import subprocess
 import shutil
+import platform
+from urllib.request import urlretrieve
 
-godot_binary = "/Users/patrickm/Projects/Godot/Godot-3.53-Mac.app/Contents/MacOS/Godot"
+zips_by_host = {
+    "linux": "https://github.com/godotengine/godot-builds/releases/download/3.5.3-stable/Godot_v3.5.3-stable_x11.64.zip",
+    "mac": "https://github.com/godotengine/godot-builds/releases/download/3.5.3-stable/Godot_v3.5.3-stable_osx.universal.zip"
+}
+binary_by_host = {
+    "limux": "Godot_v3.5.3-stable_x11.64",
+    "mac": "Godot.app/Contents/MacOS/Godot"
+}
+
+print(platform.platform())
+HOST = "mac" if "mac" in platform.platform() else ("linux" if "linux" in platform.platform() else "unknown")
+
+def download_godot():
+    if not os.path.exists(binary_by_host[HOST]):
+        url, filename = zips_by_host[HOST], zips_by_host[HOST].split("/")[-1]
+        print(f"Downloading: {url} as {filename}")
+        urlretrieve(url, filename)
+        print(f"Unzip {filename}")
+        subprocess.run(f"unzip {filename}", shell=True, executable='/bin/bash')
+
 
 export_configs = {
     "Mac OSX": {"profile_name": "Mac OSX", "output": "export/godotwright.dmg"},
@@ -48,6 +69,9 @@ def android_build():
     subprocess.run("adb install -r export/godotwright.apk", shell=True, executable='/bin/bash')
 
 def do_export(profile=None):
+    # Download godot binary (for github action)
+    download_godot()
+
     # Some files are not importing correctly so we ignore them. But we can't ignore
     # them while exporting or it skips the folders entirely. Add back at the end
     if os.path.exists("games/.gdignore"):
@@ -73,7 +97,7 @@ def do_export(profile=None):
                 os.mkdir(export["rmfolder"])
         
         subprocess.run([
-            godot_binary,
+            binary_by_host[HOST],
             "--no-window",
             "--export",
             export["profile_name"],
