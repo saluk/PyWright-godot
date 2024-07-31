@@ -29,7 +29,12 @@ func _load_audio_stream(path):
 			if ResourceLoader.exists(path):
 				stream = load(path)
 				if stream:
-					stream.loop = false
+					if stream is AudioStreamSample:
+						stream.loop_mode = AudioStreamSample.LOOP_DISABLED
+					elif stream is AudioStreamMP3:
+						(stream as AudioStreamMP3).loop = false
+					elif stream is AudioStreamOGGVorbis:
+						(stream as AudioStreamOGGVorbis).loop = false
 		if not stream:
 			# Uses an extension to load more audio types
 			# TODO not really needed if we are converting everything

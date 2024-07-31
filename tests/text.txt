@@ -1,3 +1,7 @@
+"play sound effect: {sfxgeneral/sfx-whoops.wav}"
+"screen shake: {s} woah!"
+"play sound effect with screen shake: {sfxgeneral/sfx-whoops.wav} {s}"
+
 set _textbox_bg textbox_green
 char maya hide
 "Now using a different textbox backdrop"
