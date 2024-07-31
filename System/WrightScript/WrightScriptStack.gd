@@ -177,9 +177,9 @@ func clean_scripts():
 		else:
 			newscripts.append(scr)
 	scripts = newscripts
-	ScreenManager.clean(scripts)
 	if removal:
 		emit_signal("script_removed")
+		ScreenManager.clean(scripts)
 	show_in_debugger()
 	
 func new_state(state):

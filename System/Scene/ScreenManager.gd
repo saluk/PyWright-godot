@@ -45,5 +45,4 @@ func clean(scripts):
 			active_screens.append(script.screen)
 	for screen in screens.get_children():
 		if not screen in active_screens:
-			#screen.queue_free()
-			pass
+			screen.queue_free()

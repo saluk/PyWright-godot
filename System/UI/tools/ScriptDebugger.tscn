@@ -59,6 +59,13 @@ wrap_enabled = true
 caret_blink = true
 caret_blink_speed = 0.5
 
+[node name="Label" type="Label" parent="vbox/Control/Scripts/CurrentScript"]
+margin_left = 188.0
+margin_top = 260.0
+margin_right = 241.0
+margin_bottom = 270.0
+text = "Screen:"
+
 [node name="buttons" type="HBoxContainer" parent="vbox"]
 margin_top = 304.0
 margin_right = 250.0

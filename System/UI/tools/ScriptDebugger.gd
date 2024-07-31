@@ -82,6 +82,7 @@ func rebuild():
 			"highlighted_line": null,
 			"bookmark_line": null}
 		d["editor"].name = "x"
+		d["editor"].get_node("Label").text = script.screen.name
 		node_scripts.add_child(d["editor"])
 		node_scripts.set_tab_title(i, script.filename)
 		d["editor"].text = PoolStringArray(d["script"].lines).join("\n")
