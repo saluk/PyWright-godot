@@ -1,3 +1,9 @@
+set _textbox_bg textbox_green
+char maya hide
+"Now using a different textbox backdrop"
+
+set _textbox_bg
+
 "{type}{center}{c090}Thursday October 26, 2023{n}Godot development environment."
 
 macro text_in_text

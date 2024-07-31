@@ -29,7 +29,7 @@ addev profile6$
 addev profile7$
 addev profile8$
 addev profile9$
-"present evidence 2. evidence 1 not presentable."
+"present evidence 2. evidence 1 not presentable. profiles page is lobby"
 showpresent
 label none
 "no label. presented={$_selected}"

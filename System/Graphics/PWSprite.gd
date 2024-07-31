@@ -10,6 +10,8 @@ var frames
 var width:int = 1
 var height:int = 1
 
+var pivot_center = true  # Whether the pivot point for the sprite should be in the center (true) or upper left (false)
+
 var wait = false   # Pause script until animation has finished playing
 var wait_signal = "finished_playing"
 var loaded = false
@@ -197,8 +199,9 @@ func rescale(size_x, size_y):
 	animated_sprite.scale.y = sc_h
 	width = size_x
 	height = size_y
-	animated_sprite.position = Vector2(width/2, height/2)
-	animated_sprite.position = Vector2(width/2, height/2)
+	if pivot_center:
+		animated_sprite.position = Vector2(width/2, height/2)
+		animated_sprite.position = Vector2(width/2, height/2)
 	self.emit_signal("size_changed")
 	
 

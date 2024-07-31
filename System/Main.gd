@@ -50,7 +50,7 @@ func load_game(path):
 func load_script_from_path(path):
 	#stack.load_script("res://tests/"+path)
 	#stack.load_macros_from_path("macros")
-	current_game = "res://tests/"
+	current_game = "res://tests"
 	stack.init_game(current_game, path)
 	emit_signal("stack_initialized")
 	timecounter.reset()
