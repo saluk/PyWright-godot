@@ -139,9 +139,16 @@ func ws_flash(script, arguments):
 		script,
 		"fg",
 		{"sort_with": "flash"},
-		["flash"] + arguments
+		["white"] + arguments
 	)
-	yield(main.get_tree().create_timer(0.1), "timeout")
+	var delay = 3.0/60.0
+	var color = Color(1.0,1.0,1.0,1.0)
+	if arguments.size() > 0:
+		delay = float(arguments[0])/60.0
+	if arguments.size() > 1:
+		color = Colors.string_to_color(arguments[1])
+	flash.current_sprite.set_colorize(color, 1.0)
+	yield(main.get_tree().create_timer(delay), "timeout")
 	if flash and is_instance_valid(flash):
 		flash.queue_free()
 	

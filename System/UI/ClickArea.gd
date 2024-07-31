@@ -94,19 +94,19 @@ func perform_action():
 
 func set_highlight():
 	var final_sprite = "default"
-	var final_color = Vector3(1,1,1)
+	var final_color = Color(1,1,1,1)
 	var final_amount = 0.0
 	if clicked:
 		if parent.has_sprite("clicked"):
 			final_sprite = "clicked"
 		else:
-			final_color = Vector3(0,0,1)
+			final_color = Color(0,0,1,1)
 			final_amount = 0.5
 	if over:
 		if parent.has_sprite("highlight"):
 			final_sprite = "highlight"
 		else:
-			final_color = Vector3(1,1,1)
+			final_color = Color(1,1,1,1)
 			final_amount = 0.5
 	parent.set_sprite(final_sprite)
 	if parent.current_sprite:

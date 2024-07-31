@@ -1,6 +1,8 @@
 "play sound effect: {sfxgeneral/sfx-whoops.wav}"
 "screen shake: {s} woah!"
 "play sound effect with screen shake: {sfxgeneral/sfx-whoops.wav} {s}"
+"play flash with sound effect: {sfxgeneral/sfx-whoops.wav} {f}"
+"this flash is green, translucent and is on screen for 2 seconds {f 120 00ff0088}"
 
 set _textbox_bg textbox_green
 char maya hide

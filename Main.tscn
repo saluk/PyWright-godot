@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://System/UI/tools/ScriptDebugger.tscn" type="PackedScene" id=1]
 [ext_resource path="res://System/UI/tools/FrameLog.tscn" type="PackedScene" id=2]
@@ -10,6 +10,14 @@
 [ext_resource path="res://art/general/arrow_right.png" type="Texture" id=8]
 [ext_resource path="res://System/UI/tools/ErrorLog.tscn" type="PackedScene" id=9]
 [ext_resource path="res://System/UI/tools/DirectoryCacheList.tscn" type="PackedScene" id=10]
+[ext_resource path="res://art/bg/white.png" type="Texture" id=11]
+[ext_resource path="res://System/Graphics/image_filters.shader" type="Shader" id=12]
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 12 )
+shader_param/greyscale_amt = 0.0
+shader_param/to_color_amount = 1.0
+shader_param/to_color = Plane( 1, 1, 1, 0.5 )
 
 [node name="Main" type="Node2D" groups=["Main"]]
 script = ExtResource( 3 )
@@ -83,3 +91,7 @@ custom_colors/font_color_shadow = Color( 0, 0, 0, 0.733333 )
 text = "Options"
 
 [node name="IncomingObjects" type="Node" parent="."]
+
+[node name="Sprite" type="Sprite" parent="."]
+material = SubResource( 1 )
+texture = ExtResource( 11 )

@@ -15,6 +15,12 @@ static func string_to_color(text):
 			parts.append(
 				float(("0x"+text.substr(i*2, 2)).hex_to_int())/255.0
 			)
+	elif text.length() == 8:
+		for i in range(4):
+			parts.append(
+				float(("0x"+text.substr(i*2, 2)).hex_to_int())/255.0
+			)
+		return Color(parts[0], parts[1], parts[2], parts[3])
 	else:
 		GlobalErrors.log_error("Invalid color: %s" % text)
 		return Color(1,1,1)
