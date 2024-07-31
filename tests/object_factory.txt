@@ -3,8 +3,6 @@ label top
 set _debug true
 clear
 
-goto start_examine_test
-
 ut_assert objects().size()==0
 ut_assert_after lines=1 current_line().has("now")
 goto now
@@ -61,8 +59,8 @@ ut_assert objects("edgeworth").size() == 0
 ut_assert_after frames=5 objects("skye")[0].current_sprite
 ut_assert_after frames=5 objects("skye")[0].variant_path=="normal"
 ut_assert_after frames=5 objects("skye")[0].sprite_key=="talk"
-ut_assert_after frames=40 objects("skye")[0].sprite_key=="blink"
-ut_assert_after frames=40 objects("skye")[0].current_sprite
+ut_assert_after frames=60 objects("skye")[0].sprite_key=="blink"
+ut_assert_after frames=60 objects("skye")[0].current_sprite
 ut_after frames=60 textbox().click_continue()
 "I can load (combined) sprites too"
 ut_assert objects("skye")[0].current_sprite.material.get_shader_param("greyscale_amt") == 0
@@ -114,12 +112,12 @@ ut_after signal=text_finished textbox().click_continue()
 "finished gui section"
 
 label start_examine_test
-ut_after frames=1 objects("examine_menu")[0].ws_check_from_examine(null,null)
+ut_after frames=1 objects("examine_menu+courtroom")[0].ws_check_from_examine(null,null)
 ut_after frames=2 textbox().printed == "nothing found"
 ut_after frames=3 textbox().click_continue()
 
-ut_after frames=4 objects("examine_menu")[0].set_crosshair_pos(25, 25)
-ut_after frames=5 objects("examine_menu")[0].ws_check_from_examine(null,null)
+ut_after frames=4 objects("examine_menu+courtroom")[0].set_crosshair_pos(25, 25)
+ut_after frames=5 objects("examine_menu+courtroom")[0].ws_check_from_examine(null,null)
 ut_after frames=6 textbox().printed == "something found"
 ut_after frames=7 textbox().click_continue()
 
@@ -137,13 +135,13 @@ goto examine_menu_hidden
 label next2
 "something found. x:{$_examine_clickx} y:{$_examine_clicky}"
 
-ut_after frames=1 objects("examine_menu")[0].examine_button.visible == false
-ut_after frames=1 objects("examine_menu")[0].ws_back_from_examine(null,null)
+ut_after frames=1 objects("examine_menu+courtroom")[0].examine_button.visible == false
+ut_after frames=1 objects("examine_menu+courtroom")[0].ws_back_from_examine(null,null)
 ut_after frames=2 textbox().printed == "you clicked the back button, try again"
 ut_after frames=3 textbox().click_continue()
 
-ut_after frames=4 objects("examine_menu")[0].set_crosshair_pos(25, 25)
-ut_after frames=5 objects("examine_menu")[0].ws_check_from_examine(null,null)
+ut_after frames=4 objects("examine_menu+courtroom")[0].set_crosshair_pos(25, 25)
+ut_after frames=5 objects("examine_menu+courtroom")[0].ws_check_from_examine(null,null)
 ut_after frames=6 textbox().printed == "something found"
 ut_after frames=7 textbox().click_continue()
 

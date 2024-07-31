@@ -98,6 +98,9 @@ func _ready():
 		load_script_from_path(path)
 	else:
 		load_game(path)
+	
+	if mode == "test":
+		$Screens.rect_global_position = Vector2(0,0)
 	stack.mode = mode
 	
 	stack.connect("script_added", self, "check_saving_enabled")
