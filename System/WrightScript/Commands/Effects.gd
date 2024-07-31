@@ -130,6 +130,13 @@ func ws_shake(script, arguments:Array):
 	var shaker = Shaker.new(script.screen, ttl/60.0, offset)
 	shaker.wait = wait
 	script.screen.add_child(shaker)
+	var shake_sound = null
+	if main.stack.variables.get_truth("_shake_sound", false):
+		shake_sound = "Shock.ogg"
+	else:
+		shake_sound = main.stack.variables.get_string("_shake_sound", null)
+	if shake_sound:
+		Commands.call_command("sfx", script, [shake_sound])
 	return shaker
 
 func ws_flash(script, arguments):
@@ -148,6 +155,13 @@ func ws_flash(script, arguments):
 	if arguments.size() > 1:
 		color = Colors.string_to_color(arguments[1])
 	flash.current_sprite.set_colorize(color, 1.0)
+	var flash_sound = null
+	if main.stack.variables.get_truth("_flash_sound", false):
+		flash_sound = "Slash.ogg"
+	else:
+		flash_sound = main.stack.variables.get_string("_flash_sound", null)
+	if flash_sound:
+		Commands.call_command("sfx", script, [flash_sound])
 	yield(main.get_tree().create_timer(delay), "timeout")
 	if flash and is_instance_valid(flash):
 		flash.queue_free()
