@@ -42,6 +42,7 @@ func ws_localmenu(script, arguments):
 		if WSExpression.string_to_bool(kw.get(option, "false")):
 			menu.enabled_options.append(option)
 	menu.fail_label = kw.get("fail", "none")
+	Commands.call_macro("show_court_record_button", script, [])
 	return menu
 	
 func ws_lmenu(script, arguments):

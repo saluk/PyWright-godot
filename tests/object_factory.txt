@@ -209,9 +209,10 @@ label continue
 "continuing"
 
 label TEST_INVESTIGATE_MENU
-ut_after frames=2 objects("invest_menu")[0].get_node("examine").click_area.perform_action()
-ut_after frames=3 textbox().printed == "examine 1"
-ut_after frames=4 textbox().click_continue()
+ut_after frames=4 objects("_crbut_")[0]
+ut_after frames=6 objects("invest_menu")[0].get_node("examine").click_area.perform_action()
+ut_after frames=7 textbox().printed == "examine 1"
+ut_after frames=8 textbox().click_continue()
 ut_after frames=10 objects("invest_menu")[0].get_node("move").click_area.perform_action()
 ut_after frames=11 textbox().printed == "move 1"
 ut_after frames=12 textbox().click_continue()
