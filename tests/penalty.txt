@@ -1,3 +1,5 @@
+goto penalty_over_100
+
 clear
 set penalty 50
 penalty +24
@@ -39,3 +41,9 @@ set penalty 100
 penalty 50
 "Should see penalty go from 100 to 50"
 
+label penalty_over_100
+clear 
+set penalty 100
+penalty -10
+penalty +20
+"Should see penalty go down by 10 and up by 10, and be at 100. Penalty={$penalty}"
