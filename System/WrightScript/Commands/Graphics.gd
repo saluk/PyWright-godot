@@ -63,7 +63,7 @@ func ws_fg(script, arguments):
 	return fg
 
 # TODO support more commands
-# e=, be=, priority=, noauto
+# e=, priority=, noauto
 func ws_char(script, arguments):
 	if not main.get_tree():
 		return
@@ -77,6 +77,13 @@ func ws_char(script, arguments):
 		{},
 		arguments
 	)
+	if "be" in kw:
+		character.add_sprite("blink", {
+			"path": "art/port/{base}/"+kw["be"]+"(blink).png",
+			"animation_mode": "blink",
+			"mirror": [1, 1],
+			"fallback": "default"
+		})
 	if "hide" in arguments:
 		character.visible = false
 		Commands.delete_object_group(Commands.HIDDEN_CHAR_GROUP)

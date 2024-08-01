@@ -1,3 +1,5 @@
+goto test_be
+
 nt narrator
 "I am the narrator"
 set char_maya_name Maya Fey
@@ -27,3 +29,7 @@ set _speaking maya
 "Back to maya, nametag is Maya Fey"
 nt Not Maya
 "Now I'm Not Maya, the narrator (maya is not talking)"
+
+label test_be
+char maya e=bench be=bench-hum
+"I talk with my normal bench, but blink with my hum."

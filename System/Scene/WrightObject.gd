@@ -118,7 +118,11 @@ func add_sprite(sprite_key, sprite_template):
 	print("BEGIN SPRITE SEARCH: ", sprite_key, " ", sprite_template)
 	# Ensure if we call add_sprite again for the same key we don't leave a reference
 	if sprite_key in sprites:
+		if current_sprite == sprites[sprite_key]:
+			current_sprite = null
+		SignalUtils.remove_all(sprites[sprite_key])
 		sprites[sprite_key].free()
+		sprites.erase(sprite_key)
 
 	if not sprite_template["path"]:
 		return
