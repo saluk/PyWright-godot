@@ -4,10 +4,27 @@ var main
 
 func _init(commands):
 	main = commands.main
-
-# TODO clear bottom/top
+		# """Clears all objects from the scene."""
+		# if "top" in args:
+		#     for o in self.obs:
+		#         if hasattr(o,"pos") and o.pos[1]<192:
+		#             o.delete()
+		#     return
+		# elif "bottom" in args:
+		#     for o in self.obs:
+		#         if hasattr(o,"pos") and o.pos[1]>=192:
+		#             o.delete()
+		#     return
+		# for o in self.obs:
+		#     o.delete()
 func ws_clear(script, arguments):
-	script.screen.clear()
+	var top = true
+	var bottom = true
+	if "bottom" in arguments:
+		top = false
+	if "top" in arguments:
+		bottom = false
+	script.screen.clear(top, bottom)
 func ws_delete(script, arguments):
 	var name = Commands.keywords(arguments).get("name", null)
 	if name != null:

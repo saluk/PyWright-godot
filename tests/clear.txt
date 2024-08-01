@@ -1,0 +1,10 @@
+"should show both lobbies, then top lobby only, then bottom lobby only"
+bg lobby
+bg lobby stack y=192 z=0
+pause 40
+clear bottom
+pause 40
+bg lobby stack y=192 z=0
+clear top
+pause 40
+"done"
