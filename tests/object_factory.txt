@@ -20,7 +20,7 @@ ut_assert_after frames=5 textbox()==null
 fg ani-judge-gavel
 ut_assert_after frames=10 textbox()!=null
 ut_after signal=text_finished textbox().click_continue()
-"Hopefully there was a delay"
+"Hopefully there was a delay and a sound effect"
 ut_after frames=5 textbox().printed.begins_with("Hopefully")
 ut_after frames=5 objects("ani-judge-gavel")[0].current_sprite.get_animation_progress() < 1
 ut_after signal=text_finished textbox().click_continue()
