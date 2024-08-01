@@ -85,3 +85,20 @@ func ws_investigate_option(script, args):
 		print("bad investigate menu")
 		assert(0)
 	queue_free()
+
+
+# SAVE/LOAD
+func save_node(data):
+	data["mirror"] = [mirror.x, mirror.y]
+	data["loader_class"] = "res://System/UI/Investigate.gd"
+	.save_node(data)
+
+static func create_node(saved_data:Dictionary):
+	var ob = load("res://System/UI/Investigate.gd").new()
+	return ob
+	
+func load_node(tree, saved_data:Dictionary):
+	.load_node(tree, saved_data)
+
+func after_load(tree:SceneTree, saved_data:Dictionary):
+	.after_load(tree, saved_data)
