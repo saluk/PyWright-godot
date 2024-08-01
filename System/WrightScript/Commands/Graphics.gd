@@ -63,7 +63,7 @@ func ws_fg(script, arguments):
 	return fg
 
 # TODO support more commands
-# e=, priority=, noauto
+# priority=
 func ws_char(script, arguments):
 	if not main.get_tree():
 		return
@@ -77,6 +77,7 @@ func ws_char(script, arguments):
 		{},
 		arguments
 	)
+	# TODO "e" is handled in ObjectFactory. probably should pick a lane here
 	if "be" in kw:
 		character.add_sprite("blink", {
 			"path": "art/port/{base}/"+kw["be"]+"(blink).png",
@@ -95,6 +96,12 @@ func ws_char(script, arguments):
 	)
 	if "nametag" in kw:
 		character.char_name = kw["nametag"]
+	if "noauto" in arguments:
+		# just play character animation as if they weren't a character
+		while character.sprites.size() > 1:
+			character.remove_sprite(character.sprites.keys()[0])
+		if character.sprites:
+			character.set_sprite(character.sprites.keys()[0])
 	# Called last because _speaking has a setter that sets _speaking_name
 	main.stack.variables.set_val("_speaking", character.base_path)
 	apply_fader(script, character, arguments)

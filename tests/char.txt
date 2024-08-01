@@ -1,5 +1,3 @@
-goto test_be
-
 nt narrator
 "I am the narrator"
 set char_maya_name Maya Fey
@@ -33,3 +31,11 @@ nt Not Maya
 label test_be
 char maya e=bench be=bench-hum
 "I talk with my normal bench, but blink with my hum."
+
+label test_noauto
+char maya e=bench noauto
+"I'm just talking forever blah blah blah animation should be blinking"
+
+label test_noauto
+char maya e=bench(talk) noauto
+"I'm just talking forever blah blah blah animation should be talking"

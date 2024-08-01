@@ -87,7 +87,7 @@ func free_members():
 		current_sprite.queue_free()
 		current_sprite = null
 	for sprite in sprites.values():
-		if not sprite.is_queued_for_deletion():
+		if is_instance_valid(sprite) and not sprite.is_queued_for_deletion():
 			sprite.queue_free()
 	sprites.clear()
 
@@ -111,6 +111,18 @@ func init():
 # Just used for logging
 var sprite_paths_searched = []
 
+func remove_sprite(sprite_key):
+	if not sprite_key in sprites:
+		return
+	var sprite_to_remove = sprites[sprite_key]
+	sprites.erase(sprite_key)
+	if not sprite_to_remove in sprites.values():
+		if current_sprite == sprite_to_remove:
+			current_sprite = null
+		SignalUtils.remove_all(sprite_to_remove)
+		if is_instance_valid(sprite_to_remove):
+			sprite_to_remove.free()
+
 #Sprite template:
 #  path: path of sprite to load
 #  animation_mode: loop, once, blink, talk, ...
@@ -118,11 +130,7 @@ func add_sprite(sprite_key, sprite_template):
 	print("BEGIN SPRITE SEARCH: ", sprite_key, " ", sprite_template)
 	# Ensure if we call add_sprite again for the same key we don't leave a reference
 	if sprite_key in sprites:
-		if current_sprite == sprites[sprite_key]:
-			current_sprite = null
-		SignalUtils.remove_all(sprites[sprite_key])
-		sprites[sprite_key].free()
-		sprites.erase(sprite_key)
+		remove_sprite(sprite_key)
 
 	if not sprite_template["path"]:
 		return
