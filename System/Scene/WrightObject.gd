@@ -193,6 +193,8 @@ func load_sprites(template, sprite_key=null):
 		click_area.name = "ClickArea"
 		click_area.click_macro = template["click_macro"]
 		click_area.click_args = template["click_args"]
+		click_area.select_macro = template.get("select_macro",[])
+		click_area.select_args = template.get("select_args",[])
 		add_child(click_area)
 	
 	# Just the visual of the button, use click area to drive the game
@@ -354,6 +356,8 @@ func save_node(data):
 	if click_area:
 		template["click_macro"] = click_area.click_macro
 		template["click_args"] = click_area.click_args
+		template["select_macro"] = click_area.select_macro
+		template["select_args"] = click_area.select_args
 	# PROPERTIES SAVED AFTER THIS
 
 static func create_node(saved_data:Dictionary):

@@ -12,6 +12,10 @@ var clicked := false
 
 var click_macro:String  # Macro to call when button is pressed
 var click_args:Array
+var select_macro:String  #Macro to call when button is highlighted
+var select_args:Array
+
+var select_with_keys:bool = true   #Whether this clickarea can be selected with keys
 
 var debuglabel:Label
 
@@ -57,7 +61,10 @@ func _draw():
 		draw_line(Vector2(0,rect_size.y), Vector2(0,0), Color.red, 2.0)
 
 func on_mouse_entered():
-	over = true
+	if not over:
+		over = true
+		if select_macro:
+			Commands.call_command(select_macro, parent.wrightscript, select_args)
 	set_highlight()
 	set_debug_text()
 	

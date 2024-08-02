@@ -17,6 +17,35 @@ var classes = {
 	"PWList": "res://System/UI/PWList.gd",
 	"TextBlock": "res://System/Scene/TextBlock.gd"
 }
+
+var DEFAULT_TEMPLATE = {
+	"default_name": "bg",
+	"class": "WrightObject",
+	"sprites": {
+		"default": {
+			"path": "art/bg/{base}.png",
+			"animation_mode": "loop",
+			"mirror": [1, 1]
+		}
+	},
+	"centered": false,
+	"mirror": [1, 1],
+	"block_script": false,
+	"groups": [Commands.SPRITE_GROUP, Commands.BG_GROUP, Commands.CLEAR_GROUP],
+	"start_sprite": "default",
+	"sort_with": "bg",
+	"default_variant": "",
+	"rect": null,
+	"clickable": false,
+	"button_text": false,
+	"scrollable": true,
+	"click_macro": "",
+	"click_args": [],
+	"select_macro": "",
+	"select_args": [],
+	"select_by_keys": false,
+	"position": [0,0]
+}
 	
 var TEMPLATES = {
 	"bg":
@@ -321,7 +350,9 @@ var TEMPLATES = {
 
 # Get a template to be modified and then passed into create_from_template
 func get_template(key, modified_data={}):
-	var t = TEMPLATES[key].duplicate(true)
+	var t = DEFAULT_TEMPLATE.duplicate(true)
+	var overlay = TEMPLATES[key].duplicate(true)
+	t.merge(overlay, true)
 	t.merge(modified_data, true)
 	return t
 	
