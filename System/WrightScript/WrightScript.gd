@@ -348,6 +348,10 @@ func process_wrightscript() -> Frame:
 		return Frame.new(self, line_num, line, Commands.NEXTLINE)
 	if allowed_commands.size() > 0 and not line.split(" ")[0] in allowed_commands:
 		return Frame.new(self, line_num, line, Commands.NEXTLINE)
+	if "#" in line:
+		line = line.rsplit("#", true, 1)[0].strip_edges()
+	if "//" in line:
+		line = line.rsplit("//", true, 1)[0].strip_edges()
 	if line[0] == '"' or line[0] == "'":
 		line = "text "+line
 	var split = line.split(" ") as Array
