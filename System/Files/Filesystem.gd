@@ -86,19 +86,12 @@ static func load_image_from_path(path:String) -> Image:
 		if err != OK:
 			print("Error loading file: ", path)
 			return null
-		var buffer:PoolByteArray
-		buffer = f.get_buffer(f.get_len())
 		f.close()
 		image = Image.new()
 		var error
-		if path.ends_with("png"):
-			error = image.load_png_from_buffer(buffer)
-		elif path.ends_with("bmp"):
-			error = image.load_bmp_from_buffer(buffer)
-		elif path.ends_with("jpg"):
-			error = image.load_jpg_from_buffer(buffer)
+		error = image.load(path)
 		if error != OK:
-			GlobalErrors.log_error("%s error: %s" % [path, error])
+			GlobalErrors.log_error("Tried and FAILED to load image: %s error: %s" % [path, error])
 	print("image found: ", image)
 	de_pink_image(image)
 	return image

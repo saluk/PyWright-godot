@@ -13,8 +13,9 @@ endmacro
 macro show_main_button
 isnot _textbox_show_button?
 goto end_show_main_button
-bg main2 y=192 try_bottom stack z=0 name=_main_button_bg
-gui Button {main_button_advance_text} graphic=general/buttonpress graphichigh=general/buttonpress_high name=_main_button_fg x=17 y=232 z=0 try_bottom
+obj $_bigbutton_bg y=192 try_bottom stack z=0 name=_main_button_bg
+joinvar _button_high $_bigbutton_img _high
+gui Button {main_button_advance_text} graphic=$_bigbutton_img graphichigh=$_button_high name=_main_button_fg x=17 y=232 z=0 try_bottom
 obj general/arrow_big name=_main_button_arrow x=96 y=273 z=0
 label end_show_main_button
 endmacro
@@ -22,7 +23,10 @@ endmacro
 
 
 macro show_cross_buttons
-bg main2 y=192 try_bottom stack z=0 name=_main_button_bg
+isempty _bigbutton_cross?
+set _bigbutton_cross general/cross_exam_buttons
+obj $_bigbutton_bg y=192 try_bottom stack z=0 name=_main_button_bg
+joinvar _cross_high $_bigbutton_cross _high
 
 goto left_arrow
 label fake_arrow
@@ -31,11 +35,11 @@ goto right_arrow
 
 label left_arrow
 is _cross_exam_start fake_arrow
-gui Button {cross_exam_left} graphic=general/cross_exam_buttons graphichigh=general/cross_exam_buttons_high name=_main_button_fg x=17 y=252 z=0 rect=0,0,106,79 try_bottom
+gui Button {cross_exam_left} graphic=$_bigbutton_cross graphichigh=$_cross_high name=_main_button_fg x=17 y=252 z=0 rect=0,0,106,79 try_bottom
 obj general/arrow_big name=_main_button_arrow x=32 y=273 z=0 flipx
 
 label right_arrow
-gui Button {cross_exam_right} graphic=general/cross_exam_buttons graphichigh=general/cross_exam_buttons_high name=_main_button_fg x=139 y=252 z=0 rect=117,0,106,79 try_bottom
+gui Button {cross_exam_right} graphic=$_bigbutton_cross graphichigh=$_cross_high name=_main_button_fg x=139 y=252 z=0 rect=117,0,106,79 try_bottom
 obj general/arrow_big name=_main_button_arrow x=160 y=273 z=0
 
 endmacro
