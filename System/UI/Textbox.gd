@@ -400,6 +400,7 @@ func click_continue(immediate_skip=false):
 		clean_up()
 		get_parent().remove_child(self)
 		queue_free()
+		Commands.call_command("sound_textbox_continue", main.stack.scripts[0], [])
 		
 func click_next():
 	main.stack.scripts[-1].next_statement()

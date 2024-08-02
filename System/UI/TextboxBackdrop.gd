@@ -16,4 +16,5 @@ func _ready():
 		var found_path = Filesystem.lookup_file("art/"+bg+".png", get_parent().main.stack.scripts[-1].root_path, ["png"])
 		sprite.load_animation(found_path, null, null)
 		add_child(sprite)
+		move_child(sprite, 0)
 		get_node("Textbox2").queue_free()

@@ -84,7 +84,7 @@ func ws_click_list_item(script, arguments):
 			" ".join(arguments)
 		]
 	)
-	Commands.call_command("sound_list_menu_select", stack.scripts[0], [])
+	Commands.call_command("sound_list_menu_confirm", stack.scripts[0], [])
 	queue_free()
 
 
