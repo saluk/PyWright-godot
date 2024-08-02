@@ -141,7 +141,7 @@ func load_back_button():
 	)
 	
 func ws_click_back_from_court_record(script, arguments):
-	Commands.call_command("sound_back_button_cancel", script, [])
+	Commands.call_command("sound_court_record_cancel", script, [])
 	if zoom:
 		zoom = false
 		set_offset(int(offset/8) * PAGE_SIZE)
@@ -212,6 +212,10 @@ func ws_record_click_direction(script, arguments):
 	var direction = {"L":-1, "R":1}[arguments[0]]
 	set_offset(offset + direction*{true:1, false:PAGE_SIZE}[zoom])
 	reset()
+	if not zoom:
+		Commands.call_command("sound_court_record_scroll", wrightscript, [])
+	else:
+		Commands.call_command("sound_court_record_scroll_zoomed", wrightscript, [])
 	return
 	
 func load_page():
@@ -326,8 +330,8 @@ func load_page_zoom():
 		load_arrow("R")
 	
 func load_check_button(evname):
-	var check_script = stack.variables.get_string(evname+"_check")
-	if not check_script:
+	var check_script_or_macro = stack.variables.get_string(evname+"_check")
+	if not check_script_or_macro:
 		return
 	var check_img = stack.variables.get_string("ev_check_img")
 	var check_button = ObjectFactory.create_from_template(
@@ -339,7 +343,7 @@ func load_check_button(evname):
 				"highlight": {"path": "art/"+check_img+"_high.png"}
 			},
 			"click_macro": "{record_click_check}",
-			"click_args": [evname, check_script]
+			"click_args": [evname, check_script_or_macro]
 		},
 		[],
 		script_name
@@ -418,8 +422,10 @@ func load_page_overview():
 func highlight_evidence(evname):
 	if not zoom:
 		name_label.text = evidence_name(ev_db[evname]["name"])
+		Commands.call_command("sound_court_record_scroll", wrightscript, [])
 		
 func ws_record_zoom_evidence(script, arguments):
+	Commands.call_command("sound_court_record_zoom", script, [])
 	var evname = arguments[0]
 	zoom = true
 	set_offset(stack.evidence_pages.get(page, []).find(evname))
@@ -432,6 +438,7 @@ func ws_record_click_check(script, arguments):
 	check(arguments[0], arguments[1])
 	
 func ws_click_page_from_court_record(script, arguments):
+	Commands.call_command("sound_court_record_switch", script, [])
 	set_page(arguments[0])
 	set_offset(0)
 	reset()
@@ -446,11 +453,15 @@ func present(option):
 	
 func check(evname, check_script):
 	select(evname)
-	Commands.call_command(
-		"script",
-		stack.scripts[-1],
-		[check_script, "stack", "noclear"]
-	)
+	if Commands.is_macro(check_script):
+		Commands.call_command(check_script, wrightscript, [])
+	else:
+		Commands.call_command(
+			"script",
+			stack.scripts[-1],
+			[check_script, "stack", "noclear"]
+		)
+	Commands.call_command("sound_court_record_zoom", wrightscript, [])
 	#visible = false
 	#queue_free()
 

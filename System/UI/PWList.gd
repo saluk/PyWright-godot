@@ -55,6 +55,7 @@ func add_item(text, result):
 			},
 			"click_macro": "{click_list_item}",
 			"click_args": [result],
+			"select_macro": "{sound_list_menu_select}"
 		},
 		["name="+text],
 		script_name
@@ -73,16 +74,18 @@ func add_item(text, result):
 	
 func ws_click_back_from_list(script, arguments):
 	queue_free()
+	Commands.call_command("sound_list_menu_cancel", script, [])
 	
 func ws_click_list_item(script, arguments):
-		Commands.call_command(
-			"goto",
-			stack.scripts[-1],
-			[
-				" ".join(arguments)
-			]
-		)
-		queue_free()
+	Commands.call_command(
+		"goto",
+		stack.scripts[-1],
+		[
+			" ".join(arguments)
+		]
+	)
+	Commands.call_command("sound_list_menu_select", stack.scripts[0], [])
+	queue_free()
 
 
 #SAVE/LOAD

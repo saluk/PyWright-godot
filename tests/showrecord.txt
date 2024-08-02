@@ -1,3 +1,7 @@
+macro checkme
+"Looking at evidence 1"
+endmacro
+
 label top
 set ev_z_text_col 955
 #set ev_show_mode_text false
@@ -9,6 +13,7 @@ set ev_mode_bg_profiles bg/lobby
 addev evidence1 documents
 set evidence1_desc This is a piece of evidence
 set evidence1_presentable false
+set evidence1_check checkme
 addev evidence2 documents
 set evidence2_desc THE SECOND PIECE OF EVIDENCE
 addev evidence3 documents

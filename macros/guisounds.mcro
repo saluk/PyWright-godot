@@ -63,5 +63,9 @@ sfx Cancel.ogg volume=70
 endmacro
 
 macro sound_examine_scroll
+sfx Scroll.ogg volume=70
+endmacro
+
+macro sound_examine_check
 sfx Confirm.ogg volume=70
 endmacro

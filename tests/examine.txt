@@ -1,19 +1,24 @@
 "test"
 bg lobby
+bg lobby stack name=lobbyside x=256
 bg lobby stack name=lobby2
 scroll name=lobby2 y=192 speed=3
 
 label 01
 bg lobby stack name=lobby2 y=192
 label 1
+delete name=lobby2
 examine
 region 0 0 20 20 something
+label back
+"pressed back"
+top
 label something
- delete name=lobby2
+#delete name=lobby2
 "found something"
 goto 01
 label none
- delete name=lobby2
+#delete name=lobby2
 "found nothing"
 goto 01
 label next

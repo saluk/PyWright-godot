@@ -86,6 +86,8 @@ func ws_investigate_option(script, args):
 		print("bad investigate menu")
 		assert(0)
 	queue_free()
+	# Have to do this at the end otherwise the script jumping functions will get the wrong script
+	Commands.call_command("{sound_investigate_menu_confirm}", script, [])
 
 
 # SAVE/LOAD

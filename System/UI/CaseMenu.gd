@@ -95,6 +95,7 @@ func _scroll(direction):
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()
 	yield(tween,"tween_completed")
+	Commands.call_command("sound_case_menu_select", wrightscript, [])
 	build_scene()
 	tween.interpolate_property($Control/ScrollContainer2, "rect_position",
 			start_pos + Vector2(256, 0) * direction,

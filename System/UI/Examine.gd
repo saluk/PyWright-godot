@@ -83,7 +83,7 @@ func _get_scroll_direction():
 			if region.position.x + region.size.x < 0:
 				scroll_left = true
 				break
-			if region.position.x > 256:
+			if region.position.x >= 256:
 				scroll_right = true
 				break
 	if not (scroll_left or scroll_right):
@@ -91,7 +91,7 @@ func _get_scroll_direction():
 			if bg.position.x + bg.width < 0:
 				scroll_left = true
 				break
-			if bg.position.x > 256:
+			if bg.position.x >= 256:
 				scroll_right = true
 				break
 	if scroll_left:
@@ -117,16 +117,18 @@ func ws_check_from_examine(script, arguments):
 		label = current_region.label
 	stack.variables.set_val("_examine_clickx", str(crosshair.real_position().x))
 	stack.variables.set_val("_examine_clicky", str(crosshair.real_position().y))
-	return Commands.call_command(
+	Commands.call_command(
 		"goto",
 		stack.scripts[-1],
 		[
 			label
 		]
 	)
+	Commands.call_command("sound_examine_check", stack.scripts[0], [])
 
 func ws_back_from_examine(script, arguments):
 	queue_free()
+	Commands.call_command("sound_examine_menu_cancel", script, [])
 	
 func ws_scroll_from_examine(script, arguments):
 	scrolling = true
@@ -136,9 +138,10 @@ func ws_scroll_from_examine(script, arguments):
 		scroll_button.queue_free()
 		scroll_button = null
 	var scroll_amt = 256/32
+	Commands.call_command("sound_examine_scroll", wrightscript, [])
 	for i in range(32):
 		for ob in get_children():
-			if ob is Region:
+			if ob is Region or ob in bg_obs:
 				ob.position.x -= scroll_button_direction * scroll_amt
 		for ob in get_parent().get_children():
 			if "scrollable" in ob and ob.scrollable:
