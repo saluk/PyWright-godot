@@ -17,7 +17,14 @@ func ws_mus(script, arguments):
 # TODO add arguments:
 # after=, volumee=
 func ws_sfx(script, arguments):
+	var volume = 1.0
+	var result = Commands.keywords(arguments, true)
+	var kw = result[0]
+	arguments = result[1]
+	if "volume" in kw:
+		volume = int(kw["volume"])
 	SoundPlayer.play_sound(
 		Filesystem.path_join("sfx", Commands.join(arguments)), 
-		script.root_path
+		script.root_path,
+		volume
 	)

@@ -66,6 +66,7 @@ func gui_back(script, arguments):
 	)
 	button.wait = true
 	button.wait_signal = "tree_exited"
+	button.variables.set_val("click_sound_macro", "sound_back_button_cancel")
 	return button
 	
 # TODO IMPLEMENT

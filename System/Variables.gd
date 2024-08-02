@@ -25,6 +25,9 @@ func del_val(key):
 func _get_val(key, default):
 	return store.get(key, default)
 
+func get_val(key, default):
+	return _get_val(key, default)
+
 func setter__speaking(val):
 	store["_speaking"] = val
 	store["_speaking_name"] = Commands.get_nametag()

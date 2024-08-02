@@ -5,6 +5,8 @@ var playing = false
 var loop = true
 var playing_path
 
+var cur_volume = 1.0
+
 var SOUND_VOLUME = 1.0
 var NUM_PLAYERS = 100
 
@@ -46,7 +48,7 @@ func _load_audio_stream(path):
 		# Somewhere determine whether or not to loop the sound
 		var next_player:AudioStreamPlayer = get_free_player()
 		next_player.stream = stream
-		next_player.volume_db = linear2db(SOUND_VOLUME * Configuration.user.global_volume)
+		next_player.volume_db = linear2db(SOUND_VOLUME * Configuration.user.global_volume * cur_volume)
 		next_player.play(0)
 		next_player.name = path
 		next_player.path = path
@@ -55,7 +57,7 @@ func _load_audio_stream(path):
 func alter_volume():
 	for player in players:
 		if player.playing:
-			player.volume_db = linear2db(SOUND_VOLUME * Configuration.user.global_volume)
+			player.volume_db = linear2db(SOUND_VOLUME * Configuration.user.global_volume * cur_volume)
 		
 func get_free_player() -> AudioStreamPlayer:
 	for check_player in players:
@@ -65,7 +67,8 @@ func get_free_player() -> AudioStreamPlayer:
 	players.append(next_player)
 	return next_player
 	
-func play_sound(path, current_path):
+func play_sound(path, current_path, volume=1.0):
+	cur_volume = volume
 	#path = Filesystem.lookup_file(path, root_path)
 	var found = Filesystem.lookup_file(path, current_path, ["ogg", "mp3", "wav", "oggi"])
 	if not found:

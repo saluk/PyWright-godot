@@ -29,6 +29,7 @@ func _init():
 
 func _ready():
 	._ready()
+	Commands.call_macro("sound_court_record_display", wrightscript, [])
 	script_name = "evidence_menu"
 	wait_signal = "tree_exited"
 	page = stack.variables.get_string("_cr_current_item_set", "evidence")
@@ -114,6 +115,7 @@ func _process(dt):
 	load_page()
 	load_back_button()
 	
+# TODO this should load the same back button as wrightscript
 func load_back_button():
 	# Disable back button in zoomed out view
 	if not zoom:
@@ -132,6 +134,7 @@ func load_back_button():
 		[],
 		script_name
 	)
+	back_button.variables.set_val("click_sound_macro", "sound_back_button_cancel")
 	back_button.cannot_save = true
 	back_button.position = Vector2(
 		0,
