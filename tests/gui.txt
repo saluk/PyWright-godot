@@ -1,0 +1,4 @@
+"How do we handle two gui back buttons?"
+gui Back x=50 y=50
+gui Back x=50 y=100
+"Now we have continued"

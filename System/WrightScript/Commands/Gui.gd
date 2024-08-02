@@ -66,7 +66,7 @@ func gui_back(script, arguments):
 	)
 	button.wait = true
 	button.wait_signal = "tree_exited"
-	button.click_args = [button.name]
+	button.click_area.macroargs = [button.name]
 	return button
 	
 # TODO IMPLEMENT
