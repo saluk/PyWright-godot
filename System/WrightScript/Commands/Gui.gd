@@ -6,7 +6,7 @@ func _init(commands):
 	main = commands.main
 	
 func gui_button(script, arguments):
-	var macroname = arguments.pop_front()
+	var click_macro = arguments.pop_front()
 	var spl = Commands.keywords(arguments, true)
 	var kw = spl[0]
 	var args:Array = spl[1]
@@ -24,7 +24,7 @@ func gui_button(script, arguments):
 		template["sprites"]["highlight"]["path"] = "art/{base}.png".format({"base": graphichigh})
 	else:
 		template["sprites"].erase("highlight")
-	template["click_macro"] = macroname
+	template["click_macro"] = click_macro
 	var button
 	button = ObjectFactory.create_from_template(
 		script,
@@ -50,9 +50,9 @@ func gui_wait(script, arguments):
 	return GuiWait.new(script)
 	
 func gui_back(script, arguments):
-	var macroname = "{gui_back_clicked}"
+	var click_macro = "{gui_back_clicked}"
 	var template = ObjectFactory.get_template("button")
-	template["click_macro"] = macroname
+	template["click_macro"] = click_macro
 	template["sprites"]["default"]["path"] = "art/general/back.png"
 	template["sprites"]["highlight"]["path"] = "art/general/back_high.png"
 	template["position"] = [0, 192+159]
@@ -66,7 +66,7 @@ func gui_back(script, arguments):
 	)
 	button.wait = true
 	button.wait_signal = "tree_exited"
-	button.click_area.macroargs = [button.name]
+	button.click_area.click_args = [button.name]
 	return button
 	
 # TODO IMPLEMENT

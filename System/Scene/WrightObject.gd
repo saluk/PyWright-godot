@@ -191,8 +191,8 @@ func load_sprites(template, sprite_key=null):
 	if template["clickable"]:
 		click_area = ClickArea.new()
 		click_area.name = "ClickArea"
-		click_area.macroname = template["click_macro"]
-		click_area.macroargs = template["click_args"]
+		click_area.click_macro = template["click_macro"]
+		click_area.click_args = template["click_args"]
 		add_child(click_area)
 	
 	# Just the visual of the button, use click area to drive the game
@@ -351,6 +351,10 @@ func save_node(data):
 	if wrightscript:
 		data["script_id"] = wrightscript.u_id
 	data["variables"] = SaveState._save_node(variables)
+	if click_area:
+		template["click_macro"] = click_area.click_macro
+		template["click_args"] = click_area.click_args
+	# PROPERTIES SAVED AFTER THIS
 
 static func create_node(saved_data:Dictionary):
 	var ob = load(ObjectFactory.classes[saved_data["template"]["class"]]).new()
@@ -368,7 +372,7 @@ func load_node(tree, saved_data:Dictionary):
 		)
 	main = tree.get_nodes_in_group("Main")[0]
 	stack = main.stack
-	# TODO we should include in save system which screen object is on
+	# FIXME we should include in save system which screen object is on
 	ScreenManager.top_screen().add_child(self)
 	load_sprites(saved_data["template"])
 	set_sprite(sprite_key)

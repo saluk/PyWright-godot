@@ -10,8 +10,8 @@ var parent
 var over := false
 var clicked := false
 
-var macroname:String  # Macro to call when button is pressed
-var macroargs:Array
+var click_macro:String  # Macro to call when button is pressed
+var click_args:Array
 
 var debuglabel:Label
 
@@ -79,14 +79,14 @@ func on_gui_input(event):
 	set_debug_text()
 			
 func perform_action():
-	# If macroname is surrounded by {}, call macro
+	# If click_macro is surrounded by {}, call macro
 	# Otherwise goto the label
 	# In either case, delete any guiWaits
 	Commands.emit_signal("button_clicked", self)  # This should signal to guiWaits
-	if macroname.begins_with("{") and macroname.ends_with("}"):
-		Commands.call_command(macroname, parent.wrightscript, macroargs)
+	if click_macro.begins_with("{") and click_macro.ends_with("}"):
+		Commands.call_command(click_macro, parent.wrightscript, click_args)
 	else:
-		parent.wrightscript.goto_label(macroname)
+		parent.wrightscript.goto_label(click_macro)
 				
 
 # TODO - allow customize click colors in wrightscript
