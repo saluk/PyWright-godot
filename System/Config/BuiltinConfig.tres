@@ -4,5 +4,5 @@
 
 [resource]
 script = ExtResource( 1 )
-version = "0.2"
+version = "0.3"
 screen_format = "horizontal"
