@@ -71,7 +71,6 @@ func on_gui_input(event):
 		if event.pressed:
 			clicked = true
 			set_highlight()
-			play_click_sound()
 		else:
 			clicked = false
 			set_highlight()
@@ -112,9 +111,3 @@ func set_highlight():
 	parent.set_sprite(final_sprite)
 	if parent.current_sprite:
 		parent.current_sprite.set_colorize(final_color, final_amount)
-
-# TODO this is a pretty ugly hack
-func play_click_sound():
-	var sound_macro = get_parent().variables.get_val("click_sound_macro",null)
-	if sound_macro:
-		Commands.call_command(sound_macro, parent.wrightscript, [])

@@ -134,7 +134,6 @@ func load_back_button():
 		[],
 		script_name
 	)
-	back_button.variables.set_val("click_sound_macro", "sound_back_button_cancel")
 	back_button.cannot_save = true
 	back_button.position = Vector2(
 		0,
@@ -142,6 +141,7 @@ func load_back_button():
 	)
 	
 func ws_click_back_from_court_record(script, arguments):
+	Commands.call_command("sound_back_button_cancel", script, [])
 	if zoom:
 		zoom = false
 		set_offset(int(offset/8) * PAGE_SIZE)

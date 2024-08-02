@@ -50,7 +50,7 @@ func gui_wait(script, arguments):
 	return GuiWait.new(script)
 	
 func gui_back(script, arguments):
-	var macroname = "{delete_gui_back}"
+	var macroname = "{gui_back_clicked}"
 	var template = ObjectFactory.get_template("button")
 	template["click_macro"] = macroname
 	template["sprites"]["default"]["path"] = "art/general/back.png"
@@ -66,7 +66,7 @@ func gui_back(script, arguments):
 	)
 	button.wait = true
 	button.wait_signal = "tree_exited"
-	button.variables.set_val("click_sound_macro", "sound_back_button_cancel")
+	button.click_args = [button.name]
 	return button
 	
 # TODO IMPLEMENT
@@ -82,12 +82,12 @@ func ws_gui(script, arguments):
 	return callv("gui_"+guitype.to_lower(), [script, arguments])
 
 # NEW (internal)
-func ws_delete_gui_back(script, arguments):
+func ws_gui_back_clicked(script, arguments):
 	for node in ScreenManager.top_screen().get_children():
-		if "template" in node:
-			if node["template"]["default_name"] == "Back":
-				node.queue_free()
-				return
+		if node.name == arguments[0]:
+			Commands.call_command("sound_back_button_cancel", script, [])
+			node.queue_free()
+			return
 
 func click_option(option):
 	Commands.macro_or_label(option, main.stack.scripts[-1], [])

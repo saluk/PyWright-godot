@@ -22,7 +22,7 @@ func ws_sfx(script, arguments):
 	var kw = result[0]
 	arguments = result[1]
 	if "volume" in kw:
-		volume = int(kw["volume"])
+		volume = float(kw["volume"])/100.0
 	SoundPlayer.play_sound(
 		Filesystem.path_join("sfx", Commands.join(arguments)), 
 		script.root_path,
