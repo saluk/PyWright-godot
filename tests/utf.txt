@@ -1,0 +1,17 @@
+#set _textbox_wrap off
+set _font_nt igiari-cyrillic.ttf
+set _font_nt_size 18
+set _font_tb igiari-cyrillic.ttf
+set _font_tb_size 14
+#set _textbox_lines 2
+set _cr_button false
+
+char ¿Lorém hide
+#Spanish
+"¿Lorém ipsum dolor sít amet, indóctum máluisset ei nam, ín néc epicurei recusabo laborámus? Duó ea féugait civibus antiopam, ei detracto conveñire éos."
+
+#Cyrillic
+"Лорем ипсум долор сит амет, ан малис ехплицари десеруиссе нец. Ут сеа еррор молестие цомплецтитур, лудус инермис нец ан. Ад хис утинам граеце опортере, аццусамус диссентиас сит еи. Сеа дицам адиписцинг не, яуо но цонгуе партем "
+
+#Some japanese text
+"68丘甘6勝んそ棄件ホチ要新新スナモマ明写営つじど敏健あづど品気ぼぶぜト室栄ヱメ海複那クしづ稿熱こ弥近ゅいぴ。岸幸書ゅちトゆ属4省ニヲ囲84人どがトび肉肉つるス佐都ぞお親能関稲前ツ勝俣みがむ。有セナサ聴経ナアケリ最売ヌ加還だク極8図り出時イニフム証季フずす無開イ新文べ師塾ワキイサ送媒れすこご記閉むっぜル策以モクラ問社テワケ百構満条ふ。"

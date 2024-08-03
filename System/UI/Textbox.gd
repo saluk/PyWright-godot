@@ -306,11 +306,23 @@ func get_char_sound():
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	visible = false
-	var font_path = "res://fonts/pwinternational.ttf"
+	var font_path = Filesystem.lookup_file(
+		"fonts/"+main.stack.variables.get_string("_font_tb","pwinternational.ttf"), 
+		main.top_script().root_path
+	)
 	var font = DynamicFont.new()
 	font.font_data = load(font_path)
-	font.size = 10
+	font.size = main.stack.variables.get_int("_font_tb_size",10)
 	font.set_spacing(DynamicFont.SPACING_SPACE, -2)
+	
+	var nt_font_path = Filesystem.lookup_file(
+		"fonts/"+main.stack.variables.get_string("_font_nt","arial.ttf"), 
+		main.top_script().root_path
+	)
+	var font_nt = DynamicFont.new()
+	font_nt.font_data = load(font_path)
+	font_nt.size = main.stack.variables.get_int("_font_nt_size",10)
+	font_nt.set_spacing(DynamicFont.SPACING_SPACE, -2)
 	
 	tb_timer = get_node(tb_timer)
 	tb_timer.one_shot = true
@@ -328,6 +340,7 @@ func _ready():
 		$Backdrop/Label.margin_bottom = 14
 		$Backdrop/Label.set("custom_constants/line_separation", 8)
 	$Backdrop/Label.set("custom_fonts/normal_font", font)
+	$NametagBackdrop/Label.set("custom_fonts/font", font_nt)
 	z = ZLayers.z_sort["textbox"]
 	add_to_group(Commands.TEXTBOX_GROUP)
 	update_nametag()
