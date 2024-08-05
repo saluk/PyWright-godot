@@ -20,10 +20,10 @@ var select_with_keys:bool = true   #Whether this clickarea can be selected with 
 var debuglabel:Label
 
 func _ready():
+	mouse_filter = Control.MOUSE_FILTER_STOP
 	if get_tree().debug_collisions_hint:
 		debuglabel = Label.new()
 		add_child(debuglabel)
-	#Fonts.set_element_font(debuglabel, "block", get_tree().get_nodes_in_group("Main")[0].top_script().stack)
 	set_debug_text()
 
 func _enter_tree():
@@ -118,3 +118,6 @@ func set_highlight():
 	parent.set_sprite(final_sprite)
 	if parent.current_sprite:
 		parent.current_sprite.set_colorize(final_color, final_amount)
+		
+func _process(dt):
+	set_highlight()

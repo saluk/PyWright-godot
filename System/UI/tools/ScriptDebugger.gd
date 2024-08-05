@@ -57,8 +57,21 @@ func goto_line(row, scripti):
 	scripts[scripti]["editor"].set_line_as_breakpoint(row, false)
 	
 func all_ev():
+	var found = false
 	for var_key in current_stack.variables.evidence_keys():
 		Commands.call_command("addev", current_stack.scripts[-1], [var_key])
+		found = true
+	var p = PopupPanel.new()
+	p.rect_scale = Vector2(4,4)
+	p.connect("popup_hide", p, "queue_free")
+	var l = Label.new()
+	if found:
+		l.text = "All known evidence added to court record"
+	else:
+		l.text = "No known evidence found in current game/case"
+	p.add_child(l)
+	get_parent().add_child(p)
+	p.popup_centered()
 	
 func debug_line(line):
 	print("watching line", line)

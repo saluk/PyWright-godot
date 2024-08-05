@@ -188,7 +188,7 @@ func load_page_button():
 	b.add_child(l)
 	
 func load_arrow(direction):
-	var pos = Vector2(3, 58)
+	var pos = Vector2(3, 57)
 	if direction == "R":
 		pos.x = 241
 	var b = ObjectFactory.create_from_template(
