@@ -8,6 +8,9 @@ var current_game: String
 var debugger_enabled = false
 var tab_button:Button
 
+var screens
+var authored_size = Vector2(256, 384)
+
 var init_script = """
 mus 02 - courtroom lounge ~ beginning prelude.ogg
 set _textbox_lines 2
@@ -25,6 +28,8 @@ signal frame_drawn
 signal line_executed
 signal text_finished
 signal enable_saveload_buttons
+
+var font_cache := LeastUsedCache.new(10)
 
 func load_game_from_pack(path):
 	ProjectSettings.load_resource_pack("user://"+path)
@@ -55,25 +60,46 @@ func load_script_from_path(path):
 	emit_signal("stack_initialized")
 	timecounter.reset()
 	
-func set_resolution(res:Vector2, scale:float):
+func set_resolution(res:Vector2, scale_factor:float):
 	Engine.target_fps = 60
 	var h = res.y
 	var w = res.x
-	OS.set_window_size(Vector2(w*scale, h*scale))
+	OS.set_window_size(Vector2(w*scale_factor, h*scale_factor))
 	var screen_size:Vector2 = OS.get_screen_size()
-	OS.window_position = Vector2(screen_size.x/2-w*scale/2, screen_size.y/2-h*scale/2)
-	get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_2D, SceneTree.STRETCH_ASPECT_KEEP, Vector2(w, h), 1)
+	OS.window_position = Vector2(screen_size.x/2-w*scale_factor/2, screen_size.y/2-h*scale_factor/2)
+	#get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_2D, SceneTree.STRETCH_ASPECT_KEEP, Vector2(w, h), 1)
+	
+func window_resize():
+	var v_size = get_viewport_rect().size
+	var lauthored_size = authored_size
+	if Configuration.builtin.screen_format == "horizontal" and $TabContainer.visible:
+		lauthored_size.x *= 2
+	var scalex = v_size.x/lauthored_size.x
+	var scaley = v_size.y/lauthored_size.y
+	var scale_factor = min(scalex, scaley)
+	scale = Vector2(scale_factor, scale_factor)
+	if Configuration.builtin.screen_format == "horizontal":
+		if not $TabContainer.visible:
+			screens.rect_position.x = v_size.x/2 / scale_factor - lauthored_size.x/2
+			tab_button.rect_position.x = screens.rect_position.x + screens.rect_size.x
+			$TabContainer.rect_position.x = tab_button.rect_position.x
+		else:
+			screens.rect_position.x = v_size.x/2  / scale_factor - lauthored_size.x/2
+			tab_button.rect_position.x = screens.rect_position.x + screens.rect_size.x
+			$TabContainer.rect_position.x = tab_button.rect_position.x
 
 func _ready():
+	screens = get_tree().get_nodes_in_group("Screens")[0]
 	timecounter = TimeCounter.new()
 	
 	tab_button = get_tree().get_nodes_in_group("TabButton")[0]
 	tab_button.connect("toggled", self, "_toggle_button")
 	hide_tabs()
 
+	get_tree().root.connect("size_changed", self, "window_resize")
 	if Configuration.builtin.screen_format == "vertical":
 		set_resolution(Vector2(256,384 + 32), 2.0)
-		$Screens.rect_position = Vector2(0, 16)
+		screens.rect_position = Vector2(0, 16)
 		tab_button.rect_position = Vector2(0, 0)
 		$TabContainer.rect_position = Vector2(0, 16)
 	elif Configuration.builtin.screen_format == "horizontal":
@@ -100,7 +126,7 @@ func _ready():
 		load_game(path)
 	
 	if mode == "test":
-		$Screens.rect_global_position = Vector2(0,0)
+		screens.rect_global_position = Vector2(0,0)
 	stack.mode = mode
 	
 	stack.connect("script_added", self, "check_saving_enabled")
@@ -235,16 +261,11 @@ func _toggle_button(state):
 
 func show_tabs():
 	$TabContainer.show()
-	if Configuration.builtin.screen_format == "horizontal":
-		$Screens.rect_position.x = 0
-		tab_button.rect_position.x = $Screens.rect_position.x+$Screens.rect_size.x
+	window_resize()
 
 func hide_tabs():
 	$TabContainer.hide()
-	if Configuration.builtin.screen_format == "horizontal":
-		var x = get_viewport_rect().size.x/2
-		$Screens.rect_position.x = x-$Screens.rect_size.x/2
-		tab_button.rect_position.x = $Screens.rect_position.x+$Screens.rect_size.x
+	window_resize()
 
 # SAVE/LOAD
 var save_properties = [

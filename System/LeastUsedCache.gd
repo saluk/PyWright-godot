@@ -1,8 +1,12 @@
 extends Node
+class_name LeastUsedCache
 
 var MAX_CACHE = 1000
 
 var cache = {}
+
+func _init(max_cache=250):
+	MAX_CACHE = max_cache
 
 # stores [usage, value]
 # when cache gets too big, sort by usage, and cut down by half
@@ -18,8 +22,10 @@ func has_cached(key_elements):
 	if cache.has(key):
 		return true
 		
-func get_cached(key_elements):
+func get_cached(key_elements, default=null):
 	var key = to_key(key_elements)
+	if not cache.has(key):
+		return default
 	cache[key][0] += 1
 	return cache[key][1]
 	

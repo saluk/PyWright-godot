@@ -121,8 +121,7 @@ static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -
 		texture = image
 	elif image.get_size().length() > 0:
 		texture = ImageTexture.new()
-		texture.create_from_image(image, 0)
-		texture.flags = 0
+		texture.create_from_image(image, ImageTexture.FLAG_FILTER)
 		
 	if not texture or not image.get_size().length() > 0:
 		return []

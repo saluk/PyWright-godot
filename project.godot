@@ -44,6 +44,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://System/UI/Fonts/Fonts.gd"
 }, {
+"base": "Node",
+"class": "LeastUsedCache",
+"language": "GDScript",
+"path": "res://System/LeastUsedCache.gd"
+}, {
 "base": "Node2D",
 "class": "MainScene",
 "language": "GDScript",
@@ -132,6 +137,7 @@ _global_script_class_icons={
 "FadeLib": "",
 "Filesystem": "",
 "Fonts": "",
+"LeastUsedCache": "",
 "MainScene": "",
 "NameSpaces": "",
 "PWSprite": "",
@@ -189,7 +195,7 @@ window/size/height=384
 window/size/test_width=512
 window/size/test_height=384
 window/handheld/orientation="portrait"
-window/stretch/aspect="keep"
+window/stretch/aspect="keep_width"
 
 [global]
 
@@ -272,5 +278,13 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
+2d/options/use_nvidia_rect_flicker_workaround=true
+quality/intended_usage/framebuffer_allocation=0
+quality/intended_usage/framebuffer_allocation.mobile=1
+threads/thread_model=2
+misc/lossless_compression/force_png=true
+2d/options/use_software_skinning=false
+gles2/compatibility/disable_half_float=true
 environment/default_clear_color=Color( 0, 0, 0, 1 )
+quality/filters/use_fxaa=true
 environment/default_environment="res://default_env.tres"

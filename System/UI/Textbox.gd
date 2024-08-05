@@ -31,7 +31,6 @@ var wait_mode = "auto"
 var last_text_sound_played = 0.0
 var text_sound_rate = 0.04
 
-
 # Signal that we may need to refresh the arrows
 var refresh_arrows_on_next_pack = false
 
@@ -306,23 +305,34 @@ func get_char_sound():
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	visible = false
-	var font_path = Filesystem.lookup_file(
-		"fonts/"+main.stack.variables.get_string("_font_tb","pwinternational.ttf"), 
-		main.top_script().root_path
-	)
-	var font = DynamicFont.new()
-	font.font_data = load(font_path)
-	font.size = main.stack.variables.get_int("_font_tb_size",10)
-	font.set_spacing(DynamicFont.SPACING_SPACE, -2)
-	
-	var nt_font_path = Filesystem.lookup_file(
-		"fonts/"+main.stack.variables.get_string("_font_nt","arial.ttf"), 
-		main.top_script().root_path
-	)
-	var font_nt = DynamicFont.new()
-	font_nt.font_data = load(font_path)
-	font_nt.size = main.stack.variables.get_int("_font_nt_size",10)
-	font_nt.set_spacing(DynamicFont.SPACING_SPACE, -2)
+	var font_tb_name = "fonts/"+main.stack.variables.get_string("_font_tb","pwinternational.ttf")
+	var font_tb_size = main.stack.variables.get_int("_font_tb_size",10)
+	var font_nt_name = "fonts/"+main.stack.variables.get_string("_font_nt","arial.ttf")
+	var font_nt_size = main.stack.variables.get_int("_font_nt_size",10)
+	var font = main.font_cache.get_cached([font_tb_name, font_tb_size])
+	var font_nt = main.font_cache.get_cached([font_nt_name, font_nt_size])
+	if not font:
+		font_tb_name = Filesystem.lookup_file(
+			font_tb_name, 
+			main.top_script().root_path
+		)
+		font = DynamicFont.new()
+		font.use_filter = true
+		font.use_mipmaps = true
+		font.font_data = load(font_tb_name)
+		font.size = font_tb_size
+		#font.set_spacing(DynamicFont.SPACING_SPACE, -2)
+	if not font_nt:
+		font_nt_name = Filesystem.lookup_file(
+			font_nt_name, 
+			main.top_script().root_path
+		)
+		font_nt = DynamicFont.new()
+		font_nt.use_filter = true
+		font_nt.use_mipmaps = true
+		font_nt.font_data = load(font_nt_name)
+		font_nt.size = font_nt_size
+		#font_nt.set_spacing(DynamicFont.SPACING_SPACE, -2)
 	
 	tb_timer = get_node(tb_timer)
 	tb_timer.one_shot = true
@@ -365,9 +375,11 @@ func update_nametag_size():
 	var label = $NametagBackdrop/Label
 	var size = label.get_font("font").get_string_size(label.text)
 	size.x += 10
-	$NametagBackdrop/NtMiddle.position.x = int(size.x/2)+2
+	$NametagBackdrop/NtMiddle.position.x = int(size.x/2.0+2)
+	if(int(size.x) % 2 == 0):
+		$NametagBackdrop/NtMiddle.position.x -= 1
 	$NametagBackdrop/NtMiddle.scale.x = size.x
-	$NametagBackdrop/NtRight.position.x = $NametagBackdrop/NtMiddle.position.x+int(size.x/2)
+	$NametagBackdrop/NtRight.position.x = $NametagBackdrop/NtMiddle.position.x+int(size.x/2+1)
 		
 func stop_timer():
 	set_process(true)

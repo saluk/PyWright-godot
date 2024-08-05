@@ -5,6 +5,7 @@ var main
 func _ready():
 	main = get_tree().get_nodes_in_group("Main")[0]
 	$vbox/MainMenu.connect("button_up", self, "_main_menu")
+	$vbox/Quit.connect("button_up", self, "_quit")
 	$vbox/Debugger.connect("button_up", self, "_debugger")
 	$vbox/Framelog.connect("button_up", self, "_framelog")
 	$"vbox/DirectoryCacheList Toggle".connect("button_up", self, "_dcl")
@@ -20,6 +21,9 @@ func _ready():
 
 func _main_menu():
 	main.reload()
+	
+func _quit():
+	get_tree().quit()
 
 func toggle_tab(tab_node_name):
 	var n = get_tree().get_nodes_in_group(tab_node_name)[0]
@@ -96,10 +100,11 @@ func _enable_saveload_buttons(enabled=false):
 		$"vbox/SaveLoad/HBoxContainer/Delete Selected Save".disabled = false
 		$vbox/SaveLoad/AvailableSaves.clear()
 		_populate_load_games()
+		$vbox/SaveLoad.visible = true
 		# TODO find all saves
 	else:
 		$"vbox/SaveLoad/New Save".disabled = true
 		$"vbox/SaveLoad/HBoxContainer/Load Selected Save".disabled = true
 		$"vbox/SaveLoad/HBoxContainer/Delete Selected Save".disabled = true
 		$vbox/SaveLoad/AvailableSaves.clear()
-		$vbox/SaveLoad/AvailableSaves.add_item("No game running")
+		$vbox/SaveLoad.visible = false

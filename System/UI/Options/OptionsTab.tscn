@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://System/UI/ScriptDebugger.tres" type="Theme" id=1]
+[ext_resource path="res://System/UI/Themes/ScriptDebugger.tres" type="Theme" id=1]
 [ext_resource path="res://System/UI/Options/OptionsTab.gd" type="Script" id=2]
+[ext_resource path="res://System/UI/tools/FPSDisplay.gd" type="Script" id=3]
 
 [node name="Options Tab" type="Control" groups=["OptionsTab"]]
 anchor_right = 1.0
@@ -19,109 +20,123 @@ margin_left = -91.0
 margin_right = 91.0
 
 [node name="Main options" type="Label" parent="vbox"]
-margin_right = 182.0
-margin_bottom = 8.0
+margin_right = 188.0
+margin_bottom = 11.0
 text = "Main Options"
 
 [node name="MainMenu" type="Button" parent="vbox"]
-margin_top = 12.0
-margin_right = 182.0
-margin_bottom = 26.0
+margin_top = 15.0
+margin_right = 188.0
+margin_bottom = 32.0
 text = "Main Menu (abandon current game)"
 
+[node name="Quit" type="Button" parent="vbox"]
+margin_top = 36.0
+margin_right = 188.0
+margin_bottom = 53.0
+text = "Quit"
+
 [node name="HBoxContainer" type="HBoxContainer" parent="vbox"]
-margin_top = 30.0
-margin_right = 182.0
-margin_bottom = 46.0
+margin_top = 57.0
+margin_right = 188.0
+margin_bottom = 73.0
 
 [node name="Label" type="Label" parent="vbox/HBoxContainer"]
-margin_top = 4.0
-margin_right = 28.0
-margin_bottom = 12.0
+margin_top = 2.0
+margin_right = 34.0
+margin_bottom = 13.0
 text = "Volume:"
 
 [node name="VolumeSlider" type="HSlider" parent="vbox/HBoxContainer"]
-margin_left = 32.0
-margin_right = 182.0
+margin_left = 38.0
+margin_right = 188.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 150, 0 )
 
 [node name="MarginContainer" type="MarginContainer" parent="vbox"]
-margin_top = 50.0
-margin_right = 182.0
-margin_bottom = 60.0
+margin_top = 77.0
+margin_right = 188.0
+margin_bottom = 87.0
 rect_min_size = Vector2( 0, 10 )
 
+[node name="FPS" type="Label" parent="vbox"]
+margin_top = 91.0
+margin_right = 188.0
+margin_bottom = 102.0
+text = "FPS:"
+script = ExtResource( 3 )
+
 [node name="SaveLoad" type="VBoxContainer" parent="vbox"]
-margin_top = 64.0
-margin_right = 182.0
-margin_bottom = 172.0
+visible = false
+margin_top = 106.0
+margin_right = 188.0
+margin_bottom = 223.0
 alignment = 1
 
 [node name="Saves" type="Label" parent="vbox/SaveLoad"]
-margin_right = 182.0
-margin_bottom = 8.0
+margin_right = 188.0
+margin_bottom = 11.0
 text = "Saved Games"
 
 [node name="New Save" type="Button" parent="vbox/SaveLoad"]
-margin_top = 12.0
-margin_right = 182.0
-margin_bottom = 26.0
+margin_top = 15.0
+margin_right = 188.0
+margin_bottom = 32.0
 disabled = true
 text = "Save New State"
 
 [node name="AvailableSaves" type="ItemList" parent="vbox/SaveLoad"]
-margin_top = 30.0
-margin_right = 182.0
-margin_bottom = 90.0
+margin_top = 36.0
+margin_right = 188.0
+margin_bottom = 96.0
 rect_min_size = Vector2( 0, 60 )
 size_flags_vertical = 3
 size_flags_stretch_ratio = 7.31
 items = [ "test1", null, false, "test 2", null, false ]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="vbox/SaveLoad"]
-margin_top = 94.0
-margin_right = 182.0
-margin_bottom = 108.0
+margin_top = 100.0
+margin_right = 188.0
+margin_bottom = 117.0
 
 [node name="Load Selected Save" type="Button" parent="vbox/SaveLoad/HBoxContainer"]
-margin_right = 82.0
-margin_bottom = 14.0
+margin_right = 93.0
+margin_bottom = 17.0
 disabled = true
 text = "Load Selected Save"
 
 [node name="Delete Selected Save" type="Button" parent="vbox/SaveLoad/HBoxContainer"]
-margin_left = 86.0
-margin_right = 122.0
-margin_bottom = 14.0
+margin_left = 97.0
+margin_right = 136.0
+margin_bottom = 17.0
 text = "Delete"
 
 [node name="MarginContainer2" type="MarginContainer" parent="vbox"]
-margin_top = 176.0
-margin_right = 182.0
-margin_bottom = 186.0
+margin_top = 106.0
+margin_right = 188.0
+margin_bottom = 116.0
 rect_min_size = Vector2( 0, 10 )
 
 [node name="Tools" type="Label" parent="vbox"]
-margin_top = 190.0
-margin_right = 182.0
-margin_bottom = 198.0
+margin_top = 120.0
+margin_right = 188.0
+margin_bottom = 131.0
 text = "Tools"
 
 [node name="Debugger" type="Button" parent="vbox"]
-margin_top = 202.0
-margin_right = 182.0
-margin_bottom = 216.0
+margin_top = 135.0
+margin_right = 188.0
+margin_bottom = 152.0
 text = "Enable Debugger"
 
 [node name="Framelog" type="Button" parent="vbox"]
-margin_top = 220.0
-margin_right = 182.0
-margin_bottom = 234.0
+margin_top = 156.0
+margin_right = 188.0
+margin_bottom = 173.0
 text = "Enable Framelog"
 
 [node name="DirectoryCacheList Toggle" type="Button" parent="vbox"]
-margin_top = 238.0
-margin_right = 182.0
-margin_bottom = 252.0
+margin_top = 177.0
+margin_right = 188.0
+margin_bottom = 194.0
 text = "Enable DirectoryCacheList"

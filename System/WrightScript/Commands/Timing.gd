@@ -32,8 +32,6 @@ class PWTimer extends Node:
 		self.timeleft = timeleft
 	func execute():
 		print("timer executing")
-		print("stray nodes")
-		print_stray_nodes()
 		Commands.call_macro(macro, scr, [])
 	func _process(dt):
 		timeleft -= dt

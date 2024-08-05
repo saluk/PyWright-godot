@@ -8,41 +8,26 @@ var focused = false
 
 func add_pck_button(path):
 	var txt = path.replace("_"," ").replace(".pck","")
-	var b := Button.new()
-	b.text = txt
-	b.connect("pressed", self, "launch_game", [path])
-	$Control/ScrollContainer/VBoxContainer.add_child(b)
-	
+	game_item_select_list.append(path)
+	$Control/ItemList.add_item(txt)
+
+var game_item_select_list := []
 func add_game_button(path:String, game:String):
-	#if not "://" in path:
-	#	path = "res://"+path
 	print("game path:",path,game)
-	var hbox = HBoxContainer.new()
-	var txt = game.replace("_"," ")
-	var b = Button.new()
-	b.text = ">"
-	b.align = Button.ALIGN_LEFT
+	$Control/ItemList.add_item(game)
 	if not path.ends_with("/"):
-		path = path+"/"
-	b.connect("pressed", self, "launch_game", [path+game])
-	hbox.add_child(b)
-	var l = Label.new()
-	l.text = txt
-	hbox.add_child(l)
-	$Control/ScrollContainer/VBoxContainer.add_child(hbox)
-	if not focused:
-		b.grab_focus()
-		focused = true
+		path += "/"
+	game_item_select_list.append(path+game)
 	
 func add_test_button(path):
 	var hbox = HBoxContainer.new()
 	var b = Button.new()
-	b.text = ">"
+	b.text = "play>"
 	b.align = Button.ALIGN_LEFT
 	b.connect("pressed", self, "launch_game", [path, "play"])
 	hbox.add_child(b)
 	b = Button.new()
-	b.text = "{}"
+	b.text = "{test}"
 	b.align = Button.ALIGN_LEFT
 	b.connect("pressed", self, "launch_game", [path, "test"])
 	hbox.add_child(b)
@@ -53,9 +38,9 @@ func add_test_button(path):
 
 func _clear_games():
 	focused = false
-	var game_list = $Control/ScrollContainer/VBoxContainer
-	for child in game_list.get_children():
-		child.queue_free()
+	game_item_select_list.clear()
+	$Control/ItemList.clear()
+	$Control/PlayButton.visible = false
 
 # types = "pack", "folder", "test"
 func _populate_games(folder, types):
@@ -90,9 +75,22 @@ func _ready():
 
 	_populate_games("res://tests/", "test")
 	
-	$Control/ScrollContainer/VBoxContainer/GameDir.text = "Current Dir: builtin"
 	$Control/HBoxContainer/ChooseGameDir.connect("pressed", self, "choose_game_dir")
 	$Control/HBoxContainer/BuiltinGames.connect("pressed", self, "choose_builtin_games")
+	$Control/ItemList.connect("item_selected", self, "item_selected")
+	$Control/ItemList.connect("item_activated", self, "item_activated")
+	$Control/PlayButton.connect("pressed", self, "play_item_selected")
+	
+func item_selected(index):
+	$Control/PlayButton.visible = true
+	
+func item_activated(index):
+	play_item_selected()
+	
+func play_item_selected():
+	var indexes = $Control/ItemList.get_selected_items()
+	if indexes:
+		self.launch_game(game_item_select_list[indexes[0]], "play")
 
 func choose_game_dir():
 	var d := choose_game_dir_dialog

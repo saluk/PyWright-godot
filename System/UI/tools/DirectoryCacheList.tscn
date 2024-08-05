@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://System/UI/ScriptDebugger.tres" type="Theme" id=1]
+[ext_resource path="res://System/UI/Themes/ScriptDebugger.tres" type="Theme" id=1]
 [ext_resource path="res://System/UI/tools/DirectoryCacheList.gd" type="Script" id=2]
 
 [node name="DirectoryCacheList" type="Control" groups=["DirectoryCacheList"]]
