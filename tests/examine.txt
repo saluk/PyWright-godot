@@ -1,4 +1,19 @@
-"test"
+set _examine_cursor_img general/cursor_ev
+set _examine_cursor_col ff0000
+list showcursor
+li show
+li hide
+showlist
+
+label show
+set _examine_showcursor true
+goto start
+
+label hide
+set _examine_showcursor false
+goto start
+
+label start
 bg lobby
 bg detention stack name=lobbyside x=256
 bg lobby stack name=lobby2

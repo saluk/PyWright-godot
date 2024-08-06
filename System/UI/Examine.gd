@@ -53,6 +53,8 @@ func _ready():
 func setup_crosshair():
 	crosshair = Crosshair.new()
 	crosshair.parent = self
+	crosshair.color = Colors.string_to_color(main.stack.variables.get_string("_examine_cursor_col", "FFFFFF"))
+	crosshair.showlines = main.stack.variables.get_truth("_examine_showcursor", "true")
 	add_child(crosshair)
 	cross_area = Area2D.new()
 	var shape := CollisionShape2D.new()
@@ -60,6 +62,20 @@ func setup_crosshair():
 	shape.shape.extents = Vector2(256, 192)/2
 	cross_area.add_child(shape)
 	cross_area.position = Vector2(256/2, 192/2)
+	var cross_img = main.stack.variables.get_string("_examine_cursor_img", null)
+	if cross_img:
+		cross_img = ObjectFactory.create_from_template(
+			get_tree().root.get_node("Main").top_script(),
+			"graphic",
+			{
+				"sprites": {
+					"default": {"path": "art/"+cross_img+".png"},
+				}
+			},
+			[],
+			crosshair
+		)
+		cross_img.cannot_save = true
 	add_child(cross_area)
 		
 func set_crosshair_pos(x, y):
@@ -307,30 +323,25 @@ func update():
 class Crosshair extends Node2D:
 	var crosshair_position := Vector2(int(256/2), int(192/2))
 	var parent:Node2D
+	var color
+	var showlines = true
 	func real_position():
 		return crosshair_position
 	func _draw():
 		var cp = real_position()
-		draw_line(
-			Vector2(0, cp.y),
-			Vector2(256, cp.y),
-			Color.whitesmoke
-		)
-		draw_line(
-			Vector2(cp.x, 0),
-			Vector2(cp.x, 192),
-			Color.whitesmoke
-		)
-		draw_line(
-			Vector2(cp.x-5, cp.y-5),
-			Vector2(cp.x+5, cp.y+5),
-			Color.greenyellow
-		)
-		draw_line(
-			Vector2(cp.x+5, cp.y-5),
-			Vector2(cp.x-5, cp.y+5),
-			Color.greenyellow
-		)
+		if showlines:
+			draw_line(
+				Vector2(0, cp.y),
+				Vector2(256, cp.y),
+				color
+			)
+			draw_line(
+				Vector2(cp.x, 0),
+				Vector2(cp.x, 192),
+				color
+			)
+		for child in get_children():
+			child.position = cp - Vector2(child.width/2, child.height/2)
 
 func save_node(data):
 	data["regions"] = []
