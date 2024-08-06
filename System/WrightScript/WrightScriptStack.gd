@@ -324,13 +324,13 @@ func process():
 # SAVE/LOAD
 var save_properties = [
 	"evidence_pages",
-	"macros",
+	# "macros",
 	"state",
 	"mode",
 	# "blockers", 
 	# "blocked_scripts",
 	#  "yields",
-	"macro_scripts_found"
+	# "macro_scripts_found"
 ]
 func save_node(data):
 	# Save script text and state for each script
