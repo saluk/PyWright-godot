@@ -100,9 +100,11 @@ func free():
 	print("freeing pwchar "+name)
 	free_members()
 	return .free()
-	
-func init():
+
+func _init():
 	variables = Variables.new()
+
+func init_sprite_root():
 	if not sprite_root:
 		sprite_root = Node2D.new()
 		sprite_root.name = "SpriteRoot"
@@ -168,7 +170,7 @@ func add_sprite(sprite_key, sprite_template):
 func load_sprites(template, sprite_key=null):
 	sprite_paths_searched = []
 
-	init()
+	init_sprite_root()
 	self.template = template
 	free_members()
 	for sprite_key in template["sprites"]:
