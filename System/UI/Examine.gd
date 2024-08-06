@@ -32,7 +32,7 @@ var current_region:Area2D
 # TODO build in scrolling the top bg down (but default to off)
 
 func _init():
-	save_properties.append_array(["region_args", "x_offset", "reloaded_scroll"])
+	save_properties.append_array(["x_offset", "reloaded_scroll", "fail"])
 
 func _ready():
 	wait_signal = "tree_exited"
@@ -63,6 +63,8 @@ func setup_crosshair():
 	add_child(cross_area)
 		
 func set_crosshair_pos(x, y):
+	if x<0 or y<0:
+		return
 	#print("CROSS X Y ",x," ",y)
 	crosshair.crosshair_position = Vector2(int(x), int(y))
 	update()
@@ -70,6 +72,7 @@ func set_crosshair_pos(x, y):
 class Region extends Area2D:
 	var label
 	var size
+	var save_properties = ["position", "size", "label"]
 	func _init(x, y, width, height):
 		size = Vector2(width, height)
 		position = Vector2(x,y)
@@ -79,6 +82,10 @@ class Region extends Area2D:
 			point.y >= position.y and point.y <= position.y+size.y):
 			return true
 		return false
+	func load_node(tree, saved_data:Dictionary):
+		pass
+	func save_node(data):
+		pass
 		
 func _get_scroll_direction():
 	# Enable scroll left if the RIGHT edge of any region or background is to the left
@@ -325,6 +332,14 @@ class Crosshair extends Node2D:
 			Color.greenyellow
 		)
 
+func save_node(data):
+	data["regions"] = []
+	for child in get_children():
+		if child is Region:
+			data["regions"].append(SaveState._save_node(child))
+	.save_node(data)
+	return false
+
 func after_load(tree:SceneTree, saved_data:Dictionary):
 	print(saved_data)
 	print(region_args)
@@ -333,4 +348,8 @@ func after_load(tree:SceneTree, saved_data:Dictionary):
 	print(region_args)
 	print(reloaded_scroll)
 	print(x_offset)
+	for region in saved_data["regions"]:
+		var r = Region.new(0,0,0,0)
+		SaveState._load_node(get_tree(), r, region)
+		add_child(r)
 	update()
