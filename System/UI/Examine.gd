@@ -138,7 +138,8 @@ func ws_scroll_from_examine(script, arguments):
 		scroll_button.queue_free()
 		scroll_button = null
 	var scroll_amt = 256/32
-	Commands.call_command("sound_examine_scroll", wrightscript, [])
+	if not arguments:
+		Commands.call_command("sound_examine_scroll", wrightscript, [])
 	for i in range(32):
 		for ob in get_children():
 			if ob is Region or ob in bg_obs:
@@ -172,7 +173,7 @@ func reload_scroll_regions():
 func _unhandled_input(event):
 	if scrolling: return
 	if Input.get_mouse_button_mask() & BUTTON_LEFT:
-		var pos = get_viewport().get_mouse_position()-position
+		var pos = get_parent().get_local_mouse_position()-position
 		set_crosshair_pos(pos.x, pos.y)
 		update()
 		
@@ -265,7 +266,7 @@ class Crosshair extends Node2D:
 	var crosshair_position := Vector2(int(256/2), int(192/2))
 	var parent:Node2D
 	func real_position():
-		return crosshair_position - parent.global_position + Vector2(0,192)
+		return crosshair_position
 	func _draw():
 		var cp = real_position()
 		draw_line(
