@@ -1,6 +1,6 @@
 "test"
 bg lobby
-bg lobby stack name=lobbyside x=256
+bg detention stack name=lobbyside x=256
 bg lobby stack name=lobby2
 scroll name=lobby2 y=192 speed=3
 

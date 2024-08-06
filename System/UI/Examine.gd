@@ -4,9 +4,13 @@ var scene_name:String
 
 var bg_obs = []
 var bg_obs_original = []
+var region_args = []
 
 var back_button:Node
 var examine_button:Node
+var bars_bg:Node
+var called_court_record_button = false
+var built_regions = false
 
 var scroll_button:Node
 var scroll_button_direction:int
@@ -27,6 +31,9 @@ var current_region:Area2D
 # TODO figure out how we decide whther to show the back button or not
 # TODO build in scrolling the top bg down (but default to off)
 
+func _init():
+	save_properties.append_array(["region_args", "x_offset", "reloaded_scroll"])
+
 func _ready():
 	wait_signal = "tree_exited"
 	bg_obs_original = Commands.get_objects(null, null, Commands.BG_GROUP)
@@ -40,6 +47,7 @@ func _ready():
 		bg_ob = bg_ob.duplicate()
 		bg_obs.append(bg_ob)
 		add_child(bg_ob)
+		bg_ob.cannot_save = true
 	setup_crosshair()
 	
 func setup_crosshair():
@@ -102,13 +110,20 @@ func _get_scroll_direction():
 		return 0
 	
 func add_region_args(arguments):
-	var x = int(arguments[0])
-	var y = int(arguments[1])
-	var width = int(arguments[2])
-	var height = int(arguments[3])
-	var region = Region.new(x, y, width, height)
-	region.label = arguments[4]
-	add_child(region)
+	region_args.append(arguments)
+	
+func build_regions():
+	if built_regions:
+		return
+	for arguments in region_args:
+		var x = int(arguments[0])
+		var y = int(arguments[1])
+		var width = int(arguments[2])
+		var height = int(arguments[3])
+		var region = Region.new(x, y, width, height)
+		region.label = arguments[4]
+		add_child(region)
+	built_regions = true
 	
 func ws_check_from_examine(script, arguments):
 	queue_free()
@@ -189,12 +204,26 @@ func _select():
 			return
 		
 func update():
+	build_regions()
 	if scrolling: return
 	script_name = "examine_menu"
 	if bg_obs_original:
 		script_name += "+"+bg_obs_original[0].script_name
 	reload_scroll_regions()
 	name = script_name
+	if main.stack.variables.get_truth("_examine_showbars", true) and not bars_bg:
+		bars_bg = ObjectFactory.create_from_template(
+			get_tree().root.get_node("Main").top_script(),
+			"graphic",
+			{
+				"sprites": {
+					"default": {"path": "art/"+main.stack.variables.get_string("_examine_fg", "general/examinefg")+".png"},
+				}
+			},
+			[],
+			script_name
+		)
+		bars_bg.cannot_save = true
 	if allow_back_button and not back_button:
 		back_button = ObjectFactory.create_from_template(
 			get_tree().root.get_node("Main").top_script(),
@@ -213,6 +242,7 @@ func update():
 			0,
 			192-back_button.height
 		)
+		back_button.cannot_save = true
 	if not examine_button:
 		examine_button = ObjectFactory.create_from_template(
 			get_tree().root.get_node("Main").top_script(),
@@ -230,6 +260,7 @@ func update():
 			256-examine_button.width,
 			192-examine_button.height
 		)
+		examine_button.cannot_save = true
 	var scroll_direction = _get_scroll_direction()
 	if scroll_direction!=0 and scroll_button_direction != scroll_direction:
 		scroll_button_direction = scroll_direction
@@ -252,12 +283,16 @@ func update():
 			256/2-scroll_button.width/2,
 			192-scroll_button.height
 		)
+		scroll_button.cannot_save = true
 
 	examine_button.visible = false
 	current_region = null
 	#print("CLEAR CURRENT REGION")
 	if not reveal_regions:
 		examine_button.visible = true
+	if not called_court_record_button:
+		Commands.call_macro("show_court_record_button", wrightscript, [])
+		called_court_record_button = true
 	_select()
 	.update()
 	crosshair.update()
@@ -289,3 +324,13 @@ class Crosshair extends Node2D:
 			Vector2(cp.x-5, cp.y+5),
 			Color.greenyellow
 		)
+
+func after_load(tree:SceneTree, saved_data:Dictionary):
+	print(saved_data)
+	print(region_args)
+	.after_load(tree, saved_data)
+	print(saved_data)
+	print(region_args)
+	print(reloaded_scroll)
+	print(x_offset)
+	update()
