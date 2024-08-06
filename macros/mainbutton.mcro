@@ -30,7 +30,7 @@ joinvar _cross_high $_bigbutton_cross _high
 
 goto left_arrow
 label fake_arrow
-obj general/cross_exam_buttons name=_main_button_fg x=17 y=252 z=0 rect=0,0,106,79 try_bottom
+obj $_bigbutton_cross name=_main_button_fg x=17 y=252 z=0 rect=0,0,106,79 try_bottom
 goto right_arrow
 
 label left_arrow
