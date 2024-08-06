@@ -29,3 +29,50 @@ li Hello this is an option
 li option 2
 li option 3
 showlist
+
+label checkmarks
+
+macro lock_sound
+sfx lock.ogg
+endmacro
+
+set locked true
+list haslock
+li This is ok
+li unlock the lock result=rb
+li this is locked
+is locked?
+lo checkmark=general/checkmark_lock check_x=2 check_y=2 on_select=lock_sound
+isnot locked?
+li forget ok lock
+isnot locked?
+li forget all locks
+showlist
+
+label back button
+goto none
+
+label This is ok
+"It's Ok huh?"
+goto haslock
+
+label rb
+set locked false
+"The lock should be unlocked"
+goto haslock
+
+label this is locked
+is locked?
+goto haslock
+"See, you got in. Now the checkmark should be on this option"
+goto haslock
+
+label forget ok lock
+forgetlistitem haslock This is ok
+goto haslock
+
+label forget all locks
+forgetlist haslock
+goto checkmarks
+
+label none

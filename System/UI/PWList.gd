@@ -12,16 +12,42 @@ var button_y = 30
 var allow_back_button = true
 var fail = "none"
 
+
+var tag = ""
+var check_image = ""
+var check_offset_x = -10
+var check_offset_y = -10
+
 # TODO figure out how we decide whther to show the back button or not
 
 func _init():
-	save_properties += ["scene_name", "allow_back_button", "fail", "_items"]
+	save_properties += ["scene_name", "allow_back_button", "fail", "_items", "check_image", "check_offset_x", "check_offset_y", "tag"]
 
 func _ready():
 	script_name = "listmenu"
 	wait_signal = "tree_exited"
 	
+	# Set these after initialization  with `lo`
+	check_image = main.stack.variables.get_string("_list_checked_img","general/checkmark")
+	check_offset_x = main.stack.variables.get_int("_list_checked_x",-10)
+	check_offset_y = main.stack.variables.get_int("_list_checked_y",-10)
+	
+func _get_checked_list():
+	var checked = main.stack.variables.get_string("_pwlist_checked_items_"+tag, "")
+	checked = checked.split(";;")
+	return checked
+	
+func is_checked(label):
+	return label in _get_checked_list()
+	
+func set_checked(label):
+	var checked = _get_checked_list()
+	if not label in checked:
+		checked.append(label)
+		main.stack.variables.set_val("_pwlist_checked_items_"+tag, checked.join(";;"))
+	
 func update():
+	add_list_items()
 	if allow_back_button and not back_button:
 		back_button = ObjectFactory.create_from_template(
 			get_tree().root.get_node("Main").top_script(),
@@ -43,40 +69,68 @@ func update():
 		)
 	.update()
 	
-func add_item(text, result):
-	_items.append([text, result])
-	var button = ObjectFactory.create_from_template(
-		get_tree().root.get_node("Main").top_script(),
-		"button",
-		{
-			"sprites": {
-				"default": {"path":"art/general/talkchoice.png"},
-				"highlight": {"path": "art/general/talkchoice_high.png"}
+func add_item(text, result, options={}):
+	_items.append([text, result, options])
+	
+func add_list_items():
+	for item in _items:
+		var text = item[0]
+		var result = item[1]
+		var options = item[2]
+		var button = ObjectFactory.create_from_template(
+			get_tree().root.get_node("Main").top_script(),
+			"button",
+			{
+				"sprites": {
+					"default": {"path":"art/general/talkchoice.png"},
+					"highlight": {"path": "art/general/talkchoice_high.png"}
+				},
+				"click_macro": "{click_list_item}",
+				"click_args": [result],
+				"select_macro": "{select_list_item}",
+				"select_args": [result]
 			},
-			"click_macro": "{click_list_item}",
-			"click_args": [result],
-			"select_macro": "{sound_list_menu_select}"
-		},
-		["name="+text],
-		script_name
-	)
-	button.cannot_save = true
-	button.position = Vector2((256-button.width)/2, button_y)
-	button_y += button.height+5
-	var button_label := Label.new()
-	button_label.set("custom_colors/font_color", Color(0,0,0))
-	button_label.align = Label.ALIGN_CENTER
-	button_label.valign = Label.VALIGN_CENTER
-	#button_label.rect_position = Vector2(button.width/2, button.height/2)
-	button_label.rect_size = Vector2(button.width, button.height)
-	button_label.text = text
-	button.add_child(button_label)
+			["name="+text],
+			script_name
+		)
+		button.cannot_save = true
+		button.position = Vector2((256-button.width)/2, button_y)
+		button_y += button.height+5
+		var button_label := Label.new()
+		button_label.set("custom_colors/font_color", Color(0,0,0))
+		button_label.align = Label.ALIGN_CENTER
+		button_label.valign = Label.VALIGN_CENTER
+		#button_label.rect_position = Vector2(button.width/2, button.height/2)
+		button_label.rect_size = Vector2(button.width, button.height)
+		button_label.text = text
+		button.add_child(button_label)
+		if is_checked(result) or options.get("checkmark", null):
+			var lcheck_image = options.get("checkmark", check_image)
+			var lcheck_offset_x = options.get("check_x", check_offset_x)
+			var lcheck_offset_y = options.get("check_y", check_offset_y)
+			var check_ob = ObjectFactory.create_from_template(
+				get_tree().root.get_node("Main").top_script(),
+				"graphic",
+				{
+					"sprites": {
+						"default": {"path":"art/"+lcheck_image+".png"},
+					}
+				},
+				[],
+				button
+			)
+			check_ob.position = Vector2(lcheck_offset_x, lcheck_offset_y)
+			check_ob.cannot_save = true
+		
+func set_list_item_options(options):
+	_items[-1][2] = options
 	
 func ws_click_back_from_list(script, arguments):
 	queue_free()
 	Commands.call_command("sound_list_menu_cancel", script, [])
 	
 func ws_click_list_item(script, arguments):
+	set_checked(" ".join(arguments))
 	Commands.call_command(
 		"goto",
 		stack.scripts[-1],
@@ -86,6 +140,16 @@ func ws_click_list_item(script, arguments):
 	)
 	Commands.call_command("sound_list_menu_confirm", stack.scripts[0], [])
 	queue_free()
+	
+func ws_select_list_item(script, arguments):
+	var result = arguments[0]
+	for item in _items:
+		if result == item[1]:
+			var select_macro = item[2].get("on_select", null)
+			if select_macro:
+				Commands.call_command(select_macro, stack.scripts[0], [])
+				return
+	Commands.call_command("sound_list_menu_select", stack.scripts[0], [])
 
 
 #SAVE/LOAD
@@ -93,6 +157,11 @@ func after_load(tree:SceneTree, saved_data:Dictionary):
 	var copy_items = _items.duplicate()
 	_items = []
 	for item in copy_items:
-		add_item(item[0], item[1])
+		var text = item[0]
+		var result = item[1]
+		var options = {}
+		if item.size()>2:
+			options = item[2]
+		add_item(text, result, options)
 	.after_load(tree, saved_data)
 	update()

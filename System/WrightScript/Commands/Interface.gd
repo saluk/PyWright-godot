@@ -109,6 +109,7 @@ func ws_list(script, arguments):
 		script,
 		"list_menu"
 	)
+	list_menu.tag = tag
 	list_menu.position = Vector2(0, 192)
 	list_menu.allow_back_button = true
 	if noback or not main.stack.variables.get_truth("_list_back_button"):
@@ -128,48 +129,39 @@ func ws_li(script, arguments):
 	if not result:
 		result = text
 	list_menu.add_item(text, result)
-	
-# TODO IMPLEMENT
-# Sets checkmark details
-#    @category([KEYWORD('checkmark','image used for checkmark'),
-#    KEYWORD('check_x','x position of check image'),
-#    KEYWORD('check_y','y position of check image')],type="interface")
-#    def _lo(self,command,*keys):
-#        for o in self.obs:
-#            if isinstance(o,listmenu):
-#                for k in keys:
-#                    key,value = k.split("=")
-#                    if key in ["checkmark","check_x","check_y","on_select"]:
-#                        o.options[-1][key]=value
+
+# Sets checkmark details for most recent list item - will enable the checkmark no matter
+# what is stored in variables regarding whether the player has seen the item or not
+# Can be used to show a psyche lock, or used to mark an item as seen even if the text changes
 func ws_lo(script, arguments):
-	pass
+	var kw = Commands.keywords(arguments)
+	var list_menu = main.get_tree().get_nodes_in_group(Commands.LIST_GROUP)
+	if not list_menu:
+		GlobalErrors.log_error("Couldn't find list menu to set list options for", {"script": script})
+		return
+	list_menu[0].set_list_item_options(kw)
 	
 func ws_showlist(script, arguments):
 	var list_menu = main.get_tree().get_nodes_in_group(Commands.LIST_GROUP)
 	if not list_menu:
 		GlobalErrors.log_error("Couldn't find list menu to show", {"script": script})
 		return
+	list_menu[0].update()
 	return list_menu[0]
-	
-# TODO IMPLEMENT
-#    @category([VALUE("tag","list tag to forget")],type="gameflow")
-#    def _forgetlist(self,command,tag):
-#        """Clears the memory of which options player has chosen from a specific list. Normally, chosen options from a list
-#        will be shown with a checkmark to remind the player which options they have tried, and which ones are new. You
-#        can make all the options for a list not show checkmarks by clearing the memory."""
-#        if tag in assets.lists:
-#            del assets.lists[tag]
+
 func ws_forgetlist(script, arguments):
-	pass
-#    @category([VALUE("tag","list to forget item from"),COMBINED("option","option from list to forget state of")],type="gameflow")
-#    def _forgetlistitem(self,command,tag,*item):
-#        """Forget checkmark status of a specific option from a specific list."""
-#        item = " ".join(item)
-#        if tag in assets.lists:
-#            if item in assets.lists[tag]:
-#                del assets.lists[tag][item]
+	var tag = arguments.pop_front()
+	if main.stack.variables.get_string("_pwlist_checked_items_"+tag, ""):
+		main.stack.variables.del_val("_pwlist_checked_items_"+tag)
+
 func ws_forgetlistitem(script, arguments):
-	pass
+	var tag = arguments.pop_front()
+	var item = PoolStringArray(arguments).join(" ")
+	var items = Array(main.stack.variables.get_string("_pwlist_checked_items_"+tag, "").split(";;"))
+	if items:
+		if item in items:
+			items.erase(item)
+		main.stack.variables.set_val("_pwlist_checked_items_"+tag, PoolStringArray(items).join(";;"))
 
 # TODO IMPLEMENT
 # still needs graphics
