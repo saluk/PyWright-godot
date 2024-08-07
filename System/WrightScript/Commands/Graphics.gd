@@ -25,17 +25,22 @@ func ws_clear(script, arguments):
 	if "top" in arguments:
 		bottom = false
 	script.screen.clear(top, bottom)
+	
+# NEW: all argument
 func ws_delete(script, arguments):
 	var name = Commands.keywords(arguments).get("name", null)
+	var all = Commands
 	if name != null:
 		script.screen.sort_children()
 		var children = script.screen.get_children()
 		for i in range(children.size()):
-			if not "script_name" in children[-i]:
+			if not "script_name" in children[-i-1]:
 				continue
-			if children[-i].script_name == name:
-				children[-i].queue_free()
-				children[-i].name = "DELETED_"+children[-1].name
+			if children[-i-1].script_name == name:
+				children[-i-1].queue_free()
+				children[-i-1].name = "DELETED_"+children[-i-1].name
+				if not "all" in arguments:
+					return
 				
 func apply_fader(script, obj, arguments):
 	if not "fade" in arguments:

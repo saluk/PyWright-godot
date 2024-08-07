@@ -22,6 +22,8 @@ export var sprite_key:String  # Current chosen sprite
 
 var current_sprite:Node2D
 var centered := false   # At x=0, y=0, the sprite should be in the center of the screen
+var centerx := false   # At x=0 put us centered horizontally
+var centery := false  # At y=0 put us centered vertically
 var mirror := Vector2(1,1)
 var _width_override = null
 var _height_override = null
@@ -163,6 +165,10 @@ func add_sprite(sprite_key, sprite_template):
 		return
 	var sprite = PWSpriteC.new()
 	sprite.name = "PWSprite:"+base_path+";"+variant_path
+	if template["rect"] and not template["rect"] is Array and not template["rect"] is PoolStringArray:
+		if "(" in template["rect"]:
+			template["rect"] = template["rect"].replace("(","").replace(")","")
+		template["rect"] = template["rect"].split(",")
 	sprite.load_animation(filename, null, template["rect"])
 	sprites[sprite_key] = sprite
 	return sprite
@@ -260,8 +266,14 @@ func set_sprite(new_sprite_key):
 		if click_area:
 			current_sprite.connect("size_changed", click_area, "sync_area")
 		# TODO center and mirror should be controlled by the sprite
-		if centered:
-			current_sprite.position = Vector2(int(256/2)-int(current_sprite.width/2), int(192/2)-int(current_sprite.height/2))
+		if centered or centerx or centery:
+			var x = current_sprite.position.x
+			var y = current_sprite.position.y
+			if centered or centerx:
+				x = int(256/2)-int(current_sprite.width/2)
+			if centered or centery:
+				y = int(192/2)-int(current_sprite.height/2)
+			current_sprite.position = Vector2(x,y)
 		if mirror.x < 0:
 			current_sprite.scale.x = -1
 			current_sprite.position.x += current_sprite.width
@@ -341,7 +353,7 @@ func visible_within(collide_rect:Rect2):
 # SAVE/LOAD
 var save_properties = [
 	"root_path", "base_path", "variant_path", "script_name",
-	"char_name", "sprite_key", "centered",
+	"char_name", "sprite_key", "centered", "centerx", "centery",
 	"_width_override", "_height_override", "template",
 	"z", "scrollable", "wait", "wait_signal",
 	"rotation_degrees",
@@ -367,15 +379,6 @@ static func create_node(saved_data:Dictionary):
 	return ob
 	
 func load_node(tree, saved_data:Dictionary):
-	# TODO we should probably standardize saving dictionaries, vectors, and rects
-	if "rect" in saved_data["template"] and saved_data["template"]["rect"]:
-		var r = saved_data["template"]["rect"].substr(1,saved_data["template"]["rect"].length()-2).split(",")
-		saved_data["template"]["rect"] = Rect2(
-			int(r[0].strip_edges()),
-			int(r[1].strip_edges()),
-			int(r[2].strip_edges()),
-			int(r[3].strip_edges())
-		)
 	main = tree.get_nodes_in_group("Main")[0]
 	stack = main.stack
 	# FIXME we should include in save system which screen object is on

@@ -13,6 +13,7 @@ var relative_positions = {
 	"present": Vector2(1, 1)
 }
 var bg:Node
+var called_court_record_button
 
 func _init():
 	save_properties.append("enabled_options")
@@ -43,6 +44,9 @@ func _process(dt):
 		for option in enabled_options:
 			add_option(option)
 		options_added = true
+	if not called_court_record_button:
+		Commands.call_macro("show_court_record_button", wrightscript, [])
+		called_court_record_button = true
 	
 func load_art(root_path):
 	pass

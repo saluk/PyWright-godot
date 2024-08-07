@@ -151,7 +151,7 @@ func _get_scroll_direction():
 	x_offset = -(int(left_side) % 256)
 	if left_side < 0:
 		scroll_left = true
-	if right_side >= 256:
+	if right_side > 256:
 		scroll_right = true
 	if scroll_left:
 		return -1

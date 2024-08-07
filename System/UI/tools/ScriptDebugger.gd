@@ -10,6 +10,7 @@ var scripts = []
 export(NodePath) var step
 export(NodePath) var allev
 export(NodePath) var pause
+export(NodePath) var speed
 export(NodePath) var node_scripts
 export(NodePath) var current_script
 
@@ -26,6 +27,7 @@ func _ready():
 		step = get_node(step)
 		allev = get_node(allev)
 		pause = get_node(pause)
+		speed = get_node(speed)
 		node_scripts = get_node(node_scripts)
 	
 	node_scripts.remove_child(script_tab)
@@ -33,6 +35,7 @@ func _ready():
 	step.connect("button_up", self, "step")
 	pause.connect("button_up", self, "start_debugger")
 	allev.connect("button_up", self, "all_ev")
+	speed.connect("button_up", self, "set_speed")
 	
 	goto_line_button_template = get_node("GotoLineButton")
 	goto_line_button_template.get_parent().remove_child(goto_line_button_template)
@@ -82,6 +85,16 @@ func step():
 	if in_debugger:
 		current_stack.state = current_stack.STACK_READY
 		
+func set_speed():
+	if speed.text == ">>>":
+		Engine.time_scale = 100.0
+		speed.text = ">"
+	else:
+		Engine.time_scale = 1.0
+		speed.text = ">>>"
+
+# TODO: don't rebuild just because a line has advanced
+# Actually go through each script and compare if the object needs to be updated
 func rebuild():
 	for child in node_scripts.get_children():
 		child.queue_free()

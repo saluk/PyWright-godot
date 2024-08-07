@@ -3,6 +3,7 @@ extends WrightObject
 var scene_name:String
 
 var back_button
+var called_court_record_button = false
 var choice_art
 var choice_high_art
 var _items = []
@@ -67,12 +68,31 @@ func update():
 			0,
 			192-back_button.height
 		)
+	if not called_court_record_button:
+		Commands.call_macro("show_court_record_button", wrightscript, [])
+		called_court_record_button = true
 	.update()
 	
 func add_item(text, result, options={}):
 	_items.append([text, result, options])
-	
+
 func add_list_items():
+	var bg = ObjectFactory.create_from_template(
+		main.top_script(),
+		"graphic",
+		{},
+		[main.stack.variables.get_string("_list_bg_image", "general/main2")],
+		script_name
+	)
+	bg.cannot_save = true
+	# Ensure interface doesn't allow clicks below it
+	# TODO - it's weird to have to make guis to block things off, should be
+	# built into ObjectFactory template maybe?
+	var blocker = Control.new()
+	blocker.name = "BLOCKER"
+	blocker.rect_size = Vector2(bg.width, bg.height)
+	bg.add_child(blocker)
+
 	for item in _items:
 		var text = item[0]
 		var result = item[1]
@@ -97,7 +117,7 @@ func add_list_items():
 		button.position = Vector2((256-button.width)/2, button_y)
 		button_y += button.height+5
 		var button_label := Label.new()
-		button_label.set("custom_colors/font_color", Color(0,0,0))
+		button_label.set("custom_colors/font_color", Colors.string_to_color(main.stack.variables.get_string("_list_text_color", "6e1414")))
 		button_label.align = Label.ALIGN_CENTER
 		button_label.valign = Label.VALIGN_CENTER
 		#button_label.rect_position = Vector2(button.width/2, button.height/2)

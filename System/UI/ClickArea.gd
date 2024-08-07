@@ -9,6 +9,7 @@ var parent
 
 var over := false
 var clicked := false
+var enabled := true
 
 var click_macro:String  # Macro to call when button is pressed
 var click_args:Array
@@ -86,6 +87,8 @@ func on_gui_input(event):
 	set_debug_text()
 			
 func perform_action():
+	if not enabled:
+		return
 	# If click_macro is surrounded by {}, call macro
 	# Otherwise goto the label
 	# In either case, delete any guiWaits
@@ -103,13 +106,13 @@ func set_highlight():
 	var final_sprite = "default"
 	var final_color = Color(1,1,1,1)
 	var final_amount = 0.0
-	if clicked:
+	if clicked and enabled:
 		if parent.has_sprite("clicked"):
 			final_sprite = "clicked"
 		else:
 			final_color = Color(0,0,1,1)
 			final_amount = 0.5
-	if over:
+	if over and enabled:
 		if parent.has_sprite("highlight"):
 			final_sprite = "highlight"
 		else:

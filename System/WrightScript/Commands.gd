@@ -121,8 +121,11 @@ func refresh_arrows(script):
 		call_macro("hide_present_button", script, [])
 		call_macro("hide_press_button", script, [])
 		call_macro("show_court_record_button", script, [])
+	# Called at "end" because it becomes the top of the stack and will execute first
+	# TODO: maybe we should make our internal call function unwind it so it makes more sense
 	call_macro("hide_main_button_all", script, [])
-		
+
+# TODO may not need this
 func hide_arrows(script):
 	call_macro("hide_main_button", script, [])
 	call_macro("hide_court_record_button", script, [])

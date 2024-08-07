@@ -342,7 +342,7 @@ func _ready():
 	if not main:
 		return
 		
-	connect("tree_exited", Commands, "hide_arrows", [main.stack.scripts[-1]])
+	#connect("tree_exited", Commands, "hide_arrows", [main.stack.scripts[-1]])
 
 	$NametagBackdrop/Label.text = ""
 	$Backdrop/Label.bbcode_text = ""
@@ -414,6 +414,8 @@ func finish_text():
 		pass
 			
 func click_continue(immediate_skip=false):
+	if not has_finished and not main.stack.variables.get_truth("_textbox_allow_skip", false):
+		return
 	if not immediate_skip and packs:
 		finish_text()
 	else:
@@ -519,11 +521,32 @@ func trigger_text_end_events():
 		main.stack.variables.set_val("_last_written_text", printed)
 		_set_speaking_animation("blink")
 		main.emit_signal("text_finished")
+	update_arrows(true)
+		
+func update_arrows(disable_click=null):
+	var arrow = Commands.get_objects("_main_button_arrow")
+	var button = Commands.get_objects("_main_button_fg")
+	if not arrow or not button:
+		return
+	if disable_click==null:
+		if not has_finished:
+			disable_click=true
+		else:
+			disable_click=false
+	if disable_click:
+		if not main.stack.variables.get_truth("_textbox_allow_skip", false):
+			arrow[0].visible = false
+			if button[0].click_area:
+				button[0].click_area.enabled = false
+	else:
+		arrow[0].visible = true
+		if button[0].click_area:
+			button[0].click_area.enabled = true
 		
 func _process(dt):
 	update_nametag()
 	update_textbox(dt)
-
+	update_arrows()
 
 
 # SAVE/LOAD

@@ -166,6 +166,15 @@ static func load_atlas_specific(path:String, rect_list:Array) -> Array:
 	for i in range(rect_list.size()):
 		var atlas := AtlasTexture.new()
 		atlas.atlas = texture
-		atlas.region = rect_list[i]
+		var rx = int(rect_list[i][0].strip_edges())
+		var ry = int(rect_list[i][1].strip_edges())
+		var rw = rect_list[i][2].strip_edges()
+		var rh = rect_list[i][3].strip_edges()
+		if rw == "w":
+			rw = image.get_height()
+		if rh == "h":
+			rh = image.get_height()
+		var r = Rect2(rx, ry, rw, rh)
+		atlas.region = r
 		frames.append(atlas)
 	return frames

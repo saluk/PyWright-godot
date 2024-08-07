@@ -16,6 +16,7 @@ script = ExtResource( 2 )
 step = NodePath("vbox/buttons/Step")
 allev = NodePath("vbox/buttons/AllEv")
 pause = NodePath("vbox/buttons/Pause")
+speed = NodePath("vbox/buttons/Speed")
 node_scripts = NodePath("vbox/Control/Scripts")
 current_script = NodePath("vbox/Control/Scripts/CurrentScript")
 
@@ -39,7 +40,7 @@ tab_align = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
-margin_top = 26.0
+margin_top = 29.0
 margin_right = -4.0
 margin_bottom = -4.0
 size_flags_stretch_ratio = 0.75
@@ -69,49 +70,55 @@ text = "Screen:"
 [node name="buttons" type="HBoxContainer" parent="vbox"]
 margin_top = 304.0
 margin_right = 250.0
-margin_bottom = 318.0
+margin_bottom = 321.0
 
 [node name="AllEv" type="Button" parent="vbox/buttons"]
-margin_right = 32.0
-margin_bottom = 14.0
+margin_right = 33.0
+margin_bottom = 17.0
 text = "AllEv"
 
 [node name="Pause" type="Button" parent="vbox/buttons"]
-margin_left = 36.0
-margin_right = 68.0
-margin_bottom = 14.0
+margin_left = 37.0
+margin_right = 75.0
+margin_bottom = 17.0
 text = "Pause"
 
 [node name="Step" type="Button" parent="vbox/buttons"]
-margin_left = 72.0
-margin_right = 100.0
-margin_bottom = 14.0
+margin_left = 79.0
+margin_right = 110.0
+margin_bottom = 17.0
 text = "Step"
 
+[node name="Speed" type="Button" parent="vbox/buttons"]
+margin_left = 114.0
+margin_right = 141.0
+margin_bottom = 17.0
+text = ">>>"
+
 [node name="displays" type="HBoxContainer" parent="vbox"]
-margin_top = 322.0
+margin_top = 325.0
 margin_right = 250.0
-margin_bottom = 330.0
+margin_bottom = 336.0
 
 [node name="FPS" type="Label" parent="vbox/displays"]
-margin_right = 24.0
-margin_bottom = 8.0
+margin_right = 31.0
+margin_bottom = 11.0
 rect_pivot_offset = Vector2( 104, 33 )
 text = "Mouse:"
 script = ExtResource( 5 )
 
 [node name="MousePos" type="Label" parent="vbox/displays"]
-margin_left = 28.0
-margin_right = 52.0
-margin_bottom = 8.0
+margin_left = 35.0
+margin_right = 66.0
+margin_bottom = 11.0
 rect_pivot_offset = Vector2( 104, 33 )
 text = "Mouse:"
 script = ExtResource( 3 )
 
 [node name="Timer" type="Label" parent="vbox/displays"]
-margin_left = 56.0
-margin_right = 80.0
-margin_bottom = 8.0
+margin_left = 70.0
+margin_right = 97.0
+margin_bottom = 11.0
 rect_pivot_offset = Vector2( 104, 33 )
 text = "Timer:"
 script = ExtResource( 4 )

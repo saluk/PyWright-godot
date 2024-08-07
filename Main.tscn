@@ -374,3 +374,10 @@ custom_colors/font_color_shadow = Color( 0, 0, 0, 0.733333 )
 text = "Options"
 
 [node name="IncomingObjects" type="Node" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_left = -115.5
+margin_top = 111.0
+margin_right = -75.5
+margin_bottom = 151.0
+color = Color( 0.431373, 0.0784314, 0.0784314, 1 )

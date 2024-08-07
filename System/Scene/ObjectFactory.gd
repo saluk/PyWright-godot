@@ -44,7 +44,9 @@ var DEFAULT_TEMPLATE = {
 	"select_macro": "",
 	"select_args": [],
 	"select_by_keys": false,
-	"position": [0,0]
+	"position": [0,0],
+	"centerx": false,
+	"centery": false
 }
 	
 var TEMPLATES = {
@@ -433,6 +435,8 @@ func create_from_template(
 	var y=int(consume_keyword(arguments, "y", template["position"][1]))
 	object.position = Vector2(x, y)
 	object.centered = template["centered"]
+	object.centerx = consume_keyword(arguments, "centerx", false)
+	object.centery = consume_keyword(arguments, "centery", false)
 	if arguments:
 		object.base_path = arguments[0]
 	object.variant_path = consume_keyword(arguments, "e", template["default_variant"])
@@ -440,7 +444,7 @@ func create_from_template(
 	var rc = consume_keyword(arguments, "rect", null)
 	if rc:
 		rc = rc.split(",")
-		template["rect"] = Rect2(int(rc[0]), int(rc[1]), int(rc[2]), int(rc[3]))
+		template["rect"] = rc
 	if "flipx" in arguments:
 		template["mirror"][0] = -1
 	if "flipy" in arguments:
