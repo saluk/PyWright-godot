@@ -1,15 +1,21 @@
+# Tests cursor lines in examine and some of the examine variables
+# First test proves you can scroll a screen that doesn't have regions on the right side
+# Second test does have regions on the right side
+clear
+set _examine_use
+
 set _examine_cursor_img general/cursor_ev
 set _examine_cursor_col ff0000
 list showcursor
-li show
-li hide
+li show lines
+li hide lines
 showlist
 
-label show
+label show lines
 set _examine_showcursor true
 goto start
 
-label hide
+label hide lines
 set _examine_showcursor false
 goto start
 
@@ -25,9 +31,12 @@ label 1
 delete name=lobby2
 examine
 region 0 0 20 20 something
+showexamine
+
 label back
 "pressed back"
-top
+goto nouse
+
 label something
 #delete name=lobby2
 "found something"
@@ -37,3 +46,28 @@ label none
 "found nothing"
 goto 01
 label next
+
+
+label nouse
+set _examine_use fake
+bg lobby
+bg detention stack name=lobbyside x=256
+bg lobby stack name=lobby2
+scroll name=lobby2 y=192 speed=3
+label nouse2
+examine
+region 0 0 20 20 something
+region 280 0 100 100 something2
+showexamine name=examine2
+
+label back
+"pressed back"
+top
+
+label something
+"found something"
+goto nouse2
+
+label something2
+"found something on the right"
+goto nouse2

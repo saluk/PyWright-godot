@@ -77,7 +77,9 @@ func ws_showexamine(script, arguments):
 		return
 	var examine_menu = ObjectFactory.create_from_template(
 		script,
-		"examine_menu"
+		"examine_menu",
+		{},
+		arguments
 	)
 	examine_menu.position = Vector2(0, 192)
 	for region_args in next_examine["regions"]:

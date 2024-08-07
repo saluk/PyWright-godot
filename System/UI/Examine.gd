@@ -36,11 +36,17 @@ func _init():
 
 func _ready():
 	wait_signal = "tree_exited"
-	bg_obs_original = Commands.get_objects(null, null, Commands.BG_GROUP)
-	var has_bottom_screen_bg = false
-	for bg_ob in bg_obs_original:
-		if bg_ob.position.y >= 192:
-			has_bottom_screen_bg = true
+	var use_objects = main.stack.variables.get_string("_examine_use", null)
+	if not use_objects:
+		bg_obs_original = Commands.get_objects(null, null, Commands.BG_GROUP)
+	else:
+		bg_obs_original = Commands.get_objects(use_objects, null, Commands.SPRITE_GROUP)
+	if not bg_obs_original:
+		# We treid to find backgrounds to use and found none.
+		# As a failsafe, use any background objects that are on the second screen
+		for ob in Commands.get_objects(null, null, Commands.BG_GROUP):
+			if ob.position.y >= 192:
+				bg_obs_original.append(ob)
 	# TODO don't do this if someone has scrolled a screen down?
 	# On the other hand, while it's excessive copying it shouldn't hurt anything
 	for bg_ob in bg_obs_original:
@@ -103,28 +109,50 @@ class Region extends Area2D:
 	func save_node(data):
 		pass
 		
+func update_x_offset():
+	var MAX = 100000
+	var left_side = MAX
+	var right_side = MAX
+	for region in get_children():
+		if region is Region:
+			if region.position.x < left_side:
+				left_side = region.position.x
+			if region.position.x + region.size.x > right_side:
+				right_side = region.position.x + region.size.x
+	for bg in bg_obs_original:
+		if bg.position.x < left_side:
+			left_side = bg.position.x
+		if bg.position.x + bg.width > right_side:
+			right_side = bg.position.x + bg.width
+	if left_side >= MAX:
+		# No object found, assume no scroll
+		return
+	x_offset = -(int(left_side) / 256)
+
 func _get_scroll_direction():
 	# Enable scroll left if the RIGHT edge of any region or background is to the left
 	# Enable scroll right if the LEFT edge of any region or background is to the right
 	# Will have bad behavior if both of these conditions are true
 	var scroll_left = false
 	var scroll_right = false
+	var left_side = null
+	var right_side = null
 	for region in get_children():
 		if region is Region:
-			if region.position.x + region.size.x < 0:
-				scroll_left = true
-				break
-			if region.position.x >= 256:
-				scroll_right = true
-				break
-	if not (scroll_left or scroll_right):
-		for bg in bg_obs_original:
-			if bg.position.x + bg.width < 0:
-				scroll_left = true
-				break
-			if bg.position.x >= 256:
-				scroll_right = true
-				break
+			if not left_side or region.position.x < left_side:
+				left_side = region.position.x
+			if not right_side or region.position.x + region.size.x > right_side:
+				right_side = region.position.x + region.size.x
+	for bg in bg_obs_original:
+		if not left_side or bg.position.x < left_side:
+			left_side = bg.position.x
+		if not right_side or bg.position.x + bg.width > right_side:
+			right_side = bg.position.x + bg.width
+	x_offset = -(int(left_side) % 256)
+	if left_side < 0:
+		scroll_left = true
+	if right_side >= 256:
+		scroll_right = true
 	if scroll_left:
 		return -1
 	elif scroll_right:
@@ -139,7 +167,7 @@ func build_regions():
 	if built_regions:
 		return
 	for arguments in region_args:
-		var x = int(arguments[0])
+		var x = int(arguments[0])-x_offset*256
 		var y = int(arguments[1])
 		var width = int(arguments[2])
 		var height = int(arguments[3])
@@ -175,10 +203,11 @@ func ws_scroll_from_examine(script, arguments):
 	if scroll_button:
 		scroll_button.queue_free()
 		scroll_button = null
-	var scroll_amt = 256/32
+	var steps = 32
+	var scroll_amt = 256/steps
 	if not arguments:
 		Commands.call_command("sound_examine_scroll", wrightscript, [])
-	for i in range(32):
+	for i in range(steps):
 		for ob in get_children():
 			if ob is Region or ob in bg_obs:
 				ob.position.x -= scroll_button_direction * scroll_amt
@@ -187,7 +216,7 @@ func ws_scroll_from_examine(script, arguments):
 				ob.position.x -= scroll_button_direction * scroll_amt
 		if not arguments:
 			yield(get_tree(), "idle_frame")
-	x_offset += scroll_button_direction
+	update_x_offset()
 	scrolling = false
 	if not arguments:
 		main.stack.variables.set_val(
@@ -204,9 +233,11 @@ func reload_scroll_regions():
 		"_xscroll_"+script_name,
 		0
 	)
-	while saved_scroll:
-		ws_scroll_from_examine(null, [saved_scroll/abs(saved_scroll)])
-		saved_scroll -= saved_scroll/abs(saved_scroll)
+	while x_offset != saved_scroll:
+		print(x_offset,",",saved_scroll)
+		var scroll_dir = -(x_offset-saved_scroll)
+		ws_scroll_from_examine(null, [scroll_dir/abs(scroll_dir)])
+		update_x_offset()
 	
 func _unhandled_input(event):
 	if scrolling: return
@@ -227,11 +258,13 @@ func _select():
 			return
 		
 func update():
+	update_x_offset()
 	build_regions()
 	if scrolling: return
-	script_name = "examine_menu"
-	if bg_obs_original:
-		script_name += "+"+bg_obs_original[0].script_name
+	if not script_name:
+		script_name = "examine_menu"
+		if bg_obs_original:
+			script_name += "+"+bg_obs_original[0].script_name
 	reload_scroll_regions()
 	name = script_name
 	if main.stack.variables.get_truth("_examine_showbars", true) and not bars_bg:
