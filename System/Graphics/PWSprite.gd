@@ -154,6 +154,7 @@ func load_animation(path:String, info=null, sub_rect=null):
 	if frames.size() > 1:
 		var frame_i = 0
 		for frame in frames:
+			# TODO get default frame delay
 			for delay in info["delays"].get(frame_i, 6.0):
 				animated_sprite.frames.add_frame("default", frame)
 			frame_i += 1
