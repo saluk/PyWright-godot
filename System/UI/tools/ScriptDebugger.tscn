@@ -36,13 +36,17 @@ anchor_bottom = 1.0
 margin_right = 0.0390015
 tab_align = 0
 
-[node name="CurrentScript" type="TextEdit" parent="vbox/Control/Scripts"]
+[node name="CurrentScript" type="Control" parent="vbox/Control/Scripts"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 29.0
 margin_right = -4.0
 margin_bottom = -4.0
+
+[node name="CurrentScriptEditor" type="TextEdit" parent="vbox/Control/Scripts/CurrentScript"]
+anchor_right = 1.0
+anchor_bottom = 1.0
 size_flags_stretch_ratio = 0.75
 text = "line 1 this is a really long line that may wrap an arbitrary number of 
 line 2
@@ -55,16 +59,23 @@ draw_spaces = true
 bookmark_gutter = true
 breakpoint_gutter = true
 context_menu_enabled = false
-smooth_scrolling = true
-wrap_enabled = true
 caret_blink = true
 caret_blink_speed = 0.5
 
-[node name="Label" type="Label" parent="vbox/Control/Scripts/CurrentScript"]
-margin_left = 188.0
-margin_top = 260.0
-margin_right = 241.0
-margin_bottom = 270.0
+[node name="HBoxContainer" type="HBoxContainer" parent="vbox/Control/Scripts/CurrentScript"]
+margin_top = -13.0
+margin_right = 242.0
+margin_bottom = -2.0
+
+[node name="FilenameLabel" type="Label" parent="vbox/Control/Scripts/CurrentScript/HBoxContainer"]
+margin_right = 27.0
+margin_bottom = 11.0
+text = "Script:"
+
+[node name="ScreenLabel" type="Label" parent="vbox/Control/Scripts/CurrentScript/HBoxContainer"]
+margin_left = 31.0
+margin_right = 63.0
+margin_bottom = 11.0
 text = "Screen:"
 
 [node name="buttons" type="HBoxContainer" parent="vbox"]

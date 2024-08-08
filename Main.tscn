@@ -295,7 +295,8 @@ script = ExtResource( 3 )
 margin_right = 256.0
 margin_bottom = 384.0
 rect_clip_content = true
-mouse_filter = 2
+focus_mode = 2
+mouse_filter = 1
 
 [node name="MainScreen" type="Node2D" parent="Screens" groups=["MainScreen"]]
 unique_name_in_owner = true
@@ -330,6 +331,7 @@ margin_left = 4.0
 margin_top = 29.0
 margin_right = -4.0
 margin_bottom = -4.0
+focus_neighbour_left = NodePath("../../Screens")
 
 [node name="ErrorLog" parent="TabContainer" instance=ExtResource( 9 )]
 visible = false
@@ -376,5 +378,8 @@ text = "Options"
 
 [node name="IncomingObjects" type="Node" parent="."]
 
-[node name="InputController" type="Node" parent="."]
+[node name="InputController" type="Control" parent="."]
+focus_mode = 2
 script = ExtResource( 11 )
+
+[connection signal="gui_input" from="Screens" to="." method="_on_Screens_gui_input"]

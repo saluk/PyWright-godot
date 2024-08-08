@@ -286,3 +286,9 @@ func load_node(tree, saved_data:Dictionary):
 func after_load(tree, saved_data:Dictionary):
 	stack.state = stack.STACK_READY
 	stack.after_load(tree, saved_data["stack"])
+
+
+func _on_Screens_gui_input(event):
+	var owner = get_node("InputController").get_focus_owner()
+	if owner:
+		owner.release_focus()

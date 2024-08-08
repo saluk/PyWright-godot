@@ -6,7 +6,7 @@ var look_at   # Set to a script if we are looking at something other than the cu
 var script_tab
 var popup_menu
 
-var scripts = []
+var scripts:Array = []
 export(NodePath) var step
 export(NodePath) var allev
 export(NodePath) var pause
@@ -52,12 +52,23 @@ func start_debugger(force=false):
 		pause.text = "Resume"
 		current_stack.connect("line_executed", self, "debug_line")
 		current_stack.state = current_stack.STACK_DEBUG
+
+
+func get_script_data(script):
+	for script_data in scripts:
+		if script_data["script"] == script:
+			return script_data
 		
-func goto_line(row, scripti):
+func edit_script(script):
+	var d = get_script_data(script)
+	script.load_string(d["editor"].text)
+	script.stack.show_in_debugger()
+
+func goto_line(row, script):
 	if current_stack.scripts:
-		current_stack.scripts[scripti].goto_line_number(row)
+		script.goto_line_number(row)
 		current_stack.force_clear_blockers()
-	scripts[scripti]["editor"].set_line_as_breakpoint(row, false)
+	get_script_data(script)["editor"].set_line_as_breakpoint(row, false)
 	
 func all_ev():
 	var found = false
@@ -92,41 +103,60 @@ func set_speed():
 	else:
 		Engine.time_scale = 1.0
 		speed.text = ">>>"
+		
+func add_new_script(script):
+	var editor_container = script_tab.duplicate()
+	var d = {
+		"script": script, 
+		"editor_container": editor_container,
+		"editor": editor_container.get_node("CurrentScriptEditor"),
+		"highlighted_line": null,
+		"bookmark_line": null}
+	d["editor_container"].name = "x"
+	d["editor_container"].get_node("HBoxContainer/ScreenLabel").text = script.screen.name
+	d["editor_container"].get_node("HBoxContainer/FilenameLabel").text = script.filename
+	node_scripts.add_child(d["editor_container"])
+	d["editor"].text = PoolStringArray(d["script"].lines).join("\n")
+	d["editor"].connect("text_changed", self, "edit_script", [script])
+	d["editor"].connect("breakpoint_toggled", self, "goto_line", [script])
+	d["editor"].connect("info_clicked", self, "goto_line", [script])
+	scripts.append(d)
 
 # TODO: don't rebuild just because a line has advanced
 # Actually go through each script and compare if the object needs to be updated
 func rebuild():
-	for child in node_scripts.get_children():
-		child.queue_free()
-	scripts = []
-	var i = 0
-	for ii in range(len(current_stack.scripts)):
-		var script = current_stack.scripts[current_stack.scripts.size()-1-ii]
-		var d = {
-			"script": script, 
-			"editor": script_tab.duplicate(),
-			"highlighted_line": null,
-			"bookmark_line": null}
-		d["editor"].name = "x"
-		d["editor"].get_node("Label").text = script.screen.name
-		node_scripts.add_child(d["editor"])
-		node_scripts.set_tab_title(i, script.filename)
-		d["editor"].text = PoolStringArray(d["script"].lines).join("\n")
-		d["editor"].connect("text_changed", self, "edit_script", [i])
-		d["editor"].connect("breakpoint_toggled", self, "goto_line", [i])
-		d["editor"].connect("info_clicked", self, "goto_line", [i])
-		scripts.append(d)
-		i += 1
-	while scripts.size() > current_stack.scripts.size():
-		var last = scripts.pop_back()
-		last["editor"].queue_free()
-	if scripts:
-		node_scripts.current_tab = 0
-	
-func edit_script(script_index):
-	var d = scripts[script_index]
-	d["script"].load_string(d["editor"].text)
-	d["script"].stack.show_in_debugger()
+	# Top script is actually the last item in the script list
+	# STEP 1 - delete existing scripts that aren't in the current stack
+	var change = false
+	for i in range(scripts.size()-1, 0, -1):
+		if not scripts[i]["script"] in current_stack.scripts:
+			scripts.remove(i)
+			node_scripts.remove_child(node_scripts.get_child(i))
+			change = true
+	# STEP 2 - add scripts in the current stack that aren't in our scripts
+	var has_scripts = []
+	for d in scripts:
+		has_scripts.append(d["script"])
+	for script in current_stack.scripts:
+		if not script in has_scripts:
+			add_new_script(script)
+			change = true
+	# STEP 3 - make the order between the two lists consistent, including fixing the tab titles
+	for i in range(current_stack.scripts.size()):
+		if current_stack.scripts[i] == scripts[i]["script"]:
+			continue
+		change = true
+		var script = current_stack.scripts[i]
+		var d = get_script_data(script)
+		for other_script in scripts:
+			if other_script["script"] == script:
+				scripts.erase(other_script)
+				scripts.insert(i, other_script)
+				node_scripts.move_child(other_script["editor_container"], i)
+				break
+	if scripts and change:
+		node_scripts.current_tab = scripts.size()-1
+	return
 
 func update_current_stack(stack):
 	var main = get_tree().get_nodes_in_group("Main")[0]
@@ -135,14 +165,7 @@ func update_current_stack(stack):
 	if current_stack != stack:
 		current_stack = stack
 		current_stack.connect("enter_debugger", self, "start_debugger", [true])
-	# Detect if scripts changed
-	if len(scripts) != len(stack.scripts):
-		rebuild()
-	else:
-		for i in range(len(scripts)):
-			if scripts[i]["script"] != stack.scripts[stack.scripts.size()-1-i]:
-				rebuild()
-				break
+	rebuild()
 	# Update each editor
 	for i in range(len(scripts)):
 		var to_line = scripts[i]["script"].line_num
@@ -158,7 +181,7 @@ func update_current_stack(stack):
 			scripts[i]["editor"].set_line_as_bookmark(scripts[i]["bookmark_line"], false)
 		scripts[i]["editor"].set_line_as_bookmark(to_line, true)
 		scripts[i]["bookmark_line"] = to_line
-		node_scripts.set_tab_title(i, scripts[i]["script"].filename)
+		scripts[i]["editor_container"].name = str(i)
 
 
 # TODO Whoops, I'm hooking up an event to control rather than to the script editor
