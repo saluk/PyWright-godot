@@ -15,6 +15,8 @@ var relative_positions = {
 var bg:Node
 var called_court_record_button
 
+var blocks_action_advance := true
+
 func _init():
 	save_properties.append("enabled_options")
 	save_properties.append("scene_name")

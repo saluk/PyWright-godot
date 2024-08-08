@@ -23,6 +23,8 @@ var page_label:Label
 
 var has_objects = false
 
+var blocks_action_advance := true
+
 func _init():
 	._init()
 	save_properties.append("in_presentation_context")

@@ -19,6 +19,8 @@ var check_image = ""
 var check_offset_x = -10
 var check_offset_y = -10
 
+var blocks_action_advance := true
+
 # TODO figure out how we decide whther to show the back button or not
 
 func _init():

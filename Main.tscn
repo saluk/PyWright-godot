@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://System/UI/tools/ScriptDebugger.tscn" type="PackedScene" id=1]
 [ext_resource path="res://System/UI/tools/FrameLog.tscn" type="PackedScene" id=2]
@@ -10,6 +10,7 @@
 [ext_resource path="res://art/general/arrow_right.png" type="Texture" id=8]
 [ext_resource path="res://System/UI/tools/ErrorLog.tscn" type="PackedScene" id=9]
 [ext_resource path="res://System/UI/tools/DirectoryCacheList.tscn" type="PackedScene" id=10]
+[ext_resource path="res://System/Input/InputController.gd" type="Script" id=11]
 
 [sub_resource type="Shader" id=1]
 code = "/*
@@ -374,3 +375,6 @@ custom_colors/font_color_shadow = Color( 0, 0, 0, 0.733333 )
 text = "Options"
 
 [node name="IncomingObjects" type="Node" parent="."]
+
+[node name="InputController" type="Node" parent="."]
+script = ExtResource( 11 )

@@ -50,6 +50,11 @@ _global_script_classes=[ {
 "path": "res://System/UI/Fonts/Fonts.gd"
 }, {
 "base": "Node",
+"class": "InputController",
+"language": "GDScript",
+"path": "res://System/Input/InputController.gd"
+}, {
+"base": "Node",
 "class": "LeastUsedCache",
 "language": "GDScript",
 "path": "res://System/LeastUsedCache.gd"
@@ -143,6 +148,7 @@ _global_script_class_icons={
 "FadeLib": "",
 "Filesystem": "",
 "Fonts": "",
+"InputController": "",
 "LeastUsedCache": "",
 "MainScene": "",
 "NameSpaces": "",

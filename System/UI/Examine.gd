@@ -28,6 +28,8 @@ var fail := "none"
 
 var current_region:Area2D
 
+var blocks_action_advance := true
+
 # TODO figure out how we decide whther to show the back button or not
 # TODO build in scrolling the top bg down (but default to off)
 
