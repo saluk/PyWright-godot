@@ -157,6 +157,8 @@ func show_in_debugger():
 		debugger[0].update_current_stack(self)
 		
 func show_frame(frame, begin=false):
+	if not variables.get_truth("render", true):
+		return
 	if not main or not is_instance_valid(main) or not main.get_tree():
 		return
 	var framelog = main.get_tree().get_nodes_in_group("FrameLog")
@@ -236,6 +238,8 @@ func process():
 		# Resume processing
 		state = STACK_PROCESSING
 	while yields:
+		if not variables.get_truth("render", true):
+			break
 		#show_in_debugger()
 		var new_yields = []
 		for f in yields:
@@ -254,8 +258,9 @@ func process():
 		if not scripts:
 			return new_state(STACK_YIELD)
 		if blocked(scripts[-1]) and blockers:
-			yield(main.get_tree(), "idle_frame")
-			continue
+			if variables.get_truth("render", true):
+				yield(main.get_tree(), "idle_frame")
+				continue
 		# We may have a paused frame from before to keep processing
 		show_frame(null, true)
 		frame = scripts[-1].process_wrightscript()

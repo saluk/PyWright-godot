@@ -1,0 +1,9 @@
+set render false
+set _textbox_skipupdate true
+char phoenix
+"Hello my name is phoenix"
+bg lobby
+"here is the next textbox"
+set render true
+set _textbox_skipupdate false
+"blah"

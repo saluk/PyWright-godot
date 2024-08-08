@@ -240,6 +240,9 @@ func watched(command):
 # TODO - may need to support actually replacing macro text with the arguments passed, 
 # but wont implement till we actually need to
 func call_macro(macro_name, script, arguments):
+	# FIXME Something weird happened here
+	if not script:
+		return
 	var command = is_macro(macro_name)
 	if not command:
 		if watched(macro_name):
