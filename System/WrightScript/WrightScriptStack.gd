@@ -150,7 +150,7 @@ func clear_scripts():
 func show_in_debugger():
 	if not main or not is_instance_valid(main) or not main.get_tree():
 		return
-	if not main.debugger_enabled:
+	if not Configuration.user.debugger_enabled:
 		return
 	var debugger = main.get_tree().get_nodes_in_group("ScriptDebugger")
 	if debugger:

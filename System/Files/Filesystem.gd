@@ -147,6 +147,8 @@ static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -
 			x = 0
 	return frames
 
+# Rect_list contains lists of strings, [x, y, width, hright]
+# use "w" or "h" for width and height to expand
 static func load_atlas_specific(path:String, rect_list:Array) -> Array:
 	print(path)
 	# Load image

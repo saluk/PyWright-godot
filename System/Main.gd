@@ -5,7 +5,6 @@ var stack: WrightScriptStack
 var timecounter: TimeCounter
 var current_game: String
 
-var debugger_enabled = false
 var tab_button:Button
 
 var screens
@@ -94,7 +93,8 @@ func _ready():
 	
 	tab_button = get_tree().get_nodes_in_group("TabButton")[0]
 	tab_button.connect("toggled", self, "_toggle_button")
-	hide_tabs()
+	if not Configuration.user.options_open:
+		hide_tabs()
 
 	get_tree().root.connect("size_changed", self, "window_resize")
 	if Configuration.builtin.screen_format == "vertical":
@@ -262,10 +262,12 @@ func _toggle_button(state):
 func show_tabs():
 	$TabContainer.show()
 	window_resize()
+	Configuration.set_and_save("options_open", true)
 
 func hide_tabs():
 	$TabContainer.hide()
 	window_resize()
+	Configuration.set_and_save("options_open", false)
 
 # SAVE/LOAD
 var save_properties = [

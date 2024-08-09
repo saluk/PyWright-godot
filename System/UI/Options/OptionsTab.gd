@@ -1,6 +1,7 @@
 extends Control
 
 var main
+var initialized = false
 
 func _ready():
 	main = get_tree().get_nodes_in_group("Main")[0]
@@ -18,6 +19,12 @@ func _ready():
 	$"vbox/SaveLoad/New Save".connect("button_up", self, "_create_new_save")
 	$"vbox/SaveLoad/HBoxContainer/Load Selected Save".connect("button_up", self, "_load_save")
 	$"vbox/SaveLoad/HBoxContainer/Delete Selected Save".connect("button_up", self, "_delete_save")
+	
+func _process(delta):
+	if not initialized:
+		initialized = true
+		if Configuration.user.debugger_enabled:
+			_debugger()
 
 func _main_menu():
 	main.reload()
@@ -35,8 +42,11 @@ func toggle_tab(tab_node_name):
 		return "disabled"
 		
 func enable_tab(n):
-	n.get_parent().remove_child(n)
-	get_tree().get_nodes_in_group("TabContainer")[0].add_child(n)
+	var parent = n.get_parent()
+	var tabcontainer = get_tree().get_nodes_in_group("TabContainer")[0]
+	n.set_owner(tabcontainer)
+	parent.remove_child(n)
+	tabcontainer.add_child(n)
 
 func disable_tab(n):
 	n.get_parent().remove_child(n)
@@ -45,10 +55,10 @@ func disable_tab(n):
 func _debugger():
 	if toggle_tab("ScriptDebugger") == "enabled":
 		$vbox/Debugger.text = "Disable Debugger"
-		main.debugger_enabled = true
+		Configuration.set_and_save("debugger_enabled", true)
 	else:
 		$vbox/Debugger.text = "Enable Debugger"
-		main.debugger_enabled = false
+		Configuration.set_and_save("debugger_enabled", false)
 	
 func _framelog():
 	if toggle_tab("FrameLog") == "enabled":

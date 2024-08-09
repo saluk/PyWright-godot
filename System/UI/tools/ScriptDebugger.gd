@@ -160,7 +160,7 @@ func rebuild():
 
 func update_current_stack(stack):
 	var main = get_tree().get_nodes_in_group("Main")[0]
-	if not main.debugger_enabled:
+	if not Configuration.user.debugger_enabled:
 		return
 	if current_stack != stack:
 		current_stack = stack

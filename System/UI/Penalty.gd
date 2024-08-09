@@ -23,13 +23,12 @@ func _ready():
 	script_name = "penalty"
 	var atlas = Filesystem.load_atlas_specific(
 		"art/general/healthbar.png",
-		[
-			Rect2(0, 0, 3, 14),
-			Rect2(82, 0, 2, 14),
-			Rect2(3, 0, 1, 14),
-			Rect2(68, 0, 1, 14)
-		]
+		[["0","0","3","14"],["82","0","2","14"],
+		["3","0","1","14"],["68","0","1","14"]]
 	)
+	if not atlas:
+		queue_free()
+		return
 	left = PWSprite.new()
 	left.from_frame(atlas[0])
 	right = PWSprite.new()
