@@ -39,6 +39,24 @@ func ws_prev_statement(script, arguments):
 		cross.prev_statement()
 	Commands.delete_object_group(Commands.TEXTBOX_GROUP)
 	
+# TODO
+# Cross exam model:
+#	when we encounter cross, we enter cross exam mode. when we hit endcross we exit
+#	when we encounter a statement, we add that statement line to the current cross exam model of statements
+#	we also remember this statement as our most recent statement
+#	when we jump, we see if we land inside the current cross exam, inside a new cross exam, or outside of 
+#	a cross exam. remember what line we were at when we jumped
+#	Remember the state of each cross exam we have encountered within a script (when the script is unloaded we can forget)
+#	When we resume, go to the last line encountered on the last encountered cross exam
+#		data stored: 
+#		cross_[script]_[line]_statement_1 = yes - user saw statement 1
+#		cross_[script]_[line]_statement_2 = no - user did not see statement 2
+#		cross_[script]_[line]_statement_3 = yes - user saw statement 3
+#		cross_[script]_[line]_statement_last = 3 - 
+#		currentcross = cross line number
+#	when we go to the previous statement, we should go to the "statement" line that we LAST REMEMBER before the current
+#	statement, or the existing statement if it is first. Need a memory of encountered statements
+#	When we go to the next statement, we just advance text.
 func ws_statement(script, arguments):
 	var test = Commands.keywords(arguments).get("test", "")
 	if test:
