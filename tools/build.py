@@ -11,41 +11,51 @@ zips_by_host = {
 }
 binary_by_host = {
     "linux": "./Godot_v3.5.3-stable_x11.64",
-    "mac": "Godot.app/Contents/MacOS/Godot"
+    "mac": "../Godot-3.53-Mac.app/Contents/MacOS/Godot",
+    "win": "../Godot_v3.5.3-stable_win64.exe",
+    "docker": "docker run local"
+}
+shell_by_host = {
+    "linux": "/bin/bash",
+    "mac": "/bin/bash",
+    "docker": "/bin/bash",
+    "win": "powershell"
 }
 
 print(platform.platform())
-HOST = "mac" if "mac" in platform.platform().lower() else ("linux" if "linux" in platform.platform().lower() else "unknown")
-HOST="linux"
-def download_godot():
-    if not os.path.exists(binary_by_host[HOST]):
-        url, filename = zips_by_host[HOST], zips_by_host[HOST].split("/")[-1]
-        print(f"Downloading: {url} as {filename}")
-        urlretrieve(url, filename)
-        print(f"Unzip {filename}")
-        subprocess.run(f"unzip {filename}", shell=True, executable='/bin/bash')
-        if HOST == "linux":
-            subprocess.run(f"chmod a+x {filename}", shell=True, executable='/bin/bash')
-
+HOST = "mac" if "mac" in platform.platform().lower() else None
+if not HOST:
+    HOST = "linux" if "linux" in platform.platform().lower() else None
+if not HOST:
+    HOST = "win" if "windows" in platform.platform().lower() else None
+if not HOST:
+    crash
 
 export_configs = {
-    "Mac OSX": {"profile_name": "Mac OSX", "output": "export/godotwright.dmg"},
+    "Mac OSX": {
+        "profile_name": "Mac OSX",
+        "output": "export/macosx/godotwright.dmg",
+        "folder": "export/macosx",
+        "zip_tag": "mac"
+    },
     "HTML5": {
         "profile_name": "HTML5", 
         "output": "export/web/godotwright.html", 
-        "rmfolder": "export/web",
+        "folder": "export/web",
         "after": "web_build"
     },
     "Android": {
         "profile_name": "Android", 
-        "output": "export/godotwright.apk",
-        "after": "android_build"
+        "output": "export/android/godotwright.apk",
+        "folder": "export/android",
+        "after": "android_build",
+        "zip_tag": "android"
     },
     "Windows Desktop": {
         "profile_name": "Windows Desktop",
         "output": "export/windows/godotwright.exe",
-        "rmfolder": "export/windows",
-        "after": 'lambda:upload_zips("win")'
+        "folder": "export/windows",
+        "zip_tag": "win"
     }
 }
 
@@ -59,9 +69,9 @@ def web_build():
 current_version = "demo_3"
 
 # only does windows
-def upload_zips(system="win"):
-    filename = f"GodotWright_{system}_{current_version}.zip"
-    subprocess.run([f"cd export/windows; zip ../{filename} *"], shell=True, executable="/bin/bash")
+def upload_zips(export):
+    filename = f"GodotWright_{export["zip_tag"]}_{current_version}.zip"
+    subprocess.run([f"cd {export['folder']}; zip ../{filename} *"], shell=True, executable="/bin/bash")
     subprocess.run(f"scp export/{filename} saluk@kamatera1.tinycrease.com:", shell=True, executable='/bin/bash')
     subprocess.run(
         f'ssh saluk@kamatera1.tinycrease.com "cd /opt/pywright/gdw;sudo cp ~/{filename} {filename};sudo chown www-data:www-data *"',
@@ -74,9 +84,6 @@ def do_export(profile=None):
     # ensure required folders exist
     if not os.path.exists("export"):
         os.mkdir("export")
-
-    # Download godot binary (for github action)
-    download_godot()
 
     # Some files are not importing correctly so we ignore them. But we can't ignore
     # them while exporting or it skips the folders entirely. Add back at the end
@@ -96,28 +103,28 @@ def do_export(profile=None):
         configs = [export_configs[profile]]
 
     for export in configs:
-        if export.get("rmfolder", None):
-            if os.path.exists(export["rmfolder"]):
-                shutil.rmtree(export["rmfolder"])
-            if not os.path.exists(export["rmfolder"]):
-                os.mkdir(export["rmfolder"])
+        if export.get("folder", None):
+            if os.path.exists(export["folder"]):
+                shutil.rmtree(export["folder"])
+            if not os.path.exists(export["folder"]):
+                os.mkdir(export["folder"])
         
         print("running godot build...")
         subprocess.run([
             binary_by_host[HOST],
             "--no-window",
             "--headless",
-            "--export",
             "--verbose",
-            "--display-server headless",
+            "--export",
             export["profile_name"],
-            export["output"]],
-            shell=True,
-            executable="/bin/bash"
+            export["output"]]
         )
 
         if export.get("after", None):
             eval(export["after"])()
+
+        if export.get("zip_tag", None):
+            upload_zips(export)
 
     # Restore initial state
     if os.path.exists("games/"):
