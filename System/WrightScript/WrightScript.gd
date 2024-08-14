@@ -261,6 +261,11 @@ func is_inside_cross():
 	return false
 
 func next_statement():
+	# not actually implemented, on purpose
+	# the cross exam arrow right just calls main_button_advance_text
+	# Some case writers include logic BEFORE a statement tag to determine
+	# whether the statement should appear or not
+	return
 	if not is_inside_cross():
 		return
 	var si = line_num+1
