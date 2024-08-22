@@ -36,6 +36,8 @@ func _ready():
 	check_offset_y = main.stack.variables.get_int("_list_checked_y",-10)
 	
 func _get_checked_list():
+	if not tag:
+		return []
 	var checked = main.stack.variables.get_string("_pwlist_checked_items_"+tag, "")
 	checked = checked.split(";;")
 	return checked
@@ -44,12 +46,14 @@ func is_checked(label):
 	return label in _get_checked_list()
 	
 func set_checked(label):
+	if not tag:
+		return
 	var checked = _get_checked_list()
 	if not label in checked:
 		checked.append(label)
 		main.stack.variables.set_val("_pwlist_checked_items_"+tag, checked.join(";;"))
 	
-func update():
+func build():
 	add_list_items()
 	if allow_back_button and not back_button:
 		back_button = ObjectFactory.create_from_template(
@@ -73,7 +77,6 @@ func update():
 	if not called_court_record_button:
 		Commands.call_macro("show_court_record_button", wrightscript, [])
 		called_court_record_button = true
-	.update()
 	
 func add_item(text, result, options={}):
 	_items.append([text, result, options])
@@ -126,7 +129,8 @@ func add_list_items():
 		button_label.rect_size = Vector2(button.width, button.height)
 		button_label.text = text
 		button.add_child(button_label)
-		if is_checked(result) or options.get("checkmark", null):
+		# TODO enable setting the text color, font, size of the option
+		if is_checked(result):
 			var lcheck_image = options.get("checkmark", check_image)
 			var lcheck_offset_x = options.get("check_x", check_offset_x)
 			var lcheck_offset_y = options.get("check_y", check_offset_y)
@@ -186,4 +190,4 @@ func after_load(tree:SceneTree, saved_data:Dictionary):
 			options = item[2]
 		add_item(text, result, options)
 	.after_load(tree, saved_data)
-	update()
+	build()
