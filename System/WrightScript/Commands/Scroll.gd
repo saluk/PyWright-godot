@@ -19,10 +19,10 @@ class Scroller extends Node:
 	var controlled  # for saving
 	func _init(x, y, z, speed, wait, filter):
 		name = "scroll"
-		total = Vector2(x, y)
+		total = Vector2(float(x), float(y))
 		objects = getscrollable(Commands.get_objects(null, false))
-		move = total.normalized() * (speed/0.02)
-		time_left = total.length()/(speed/0.02)
+		move = total.normalized() * (float(speed)/0.02)
+		time_left = float(total.length())/(speed/0.02)
 		total_time = time_left
 		if wait:
 			wait_signal = "tree_exited"
@@ -123,7 +123,7 @@ static func ws_scroll(script, arguments):
 	var x = int(kw.get("x", 0))
 	var y = int(kw.get("y", 0))
 	var z = int(kw.get("z", 0))
-	var speed = int(kw.get("speed", 1))
+	var speed = float(kw.get("speed", 1))
 	var last = "last" in arguments
 	var wait = not "nowait" in arguments
 	var script_name = kw.get("name", null)
