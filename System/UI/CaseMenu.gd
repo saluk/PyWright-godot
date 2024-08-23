@@ -60,7 +60,7 @@ func build_scene():
 	SignalUtils.remove_all($Control/ArrowLeft)
 	SignalUtils.remove_all($Control/ArrowRight)
 	SignalUtils.remove_all($Control/ScrollContainer2/VBoxContainer/ResumeButton)
-	$Control/ScrollContainer2/VBoxContainer/CaseBox/CaseTitle.bbcode_text = "[center][b]%s[/b][/center]"%current_case()
+	$Control/ScrollContainer2/VBoxContainer/CaseBox/CaseTitle.bbcode_text = "[center][b]%s[/b][/center]"%current_case().replace("_"," ")
 	$Control/ArrowLeft.visible = false
 	$Control/ArrowRight.visible = false
 	$Control/ScrollContainer2/VBoxContainer/NewGameButton.connect("pressed", self, "launch_game")
