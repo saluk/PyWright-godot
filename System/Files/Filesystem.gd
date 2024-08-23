@@ -1,5 +1,18 @@
 extends Reference
 class_name Filesystem
+
+# Returns text that is safe to be in a filename
+static func sanitize_text_for_path(text, remove_slashes=true):
+	text = text.replace(":","--").replace(",","..").replace(" ","_")
+	if remove_slashes:
+		text = text.replace("/",".")
+	return text
+	
+static func make_if_not_exists_dir(path):
+	var d = Directory.new()
+	# Ensure save folder exists
+	if not d.dir_exists(path):
+		d.make_dir(path)
 	
 static func path_join(a, b):
 	if a.ends_with("/"):

@@ -4,6 +4,7 @@ var cases = []
 var wrightscript
 
 signal CASE_SELECTED
+signal SCROLL_FINISHED
 var wait_signal = "CASE_SELECTED"
 
 var focused = false
@@ -40,6 +41,33 @@ func _ready():
 	$Control/GameTitle.text = game_name
 	build_scene()
 	connect_arrows()
+	load_last_case()
+	
+func get_last_case_file():
+	var game_name = Filesystem.sanitize_text_for_path(game_data["title"])
+	var last_case = "user://recent_cases/"
+	Filesystem.make_if_not_exists_dir(last_case)
+	last_case+=game_name
+	return last_case
+	
+func load_last_case():
+	var last_case = get_last_case_file()
+	var f:File = File.new()
+	if f.file_exists(last_case):
+		f.open(last_case, File.READ)
+		var case_name = f.get_line()
+		f.close()
+		if case_name in cases:
+			while cases[case_chosen] != case_name:
+				_scroll(1)
+				yield(self, "SCROLL_FINISHED")
+				
+func save_last_case():
+	var last_case = get_last_case_file()
+	var f:File = File.new()
+	f.open(last_case, File.WRITE)
+	f.store_line(cases[case_chosen])
+	f.close()
 	
 func current_case():
 	return cases[case_chosen]
@@ -105,6 +133,7 @@ func _scroll(direction):
 	yield(tween,"tween_completed")
 	remove_child(tween)
 	connect_arrows()
+	emit_signal("SCROLL_FINISHED")
 
 func next_case():
 	_scroll(1)
@@ -113,6 +142,7 @@ func prev_case():
 	_scroll(-1)
 
 func launch_game(path=null, save=null):
+	save_last_case()
 	var tree = get_tree()
 	if not path:
 		path = current_case()

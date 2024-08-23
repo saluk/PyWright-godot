@@ -190,16 +190,12 @@ static func save_new_file(main):
 static func get_saved_games_for_current(main, save_path_name=null):
 	save_path_name = _get_save_path_name(main, save_path_name)
 	var d
-	d = Directory.new()
 	var path = "user://game_saves"
-	# Ensure save folder exists
-	if not d.dir_exists(path):
-		d.make_dir(path)
+	Filesystem.make_if_not_exists_dir(path)
 		
 	# Ensure save folder exists for this game
 	path += "/" + save_path_name
-	if not d.dir_exists(path):
-		d.make_dir(path)
+	Filesystem.make_if_not_exists_dir(path)
 		
 	var save_files = []
 	d = Directory.new()
