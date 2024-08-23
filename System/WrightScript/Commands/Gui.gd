@@ -13,11 +13,11 @@ func gui_button(script, arguments):
 	for single in ["try_bottom", "hold"]:
 		while single in args:
 			args.erase(single)
-	var text = Commands.join(args)
-	if text:
-		arguments.append("button_text="+text)
 	var graphic = kw.get("graphic", "")
 	var graphichigh = kw.get("graphichigh", "")
+	var text = Commands.join(args)
+	if text and not graphic:
+		arguments.append("button_text="+text)
 	var template = ObjectFactory.get_template("button")
 	template["sprites"]["default"]["path"] = "art/{base}.png".format({"base": graphic})
 	if graphichigh:
