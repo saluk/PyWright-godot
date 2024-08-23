@@ -202,8 +202,8 @@ func ws_setflag(script, arguments):
 	main.stack.variables.set_val(arguments[0], "true")
 	
 func ws_delflag(script, arguments):
-	if arguments[0] in main.stack.variables:
-		main.stack.variables.erase(arguments[0])
+	if main.stack.variables.get_string(arguments[0], null) != null:
+		main.stack.variables.del_val(arguments[0])
 		
 func ws_noflag(script, arguments):
 	# NOT YET IMPLEMENTED
