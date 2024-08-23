@@ -130,7 +130,7 @@ func add_list_items():
 		button_label.text = text
 		button.add_child(button_label)
 		# TODO enable setting the text color, font, size of the option
-		if is_checked(result):
+		if is_checked(result) or Values.to_truth(options.get("force_check", "false")):
 			var lcheck_image = options.get("checkmark", check_image)
 			var lcheck_offset_x = options.get("check_x", check_offset_x)
 			var lcheck_offset_y = options.get("check_y", check_offset_y)

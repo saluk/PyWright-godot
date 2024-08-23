@@ -147,7 +147,7 @@ func ws_showlist(script, arguments):
 	if not list_menu:
 		GlobalErrors.log_error("Couldn't find list menu to show", {"script": script})
 		return
-	list_menu[0].update()
+	list_menu[0].build()
 	return list_menu[0]
 
 func ws_forgetlist(script, arguments):
