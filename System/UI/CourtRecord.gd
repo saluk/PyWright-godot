@@ -233,9 +233,8 @@ func load_page():
 
 # TODO use variables for positioning and art assets
 func load_page_zoom():
-	var zoombg_path = Filesystem.lookup_file("art/%s.png" % stack.variables.get_string("ev_z_bg"), root_path)
 	var zoombg = PWSprite.new()
-	zoombg.load_animation(zoombg_path)
+	zoombg.load_animation("art/%s.png" % stack.variables.get_string("ev_z_bg"), root_path)
 	add_child(zoombg)
 	zoombg.position = Vector2(
 		stack.variables.get_int("ev_z_bg_x"),
@@ -266,17 +265,9 @@ func load_page_zoom():
 			"name": key_name, "desc": key_desc, "pic": key_pic, "check": key_check
 		}
 		var pic = PWSprite.new()
-		var ev_path = Filesystem.lookup_file(
-			"art/ev/"+key_pic+".png",
-			self.root_path
-		)
-		if not ev_path:
-			ev_path = Filesystem.lookup_file(
-				"art/ev/envelope.png",
-				self.root_path
-			)
 		pic.name = "ZoomedEv"+key_pic
-		pic.load_animation(ev_path)
+		if pic.load_animation("art/ev/"+key_pic+".png", root_path) is Array:
+			pic.load_animation("art/ev/envelope.png", root_path)
 		pic.rescale(
 			stack.variables.get_int("ev_big_width")+1,
 			stack.variables.get_int("ev_big_height")+1

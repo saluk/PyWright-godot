@@ -1,6 +1,11 @@
 extends Node2D
 class_name PWSprite
 
+var info:Dictionary = {
+	'horizontal': '1',
+	'vertical': '1',
+	'delays': {}
+}
 var animated_sprite:AnimatedSprite
 var sprite_path:String
 var script_name:String
@@ -81,13 +86,45 @@ func set_wait(b):
 #        self.blinkspeed = [int(x) for x in l.split(" ")[1:]]
 #f.close()
 
-func load_info(path:String):
+func _search_file(search_paths:Array, root_path:String):
+	var filename
+	var sprite_paths_searched = []
+	for path in search_paths:
+		print(path)
+		filename = Filesystem.lookup_file(
+			path,
+			root_path,
+			[],
+			false
+		)
+		if not filename:
+			sprite_paths_searched.append(path)
+			continue
+		break
+	if not filename:
+		return sprite_paths_searched
+	return filename
+
+func load_animation(search_path:String, root_path:String, sub_rect=null):
+	var search_paths = [search_path]
+	if search_path.ends_with(".png"):
+		search_paths.append(search_path.substr(0,search_path.length()-4))
+	while "//" in search_path:
+		search_path = search_path.replace("//", "/")
+		search_paths.append(search_path)
+	var sprite_filename = _search_file(search_paths.duplicate(), root_path)
+	var info_filename = _search_file([search_path.rsplit(".", true, 1)[0]+'.txt'], root_path)
+	if not info_filename is Array:
+		var valid_info = _load_info(info_filename)
+	if info.get('length', null)==null:
+		info['length'] = int(info['horizontal']) * int(info['vertical'])
+	if not sprite_filename is Array:
+		var valid_sprite = _load_animation(sprite_filename, sub_rect)
+	else:
+		return sprite_filename
+
+func _load_info(path:String):
 	print("load info:", path)
-	var data = {
-		'horizontal': '1',
-		'vertical': '1',
-		'delays': {}
-	}
 	var f = File.new()
 	var err = f.open(path, File.READ)
 	if err == OK:
@@ -98,24 +135,20 @@ func load_info(path:String):
 				continue
 			var key_value = line.split(" ")
 			if key_value.size() == 2:
-				data[key_value[0]] = key_value[1]
+				info[key_value[0]] = key_value[1]
 			elif key_value[0] == "framedelay":
-				data["delays"][int(key_value[1])] = int(key_value[2])
+				info["delays"][int(key_value[1])] = int(key_value[2])
 			elif key_value[0] == "sfx":
 				# TODO can only have one sound effect per frame
 				sound_frames[int(key_value[1])] = key_value[2]
 		f.close()
-	if data.get('length', null)==null:
-		data['length'] = int(data['horizontal']) * int(data['vertical'])
-	return data
+	else:
+		return false
 
-func load_animation(path:String, info=null, sub_rect=null):
+func _load_animation(path:String, sub_rect=null):
 	sprite_path = path
 	# Load pwv
 	
-	print("loading info:", path.rsplit(".", true, 1)[0]+'.txt')
-	if not info:
-		info = load_info(path.rsplit(".", true, 1)[0]+'.txt')
 	print("txt:", info)
 	
 	if AnimationFramesCache.has_cached([path, sub_rect]):
