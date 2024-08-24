@@ -142,36 +142,17 @@ func add_sprite(sprite_key, sprite_template):
 		"base": base_path,
 		"variant": variant_path
 	})
-	var search_paths = [search_path]
-	if search_path.ends_with(".png"):
-		search_paths.append(search_path.substr(0,search_path.length()-4))
-	while "//" in search_path:
-		search_path = search_path.replace("//", "/")
-		search_paths.append(search_path)
-	var filename
-	for path in search_paths:
-		print(path)
-		filename = Filesystem.lookup_file(
-			path,
-			root_path,
-			[],
-			false
-		)
-		if not filename:
-			sprite_paths_searched.append(path)
-			continue
-		break
-	if not filename:
-		return
 	var sprite = PWSpriteC.new()
 	sprite.name = "PWSprite:"+base_path+";"+variant_path
+	# TODO handle template rects better
 	if template["rect"] and not template["rect"] is Array and not template["rect"] is PoolStringArray:
 		if "(" in template["rect"]:
 			template["rect"] = template["rect"].replace("(","").replace(")","")
 		template["rect"] = template["rect"].split(",")
-	sprite.load_animation(filename, null, template["rect"])
-	sprites[sprite_key] = sprite
-	return sprite
+	sprite_paths_searched = sprite.load_animation(search_path, root_path, template["rect"])
+	if not sprite_paths_searched:
+		sprites[sprite_key] = sprite
+		return sprite
 	
 func load_sprites(template, sprite_key=null):
 	sprite_paths_searched = []

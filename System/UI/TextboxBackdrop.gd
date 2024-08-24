@@ -13,8 +13,7 @@ func _ready():
 		var sprite = PWSpriteC.new()
 		sprite.name = "PWSprite:"+bg
 		sprite.pivot_center = false
-		var found_path = Filesystem.lookup_file("art/"+bg+".png", get_parent().main.stack.scripts[-1].root_path, ["png"])
-		sprite.load_animation(found_path, null, null)
+		sprite.load_animation("art/"+bg+".png", get_parent().main.stack.scripts[-1].root_path)
 		add_child(sprite)
 		move_child(sprite, 0)
 		get_node("Textbox2").queue_free()
