@@ -5,12 +5,16 @@ var main
 func _init(commands):
 	main = commands.main
 
+# We always reset the _music_loop value, which means if you want a looping track
+# you always have to call it AFTER the mus command
 func ws_mus(script, arguments):
 	if not len(arguments):
 		MusicPlayer.stop_music()
 	else:
+		var song = Commands.join(arguments)
+		main.stack.variables.set_val("_music_loop", song)
 		MusicPlayer.play_music(
-			Filesystem.path_join("music",Commands.join(arguments)), 
+			Filesystem.path_join("music",song), 
 			script.root_path
 		)
 
