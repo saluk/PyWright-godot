@@ -15,7 +15,7 @@ script = ExtResource( 4 )
 tb_timer = NodePath("Timer")
 
 [node name="Backdrop" type="Node2D" parent="."]
-position = Vector2( 128, 160 )
+position = Vector2( 128, 161 )
 script = ExtResource( 6 )
 
 [node name="Textbox2" type="Sprite" parent="Backdrop"]
@@ -37,26 +37,34 @@ scroll_active = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Backdrop/Area2D"]
 shape = SubResource( 1 )
 
+[node name="NametagImage" type="Node2D" parent="."]
+position = Vector2( 2, 114 )
+
 [node name="NametagBackdrop" type="Node2D" parent="."]
-position = Vector2( 2, 120 )
+position = Vector2( 0, 116 )
 
 [node name="NtLeft" type="Sprite" parent="NametagBackdrop"]
+visible = false
 texture = ExtResource( 5 )
+centered = false
 
 [node name="NtMiddle" type="Sprite" parent="NametagBackdrop"]
+visible = false
 position = Vector2( 100, 0 )
 scale = Vector2( 200, 1 )
 texture = ExtResource( 3 )
+centered = false
 
 [node name="NtRight" type="Sprite" parent="NametagBackdrop"]
+visible = false
 position = Vector2( 200, 0 )
 texture = ExtResource( 2 )
+centered = false
 
 [node name="Label" type="Label" parent="NametagBackdrop"]
-margin_left = 6.0
-margin_top = -6.0
-margin_right = 196.0
-margin_bottom = 8.0
+margin_left = 4.0
+margin_right = 194.0
+margin_bottom = 14.0
 text = "Somebody"
 
 [node name="Timer" type="Timer" parent="."]

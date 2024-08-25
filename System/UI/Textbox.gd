@@ -34,6 +34,11 @@ var text_sound_rate = 0.04
 # Signal that we may need to refresh the arrows
 var refresh_arrows_on_next_pack = false
 
+var nt_left_sprite = null
+var nt_middle_sprite = null
+var nt_right_sprite = null
+var nt_sprite = null
+
 var MAX_WHILE = 400
 signal run_returned
 
@@ -362,24 +367,74 @@ func _ready():
 	Commands.refresh_arrows(main.stack.scripts[-1])
 
 func update_nametag():
-	# Lookup character name
+	var nt_image = main.stack.variables.get_string("_nt_image", null)
+	if nt_image and not nt_sprite:
+		$NametagBackdrop.visible = false
+		nt_sprite = ObjectFactory.create_from_template(
+			main.top_script(),
+			"graphic",
+			{},
+			[nt_image],
+			null
+		)
+		nt_sprite.cannot_save = true
+		$NametagImage.add_child(nt_sprite)
+		nt_sprite.position = Vector2(0,0)
+		return
+	# Lookup character name 
 	var nametag = main.stack.variables.get_string("_speaking_name")
 	if not nametag:
 		$NametagBackdrop.visible = false
 	else:
 		$NametagBackdrop/Label.text = nametag
 		$NametagBackdrop.visible = true
-	update_nametag_size()
+		update_nametag_size()
 	
 func update_nametag_size():
 	var label = $NametagBackdrop/Label
 	var size = label.get_font("font").get_string_size(label.text)
 	size.x += 10
-	$NametagBackdrop/NtMiddle.position.x = int(size.x/2.0+2)
-	if(int(size.x) % 2 == 0):
-		$NametagBackdrop/NtMiddle.position.x -= 1
-	$NametagBackdrop/NtMiddle.scale.x = size.x
-	$NametagBackdrop/NtRight.position.x = $NametagBackdrop/NtMiddle.position.x+int(size.x/2+1)
+	if not nt_left_sprite:
+		nt_left_sprite = ObjectFactory.create_from_template(
+			main.top_script(),
+			"graphic",
+			{},
+			[main.stack.variables.get_string(
+				"_nt_left",
+				main.stack.variables.get_string("_nt_image_left", "general/nt_left")
+			)],
+			$NametagBackdrop
+		)
+		nt_left_sprite.cannot_save = true
+		nt_left_sprite.position = Vector2(0,0)
+	if not nt_middle_sprite:
+		nt_middle_sprite = ObjectFactory.create_from_template(
+			main.top_script(),
+			"graphic",
+			{},
+			[main.stack.variables.get_string(
+				"_nt_middle",
+				main.stack.variables.get_string("_nt_image_middle", "general/nt_middle")
+			)],
+			$NametagBackdrop
+		)
+		nt_middle_sprite.cannot_save = true
+		nt_middle_sprite.position = Vector2(nt_left_sprite.width-1+int(size.x/2),0)
+		nt_middle_sprite.scale.x = size.x
+	if not nt_right_sprite:
+		nt_right_sprite = ObjectFactory.create_from_template(
+			main.top_script(),
+			"graphic",
+			{},
+			[main.stack.variables.get_string(
+				"_nt_right",
+				main.stack.variables.get_string("_nt_image_right", "general/nt_right")
+			)],
+			$NametagBackdrop
+		)
+		nt_right_sprite.cannot_save = true
+		nt_right_sprite.position = Vector2(nt_middle_sprite.position.x+int(size.x/2),0)
+	$NametagBackdrop.move_child($NametagBackdrop/Label, $NametagBackdrop.get_child_count()-1)
 		
 func stop_timer():
 	set_process(true)
