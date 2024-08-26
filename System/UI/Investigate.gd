@@ -39,8 +39,8 @@ func _process(dt):
 			wrightscript,
 			"bg",
 			{},
-			[bg_script, "y=192"],
-			script_name
+			[bg_script, "y=192", "z="+str(ZLayers.z_sort["uglyarrow"])],
+			null
 		)
 		bg.cannot_save = true
 		for option in enabled_options:
