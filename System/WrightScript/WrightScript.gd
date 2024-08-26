@@ -130,7 +130,7 @@ func preprocess_lines():
 			
 		# See comment above ws_examine
 		if examining:
-			if segments and segments[0]!="region":
+			if segments and segments[0]!="region" and segments[0].strip_edges():
 				examining = false
 				if segments[0] != "showexamine":
 					lines.insert(i,"showexamine")
@@ -336,6 +336,20 @@ class Frame:
 			
 func get_frame(sig):
 	return Frame.new(self, line_num, line, sig)
+	
+# Returns the part of the line that doesn't have a command and has non-blank text
+func split_line(line):
+	var comment
+	if "#" in line and "//" in line:
+		if line.find_last("#") < line.find_last("//"):
+			line = line.substr(0, line.find_last("#"))
+		else:
+			line =line.substr(0, line.find_last("//"))
+	if "#" in line:
+		line = line.rsplit("#", true, 1)[0]
+	elif "//" in line:
+		line = line.rsplit("//", true, 1)[0]
+	return line.strip_edges()
 		
 func process_wrightscript() -> Frame:
 	allow_next_line = true
@@ -346,17 +360,12 @@ func process_wrightscript() -> Frame:
 		return Frame.new(self, line_num, "", Commands.END)
 	print("SCRIPT EXECUTION:", to_string())
 	self.stack.emit_signal("line_executed", lines[line_num])
-	line = lines[line_num]
-	if not line.strip_edges():
-		return Frame.new(self, line_num, line, Commands.NEXTLINE)
-	if line.strip_edges().begins_with("#") or line.strip_edges().begins_with("//"):
+	line = split_line(lines[line_num])
+	if not line:
 		return Frame.new(self, line_num, line, Commands.NEXTLINE)
 	if allowed_commands.size() > 0 and not line.split(" ")[0] in allowed_commands:
 		return Frame.new(self, line_num, line, Commands.NEXTLINE)
-	if "#" in line:
-		line = line.rsplit("#", true, 1)[0].strip_edges()
-	if "//" in line:
-		line = line.rsplit("//", true, 1)[0].strip_edges()
+	# TODO should be able to use # inside at least a text string, if not inside an argument
 	if line[0] == '"' or line[0] == "'":
 		line = "text "+line
 	var split = line.split(" ") as Array

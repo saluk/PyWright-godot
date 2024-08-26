@@ -37,6 +37,7 @@ func _init():
 	save_properties.append_array(["x_offset", "reloaded_scroll", "fail"])
 
 func _ready():
+	setup_clickarea()
 	wait_signal = "tree_exited"
 	var use_objects = main.stack.variables.get_string("_examine_use", null)
 	if not use_objects:
@@ -57,6 +58,20 @@ func _ready():
 		add_child(bg_ob)
 		bg_ob.cannot_save = true
 	setup_crosshair()
+	
+func setup_clickarea():
+	var click_area:Control = Control.new()
+	click_area.set_size(Vector2(256, 192))
+	add_child(click_area)
+	click_area.connect("mouse_entered", self, "enter_examine_clickarea")
+	click_area.connect("mouse_exited", self, "exit_examine_clickarea")
+	
+var mouse_active := false
+func enter_examine_clickarea():
+	mouse_active = true
+	
+func exit_examine_clickarea():
+	mouse_active = false
 	
 func setup_crosshair():
 	crosshair = Crosshair.new()
@@ -241,8 +256,9 @@ func reload_scroll_regions():
 		ws_scroll_from_examine(null, [scroll_dir/abs(scroll_dir)])
 		update_x_offset()
 	
-func _unhandled_input(event):
+func _process(dt):
 	if scrolling: return
+	if not mouse_active: return
 	if Input.get_mouse_button_mask() & BUTTON_LEFT:
 		var pos = get_parent().get_local_mouse_position()-position
 		set_crosshair_pos(pos.x, pos.y)
