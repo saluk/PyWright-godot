@@ -90,6 +90,7 @@ text = "Somebody"
 [node name="Timer" type="Timer" parent="."]
 
 [node name="WidthChecker" type="RichTextLabel" parent="."]
+visible = false
 margin_left = 4.0
 margin_top = 77.0
 margin_right = 254.0

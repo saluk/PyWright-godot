@@ -1,4 +1,7 @@
-"This{n}text{n}is vary &long and should go to 4 lines which means that there should actually &be 2 textboxes where you click one and it moves onto the next one."
+char phoenix
+"This{n}text{n}is vary &long and should go to 4 lines which means that there should actually &be 3 textboxes where you click one and it moves onto the next one."
+"This{n}text{n}is vary &long but wont break on spaces:andshouldgoto4lineswhichmeansthatthereshouldactually&be3textboxeswhereyouclickoneanditmovesontothenextone."
+
 
 "play sound effect: {sfxgeneral/sfx-whoops.wav}"
 "screen shake: {s} woah!"

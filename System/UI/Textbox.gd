@@ -322,10 +322,15 @@ func queue_next_textbox():
 		# Don't know why this here
 		next_packs[0].leftover -= 1
 		#Back up how much was printed on the previous line
+		var break_on_spaces = true
+		if not " " in next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1):
+			break_on_spaces = false
 		while get_number_of_lines_for(PoolStringArray(printed_lines).join("\n")) > 3 or last_char != " ":
 			last_char = printed_lines[-1][-1]
+			if not break_on_spaces:
+				last_char = " "
 			printed_lines[-1] = printed_lines[-1].substr(0, printed_lines[-1].length()-1)
-			print("last_char:", last_char, " printed_lines[-1]", printed_lines[-1])
+			print("break_on_spaces", break_on_spaces, " last_char:", last_char, " printed_lines[-1]", printed_lines[-1])
 			next_packs[0].leftover += 1
 			print("leftover:", next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1))
 	#next_lines = [carryover]
