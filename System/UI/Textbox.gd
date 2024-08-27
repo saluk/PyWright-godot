@@ -6,9 +6,17 @@ var text_to_print := ""
 var created_packs = false
 var packs := []
 var printed := ""
+var printed_lines:Array = []
 var has_finished := false
 var wait_signal := "tree_exited"
+
+# If there are more packs, when we continue the text, we should show those instead
+var next_packs := []
+var NEW_TEXTBOX_WIDTH = 10
+
 export(NodePath) var tb_timer
+export(NodePath) var text_label_path
+onready var text_label:RichTextLabel = get_node(text_label_path)
 var z:int
 
 # states while printing
@@ -64,10 +72,12 @@ class TextPack:
 		
 	# add all text to label, then increase visible characters each frame
 	# if characters per frame is INF, will print text immediately
-	func _print_text(dt:float, rich_text_label, force):
+	func _print_text(dt:float, force):
+		print("BUILDING TEXT FOR PACK", text)
+		var rich_text_label = textbox.text_label
 		if leftover == null:
 			rich_text_label.bbcode_text += self.text
-			textbox.printed += self.text
+			#textbox.printed += self.text
 			leftover =  self.textbox.strip_bbcode(self.text).length()
 		
 		var delta # Number of characters to add to the display
@@ -89,10 +99,11 @@ class TextPack:
 				delta = int(delta)
 				delta = 1
 				time_elapsed -= delta/characters_per_second
+			rich_text_label.visible_characters += delta
+			print("last delta:", delta)
+			leftover -= delta
 			if delta >= 1:
 				emit_signal("text_printed")
-			rich_text_label.visible_characters += delta
-			leftover -= delta
 			# TODO this is pretty hacky - Textbox really needs another rewrite
 			var t = self.textbox.strip_bbcode(self.textbox.printed)
 			if t:
@@ -104,7 +115,7 @@ class TextPack:
 			pass
 			
 	# execute pack command and change the provided textbox accordingly
-	func consume(rich_text_label, dt:float, force = false):
+	func consume(dt:float, force = false):
 		var run_return
 		if not has_run:
 			run_return = self._run(force)
@@ -112,8 +123,21 @@ class TextPack:
 			if run_return is GDScriptFunctionState:
 				run_return = yield(run_return, "completed")
 			self.text = run_return + self.text
-		_print_text(dt, rich_text_label, force)
+		_print_text(dt, force)
 		if not leftover or leftover <= 0: self.delete = true
+		# figure out how much to print here
+		
+	func duplicate():
+		var p = get_script().new(text, textbox, true)
+		p.text = text
+		p.textbox = textbox
+		p.leftover = leftover
+		p.has_run = has_run
+		p.characters_per_frame = characters_per_frame
+		p.delete = false
+		p.time_elapsed = time_elapsed
+		return p
+		
 
 class CommandPack extends TextPack:
 	var command_args := ""
@@ -243,7 +267,7 @@ class CommandPack extends TextPack:
 			_:
 				self.textbox.refresh_arrows_on_next_pack = true
 				var old_script = self.textbox.main.top_script()
-				Commands.call_command(self.command, self.textbox.main.top_script(), args)
+				Commands.call_command(self.command, old_script, args)
 				
 				# TODO macros in text is still very broken
 				#textbox.set_process(false)
@@ -256,9 +280,59 @@ class CommandPack extends TextPack:
 		return run_return
 		
 func _on_text_printed():
+	printed = text_label.text.substr(0,text_label.visible_characters+1)
+	if not printed:
+		return
+	print(printed)
+	print(text_label.get_visible_line_count())
+	print(text_label.get_content_height())
+	if printed[-1] == "&":
+		pass
+	printed_lines = printed.split("\n")
+	if printed_lines.size() > 2:
+		if printed_lines.size() > 3 or (printed_lines.size() == 3 and get_number_of_lines_for(printed_lines[2]) > 1):
+			queue_next_textbox()
+	elif printed_lines.size() == 2:
+		if get_number_of_lines_for(printed_lines[1]) > 2:
+			queue_next_textbox()
+	elif printed_lines.size() == 1:
+		if get_number_of_lines_for(printed_lines[0]) > 3:
+			queue_next_textbox()
 	if Time.get_ticks_msec()-last_text_sound_played > text_sound_rate * 1000:
 		play_sound()
 		last_text_sound_played = Time.get_ticks_msec()
+		
+func get_number_of_lines_for(text):
+	var width_checker = get_node("WidthChecker")
+	width_checker.text = text
+	return int(width_checker.get_content_height()/15)
+		
+func queue_next_textbox():
+	next_packs = []
+	for line in printed_lines.slice(3, printed_lines.size()):
+		next_packs.append(TextPack.new(line, self, true))
+	for pack in packs:
+		next_packs.append(pack.duplicate())
+	# TODO even bigger hack on determining size of text
+	if printed_lines.size() < 4:
+		print("leftover start:", next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1))	
+		var last_char = printed_lines[-1][-1]
+		print("last_char:", last_char)
+		var offset = 0
+		# Don't know why this here
+		next_packs[0].leftover -= 1
+		#Back up how much was printed on the previous line
+		while get_number_of_lines_for(PoolStringArray(printed_lines).join("\n")) > 3 or last_char != " ":
+			last_char = printed_lines[-1][-1]
+			printed_lines[-1] = printed_lines[-1].substr(0, printed_lines[-1].length()-1)
+			print("last_char:", last_char, " printed_lines[-1]", printed_lines[-1])
+			next_packs[0].leftover += 1
+			print("leftover:", next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1))
+	#next_lines = [carryover]
+	next_packs[0].text = next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1)
+	next_packs[0].leftover = null
+	packs = []
+	has_finished = true
 		
 func process_text_character(c):
 	var punctuation = main.stack.variables.get_string("_punctuation")
@@ -355,6 +429,7 @@ func _ready():
 		$Backdrop/Label.margin_bottom = 14
 		$Backdrop/Label.set("custom_constants/line_separation", 8)
 	$Backdrop/Label.set("custom_fonts/normal_font", font)
+	$WidthChecker.set("custom_fonts/normal_font", font)
 	$NametagBackdrop/Label.set("custom_fonts/font", font_nt)
 	z = ZLayers.z_sort["textbox"]
 	add_to_group(Commands.TEXTBOX_GROUP)
@@ -474,6 +549,23 @@ func click_continue(immediate_skip=false):
 	if not immediate_skip and packs:
 		finish_text()
 	else:
+		if next_packs:
+			packs = next_packs
+			has_finished = false
+			#var new_text_label = RichTextLabel.new()
+			#new_text_label.bbcode_enabled = true
+			#text_label.get_parent().add_child(new_text_label)
+			#new_text_label.rect_position = text_label.rect_position
+			#new_text_label.rect_position = text_label.rect_position
+			#text_label.queue_free()
+			#new_text_label.visible_characters = 0
+			#text_label = new_text_label
+			text_label.bbcode_text = ""
+			text_label.visible_characters = 0
+			printed = ""
+			printed_lines = []
+			next_packs = []
+			return false
 		# when we advance text from script we:
 		# - click_continue
 		# - but if we only queue_free, it will block the script until a later frame
@@ -483,14 +575,15 @@ func click_continue(immediate_skip=false):
 		get_parent().remove_child(self)
 		queue_free()
 		Commands.call_command("sound_textbox_continue", main.stack.scripts[0], [])
+	return true
 		
 func click_next():
-	main.stack.scripts[-1].next_statement()
-	click_continue(true)
+	if click_continue(true):
+		main.stack.scripts[-1].next_statement()
 
 func click_prev():
-	main.stack.scripts[-1].prev_statement()
-	click_continue(true)
+	if click_continue(true):
+		main.stack.scripts[-1].prev_statement()
 		
 func get_next_pack(text, connect_signals=false):
 	var i = 0
@@ -555,15 +648,15 @@ func strip_bbcode(source:String) -> String:
 func update_textbox(dt:float, force = false):
 	if not packs and not created_packs:
 		packs = tokenize_text(text_to_print, true)
-		$Backdrop/Label.visible_characters = 0
+		text_label.visible_characters = 0
 		created_packs = true
 		Commands.refresh_arrows(main.stack.scripts[-1])
 	if packs:
 		if refresh_arrows_on_next_pack:
 			Commands.refresh_arrows(main.stack.scripts[-1])
 			refresh_arrows_on_next_pack = false
-		packs[0].consume($Backdrop/Label, dt, force)
-		if packs[0].delete:
+		packs[0].consume(dt, force)
+		if packs and packs[0].delete:
 			packs.remove(0)
 	else:
 		trigger_text_end_events()

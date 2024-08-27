@@ -1,3 +1,5 @@
+"This{n}text{n}is vary &long and should go to 4 lines which means that there should actually &be 2 textboxes where you click one and it moves onto the next one."
+
 "play sound effect: {sfxgeneral/sfx-whoops.wav}"
 "screen shake: {s} woah!"
 "play sound effect with screen shake: {sfxgeneral/sfx-whoops.wav} {s}"
