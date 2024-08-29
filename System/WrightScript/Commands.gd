@@ -232,8 +232,9 @@ func is_macro(command):
 		return command
 	return ""
 	
+# TODO we should watch for search strings in LINES, would be more flexible
 func watched(command):
-	if command == "show_main_button": # Replace 0 to watch for a specific command
+	if command in main.stack.watched_commands:
 		return true
 	return false
 	

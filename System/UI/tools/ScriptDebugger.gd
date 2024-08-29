@@ -14,6 +14,12 @@ export(NodePath) var speed
 export(NodePath) var node_scripts
 export(NodePath) var current_script
 
+export(NodePath) var show_watched_panel
+export(NodePath) var watched_panel
+export(NodePath) var watched_textedit
+
+var stepping_over = -1
+
 var in_debugger = false
 var debug_last_state = null
 
@@ -28,14 +34,18 @@ func _ready():
 		allev = get_node(allev)
 		pause = get_node(pause)
 		speed = get_node(speed)
+		show_watched_panel = get_node(show_watched_panel)
+		watched_panel = get_node(watched_panel)
+		watched_textedit = get_node(watched_textedit)
 		node_scripts = get_node(node_scripts)
 	
 	node_scripts.remove_child(script_tab)
 	# TODO conceal buttons if game is not playing to prevent error
-	step.connect("button_up", self, "step")
+	step.connect("button_up", self, "step_over")
 	pause.connect("button_up", self, "start_debugger")
 	allev.connect("button_up", self, "all_ev")
 	speed.connect("button_up", self, "set_speed")
+	show_watched_panel.connect("button_up", self, "_show_watched_panel")
 	
 	goto_line_button_template = get_node("GotoLineButton")
 	goto_line_button_template.get_parent().remove_child(goto_line_button_template)
@@ -89,12 +99,22 @@ func all_ev():
 	
 func debug_line(line):
 	print("watching line", line)
+	if stepping_over >= 0:
+		if scripts.size() > stepping_over:
+			if current_stack.state == current_stack.STACK_DEBUG:
+				current_stack.state = current_stack.STACK_READY
+			return
+		stepping_over = -1
 	debug_last_state = current_stack.state
 	current_stack.state = current_stack.STACK_DEBUG
 	
-func step():
+func step_over():
 	if in_debugger:
-		current_stack.state = current_stack.STACK_READY
+		if stepping_over == -1:
+			stepping_over = node_scripts.current_tab+1
+			current_stack.state = current_stack.STACK_READY
+			while scripts.size() > 1:
+				yield(get_tree(), "idle_frame")
 		
 func set_speed():
 	if speed.text == ">>>":
@@ -183,7 +203,6 @@ func update_current_stack(stack):
 		scripts[i]["bookmark_line"] = to_line
 		scripts[i]["editor_container"].name = str(i)
 
-
 # TODO Whoops, I'm hooking up an event to control rather than to the script editor
 var COPY = 0
 func _input(evt:InputEvent):
@@ -196,3 +215,14 @@ func _input(evt:InputEvent):
 func menu_id_pressed(id):
 	if id == COPY:
 		pass
+
+
+func _show_watched_panel():
+	watched_panel.visible = true
+func _hide_watched_pane():
+	watched_panel.visible = false
+func _on_TextEdit_text_changed():
+	var main = get_tree().get_nodes_in_group("Main")[0]
+	main.stack.watched_commands = []
+	for line in watched_textedit.text.split("\n", false):
+		main.stack.watched_commands.append(line)
