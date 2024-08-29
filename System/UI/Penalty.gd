@@ -69,15 +69,15 @@ func _process(dt):
 	bad.position = Vector2(100-float((100-ivalue))/2.0, 0)
 	bad.scale = Vector2((100-ivalue), 1)
 	if threat_amount:
-		threat_section.position = Vector2(100-threat_amount/2, 0)
+		threat_section.position = Vector2(100-threat_amount/2-(100-ivalue), 0)
 		threat_section.scale = Vector2(threat_amount, 1)
 		threat_timer += dt*8
 		threat_section.material.set_shader_param("to_color_amount", (1.0+(sin(threat_timer)*0.5))/2.0)
 	if value != end_value:
 		if value < end_value:
-			value += min(30*dt, end_value-value)   # TODO - conver to pywright speed
+			value += min(60*dt, end_value-value)   # TODO - conver to pywright speed
 		elif value > end_value:
-			value -= min(30*dt, value-end_value)
+			value -= min(60*dt, value-end_value)
 		else:
 			emit_signal("animation_done")
 		set_value(value)

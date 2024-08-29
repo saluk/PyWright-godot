@@ -159,6 +159,20 @@ func preprocess_lines():
 				off += 1
 			lines.remove(i)
 			continue
+		elif segments and segments[0] and segments[0][0] == "{":
+			segments[0] = segments[0].substr(1)
+			segments[-1] = segments[-1].substr(0,segments[-1].length()-1)
+			var command = segments[0]
+			var args = []
+			if segments.size() > 1:
+				args = segments[1].split(" ")
+			if Commands.is_macro(command):
+				var script_lines = Commands.get_processed_macro_lines(command, args, line_num)
+				lines[i] = "#im- " + line
+				for off in range(script_lines.size()):
+					lines.insert(i+1+off, script_lines[off])
+			else:
+				GlobalErrors.log_error("no macro found to include:"+command)
 		i += 1
 	print("SCRIPT STARTING:", to_string())
 		

@@ -20,14 +20,12 @@ class Fader extends Node:
 		objects = Commands.get_objects(null, false)
 		if wait:
 			wait_signal = "tree_exited"
-	func control(script_name):
+	func control_all_named(script_name):
 		objects = Commands.get_objects(script_name)
-		if objects:
-			objects = [objects[-1]]
 	func control_last():
 		objects = [Commands.get_objects(null, true)]
 		if objects:
-			objects = [objects[0]]
+			objects = [objects[-1]]
 	func control_all(screen):
 		objects = Commands.get_objects(null, true)
 	func set_fade():
@@ -35,20 +33,19 @@ class Fader extends Node:
 			if is_instance_valid(object):
 				object.modulate = Color(1, 1, 1, start/100.0)
 	func _process(dt):
-		set_fade()
 		if start < end:
 			start += dt*speed*60
 			if start >= end:
 				start = end
-				set_fade()
 				queue_free()
 		elif start > end:
 			start -= dt*speed*60
 			if start <= end:
 				start = end
-				set_fade()
 				queue_free()
-	
+		set_fade()
+
+# TODO 2.0 make a version that deletes objects when you fade them out
 static func ws_fade(script, arguments):
 	var kw = Commands.keywords(arguments)
 	var fade_in = "in" in arguments
@@ -70,7 +67,7 @@ static func ws_fade(script, arguments):
 	var script_name = kw.get("name", null)
 	var fader = Fader.new(start, end, speed, wait)
 	if script_name:
-		fader.control(script_name)
+		fader.control_all_named(script_name)
 	elif last:
 		fader.control_last()
 	else:
