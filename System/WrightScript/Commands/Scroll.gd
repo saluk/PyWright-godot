@@ -22,7 +22,8 @@ class Scroller extends Node:
 		total = Vector2(float(x), float(y))
 		objects = getscrollable(Commands.get_objects(null, false))
 		move = total.normalized() * (float(speed)/0.02)
-		time_left = float(total.length())/(speed/0.02)
+		if (speed/0.02) > 0:
+			time_left = float(total.length())/(speed/0.02)
 		total_time = time_left
 		if wait:
 			wait_signal = "tree_exited"
