@@ -208,7 +208,7 @@ func call_command(command, script, arguments):
 		args.append(value_replace(arg))
 	arguments = args
 
-	# gui Buttons use {} to mean either a macro or a command
+	# gui Buttons use {} to mean either a macro or a label
 	if command.begins_with("{") and command.ends_with("}"):
 		command = command.substr(1,command.length()-2)
 		
@@ -231,12 +231,25 @@ func is_macro(command):
 	if main.stack.macros.has(command):
 		return command
 	return ""
-	
+
 # TODO we should watch for search strings in LINES, would be more flexible
 func watched(command):
 	if command in main.stack.watched_commands:
 		return true
 	return false
+
+func get_processed_macro_lines(macro_name, arguments, line_num):
+	var input_str = PoolStringArray(main.stack.macros[macro_name]).join("\n")
+	input_str = input_str.replace("$0", str(line_num))
+	var i = 1
+	for arg in arguments:
+		if "=" in arg:
+			var spl = arg.split("=", false, 1)
+			input_str = input_str.replace("$"+spl[0].strip_edges(), spl[1].strip_edges())
+		else:
+			input_str = input_str.replace("$"+str(i), arg)
+			i += 1
+	return input_str.split("\n", false)
 	
 # TODO - may need to support actually replacing macro text with the arguments passed, 
 # but wont implement till we actually need to
@@ -250,17 +263,7 @@ func call_macro(macro_name, script, arguments):
 			print("macro not found:"+command)
 			return DEBUG
 		return
-	var i = 1
-	for arg in arguments:
-		if "=" in arg:
-			var spl = arg.split("=")
-			main.stack.variables.set_val(
-				spl[0].strip_edges(),
-				spl[1].strip_edges())
-		else:
-			main.stack.variables.set_val(str(i), arg)
-		i += 1
-	var script_lines = main.stack.macros[command]
+	var script_lines = get_processed_macro_lines(macro_name, arguments, script.line_num)
 	var new_script = main.stack.add_script(PoolStringArray(script_lines).join("\n"), script.root_path)
 	new_script.filename = "{"+command+"}"
 	# TODO not sure if this is how to handle macros that try to goto
