@@ -14,6 +14,16 @@ func _init(commands):
 #        else:
 #            assets.variables["_debug"] = "off"
 func ws_debug(script, arguments):
+	print(" OBJECT LIST ")
+	for object in ScreenManager.top_screen().get_children():
+		var script_name = ""
+		if object.get_script():
+			script_name = object.get_script().resource_name
+		var id_name = "(None)"
+		if "script_name" in object:
+			id_name = object.script_name
+		print(" OBJECT LIST - class:" + script_name + "  id_name:"+id_name+"  id:"+object.to_string()+"  pos:"+str(object.position)+"  fade:"+str(object.modulate))
+	print(" END OBJECT LIST ")
 	return Commands.DEBUG
 	
 func ws_print(script, arguments):
@@ -139,9 +149,11 @@ func ws_exit(script, arguments):
 	return ws_endscript(script, arguments)
 	
 # TODO IMPLEMENT
+# we should detect any click anywhere or the enter key
 func ws_waitenter(script, arguments):
 	pass
 
+# TODO implement - not hard
 func ws_savegame(script, arguments):
 	return Commands.NOTIMPLEMENTED
 	
