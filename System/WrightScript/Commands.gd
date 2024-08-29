@@ -109,12 +109,12 @@ func refresh_arrows(script):
 		main.stack.variables.set_val("_cross_exam_start", "true")
 	else:
 		main.stack.variables.set_val("_cross_exam_start", "false")
-	if script.is_inside_cross():
+	if script.is_inside_statement():
 		call_macro("show_cross_buttons", script, [])
 	else:
 		call_macro("show_main_button", script, [])
 
-	if script.is_inside_cross():
+	if script.is_inside_statement():
 		call_macro("show_present_button", script, [])
 		call_macro("show_press_button", script, [])
 	else:

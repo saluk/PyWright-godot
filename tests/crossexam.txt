@@ -1,5 +1,7 @@
 addev test
 
+set show_d false
+
 "start"
 cross top
 statement a
@@ -8,12 +10,20 @@ statement b
 "statement b"
 statement c
 "statement c"
+is show_d = false statement_e
+statement d
+"statement d"
+label statement_e
+statement e
+"statement e"
+label endcross
 endcross
 "back to start: {$currentcross}"
 cross_restart
 
 label press a
-"press or present a"
+"press or present a, adding statement d to court record"
+set show_d true
 resume
 
 label press b
@@ -25,6 +35,14 @@ label press c
 "press c, dont clear crossexam. present test"
 present
 goto next
+
+label press d
+"you were able to press d"
+resume
+
+label press e
+"you were able to press e"
+resume
 
 label test
 "jumped to 'test'"

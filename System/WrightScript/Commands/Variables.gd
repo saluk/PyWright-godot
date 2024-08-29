@@ -102,7 +102,10 @@ func ws_subvar(script, arguments):
 	var numb = Values.to_num(arguments[1])
 	if numa==null:
 		return GlobalErrors.log_error(arguments[0]+"="+str(numa)+" not a number", {"script": script})
-	main.stack.variables.set_val(arguments[0], numa - numb)
+	if numa != null and numb != null:
+		main.stack.variables.set_val(arguments[0], numa - numb)
+	else:
+		GlobalErrors.log_error(arguments[0]+"="+str(numa)+" not a number or "+arguments[1]+"="+str(numb)+" not a number", {"script": script})
 
 func ws_mulvar(script, arguments):
 	var numa = main.stack.variables.get_num(arguments[0])
