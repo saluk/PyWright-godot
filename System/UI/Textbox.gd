@@ -143,6 +143,7 @@ class CommandPack extends TextPack:
 	var command_args := ""
 	var command
 	var args = []
+	var matched_text = false
 	
 	func _init(line, textbox, connect_signals=false).(line, textbox, connect_signals):
 		self.command_args = line
@@ -184,12 +185,14 @@ class CommandPack extends TextPack:
 		match self.command:
 			"n":
 				ret = "\n"
+				matched_text = true
 			"center":
 				if not tb.center:
 					ret = "[center]"
 				else:
 					ret = "[/center]"
 				self.textbox.center = not tb.center
+				matched_text = true
 			"c":
 				if tb.diffcolor:
 					ret = "[/color]"
@@ -198,10 +201,12 @@ class CommandPack extends TextPack:
 				else:
 					ret = "[color=#"+Colors.string_to_hex(args[0])+"]"
 					tb.diffcolor = true
+				matched_text = true
 			"$":
 				var packs = tb.tokenize_text(tb.main.stack.variables.get_string(args[0]))
 				for p in packs:
 					ret += p.text
+				matched_text = true
 		return ret
 		
 	
@@ -211,6 +216,9 @@ class CommandPack extends TextPack:
 	func _run(force = false):
 		var args = self.args
 		var run_return = null
+		if matched_text:
+			has_run = true
+			return null
 		match self.command:
 			"e":
 				Commands.call_command("emo", self.textbox.main.top_script(), args)
