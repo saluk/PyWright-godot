@@ -33,14 +33,17 @@ func ws_delete(script, arguments):
 	if name != null:
 		script.screen.sort_children()
 		var children = script.screen.get_children()
+		var deleted = []
 		for i in range(children.size()):
 			if not "script_name" in children[-i-1]:
 				continue
 			if children[-i-1].script_name == name:
-				children[-i-1].queue_free()
+				deleted.append(children[-i-1])
 				children[-i-1].name = "DELETED_"+children[-i-1].name
 				if not "all" in arguments:
-					return
+					break
+		for child in deleted:
+			script.screen.remove_child(child)
 				
 func apply_fader(script, obj, arguments):
 	if not "fade" in arguments:
