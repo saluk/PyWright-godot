@@ -204,11 +204,12 @@ func ws_penalty(script, arguments):
 	var threat = Commands.keywords(arguments).get("threat", null)
 	var delay = Commands.keywords(arguments).get("delay", null)
 	var damage_amount
-	if arguments:
+	for arg in arguments:
 		if "=" in arguments[0]:
-			damage_amount = null
+			pass
 		else:
 			damage_amount = arguments[0]
+			break
 	if delay==null:
 		delay = 50
 		if not damage_amount or threat:
