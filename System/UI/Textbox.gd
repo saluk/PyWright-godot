@@ -540,6 +540,7 @@ func clean_up():
 	# TODO we could check whether tboff needs to be called or not
 	# In pywright, it's only called when _tb_on is true
 	Commands.call_command("tboff", main.top_script(), [])
+	reset_statement()
 	
 func finish_text():
 	var while_loops = 0
@@ -695,6 +696,9 @@ func update_arrows(disable_click=null):
 		arrow[0].visible = true
 		if button[0].click_area:
 			button[0].click_area.enabled = true
+
+func reset_statement():
+	main.stack.variables.del_val("_in_statement")
 		
 func _process(dt):
 	update_nametag()

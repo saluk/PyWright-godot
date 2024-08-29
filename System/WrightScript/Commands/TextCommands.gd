@@ -15,7 +15,7 @@ func ws_textbox(script, arguments):
 	if text.ends_with(quote_char):
 		text = text.substr(0, text.length()-1)
 	# Default to green text in cross examine
-	if script.is_inside_cross():
+	if script.is_inside_statement():
 		text = "{c292}" + text
 	return Commands.create_textbox(script, text)
 	

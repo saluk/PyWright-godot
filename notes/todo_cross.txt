@@ -1,0 +1,31 @@
+This is done, but lets keep this document as a reference to refer to how things work
+
+1. keep track of all cross exam data internally when we process a script (for ONE cross)
+    (we can't resume a different cross than the last one, and we can't navigate
+    statements between crosses)
+    cross:
+        line_start
+        line_end (because pywright works just fine without an end, this may be moot - maybe we dont even track this)
+                (although endcross can allow you to clearly switch to a new cross)
+                (although we could also just call line_end where the next cross happens)
+                (clearcross can help to remove the cross exam information)
+        `currentcross` = -1 or line_num
+2. keep track of all statements we process while there is an active cross
+    - these can be stored on the current cross object
+    - for saved games, we should use variables as a source of truth
+    [statementA, statementB]
+    statementB is the last statement we saw
+    statement:
+        line number of statement command
+3. when right is pressed: keep processing the script forward linearlly
+    track when we have crossed a statement line and add that statement to the statement_stack
+    show right arrow if we are in a statement
+4. when left is pressed: jump to the last statement in the stack and rewind the stack:
+    [statementA, statementB] -> [statementA], goto statementA
+    show left arrow if we are in a statement, and there is a statement stack
+5. resume:
+    jump to the last statement in the stack
+6. clearcross:
+    clear ALL cross variables, even the cross object
+7. endcross:
+    clear the statement stack

@@ -190,6 +190,7 @@ func goto_label(label, fail=null):
 	elif fail in labels:
 		line_nums = labels[fail]
 	else:
+		stack.variables.del_val("_lastline")
 		if allow_goto_parent_script:
 			end()
 			stack.scripts.pop_back()
@@ -199,6 +200,7 @@ func goto_label(label, fail=null):
 		GlobalErrors.log_error("Tried to go somewhere non existent "+label, {"script": self})
 		allow_next_line = true
 		return
+	stack.variables.set_val("_lastline", str(line_num+1))
 	# Try to go to next line number
 	for possible_line_num in line_nums:
 		if possible_line_num > line_num:
@@ -208,6 +210,23 @@ func goto_label(label, fail=null):
 	# We couldn't find it, go to the first match
 	line_num = line_nums[0]
 	emit_signal("GOTO_RESULT")
+
+func resume():
+	# If there is a cross examination in progress, goto the last statement on its stack
+	if resume_cross():
+		return
+	var lastline = stack.variables.get_int("_lastline", null)
+	if lastline != null:
+		# TODO probably not what anyone expects
+		goto_line_number(lastline)
+
+func resume_cross():
+	var resume_line = stack.variables.get_int("_cross_resume_line", null)
+	if resume_line == null:
+		return false
+	stack.variables.del_val("_cross_resume_line")
+	stack.variables.del_val("_lastline")
+	goto_line_number(resume_line)
 
 # Go to the label, unless label is ? in which case we execute the next line
 func succeed(label):
@@ -223,42 +242,32 @@ func fail(label, dest=null):
 		goto_label(dest)
 		
 func is_statement(line):
-	line = line.to_lower()
+	line = split_line(line).to_lower()
 	return line.begins_with("statement ") or line.strip_edges() == "statement"
 	
 func is_cross(line):
-	line = line.to_lower()
+	line = split_line(line).to_lower()
 	return line.begins_with("cross ") or line.strip_edges() == "cross"
 	
 func is_endcross(line):
-	line = line.to_lower()
+	line = split_line(line).to_lower()
 	return line.begins_with("endcross ") or line.strip_edges() == "endcross"
 		
 func is_inside_cross():
-	var crosses = []
-	var endcrosses = []
-	var i
-	i = 0
-	for line in lines:
-		if is_cross(line):
-			crosses.append(i)
-		i += 1
-	i = 0
-	for line in lines:
-		if is_endcross(line):
-			endcrosses.append(i)
-		i += 1
-	if not crosses or not endcrosses:
-		stack.variables.set_val("_is_cross", "nocrosses")
+	var currentcross = stack.variables.get_int("currentcross", null)
+	if currentcross==null:
 		return false
-	for c in crosses:
-		if c < line_num:
-			for ec in endcrosses:
-				if ec > line_num:
-					stack.variables.set_val("_is_cross","true")
+	# double check that the global currentcross value actually matches up with a cross statement
+	# currentcross may have been set by a different script
+	# TODO - maybe script namespace would work here
+	if currentcross >= lines.size():
+		return false
+	if not is_cross(lines[currentcross]):
+		return false
 					return true
-	stack.variables.set_val("_is_cross", "notbetween")
-	return false
+	
+func is_inside_statement():
+	return is_inside_cross() and stack.variables.get_truth("_in_statement", null)
 
 func next_statement():
 	# not actually implemented, on purpose
@@ -266,31 +275,24 @@ func next_statement():
 	# Some case writers include logic BEFORE a statement tag to determine
 	# whether the statement should appear or not
 	return
-	if not is_inside_cross():
-		return
-	var si = line_num+1
-	while si < lines.size():
-		if is_statement(lines[si]):
-			return goto_line_number(si)
-		if is_endcross(lines[si]):
-			return goto_line_number(si)
-		si += 1
 		
 func get_prev_statement():
 	if not is_inside_cross():
-		return
+		print("NOT INSIDE CROSS SO NO PREV STATEMENT")
+		return null
 	var si = line_num-1
-	while si > -1:
-		if is_cross(lines[si]):
+	var seen_statements = stack.variables.get_string("_statements","").split(",", false)
+	if seen_statements.size() < 2:
+		print("SEEN STATEMENTS:", seen_statements," so no left arrow")
 			return null
-		if is_statement(lines[si]) and si != stack.variables.get_int("_statement_line_num"):
-			return si
-		si -= 1
-	return null
+	return int(seen_statements[-2])
 		
 func prev_statement():
 	var si = get_prev_statement()
 	if si != null:
+		var seen_statements = stack.variables.get_string("_statements","").split(",", false)
+		seen_statements.remove(seen_statements.size()-1)
+		stack.variables.set_val("_statements", seen_statements.join(","))
 		return goto_line_number(si)
 
 func read_macro():
@@ -368,6 +370,7 @@ func process_wrightscript() -> Frame:
 	# TODO should be able to use # inside at least a text string, if not inside an argument
 	if line[0] == '"' or line[0] == "'":
 		line = "text "+line
+		
 	var split = line.split(" ") as Array
 	var call_command = split[0].to_lower()
 	var sig = Commands.call_command(
