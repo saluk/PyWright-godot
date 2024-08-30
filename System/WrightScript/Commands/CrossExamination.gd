@@ -9,6 +9,11 @@ func ws_cross(script, arguments):
 	main.stack.variables.set_val("_statement", "")
 	main.stack.variables.set_val("currentcross", script.line_num)
 	main.stack.variables.set_val("_statements", "")
+	var fail = Commands.keywords(arguments).get("fail", null)
+	if fail:
+		StandardVar.COURT_FAIL_LABEL.store(fail)
+	else:
+		StandardVar.COURT_FAIL_LABEL.delete()
 	
 func ws_endcross(script, arguments):
 	main.stack.variables.set_val("_statement", "")
@@ -63,7 +68,7 @@ func ws_callpress(script, arguments):
 		main.stack.variables.set_val("_cross_resume_line", cross_script.line_num+1)
 	return script.goto_label(
 		"press "+main.stack.variables.get_string("_statement"),
-		"none"
+		StandardVar.COURT_FAIL_LABEL.retrieve()
 	)
 
 # Return to the last line we jumped from, or the last statement
@@ -129,5 +134,5 @@ func ws_callpresent(script, arguments):
 	Commands.call_command(
 		"goto",
 		main.stack.scripts[-1],
-		[ev, "fail=none"]
+		[ev, "fail="+StandardVar.COURT_FAIL_LABEL.retrieve()]
 	)

@@ -3,7 +3,7 @@ addev test
 set show_d false
 
 "start"
-cross top
+cross top fail=failtest
 statement a
 "statement a"
 statement b
@@ -40,9 +40,7 @@ label press d
 "you were able to press d"
 resume
 
-label press e
-"you were able to press e"
-resume
+# Statement e cannot be pressed
 
 label test
 "jumped to 'test'"
@@ -54,6 +52,10 @@ resume
 
 label next
 "Current cross should be empty: {$currentcross}"
+resume
+
+label failtest
+"good"
 resume
 
 label none

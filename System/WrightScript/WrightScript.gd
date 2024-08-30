@@ -278,7 +278,7 @@ func is_inside_cross():
 		return false
 	if not is_cross(lines[currentcross]):
 		return false
-					return true
+	return true
 	
 func is_inside_statement():
 	return is_inside_cross() and stack.variables.get_truth("_in_statement", null)
@@ -298,7 +298,7 @@ func get_prev_statement():
 	var seen_statements = stack.variables.get_string("_statements","").split(",", false)
 	if seen_statements.size() < 2:
 		print("SEEN STATEMENTS:", seen_statements," so no left arrow")
-			return null
+		return null
 	return int(seen_statements[-2])
 		
 func prev_statement():
