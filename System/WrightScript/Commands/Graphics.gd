@@ -53,7 +53,7 @@ func apply_fader(script, obj, arguments):
 	var speed = 5.0
 	var wait = true
 	var fader = FadeLib.Fader.new(start, end, speed, wait)
-	fader.control(obj.script_name)
+	fader.control_all_named(obj.script_name)
 	script.screen.add_child(fader)
 	return fader
 				
