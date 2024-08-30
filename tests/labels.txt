@@ -1,0 +1,13 @@
+TODO This doesn't actually function well, because of the main arrow button macros also including labels
+
+"goto the label and keep going to it"
+
+label thelabel
+"starting over"
+"{$_currentlabel} should be 'thelabel'"
+
+label passedlabel
+"{$_currentlabel} should be 'thelabel'"
+"{$script._lastlabel} should be 'passedlabel'"
+
+goto $_currentlabel

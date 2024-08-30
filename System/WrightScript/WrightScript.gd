@@ -215,6 +215,7 @@ func goto_label(label, fail=null):
 		allow_next_line = true
 		return
 	stack.variables.set_val("_lastline", str(line_num+1))
+	StandardVar.CURRENTLABEL.store(label)
 	# Try to go to next line number
 	for possible_line_num in line_nums:
 		if possible_line_num > line_num:
