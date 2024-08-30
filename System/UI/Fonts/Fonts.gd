@@ -27,6 +27,9 @@ static func set_element_font(el, type, stack):
 	var font = get_font(type, stack)
 	if font:
 		el.set("custom_fonts/font", font)
+		el.set("custom_fonts/normal_font", font)
+		el.set("custom_fonts/bold_font", font)
+		el.set("custom_fonts/italics_font", font)
 	else:
 		var font_data = get_font_for_type(type, stack)
 		GlobalErrors.log_error("Error setting font for type "+str(font_data))

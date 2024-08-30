@@ -95,6 +95,8 @@ func build_scene():
 	$Control/ArrowRight.visible = false
 	$Control/ScrollContainer2/VBoxContainer/NewGameButton.connect("pressed", self, "launch_game")
 	$Control/ScrollContainer2/VBoxContainer/ResumeButton.visible = false
+	Fonts.set_element_font($Control/ScrollContainer2/VBoxContainer/NewGameButton/NewGame, "new_resume", wrightscript.stack)
+	Fonts.set_element_font($Control/ScrollContainer2/VBoxContainer/ResumeButton/Resume, "new_resume", wrightscript.stack)
 	connect_resume()
 	
 func connect_arrows():
