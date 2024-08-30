@@ -30,7 +30,17 @@ signal enable_saveload_buttons
 
 var font_cache := LeastUsedCache.new(10)
 
+func reset():
+	MusicPlayer.stop_music()
+	SoundPlayer.stop_sounds()
+	stack.clear_scripts()
+	stack.blockers = []
+	ScreenManager.clear()
+	font_cache.clear()
+	timecounter.reset()
+
 func load_game_from_pack(path):
+	reset()
 	ProjectSettings.load_resource_pack("user://"+path)
 	
 	# Find the game in the directory
@@ -46,18 +56,18 @@ func load_game_from_pack(path):
 		assert(false)
 
 func load_game(path):
+	reset()
 	current_game = path
 	stack.init_game(path)
 	emit_signal("stack_initialized")
-	timecounter.reset()
 		
 func load_script_from_path(path):
+	reset()
 	#stack.load_script("res://tests/"+path)
 	#stack.load_macros_from_path("macros")
 	current_game = "res://tests"
 	stack.init_game(current_game, path)
 	emit_signal("stack_initialized")
-	timecounter.reset()
 	
 func set_resolution(res:Vector2, scale_factor:float):
 	Engine.target_fps = 60
@@ -213,11 +223,7 @@ func cross_exam_script():
 	return null
 
 func reload():
-	MusicPlayer.stop_music()
-	SoundPlayer.stop_sounds()
-	stack.clear_scripts()
-	stack.blockers = []
-	ScreenManager.clear()
+	reset()
 	get_tree().reload_current_scene()
 
 func pause(paused=true, toggle=false):

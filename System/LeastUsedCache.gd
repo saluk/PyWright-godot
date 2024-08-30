@@ -28,7 +28,18 @@ func get_cached(key_elements, default=null):
 		return default
 	cache[key][0] += 1
 	return cache[key][1]
-	
+
+func set_cached(key_elements, value):
+	_shrink_cache()
+	var key = to_key(key_elements)
+	cache[key] = [1, value]
+
+func clear():
+	# TODO iterate through items and determine if they need to be freed()
+	cache = {}
+
+# FIXME because we pass value in blank, it's actually creating
+# that value in memory
 func set_get_cached(key_elements, value):
 	var key = to_key(key_elements)
 	var current_value = null

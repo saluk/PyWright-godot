@@ -121,7 +121,9 @@ func add_list_items():
 		button.cannot_save = true
 		button.position = Vector2((256-button.width)/2, button_y)
 		button_y += button.height+5
+		# TODO we could probably bake this into button text
 		var button_label := Label.new()
+		Fonts.set_element_font(button_label, "list", main.stack)
 		button_label.set("custom_colors/font_color", Colors.string_to_color(main.stack.variables.get_string("_list_text_color", "6e1414")))
 		button_label.align = Label.ALIGN_CENTER
 		button_label.valign = Label.VALIGN_CENTER
