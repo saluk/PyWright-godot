@@ -4,7 +4,7 @@ class_name TextBlock
 var text_contents
 var text_width = 0
 var text_height = 0
-var text_color = "000"
+var text_color = "FFFFFF"
 var has_objects = false
 
 func _init():
@@ -34,7 +34,7 @@ func load_text():
 		text_height
 	)
 	desc.set("custom_constants/line_spacing", 
-		stack.variables.get_int("textblock_line_height", 10)
+		StandardVar.FONT_BLOCK_LINEHEIGHT.retrieve()
 	)
 	desc.set("custom_colors/font_color", Colors.string_to_color(text_color))
 	desc.text = text_contents.replace("{n}","\n")
