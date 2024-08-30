@@ -39,6 +39,7 @@ func _ready():
 		game_name = game_name.rstrip("/")
 		game_name = game_name.split("/")[-1]
 	$Control/GameTitle.text = game_name
+	Fonts.set_element_font($Control/GameTitle, "gametitle", wrightscript.stack)
 	build_scene()
 	connect_arrows()
 	load_last_case()
@@ -88,7 +89,8 @@ func build_scene():
 	SignalUtils.remove_all($Control/ArrowLeft)
 	SignalUtils.remove_all($Control/ArrowRight)
 	SignalUtils.remove_all($Control/ScrollContainer2/VBoxContainer/ResumeButton)
-	$Control/ScrollContainer2/VBoxContainer/CaseBox/CaseTitle.bbcode_text = "[center][b]%s[/b][/center]"%current_case().replace("_"," ")
+	get_node("%CaseTitle").bbcode_text = "[center][b]%s[/b][/center]"%current_case().replace("_"," ")
+	Fonts.set_element_font(get_node("%CaseTitle"), "gametitle", wrightscript.stack)
 	$Control/ArrowLeft.visible = false
 	$Control/ArrowRight.visible = false
 	$Control/ScrollContainer2/VBoxContainer/NewGameButton.connect("pressed", self, "launch_game")
