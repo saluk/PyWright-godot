@@ -29,3 +29,5 @@ var FONT_BLOCK_LINEHEIGHT := VariableDef.new("_font_block_lineheight", "int", 10
 
 var CURRENTLABEL := VariableDef.new("_currentlabel", "string", null)
 var LASTLABEL := VariableDef.new("_lastlabel", "string", null)
+
+var PENALTY_SCRIPT := VariableDef.new("_penalty_script", "string", null)
