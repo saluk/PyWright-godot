@@ -1,6 +1,6 @@
 class_name ObjParse
 
-const debug:=false
+const debug:=true
 
 # Obj parser made by Ezcha, updated by Deakcor
 # Created on 7/11/2018
