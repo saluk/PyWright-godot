@@ -447,10 +447,6 @@ func _ready():
 	z = ZLayers.z_sort["textbox"]
 	add_to_group(Commands.TEXTBOX_GROUP)
 	update_nametag()
-	
-	# Debug mode immediately prints text
-	if main.stack.variables.get_truth("_debug", false):
-		finish_text()
 		
 	Commands.refresh_arrows(main.stack.scripts[-1])
 
