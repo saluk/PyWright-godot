@@ -32,4 +32,11 @@ var LASTLABEL := VariableDef.new("_lastlabel", "string", null)
 
 var PENALTY_SCRIPT := VariableDef.new("_penalty_script", "string", null)
 
+var TEXTBOX_BG := VariableDef.new("_textbox_bg", "string", "general/textbox_2")
+var TEXTBOX_X := VariableDef.new("_textbox_x", "int", null)
+var TEXTBOX_Y := VariableDef.new("_textbox_y", "int", null)
+var NT_X := VariableDef.new("_nt_x", "int", null)
+var NT_Y := VariableDef.new("_nt_y", "int", null)
+var NT_TEXT_X := VariableDef.new("_nt_text_x", "int", null)
+var NT_TEXT_Y := VariableDef.new("_nt_text_y", "int", null)
 var TEXTBOX_LINES := VariableDef.new("_textbox_lines", "string", "auto")

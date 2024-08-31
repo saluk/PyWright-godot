@@ -1,3 +1,23 @@
+label textbox_positioning
+set _textbox_x 50
+set _textbox_y 192
+char phoenix
+"Textbox is on the top of the second screen, but indented"
+set _nt_x 0
+set _nt_y 0
+"Now the nametag has been moved to corner"
+set _textbox_x
+set _textbox_y
+set _nt_x 150
+set _nt_y 100
+"Nametag in center"
+set _nt_text_x 50
+set _nt_text_y 5
+"nametag text is off center in its frame"
+set _nt_x
+set _nt_y
+set _nt_text_x
+set _nt_text_y
 
 label test_textbox_lines_and_wrap
 # Note, this isn't really implemented

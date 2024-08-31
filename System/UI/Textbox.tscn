@@ -32,57 +32,66 @@ func _ready():
 [node name="Textbox" type="Node2D" groups=["TEXTBOX_GROUP"]]
 script = ExtResource( 4 )
 tb_timer = NodePath("Timer")
-text_label_path = NodePath("Backdrop/TextLabel")
+text_label_path = NodePath("Handle/Backdrop/TextLabel")
 
-[node name="Backdrop" type="Node2D" parent="."]
-position = Vector2( 128, 161 )
+[node name="Handle" type="Node2D" parent="."]
+unique_name_in_owner = true
+position = Vector2( 0, 129 )
+
+[node name="Backdrop" type="Node2D" parent="Handle"]
 script = ExtResource( 6 )
 
-[node name="Textbox2" type="Sprite" parent="Backdrop"]
+[node name="Textbox2" type="Sprite" parent="Handle/Backdrop"]
 texture = ExtResource( 1 )
+centered = false
 
-[node name="TextLabel" type="RichTextLabel" parent="Backdrop"]
+[node name="Area2D" type="Area2D" parent="Handle/Backdrop/Textbox2"]
+position = Vector2( 128, 32 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Handle/Backdrop/Textbox2/Area2D"]
+shape = SubResource( 1 )
+
+[node name="TextLabel" type="RichTextLabel" parent="Handle/Backdrop"]
 unique_name_in_owner = true
-margin_left = -124.0
-margin_top = -27.0
-margin_right = 126.0
-margin_bottom = 27.0
+anchor_right = 10.0
+margin_left = 2.0
+margin_top = 2.0
+margin_right = 256.0
+margin_bottom = 65.0
 mouse_filter = 2
 bbcode_enabled = true
 bbcode_text = "Some [color=#FFFF00]text[/color] that has [color=#FF0000]colors[/color]."
 text = "Some text that has colors."
 scroll_active = false
 
-[node name="Area2D" type="Area2D" parent="Backdrop"]
+[node name="NametagImage" type="Node2D" parent="Handle"]
+unique_name_in_owner = true
+position = Vector2( 2, -15 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Backdrop/Area2D"]
-shape = SubResource( 1 )
+[node name="NametagBackdrop" type="Node2D" parent="Handle"]
+unique_name_in_owner = true
+position = Vector2( 0, -13 )
 
-[node name="NametagImage" type="Node2D" parent="."]
-position = Vector2( 2, 114 )
-
-[node name="NametagBackdrop" type="Node2D" parent="."]
-position = Vector2( 0, 116 )
-
-[node name="NtLeft" type="Sprite" parent="NametagBackdrop"]
+[node name="NtLeft" type="Sprite" parent="Handle/NametagBackdrop"]
 visible = false
 texture = ExtResource( 5 )
 centered = false
 
-[node name="NtMiddle" type="Sprite" parent="NametagBackdrop"]
+[node name="NtMiddle" type="Sprite" parent="Handle/NametagBackdrop"]
 visible = false
 position = Vector2( 100, 0 )
 scale = Vector2( 200, 1 )
 texture = ExtResource( 3 )
 centered = false
 
-[node name="NtRight" type="Sprite" parent="NametagBackdrop"]
+[node name="NtRight" type="Sprite" parent="Handle/NametagBackdrop"]
 visible = false
 position = Vector2( 200, 0 )
 texture = ExtResource( 2 )
 centered = false
 
-[node name="Label" type="Label" parent="NametagBackdrop"]
+[node name="NametagLabel" type="Label" parent="Handle/NametagBackdrop"]
+unique_name_in_owner = true
 margin_left = 4.0
 margin_right = 194.0
 margin_bottom = 14.0
@@ -99,4 +108,4 @@ margin_bottom = 108.0
 custom_colors/default_color = Color( 0.352941, 0.898039, 0.92549, 1 )
 script = SubResource( 2 )
 
-[connection signal="input_event" from="Backdrop/Area2D" to="." method="_on_Area2D_input_event"]
+[connection signal="input_event" from="Handle/Backdrop/Textbox2/Area2D" to="." method="_on_Area2D_input_event"]

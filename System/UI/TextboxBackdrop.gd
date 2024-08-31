@@ -1,11 +1,7 @@
 extends Node
 
-func variables():
-	return get_parent().main.stack.variables
-
-
 func _ready():
-	var bg = variables().get_string("_textbox_bg", null)
+	var bg = StandardVar.TEXTBOX_BG.retrieve()
 	if not bg:
 		return
 	if bg != "general/textbox_2":
