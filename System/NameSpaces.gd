@@ -62,6 +62,9 @@ func init_game_namespace(game_file):
 	pass
 	# TODO load game file and populate the game_namespace
 	# Attach a signal to save the file when variables are written to
+
+class NOT_FOUND:
+	pass
 	
 class Accessor:
 	var key:String
@@ -97,9 +100,7 @@ class Accessor:
 			return []
 		return namespace.store[key]
 	func get_val(type=null, default=null):
-		if not key in namespace.store:
-			return default
-		var val = namespace.store[key]
+		var val = namespace.get_val(key, NOT_FOUND.new())
 		if access_item != null:
 			if not val is Array:
 				print("cant access from non-array")
@@ -118,6 +119,8 @@ class Accessor:
 			else:
 				print("invalid access item")
 				val = ""
+		if val is NOT_FOUND:
+			return default
 		match type:
 			"string":
 				val = Values.to_str(val)
@@ -131,6 +134,8 @@ class Accessor:
 				val = Values.to_truth(val)
 			"truth_string":
 				val = Values.to_truth_string(val)
+			_:
+				GlobalErrors.log_error("Cannot convert variable of type "+type)
 		if val==null:
 			return default
 		return val

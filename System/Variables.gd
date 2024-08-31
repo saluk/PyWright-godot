@@ -4,6 +4,7 @@ class_name Variables
 var store := {}
 
 var setters := ["_speaking", "_music_fade"]
+var getters := ["_version"]
 
 func _init():
 	reset()
@@ -20,6 +21,8 @@ func del_val(key):
 	store.erase(key)
 	
 func _get_val(key, default):
+	if key in getters:
+		return call("getter_"+key)
 	return store.get(key, default)
 
 func get_val(key, default):
@@ -32,6 +35,9 @@ func setter__speaking(val):
 func setter__music_fade(val):
 	store["_music_fade"] = val
 	MusicPlayer.alter_volume()
+
+func getter__version():
+	return str(Configuration.builtin.version)
 
 # Functions to access a namespace as a list
 

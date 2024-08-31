@@ -19,7 +19,7 @@ static func to_str(v):
 static func to_int(v):
 	if v is int:
 		return v
-	if v.is_valid_integer():
+	if v!=null and v.is_valid_integer():
 		return int(v)
 	return null
 

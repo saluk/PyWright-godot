@@ -1,4 +1,4 @@
-goto penalty_over_100
+goto test_penalty_script
 
 clear
 set penalty 50
@@ -47,3 +47,17 @@ set penalty 100
 penalty -10
 penalty +20
 "Should see penalty go down by 10 and up by 10, and be at 100. Penalty={$penalty}"
+
+
+
+label test_penalty_script
+set _penalty_script penalty test_penalty_script2
+
+set penalty 10
+"penalty goes to 0 and we should get 'continued!'"
+penalty -10 delay=5
+exit
+
+
+label test_penalty_script2
+"continued!"

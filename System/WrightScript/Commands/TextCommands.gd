@@ -49,9 +49,9 @@ func ws_textblock(script, arguments:Array):
 		"x="+pos[0],
 		"y="+pos[1]]
 	)
-	obj.text_contents = String.join(ret_args.slice(4,ret_args.size()))
+	obj.text_contents = " ".join(ret_args.slice(4,ret_args.size()))
 	obj.text_width = int(ret_args[2])
 	obj.text_height = int(ret_args[3])
-	obj.text_color = keywords.get("color", "000")
+	obj.text_color = keywords.get("color", "FFFFFF")
 	obj.script_name = keywords.get("name", "textblock")
 	return obj

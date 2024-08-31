@@ -1,3 +1,5 @@
+"GodotWright version: {$_version}"
+
 macro dojoin
 set mx 1
 joinvar my $mx 0

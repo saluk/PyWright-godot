@@ -42,7 +42,7 @@ func ws_top(script, arguments):
 	script.goto_line_number(0)
 
 func ws_label(script, arguments):
-	main.stack.variables.set_val("_lastlabel", arguments[0])
+	StandardVar.LASTLABEL.store(arguments[0], script.variables)
 
 # TODO
 # need to verify some of the specifics. mainly why did we need parent?

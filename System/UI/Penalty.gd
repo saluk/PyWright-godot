@@ -57,6 +57,18 @@ func get_value():
 	
 func set_value(value):
 	stack.variables.set_val(variable, value)
+	if value <= 0:
+		execute_fail()
+
+func execute_fail():
+	var script = StandardVar.PENALTY_SCRIPT.retrieve()
+	if script:
+		script = script.split(" ", false, 1)
+		Commands.call_command(
+			"script",
+			Commands.main.top_script(),
+			[script[0], "label="+script[1]]
+		)
 
 # TODO get sizes pixel perfect
 func _process(dt):

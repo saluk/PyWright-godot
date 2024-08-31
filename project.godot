@@ -191,6 +191,7 @@ SoundFileCache="*res://System/LeastUsedCache.gd"
 ScreenManager="*res://System/Scene/ScreenManager.gd"
 Configuration="*res://System/Config/Configuration.gd"
 GlobalErrors="*res://System/UI/tools/GlobalErrors.gd"
+StandardVar="*res://System/WrightScript/StandardVar.gd"
 
 [debug]
 

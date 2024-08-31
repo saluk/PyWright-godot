@@ -3,6 +3,7 @@ extends Node2D
 var main
 var nametag := ""
 var text_to_print := ""
+var tb_lines := 3
 var created_packs = false
 var packs := []
 var printed := ""
@@ -342,7 +343,8 @@ func queue_next_textbox():
 			next_packs[0].leftover += 1
 			print("leftover:", next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1))
 	#next_lines = [carryover]
-	next_packs[0].text = next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1)
+	if next_packs[0].leftover:
+		next_packs[0].text = next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1)
 	next_packs[0].leftover = null
 	packs = []
 	has_finished = true
@@ -436,28 +438,52 @@ func _ready():
 		
 	#connect("tree_exited", Commands, "hide_arrows", [main.stack.scripts[-1]])
 
-	$NametagBackdrop/Label.text = ""
-	$Backdrop/Label.bbcode_text = ""
-	if main.stack.variables.get_int("_textbox_lines", 3) == 2:
-		$Backdrop/Label.margin_bottom = 14
-		$Backdrop/Label.set("custom_constants/line_separation", 8)
-	$Backdrop/Label.set("custom_fonts/normal_font", font)
+	get_node("%NametagLabel").text = ""
+	get_node("%TextLabel").bbcode_text = ""
+	var tb_lines_var = StandardVar.TEXTBOX_LINES.retrieve()
+	if tb_lines_var == "auto":
+		tb_lines = text_to_print.count("{n}")
+	else:
+		tb_lines = int(tb_lines_var)
+	if tb_lines < 3:
+		get_node("%TextLabel").margin_bottom = 14
+		get_node("%TextLabel").set("custom_constants/line_separation", 8)
+	get_node("%TextLabel").set("custom_fonts/normal_font", font)
 	$WidthChecker.set("custom_fonts/normal_font", font)
-	$NametagBackdrop/Label.set("custom_fonts/font", font_nt)
+	get_node("%NametagLabel").set("custom_fonts/font", font_nt)
 	z = ZLayers.z_sort["textbox"]
 	add_to_group(Commands.TEXTBOX_GROUP)
+
+	var alter_x = StandardVar.TEXTBOX_X.retrieve()
+	var alter_y = StandardVar.TEXTBOX_Y.retrieve()
+	if alter_x != null:
+		get_node("%Handle").position.x = alter_x
+	if alter_y != null:
+		get_node("%Handle").position.y = alter_y
+
+	var nt_backdrop = get_node("%NametagBackdrop")
+	var alter_nt_x = StandardVar.NT_X.retrieve()
+	var alter_nt_y = StandardVar.NT_Y.retrieve()
+	if alter_nt_x != null:
+		nt_backdrop.position.x = alter_nt_x - get_node("%Handle").position.x
+	if alter_nt_y != null:
+		nt_backdrop.position.y = alter_nt_y - get_node("%Handle").position.y
+
+	var alter_nt_text_x = StandardVar.NT_TEXT_X.retrieve()
+	var alter_nt_text_y = StandardVar.NT_TEXT_Y.retrieve()
+	if alter_nt_text_x != null:
+		get_node("%NametagLabel").rect_position.x = alter_nt_text_x
+	if alter_nt_text_y != null:
+		get_node("%NametagLabel").rect_position.y = alter_nt_text_y
+
 	update_nametag()
-	
-	# Debug mode immediately prints text
-	if main.stack.variables.get_truth("_debug", false):
-		finish_text()
 		
 	Commands.refresh_arrows(main.stack.scripts[-1])
 
 func update_nametag():
 	var nt_image = main.stack.variables.get_string("_nt_image", null)
 	if nt_image and not nt_sprite:
-		$NametagBackdrop.visible = false
+		get_node("%NametagBackdrop").visible = false
 		nt_sprite = ObjectFactory.create_from_template(
 			main.top_script(),
 			"graphic",
@@ -466,20 +492,21 @@ func update_nametag():
 			null
 		)
 		nt_sprite.cannot_save = true
-		$NametagImage.add_child(nt_sprite)
+		nt_sprite.get_parent().remove_child(nt_sprite)
+		get_node("%NametagImage").add_child(nt_sprite)
 		nt_sprite.position = Vector2(0,0)
 		return
 	# Lookup character name 
 	var nametag = main.stack.variables.get_string("_speaking_name")
 	if not nametag:
-		$NametagBackdrop.visible = false
+		get_node("%NametagBackdrop").visible = false
 	else:
-		$NametagBackdrop/Label.text = nametag
-		$NametagBackdrop.visible = true
+		get_node("%NametagLabel").text = nametag
+		get_node("%NametagBackdrop").visible = true
 		update_nametag_size()
 	
 func update_nametag_size():
-	var label = $NametagBackdrop/Label
+	var label = get_node("%NametagLabel")
 	var size = label.get_font("font").get_string_size(label.text)
 	size.x += 10
 	if not nt_left_sprite:
@@ -491,7 +518,7 @@ func update_nametag_size():
 				"_nt_left",
 				main.stack.variables.get_string("_nt_image_left", "general/nt_left")
 			)],
-			$NametagBackdrop
+			get_node("%NametagBackdrop")
 		)
 		nt_left_sprite.cannot_save = true
 		nt_left_sprite.position = Vector2(0,0)
@@ -504,7 +531,7 @@ func update_nametag_size():
 				"_nt_middle",
 				main.stack.variables.get_string("_nt_image_middle", "general/nt_middle")
 			)],
-			$NametagBackdrop
+			get_node("%NametagBackdrop")
 		)
 		nt_middle_sprite.cannot_save = true
 		nt_middle_sprite.position = Vector2(nt_left_sprite.width-1+int(size.x/2),0)
@@ -518,11 +545,11 @@ func update_nametag_size():
 				"_nt_right",
 				main.stack.variables.get_string("_nt_image_right", "general/nt_right")
 			)],
-			$NametagBackdrop
+			get_node("%NametagBackdrop")
 		)
 		nt_right_sprite.cannot_save = true
 		nt_right_sprite.position = Vector2(nt_middle_sprite.position.x+int(size.x/2),0)
-	$NametagBackdrop.move_child($NametagBackdrop/Label, $NametagBackdrop.get_child_count()-1)
+	get_node("%NametagBackdrop").move_child(get_node("%NametagLabel"), get_node("%NametagBackdrop").get_child_count()-1)
 		
 func stop_timer():
 	set_process(true)
