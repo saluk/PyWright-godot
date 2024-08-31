@@ -31,3 +31,5 @@ var CURRENTLABEL := VariableDef.new("_currentlabel", "string", null)
 var LASTLABEL := VariableDef.new("_lastlabel", "string", null)
 
 var PENALTY_SCRIPT := VariableDef.new("_penalty_script", "string", null)
+
+var TEXTBOX_LINES := VariableDef.new("_textbox_lines", "string", "auto")

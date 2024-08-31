@@ -3,6 +3,7 @@ extends Node2D
 var main
 var nametag := ""
 var text_to_print := ""
+var tb_lines := 3
 var created_packs = false
 var packs := []
 var printed := ""
@@ -342,7 +343,8 @@ func queue_next_textbox():
 			next_packs[0].leftover += 1
 			print("leftover:", next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1))
 	#next_lines = [carryover]
-	next_packs[0].text = next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1)
+	if next_packs[0].leftover:
+		next_packs[0].text = next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1)
 	next_packs[0].leftover = null
 	packs = []
 	has_finished = true
@@ -437,11 +439,16 @@ func _ready():
 	#connect("tree_exited", Commands, "hide_arrows", [main.stack.scripts[-1]])
 
 	$NametagBackdrop/Label.text = ""
-	$Backdrop/Label.bbcode_text = ""
-	if main.stack.variables.get_int("_textbox_lines", 3) == 2:
-		$Backdrop/Label.margin_bottom = 14
-		$Backdrop/Label.set("custom_constants/line_separation", 8)
-	$Backdrop/Label.set("custom_fonts/normal_font", font)
+	get_node("%TextLabel").bbcode_text = ""
+	var tb_lines_var = StandardVar.TEXTBOX_LINES.retrieve()
+	if tb_lines_var == "auto":
+		tb_lines = text_to_print.count("{n}")
+	else:
+		tb_lines = int(tb_lines_var)
+	if tb_lines < 3:
+		get_node("%TextLabel").margin_bottom = 14
+		get_node("%TextLabel").set("custom_constants/line_separation", 8)
+	get_node("%TextLabel").set("custom_fonts/normal_font", font)
 	$WidthChecker.set("custom_fonts/normal_font", font)
 	$NametagBackdrop/Label.set("custom_fonts/font", font_nt)
 	z = ZLayers.z_sort["textbox"]

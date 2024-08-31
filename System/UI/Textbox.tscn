@@ -32,7 +32,7 @@ func _ready():
 [node name="Textbox" type="Node2D" groups=["TEXTBOX_GROUP"]]
 script = ExtResource( 4 )
 tb_timer = NodePath("Timer")
-text_label_path = NodePath("Backdrop/Label")
+text_label_path = NodePath("Backdrop/TextLabel")
 
 [node name="Backdrop" type="Node2D" parent="."]
 position = Vector2( 128, 161 )
@@ -41,7 +41,8 @@ script = ExtResource( 6 )
 [node name="Textbox2" type="Sprite" parent="Backdrop"]
 texture = ExtResource( 1 )
 
-[node name="Label" type="RichTextLabel" parent="Backdrop"]
+[node name="TextLabel" type="RichTextLabel" parent="Backdrop"]
+unique_name_in_owner = true
 margin_left = -124.0
 margin_top = -27.0
 margin_right = 126.0
