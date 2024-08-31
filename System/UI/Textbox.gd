@@ -462,6 +462,7 @@ func update_nametag():
 			null
 		)
 		nt_sprite.cannot_save = true
+		nt_sprite.get_parent().remove_child(nt_sprite)
 		$NametagImage.add_child(nt_sprite)
 		nt_sprite.position = Vector2(0,0)
 		return

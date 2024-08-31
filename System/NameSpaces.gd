@@ -100,8 +100,6 @@ class Accessor:
 			return []
 		return namespace.store[key]
 	func get_val(type=null, default=null):
-		if "version" in key:
-			pass
 		var val = namespace.get_val(key, NOT_FOUND.new())
 		if access_item != null:
 			if not val is Array:
