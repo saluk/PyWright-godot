@@ -51,7 +51,7 @@ func bool_to_string(b:bool):
 		false: "false"
 	}[b]
 
-func string_to_bool(s:String):
+func string_to_bool(s):
 	if s in ["on", "1", "true"]:
 		return true
 	return false
