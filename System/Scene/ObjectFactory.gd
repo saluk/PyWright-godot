@@ -15,7 +15,8 @@ var classes = {
 	"Penalty": "res://System/UI/Penalty.gd",
 	"Examine": "res://System/UI/Examine.gd",
 	"PWList": "res://System/UI/PWList.gd",
-	"TextBlock": "res://System/Scene/TextBlock.gd"
+	"TextBlock": "res://System/Scene/TextBlock.gd",
+	"Node3D": "res://System/Graphics/Node3D.gd"
 }
 
 var DEFAULT_TEMPLATE = {

@@ -238,8 +238,20 @@ func ws_penalty(script, arguments):
 		return penalty
 
 func ws_surf3d(script, arguments):
-	return Commands.NOTIMPLEMENTED
+	var surf3d = load("res://System/Graphics/Node3D.tscn").instance()
+	surf3d.add_to_group(Commands.SPRITE_GROUP)
+	surf3d.script_name = "surf3d"
+	surf3d.name = "surf3d"
+	var x = int(arguments[0])
+	var y = int(arguments[1])
+	var sw = int(arguments[2])
+	var sh = int(arguments[3])
+	var rw = int(arguments[4])
+	var rh = int(arguments[5])
+	surf3d.position.x = x
+	surf3d.position.y = y
+	ScreenManager.top_screen().add_child(surf3d)
 	
 func ws_mesh(script, arguments):
-	return Commands.NOTIMPLEMENTED
-	
+	var mesh = PWMesh.new(Filesystem.lookup_file("art/models/"+arguments[0], script.root_path))
+	mesh.script_name = "mesh"

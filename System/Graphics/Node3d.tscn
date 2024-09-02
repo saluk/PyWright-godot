@@ -1,18 +1,14 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Cup.obj" type="ArrayMesh" id=1]
-[ext_resource path="res://3dtest.gd" type="Script" id=2]
+[ext_resource path="res://System/Graphics/Node3D.gd" type="Script" id=2]
 
 [sub_resource type="Environment" id=5]
 ambient_light_color = Color( 1, 1, 1, 1 )
+ssao_enabled = true
 
-[node name="3dtest" type="Node2D"]
-position = Vector2( 100.5, 87 )
+[node name="Node3D" type="Node2D"]
 script = ExtResource( 2 )
-
-[node name="MeshInstance2D" type="MeshInstance2D" parent="."]
-visible = false
-scale = Vector2( 100, 100 )
 
 [node name="ViewportContainer" type="ViewportContainer" parent="."]
 margin_right = 150.0
@@ -21,6 +17,7 @@ mouse_filter = 2
 stretch = true
 
 [node name="Viewport" type="Viewport" parent="ViewportContainer"]
+unique_name_in_owner = true
 size = Vector2( 256, 192 )
 transparent_bg = true
 handle_input_locally = false
@@ -28,6 +25,7 @@ render_target_update_mode = 3
 
 [node name="MeshInstance" type="MeshInstance" parent="ViewportContainer/Viewport"]
 unique_name_in_owner = true
+visible = false
 mesh = ExtResource( 1 )
 skeleton = NodePath("../../..")
 
@@ -35,5 +33,8 @@ skeleton = NodePath("../../..")
 environment = SubResource( 5 )
 
 [node name="Camera" type="Camera" parent="ViewportContainer/Viewport"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0611341, 9.73499 )
-projection = 1
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100 )
+keep_aspect = 0
+current = true
+fov = 60.0
+far = 1000.0

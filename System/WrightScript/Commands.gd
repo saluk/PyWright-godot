@@ -29,6 +29,7 @@ var ARROW_GROUP = "PWARROWS"
 var TEXTBOX_GROUP = "TEXTBOX_GROUP"
 var PENALTY_GROUP = "PWPENALTY"
 var COURT_RECORD_GROUP = "CourtRecord"
+var MESH_GROUP = "Meshes"  # Used for anything that is 3d
 
 var external_commands = {}
 
@@ -42,6 +43,9 @@ func on_screen(screen, nodes):
 	for n in nodes:
 		if n in children:
 			onscreen.append(n)
+		elif n.has_method("get_screen"):
+			if n.get_screen() == screen:
+				onscreen.append(n)
 	return onscreen
 func get_objects(script_name, last=null, group=SPRITE_GROUP, screen=null):
 	# TODO not sure if this is the right way to handle getting objects
@@ -59,6 +63,10 @@ func get_objects(script_name, last=null, group=SPRITE_GROUP, screen=null):
 			continue
 		if not script_name or object.script_name == script_name:
 			objects.append(object)
+		if object.has_method("get_meshes"):
+			for mesh in object.get_meshes():
+				if not script_name or mesh.script_name == script_name:
+					objects.append(mesh)
 	return on_screen(screen, objects)
 	
 func delete_object_group(group, screen=null):
