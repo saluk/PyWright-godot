@@ -19,7 +19,7 @@ class Scroller extends Node:
 	var controlled  # for saving
 	func _init(x, y, z, speed, wait, filter):
 		name = "scroll"
-		total = Vector2(float(x), float(y))
+		total = Vector3(float(x), float(y), float(z))
 		objects = getscrollable(Commands.get_objects(null, false))
 		move = total.normalized() * (float(speed)/0.02)
 		if (speed/0.02) > 0:
@@ -31,24 +31,44 @@ class Scroller extends Node:
 		tween = Tween.new()
 		add_child(tween)
 		for o in objects:
-			var next_pos
-			if start_positions:
-				next_pos = start_positions.pop_front()
-			else:
-				next_pos = o.position
-			tween.interpolate_property(
-				o, 
-				"position", 
-				next_pos, 
-				next_pos+total, 
-				total_time, 
-				Tween.TRANS_LINEAR
-			)
-			print(o.name)
-			print(next_pos)
-			print(total)
-			print(next_pos+total)
-			save_start_positions.append(next_pos)
+			if "position" in o:
+				var next_pos
+				if start_positions:
+					next_pos = start_positions.pop_front()
+				else:
+					next_pos = o.position
+				tween.interpolate_property(
+					o, 
+					"position", 
+					next_pos, 
+					next_pos+total, 
+					total_time, 
+					Tween.TRANS_LINEAR
+				)
+				print(o.name)
+				print(next_pos)
+				print(total)
+				print(next_pos+total)
+				save_start_positions.append(next_pos)
+			elif "translation" in o:
+				var next_pos
+				if start_positions:
+					next_pos = start_positions.pop_front()
+				else:
+					next_pos = o.translation
+				tween.interpolate_property(
+					o, 
+					"translation", 
+					next_pos, 
+					next_pos+total, 
+					total_time, 
+					Tween.TRANS_LINEAR
+				)
+				print(o.name)
+				print(next_pos)
+				print(total)
+				print(next_pos+total)
+				save_start_positions.append(next_pos)
 		tween.start()
 	func getscrollable(objects):
 		var return_list = []

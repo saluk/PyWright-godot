@@ -1,10 +1,19 @@
-extends WrightObject
+
+extends MeshInstance
 class_name PWMesh
 
 signal rotation_done
 var mesh_path:String
-var mesh_instance:MeshInstance
+var script_name = "mesh"
 var node3d
+
+var wait_signal = null
+var scrollable = true
+
+# TODO include save properties
+var cannot_save := true
+
+var textures = []
 
 func _init(path):
 	mesh_path = path
@@ -15,12 +24,12 @@ func get_screen():
 	return node3d.get_screen()
 
 func load_mesh():
-	if mesh_instance:
-		mesh_instance.free()
-	mesh_instance = MeshInstance.new()
-	mesh_instance.mesh = ObjParse.load_obj(mesh_path, "")
-	mesh_instance.scale = Vector3(1,1,1)
-	add_child(mesh_instance)
+	mesh = ObjParse.load_obj(mesh_path, "")
+	scale = Vector3(1,1,1)
+	for surf in range(mesh.get_surface_count()):
+		var mat:Material = mesh.surface_get_material(surf)
+		if mat.albedo_texture and not mat.albedo_texture in textures:
+			textures.append(mat.albedo_texture)
 
 func add_to_node3d(node3d=null):
 	if not node3d:
@@ -38,9 +47,9 @@ func do_rotate(axis="z", degrees=0, speed=1, nowait=false):
 	if not nowait:
 		wait_signal = "rotation_done"
 	if axis == "x":
-		mesh_instance.rotation_degrees.x += degrees
+		rotation_degrees.x += degrees
 	if axis == "y":
-		mesh_instance.rotation_degrees.y += degrees
+		rotation_degrees.y += degrees
 	if axis == "z":
-		mesh_instance.rotation_degrees.z += degrees
+		rotation_degrees.z += degrees
 	emit_signal("rotation_done")

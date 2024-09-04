@@ -250,8 +250,8 @@ func ws_surf3d(script, arguments):
 	var rh = int(arguments[5])
 	surf3d.position.x = x
 	surf3d.position.y = y
+	surf3d.set_size([sw, sh, rw, rh])
 	ScreenManager.top_screen().add_child(surf3d)
 	
 func ws_mesh(script, arguments):
 	var mesh = PWMesh.new(Filesystem.lookup_file("art/models/"+arguments[0], script.root_path))
-	mesh.script_name = "mesh"
