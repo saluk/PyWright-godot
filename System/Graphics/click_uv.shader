@@ -1,6 +1,34 @@
 shader_type spatial;
 render_mode unshaded, cull_disabled;
+uniform float texture_width = 300;
+uniform float texture_height = 300;
+uniform int region_shades;
+uniform vec4 region1;
+uniform vec4 region2;
+uniform vec4 region3;
+uniform vec4 region4;
+uniform int region_max;
+
+bool in_region(vec2 uv, vec4 region) {
+	float x = uv.x * texture_width;
+	float y = uv.y * texture_height;
+	if((x >= region.x && x < (region.x + region.b)) && (y >= region.y && y < (region.y + region.a))) {
+		return true;
+	}
+	return false;
+}
 
 void fragment() {
-	ALBEDO = vec3(UV.x, UV.y, 1.0);
+	float click_colors[] = {0.1, 0.3, 0.5, 0.7};
+	vec4 regions[] = {region1, region2, region3, region4};
+	for(int i; i<min(4, region_max); i++) {
+		if(in_region(UV, regions[i])) {
+			ALBEDO.x = click_colors[i];
+			break;
+		}
+	}
+	//ALBEDO.x = UV.y;
+	SPECULAR = 0.0;
+	METALLIC = 0.0;
+	//ALBEDO.y = 0.5;
 }

@@ -1,111 +1,38 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://Cup.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://System/Graphics/Node3D.gd" type="Script" id=2]
 
-[sub_resource type="Environment" id=5]
+[sub_resource type="Environment" id=18]
 ambient_light_color = Color( 1, 1, 1, 1 )
-fog_enabled = true
-ssao_enabled = true
-
-[sub_resource type="VisualShaderNodeColorConstant" id=13]
-output_port_for_preview = 0
-constant = Color( 1, 0.984375, 0, 1 )
-
-[sub_resource type="VisualShader" id=14]
-code = "shader_type spatial;
-render_mode specular_schlick_ggx, async_visible;
-
-
-
-
-void vertex() {
-// Output:0
-
-}
-
-void fragment() {
-// Color:2
-	vec3 n_out2p0 = vec3(1.000000, 0.984375, 0.000000);
-	float n_out2p1 = 1.000000;
-
-// Output:0
-	ALBEDO = n_out2p0;
-
-}
-
-void light() {
-// Output:0
-
-}
-"
-nodes/fragment/2/node = SubResource( 13 )
-nodes/fragment/2/position = Vector2( 108, 176 )
-nodes/fragment/connections = PoolIntArray( 2, 0, 0, 0 )
-
-[sub_resource type="ShaderMaterial" id=15]
-shader = SubResource( 14 )
 
 [sub_resource type="Shader" id=16]
 code = "shader_type canvas_item;
+uniform float alpha;
 
 void fragment() {
-	COLOR = vec4(0, 0, 0, 0);
+	COLOR = texture(TEXTURE, UV);
+	COLOR.a = alpha;
 }"
 
 [sub_resource type="ShaderMaterial" id=17]
 shader = SubResource( 16 )
+shader_param/alpha = 1.0
+
+[sub_resource type="Environment" id=19]
 
 [node name="Node3D" type="Node2D"]
 script = ExtResource( 2 )
 
 [node name="view_container" type="ViewportContainer" parent="."]
 unique_name_in_owner = true
-margin_right = 150.0
-margin_bottom = 150.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 256.0
+margin_bottom = 192.0
 mouse_default_cursor_shape = 13
 stretch = true
 
 [node name="view_viewport" type="Viewport" parent="view_container"]
-unique_name_in_owner = true
-size = Vector2( 256, 192 )
-transparent_bg = true
-handle_input_locally = false
-msaa = 4
-fxaa = true
-render_target_update_mode = 3
-physics_object_picking = true
-
-[node name="SpatialRoot" type="Spatial" parent="view_container/view_viewport"]
-unique_name_in_owner = true
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="view_container/view_viewport/SpatialRoot"]
-environment = SubResource( 5 )
-
-[node name="Camera" type="Camera" parent="view_container/view_viewport/SpatialRoot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100 )
-keep_aspect = 0
-current = true
-fov = 60.0
-far = 1000.0
-
-[node name="Meshes" type="Spatial" parent="view_container/view_viewport/SpatialRoot"]
-unique_name_in_owner = true
-
-[node name="MeshInstance" type="MeshInstance" parent="view_container/view_viewport/SpatialRoot/Meshes"]
-unique_name_in_owner = true
-mesh = ExtResource( 1 )
-skeleton = NodePath("../../../../..")
-material/0 = SubResource( 15 )
-
-[node name="click_container" type="ViewportContainer" parent="."]
-unique_name_in_owner = true
-material = SubResource( 17 )
-margin_right = 150.0
-margin_bottom = 150.0
-stretch = true
-
-[node name="click_viewport" type="Viewport" parent="click_container"]
 unique_name_in_owner = true
 size = Vector2( 256, 192 )
 own_world = true
@@ -116,15 +43,47 @@ fxaa = true
 render_target_update_mode = 3
 physics_object_picking = true
 
-[node name="SpatialRoot2" type="Spatial" parent="click_container/click_viewport"]
+[node name="SpatialRoot" type="Spatial" parent="view_container/view_viewport"]
 unique_name_in_owner = true
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="click_container/click_viewport/SpatialRoot2"]
-environment = SubResource( 5 )
+[node name="Camera" type="Camera" parent="view_container/view_viewport/SpatialRoot"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100 )
+keep_aspect = 0
+environment = SubResource( 18 )
+current = true
+fov = 60.0
+far = 1000.0
+
+[node name="Meshes" type="Spatial" parent="view_container/view_viewport/SpatialRoot"]
+unique_name_in_owner = true
+
+[node name="click_container" type="ViewportContainer" parent="."]
+unique_name_in_owner = true
+modulate = Color( 1, 1, 1, 0 )
+material = SubResource( 17 )
+margin_right = 256.0
+margin_bottom = 192.0
+stretch = true
+
+[node name="click_viewport" type="Viewport" parent="click_container"]
+unique_name_in_owner = true
+size = Vector2( 256, 192 )
+own_world = true
+transparent_bg = true
+handle_input_locally = false
+hdr = false
+keep_3d_linear = true
+debug_draw = 1
+render_target_update_mode = 3
+physics_object_picking = true
+
+[node name="SpatialRoot2" type="Spatial" parent="click_container/click_viewport"]
+unique_name_in_owner = true
 
 [node name="Camera" type="Camera" parent="click_container/click_viewport/SpatialRoot2"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100 )
 keep_aspect = 0
+environment = SubResource( 19 )
 current = true
 fov = 60.0
 far = 1000.0

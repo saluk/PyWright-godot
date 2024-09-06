@@ -169,7 +169,8 @@ static func _create_obj(obj:String,mats:Dictionary)->Mesh:
 				pass
 			"v":
 				# Vertice
-				var n_v = Vector3(float(parts[1]), float(parts[2]), float(parts[3]))
+				# Change made by saluk to invert the z value of models
+				var n_v = Vector3(float(parts[1]), float(parts[2]), -float(parts[3]))
 				vertices.append(n_v)
 			"vn":
 				# Normal

@@ -56,11 +56,13 @@ class Scroller extends Node:
 					next_pos = start_positions.pop_front()
 				else:
 					next_pos = o.translation
+				# TODO kind of hacky to invert and clamp the z movement
+				var end_pos = Vector3(next_pos.x+total.x, next_pos.y+total.y, clamp(next_pos.z-total.z, o.maxz, -o.minz))
 				tween.interpolate_property(
 					o, 
 					"translation", 
 					next_pos, 
-					next_pos+total, 
+					end_pos, 
 					total_time, 
 					Tween.TRANS_LINEAR
 				)

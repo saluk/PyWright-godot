@@ -16,6 +16,7 @@ var ready = false
 
 func _init():
 	script_name = "surf3d"
+	z = ZLayers.z_sort["surf3d"]
 	
 	
 func _ready():
@@ -71,35 +72,18 @@ func _gui_input(event):
 		click_image.lock()
 		var clicked_color = click_image.get_pixelv(mouse_position)
 		click_image.unlock()
+		print("clicked color:", clicked_color)
 		var u = clicked_color.r
 		var v = clicked_color.g
-		print("clicked pos:", mouse_position.x,", ",mouse_position.y)
-		print("clicked uv:", u,", ",v)
-		# We need a texture... just use first one we found
-		# TODO better support for multiple meshes and textures
-		for m in meshes:
-			for t in m.textures:
-				var x = u * t.get_size().x
-				var y = v * t.get_size().y
-				print("clicked xy:", x, ", ", y)
-		return true
+		for mesh in get_node("%Meshes").get_children():
+			var jump_label = mesh.get_label_for_click(u)
+			if jump_label:
+				Commands.call_command("goto", Commands.main.top_script(), [jump_label])
+				return true
 	return false
 
 
 # Copy over all meshes from viewport 1, set their override material
-
-
-class ClickMesh extends MeshInstance:
-	var original_mesh
-	var click_uv = preload("res://System/Graphics/click_uv.shader")
-	func _init(original_mesh):
-		self.original_mesh = original_mesh
-		self.mesh = original_mesh.mesh
-		self.material_override = ShaderMaterial.new()
-		self.material_override.shader = click_uv
-		._init()
-	func _process(dt):
-		transform = original_mesh.transform
 	
 func _process(dt):
 	var copied_meshes = []
@@ -110,9 +94,12 @@ func _process(dt):
 		else:
 			copied_meshes.append(child.original_mesh)
 			click_meshes.append(child)
+			child.translation = child.original_mesh.translation
+			child.rotation_degrees = child.original_mesh.rotation_degrees
 	for child in get_node("%Meshes").get_children():
 		if not child in copied_meshes:
 			copied_meshes = child
 			var cm = ClickMesh.new(child)
+			cm.make_click_mesh()
 			click_meshes.append(cm)
 			get_node("%ClickMeshes").add_child(cm)

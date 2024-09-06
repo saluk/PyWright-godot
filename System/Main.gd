@@ -8,6 +8,13 @@ var current_game: String
 var tab_button:Button
 
 var screens
+
+# A weird quirk of PyWright means that even if you clear a surface, the mesh sticks around
+# This ensures there is only one 3d examine mesh loaded
+# Whenever we create a Node3D, reload the last mesh here into the scene
+var examine_meshes = []
+var examine_state = []
+
 var authored_size = Vector2(256, 384)
 
 var init_script = """
