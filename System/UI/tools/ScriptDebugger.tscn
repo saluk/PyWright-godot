@@ -17,6 +17,7 @@ step = NodePath("vbox/buttons/Step")
 allev = NodePath("vbox/buttons/AllEv")
 pause = NodePath("vbox/buttons/Pause")
 speed = NodePath("vbox/buttons/Speed")
+slow = NodePath("vbox/buttons/Slow")
 node_scripts = NodePath("vbox/Control/Scripts")
 current_script = NodePath("vbox/Control/Scripts/CurrentScript")
 show_watched_panel = NodePath("vbox/buttons/Watch")
@@ -109,9 +110,16 @@ margin_right = 141.0
 margin_bottom = 17.0
 text = ">>>"
 
-[node name="Watch" type="Button" parent="vbox/buttons"]
+[node name="Slow" type="Button" parent="vbox/buttons"]
 margin_left = 145.0
-margin_right = 184.0
+margin_right = 177.0
+margin_bottom = 17.0
+hint_tooltip = "Will intoduce a wait during each frame, making the framerate really slow. Can be useful to debug things that happen very quickly."
+text = "Slow"
+
+[node name="Watch" type="Button" parent="vbox/buttons"]
+margin_left = 181.0
+margin_right = 220.0
 margin_bottom = 17.0
 text = "Watch"
 

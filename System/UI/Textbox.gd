@@ -9,7 +9,8 @@ var packs := []
 var printed := ""
 var printed_lines:Array = []
 var has_finished := false
-var wait_signal := "tree_exited"
+var wait_signal := "textbox_deleting"
+var is_deleting := false  # Use to kill this on the next frame
 
 # If there are more packs, when we continue the text, we should show those instead
 var next_packs := []
@@ -50,6 +51,7 @@ var nt_sprite = null
 
 var MAX_WHILE = 400
 signal run_returned
+signal textbox_deleting
 
 class TextPack:
 	var text = ""
@@ -265,7 +267,7 @@ class CommandPack extends TextPack:
 				textbox.ticks_per_update = 10
 				textbox.wait_mode = "manual"
 			"next":
-				self.textbox.queue_free()
+				textbox.queue_free()
 			"f":
 				Commands.call_command("flash", self.textbox.main.top_script(), args)
 			"s":
@@ -396,9 +398,39 @@ func get_char_sound():
 		blipsound = "blipmale.ogg"
 	return blipsound
 
+# THis weird function will determine if we know that there
+# will be text once the markup has been processed. It doesn't
+# guarantee that there *won't* be text, but does guarantee that there will be
+# If a textbox won't have text, treat it as if it is just a bucket of commands,
+# and don't show the textbox unless text has been added to it. 
+# If there will be text, show the textbox immediately
+func will_there_be_text(text):
+	print("WILL THERE BE TEXT")
+	var next_token:String = "{"
+	var block:String
+	var parts:PoolStringArray
+	while text:
+		parts = text.split(next_token, true, 1)
+		print(parts)
+		block = parts[0]
+		if parts.size() > 1:
+			text = parts[1]
+		else:
+			text = ""
+		if next_token == "{" and not block.empty():
+			return true
+		if next_token == "{":
+			next_token = "}"
+		else:
+			next_token = "{"
+	return false
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	visible = false
+	# Disable showing textbox until there is text, otherwise if we know there will be,
+	# show it immediately
+	if not will_there_be_text(text_to_print):
+		visible = false
 	var font_tb_name = "fonts/"+main.stack.variables.get_string("_font_tb","pwinternational.ttf")
 	var font_tb_size = main.stack.variables.get_int("_font_tb_size",10)
 	var font_nt_name = "fonts/"+main.stack.variables.get_string("_font_nt","arial.ttf")
@@ -568,7 +600,9 @@ func _on_Area2D_input_event(viewport, event, shape_idx):
 		
 func queue_free():
 	clean_up()
-	.queue_free()
+	emit_signal("textbox_deleting")
+	# delete on the next frame
+	is_deleting = true
 	
 func clean_up():
 	trigger_text_end_events()
@@ -736,6 +770,14 @@ func reset_statement():
 	main.stack.variables.del_val("_in_statement")
 		
 func _process(dt):
+	# FIXME this may be something we want to apply to all WrightObjects too
+	# Essentially, when something is queue_free() during the _process() chain,
+	# it will be deleted at the end of the frame.
+	# If something is blocking the scripts, it will unblock itself in the same frame
+	# in which it is deleted, allowing the screen to be drawn with the item removed
+	if is_deleting:
+		.queue_free()
+		return
 	update_nametag()
 	update_textbox(dt)
 	update_arrows()
