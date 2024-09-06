@@ -1,0 +1,126 @@
+# Modifed from SuperAJ3 code
+set _debug true
+
+macro cleana
+delete name=rb
+delete name=lb
+delete name=pushb
+delete name=pullb
+delete name=breck
+endmacro
+cleana
+label top
+bg 3dgrid z=-10
+fg fg3d z=-9 stack
+surf3d 30 40 200 200 192 120
+noflag pokemon chips
+goto buttons
+label chips
+mesh gem.obj scale=25
+
+label buttons
+gui Button right x=180 y=150 name=rb hold rotate
+gui Button left x=50 y=150 name=lb hold rotate
+gui Button push x=20 y=30 name=pushb hold zoom
+gui Button pull x=20 y=120 name=pullb hold zoom
+gui Button breck x=0 y=356 hotkey=k_e try_bottom name=breck
+
+label regions
+region3d 0 0 5 5 green
+region3d 5 0 5 5 yellow
+region3d 10 0 5 5 red
+region3d 15 0 5 5 purple
+region3d 20 0 5 5 blue
+region3d 25 0 5 5 sky
+
+examine3d
+
+label wait
+print "waiting"
+gui Wait
+
+label right
+rotate name=mesh degrees=10 speed=5 axis=y
+goto resettingitall
+
+label left
+rotate name=mesh degrees=-10 speed=5 axis=y
+goto resettingitall
+
+label push
+scroll name=mesh z=-10 speed=10
+goto resettingitall
+
+label pull
+scroll name=mesh z=10 speed=10
+goto resettingitall
+
+label breck
+delete name=breck
+goto escape
+
+
+label green
+setflag pokemon
+cleana
+set _cr_button false
+delete name=bottomscreen
+char maya hide
+"This section of the gem is green"
+goto top
+
+label yellow
+setflag pokemon
+cleana
+set _cr_button false
+delete name=bottomscreen
+char maya hide
+"This section of the gem is yellow"
+goto top
+
+label red
+setflag pokemon
+cleana
+set _cr_button false
+delete name=bottomscreen
+char maya hide
+"This section of the gem is red"
+goto top
+
+label purple
+setflag pokemon
+cleana
+set _cr_button false
+delete name=bottomscreen
+char maya hide
+"This section of the gem is purple"
+goto top
+
+label blue
+setflag pokemon
+cleana
+set _cr_button false
+delete name=bottomscreen
+char maya hide
+"This section of the gem is blue"
+goto top
+
+label sky
+setflag pokemon
+cleana
+set _cr_button false
+delete name=bottomscreen
+char maya hide
+"This section of the gem is skyblue"
+goto top
+
+label resettingitall
+cleana
+goto buttons
+
+label escape
+delete name=breck
+set _debug false
+delflag pokemon
+gui Back y=351
+set _cr_button true

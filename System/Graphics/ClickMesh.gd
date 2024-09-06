@@ -9,6 +9,7 @@ var textures = []
 func _init(original_mesh):
 	self.original_mesh = original_mesh
 	self.mesh = original_mesh.mesh.duplicate()
+	self.scale = self.original_mesh.scale
 	self.original_mesh.click_mesh = self
 	#self.material_override = ShaderMaterial.new()
 	#self.material_override.shader = click_uv
@@ -27,6 +28,8 @@ func make_click_mesh():
 			shader_mat = ShaderMaterial.new()
 			shader_mat.shader = click_uv
 			shader_mat.set_shader_param("albedo_texture", mat.albedo_texture)
+			shader_mat.set_shader_param("texture_width", mat.albedo_texture.get_width())
+			shader_mat.set_shader_param("texture_height", mat.albedo_texture.get_height())
 		else:
 			shader_mat = mat
 		for i in range(original_mesh.regions.size()):

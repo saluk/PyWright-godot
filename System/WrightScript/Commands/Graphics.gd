@@ -254,14 +254,15 @@ func ws_surf3d(script, arguments):
 	surf3d.set_size([container_w, container_h, resolution_w, resolution_h])
 	ScreenManager.top_screen().add_child(surf3d)
 	if main.examine_meshes:
-		var mesh = PWMesh.new(main.examine_meshes[0])
-	
+		ws_mesh(script, main.examine_meshes[0])
+
+# Argument "scale" is new
 func ws_mesh(script, arguments):
-	for mesh in main.examine_meshes:
-		mesh.queue_free()
-	main.examine_meshes = [Filesystem.lookup_file("art/models/"+arguments[0], script.root_path)]
-	var mesh = PWMesh.new(main.examine_meshes[0])
-	main.examine_meshes.append(mesh)
+	main.examine_meshes = [arguments]
+	var mesh = PWMesh.new(Filesystem.lookup_file("art/models/"+arguments[0], script.root_path))
+	var scale = Commands.keywords(arguments).get("scale", null)
+	if scale != null:
+		mesh.scale = Vector3(float(scale), float(scale), float(scale))
 
 # NEW
 func ws_clearmeshes(script, arguments):

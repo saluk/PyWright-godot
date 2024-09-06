@@ -8,7 +8,7 @@ var node3d
 var click_mesh
 var regions = [
 ]
-var region_colors = [0.1, 0.3, 0.5, 0.7]
+var region_colors = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 var region_labels = []
 
 var script_name = "mesh"
