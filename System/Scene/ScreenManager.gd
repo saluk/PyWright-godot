@@ -28,6 +28,13 @@ func get_main_screen():
 		return null
 	_main_screen = screens.get_node("%MainScreen")
 	return _main_screen
+
+func get_screens():
+	var screen_array = []
+	for screen in screens.get_children():
+		if screen is Screen:
+			screen_array.append(screen)
+	return screen_array
 	
 func _on_tree_changed():
 	if not is_instance_valid(_main_screen):

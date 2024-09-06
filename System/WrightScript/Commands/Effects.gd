@@ -32,7 +32,15 @@ func ws_grey(script, arguments):
 #        if kwargs['wait']:
 #            return True
 func ws_rotate(script, arguments):
-	pass
+	var kw = Commands.keywords(arguments)
+	var degrees = int(kw.get("degrees", 0))
+	var speed = int(kw.get("speed", 1))
+	var axis = kw.get("axis", "z")
+	var name = kw.get("name", null)
+	var nowait = "nowait" in arguments
+	var obj = Commands.get_objects(name)
+	if obj and obj[0] is PWMesh:
+		obj[0].do_rotate(axis, degrees, speed, nowait)
 	
 # TODO IMPLEMENT
 #    @category([KEYWORD("start","Color tint to start at","'ffffff' or no tint (full color)"),

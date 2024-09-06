@@ -2,7 +2,7 @@
 [z]
 0  uglyarrow waitenter delay scroll rotateanim fadeanim guiWait SoundEvent invisible
 1  bg
-2  portrait char
+2  portrait char surf3d
 3  sprite fadesprite graphic mesh evidence fg movie testimony_blink 
 4  textblock textbox penalty notguilty guilty
 5  press_button present_button menu listmenu examine_menu gui

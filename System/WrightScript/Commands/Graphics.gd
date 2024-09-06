@@ -238,8 +238,34 @@ func ws_penalty(script, arguments):
 		return penalty
 
 func ws_surf3d(script, arguments):
-	return Commands.NOTIMPLEMENTED
-	
+	var surf3d = load("res://System/Graphics/Node3D.tscn").instance()
+	surf3d.add_to_group(Commands.SPRITE_GROUP)
+	surf3d.add_to_group(Commands.CLEAR_GROUP)
+	surf3d.script_name = "surf3d"
+	surf3d.name = "surf3d"
+	var x = int(arguments[0])
+	var y = int(arguments[1])
+	var resolution_w = int(arguments[2])
+	var resolution_h = int(arguments[3])
+	var container_w = int(arguments[4])
+	var container_h = int(arguments[5])
+	surf3d.position.x = x
+	surf3d.position.y = y
+	surf3d.set_size([container_w, container_h, resolution_w, resolution_h])
+	ScreenManager.top_screen().add_child(surf3d)
+	if main.examine_meshes:
+		ws_mesh(script, main.examine_meshes[0])
+
+# Argument "scale" is new
 func ws_mesh(script, arguments):
-	return Commands.NOTIMPLEMENTED
-	
+	main.examine_meshes = [arguments]
+	var mesh = PWMesh.new(Filesystem.lookup_file("art/models/"+arguments[0], script.root_path))
+	var scale = Commands.keywords(arguments).get("scale", null)
+	if scale != null:
+		mesh.scale = Vector3(float(scale), float(scale), float(scale))
+
+# NEW
+func ws_clearmeshes(script, arguments):
+	for mesh in main.examine_meshes:
+		mesh.queue_free()
+	main.examine_meshes = []

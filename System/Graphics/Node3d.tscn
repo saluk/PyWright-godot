@@ -1,0 +1,92 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://System/Graphics/Node3D.gd" type="Script" id=2]
+
+[sub_resource type="Environment" id=18]
+ambient_light_color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="Shader" id=16]
+code = "shader_type canvas_item;
+uniform float alpha;
+
+void fragment() {
+	COLOR = texture(TEXTURE, UV);
+	COLOR.a = alpha;
+}"
+
+[sub_resource type="ShaderMaterial" id=17]
+shader = SubResource( 16 )
+shader_param/alpha = 1.0
+
+[sub_resource type="Environment" id=19]
+
+[node name="Node3D" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="view_container" type="ViewportContainer" parent="."]
+unique_name_in_owner = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 256.0
+margin_bottom = 192.0
+mouse_default_cursor_shape = 13
+stretch = true
+
+[node name="view_viewport" type="Viewport" parent="view_container"]
+unique_name_in_owner = true
+size = Vector2( 256, 192 )
+own_world = true
+transparent_bg = true
+handle_input_locally = false
+msaa = 4
+fxaa = true
+render_target_update_mode = 3
+physics_object_picking = true
+
+[node name="SpatialRoot" type="Spatial" parent="view_container/view_viewport"]
+unique_name_in_owner = true
+
+[node name="Camera" type="Camera" parent="view_container/view_viewport/SpatialRoot"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100 )
+keep_aspect = 0
+environment = SubResource( 18 )
+current = true
+fov = 60.0
+far = 1000.0
+
+[node name="Meshes" type="Spatial" parent="view_container/view_viewport/SpatialRoot"]
+unique_name_in_owner = true
+
+[node name="click_container" type="ViewportContainer" parent="."]
+unique_name_in_owner = true
+modulate = Color( 1, 1, 1, 0 )
+material = SubResource( 17 )
+margin_right = 256.0
+margin_bottom = 192.0
+stretch = true
+
+[node name="click_viewport" type="Viewport" parent="click_container"]
+unique_name_in_owner = true
+size = Vector2( 256, 192 )
+own_world = true
+transparent_bg = true
+handle_input_locally = false
+hdr = false
+keep_3d_linear = true
+debug_draw = 1
+render_target_update_mode = 3
+physics_object_picking = true
+
+[node name="SpatialRoot2" type="Spatial" parent="click_container/click_viewport"]
+unique_name_in_owner = true
+
+[node name="Camera" type="Camera" parent="click_container/click_viewport/SpatialRoot2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100 )
+keep_aspect = 0
+environment = SubResource( 19 )
+current = true
+fov = 60.0
+far = 1000.0
+
+[node name="ClickMeshes" type="Spatial" parent="click_container/click_viewport/SpatialRoot2"]
+unique_name_in_owner = true

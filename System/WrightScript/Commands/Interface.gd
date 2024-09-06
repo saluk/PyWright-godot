@@ -91,12 +91,21 @@ func ws_showexamine(script, arguments):
 	examine_menu.update()
 	next_examine = {}
 	return examine_menu
-	
+
+# TODO probably not the best way to do this
+var regions_to_add = []
 func ws_region3d(script, arguments):
-	return Commands.NOTIMPLEMENTED
+	regions_to_add.append([arguments[4], Plane(arguments[0], arguments[1], arguments[2], arguments[3])])
 	
 func ws_examine3d(script, arguments):
-	return Commands.NOTIMPLEMENTED
+	if regions_to_add:
+		for obj in Commands.get_objects(null):
+			if obj is PWMesh:
+				obj.clear_regions()
+				for region in regions_to_add:
+					obj.add_region(region[0], region[1])
+				obj.update_click_regions()
+		regions_to_add = []
 
 func ws_list(script, arguments):
 	Commands.delete_object_group(Commands.LIST_GROUP)
