@@ -11,6 +11,8 @@ export(NodePath) var step
 export(NodePath) var allev
 export(NodePath) var pause
 export(NodePath) var speed
+var slow_mode = false
+export(NodePath) var slow
 export(NodePath) var node_scripts
 export(NodePath) var current_script
 
@@ -34,6 +36,7 @@ func _ready():
 		allev = get_node(allev)
 		pause = get_node(pause)
 		speed = get_node(speed)
+		slow = get_node(slow)
 		show_watched_panel = get_node(show_watched_panel)
 		watched_panel = get_node(watched_panel)
 		watched_textedit = get_node(watched_textedit)
@@ -45,6 +48,7 @@ func _ready():
 	pause.connect("button_up", self, "start_debugger")
 	allev.connect("button_up", self, "all_ev")
 	speed.connect("button_up", self, "set_speed")
+	slow.connect("button_up", self, "toggle_slow")
 	show_watched_panel.connect("button_up", self, "_show_watched_panel")
 	
 	goto_line_button_template = get_node("GotoLineButton")
@@ -123,6 +127,20 @@ func set_speed():
 	else:
 		Engine.time_scale = 1.0
 		speed.text = ">>>"
+		
+func toggle_slow():
+	if slow_mode:
+		slow_mode = false
+		slow.text = "slow"
+		Engine.time_scale = 1.0
+	else:
+		slow_mode = true
+		slow.text = "(slow)"
+		Engine.time_scale = 0.05
+		
+func _process(delta):
+	if slow_mode:
+		OS.delay_msec(200)
 		
 func add_new_script(script):
 	var editor_container = script_tab.duplicate()

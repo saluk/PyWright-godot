@@ -25,7 +25,7 @@ class Scroller extends Node:
 		if (speed/0.02) > 0:
 			time_left = float(total.length())/(speed/0.02)
 		total_time = time_left
-		if wait:
+		if wait and time_left > 0.02:
 			wait_signal = "tree_exited"
 	func make_tweens(start_positions=[]):
 		tween = Tween.new()
@@ -37,18 +37,15 @@ class Scroller extends Node:
 					next_pos = start_positions.pop_front()
 				else:
 					next_pos = o.position
+				var end_pos = Vector2(next_pos.x+total.x, next_pos.y+total.y)
 				tween.interpolate_property(
 					o, 
 					"position", 
 					next_pos, 
-					next_pos+total, 
+					end_pos, 
 					total_time, 
 					Tween.TRANS_LINEAR
 				)
-				print(o.name)
-				print(next_pos)
-				print(total)
-				print(next_pos+total)
 				save_start_positions.append(next_pos)
 			elif "translation" in o:
 				var next_pos
