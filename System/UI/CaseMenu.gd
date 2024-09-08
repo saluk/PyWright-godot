@@ -15,7 +15,9 @@ var game_data = {}
 		
 func get_data():
 	var path = wrightscript.root_path + "data.txt"
-	var data = {}
+	var data = {
+		"title": wrightscript.root_path.rsplit("/", 1)[-1]
+	}
 	var f = File.new()
 	var err = f.open(path, File.READ)
 	if err == OK:
@@ -45,6 +47,8 @@ func _ready():
 	load_last_case()
 	
 func get_last_case_file():
+	if not "title" in game_data:
+		return null
 	var game_name = Filesystem.sanitize_text_for_path(game_data["title"])
 	var last_case = "user://recent_cases/"
 	Filesystem.make_if_not_exists_dir(last_case)
@@ -53,6 +57,8 @@ func get_last_case_file():
 	
 func load_last_case():
 	var last_case = get_last_case_file()
+	if not last_case:
+		return
 	var f:File = File.new()
 	if f.file_exists(last_case):
 		f.open(last_case, File.READ)
@@ -65,6 +71,8 @@ func load_last_case():
 				
 func save_last_case():
 	var last_case = get_last_case_file()
+	if not last_case:
+		return null
 	var f:File = File.new()
 	f.open(last_case, File.WRITE)
 	f.store_line(cases[case_chosen])
