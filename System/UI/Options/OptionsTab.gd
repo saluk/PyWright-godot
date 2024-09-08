@@ -3,6 +3,9 @@ extends Control
 var main
 var initialized = false
 
+onready var new_save_button = get_node("%NewSave")
+onready var save_name = get_node("%SaveName")
+
 func _ready():
 	main = get_tree().get_nodes_in_group("Main")[0]
 	$vbox/MainMenu.connect("button_up", self, "_main_menu")
@@ -16,7 +19,7 @@ func _ready():
 	
 	main.connect("enable_saveload_buttons", self, "_enable_saveload_buttons")
 	main.check_saving_enabled()
-	$"vbox/SaveLoad/New Save".connect("button_up", self, "_create_new_save")
+	new_save_button.connect("button_up", self, "_create_new_save")
 	$"vbox/SaveLoad/HBoxContainer/Load Selected Save".connect("button_up", self, "_load_save")
 	$"vbox/SaveLoad/HBoxContainer/Delete Selected Save".connect("button_up", self, "_delete_save")
 	
@@ -78,7 +81,7 @@ func _volume_changed(val):
 	MusicPlayer.alter_volume()
 	
 func _create_new_save():
-	SaveState.save_new_file(main)
+	SaveState.save_new_file(main, save_name.text)
 	$vbox/SaveLoad/AvailableSaves.clear()
 	_populate_load_games()
 	
@@ -100,12 +103,12 @@ func _delete_save():
 
 func _populate_load_games():
 	var save_files = SaveState.get_saved_games_for_current(main)
-	for filename in save_files:
-		$vbox/SaveLoad/AvailableSaves.add_item(filename)
+	for file in save_files:
+		$vbox/SaveLoad/AvailableSaves.add_item(file[1])
 	
 func _enable_saveload_buttons(enabled=false):
 	if enabled:
-		$"vbox/SaveLoad/New Save".disabled = false
+		new_save_button.disabled = false
 		$"vbox/SaveLoad/HBoxContainer/Load Selected Save".disabled = false
 		$"vbox/SaveLoad/HBoxContainer/Delete Selected Save".disabled = false
 		$vbox/SaveLoad/AvailableSaves.clear()
@@ -113,7 +116,7 @@ func _enable_saveload_buttons(enabled=false):
 		$vbox/SaveLoad.visible = true
 		# TODO find all saves
 	else:
-		$"vbox/SaveLoad/New Save".disabled = true
+		new_save_button.disabled = true
 		$"vbox/SaveLoad/HBoxContainer/Load Selected Save".disabled = true
 		$"vbox/SaveLoad/HBoxContainer/Delete Selected Save".disabled = true
 		$vbox/SaveLoad/AvailableSaves.clear()

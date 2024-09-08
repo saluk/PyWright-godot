@@ -193,3 +193,10 @@ static func load_atlas_specific(path:String, rect_list:Array) -> Array:
 		atlas.region = r
 		frames.append(atlas)
 	return frames
+
+static func sort_files_by_time(file_a, file_b):
+	file_a = file_a[0]+"/"+file_a[1]
+	file_b = file_b[0]+"/"+file_b[1]
+	var file = File.new()
+	if file.get_modified_time(file_a) < file.get_modified_time(file_b):
+		return true

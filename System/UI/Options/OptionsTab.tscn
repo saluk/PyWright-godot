@@ -9,6 +9,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = -262.0
 margin_bottom = -46.0
+focus_mode = 1
+mouse_filter = 1
 theme = ExtResource( 1 )
 script = ExtResource( 2 )
 
@@ -67,10 +69,9 @@ text = "FPS:"
 script = ExtResource( 3 )
 
 [node name="SaveLoad" type="VBoxContainer" parent="vbox"]
-visible = false
 margin_top = 106.0
 margin_right = 188.0
-margin_bottom = 223.0
+margin_bottom = 227.0
 alignment = 1
 
 [node name="Saves" type="Label" parent="vbox/SaveLoad"]
@@ -78,26 +79,41 @@ margin_right = 188.0
 margin_bottom = 11.0
 text = "Saved Games"
 
-[node name="New Save" type="Button" parent="vbox/SaveLoad"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="vbox/SaveLoad"]
 margin_top = 15.0
 margin_right = 188.0
-margin_bottom = 32.0
+margin_bottom = 36.0
+alignment = 1
+
+[node name="SaveName" type="LineEdit" parent="vbox/SaveLoad/HBoxContainer2"]
+unique_name_in_owner = true
+margin_left = 3.0
+margin_right = 103.0
+margin_bottom = 21.0
+rect_min_size = Vector2( 100, 0 )
+placeholder_text = "(date)"
+
+[node name="NewSave" type="Button" parent="vbox/SaveLoad/HBoxContainer2"]
+unique_name_in_owner = true
+margin_left = 107.0
+margin_right = 185.0
+margin_bottom = 21.0
 disabled = true
 text = "Save New State"
 
 [node name="AvailableSaves" type="ItemList" parent="vbox/SaveLoad"]
-margin_top = 36.0
+margin_top = 40.0
 margin_right = 188.0
-margin_bottom = 96.0
+margin_bottom = 100.0
 rect_min_size = Vector2( 0, 60 )
 size_flags_vertical = 3
 size_flags_stretch_ratio = 7.31
 items = [ "test1", null, false, "test 2", null, false ]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="vbox/SaveLoad"]
-margin_top = 100.0
+margin_top = 104.0
 margin_right = 188.0
-margin_bottom = 117.0
+margin_bottom = 121.0
 
 [node name="Load Selected Save" type="Button" parent="vbox/SaveLoad/HBoxContainer"]
 margin_right = 93.0
@@ -112,31 +128,31 @@ margin_bottom = 17.0
 text = "Delete"
 
 [node name="MarginContainer2" type="MarginContainer" parent="vbox"]
-margin_top = 106.0
+margin_top = 231.0
 margin_right = 188.0
-margin_bottom = 116.0
+margin_bottom = 241.0
 rect_min_size = Vector2( 0, 10 )
 
 [node name="Tools" type="Label" parent="vbox"]
-margin_top = 120.0
+margin_top = 245.0
 margin_right = 188.0
-margin_bottom = 131.0
+margin_bottom = 256.0
 text = "Tools"
 
 [node name="Debugger" type="Button" parent="vbox"]
-margin_top = 135.0
+margin_top = 260.0
 margin_right = 188.0
-margin_bottom = 152.0
+margin_bottom = 277.0
 text = "Enable Debugger"
 
 [node name="Framelog" type="Button" parent="vbox"]
-margin_top = 156.0
+margin_top = 281.0
 margin_right = 188.0
-margin_bottom = 173.0
+margin_bottom = 298.0
 text = "Enable Framelog"
 
 [node name="DirectoryCacheList Toggle" type="Button" parent="vbox"]
-margin_top = 177.0
+margin_top = 302.0
 margin_right = 188.0
-margin_bottom = 194.0
+margin_bottom = 319.0
 text = "Enable DirectoryCacheList"

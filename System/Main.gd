@@ -112,6 +112,8 @@ func _ready():
 	tab_button.connect("toggled", self, "_toggle_button")
 	if not Configuration.user.options_open:
 		hide_tabs()
+	else:
+		tab_button.pressed = true
 
 	get_tree().root.connect("size_changed", self, "window_resize")
 	if Configuration.builtin.screen_format == "vertical":
@@ -273,11 +275,13 @@ func _toggle_button(state):
 		hide_tabs()
 
 func show_tabs():
+	tab_button.pressed = true
 	$TabContainer.show()
 	window_resize()
 	Configuration.set_and_save("options_open", true)
 
 func hide_tabs():
+	tab_button.pressed = false
 	$TabContainer.hide()
 	window_resize()
 	Configuration.set_and_save("options_open", false)
