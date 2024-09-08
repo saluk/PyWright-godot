@@ -112,7 +112,7 @@ func connect_resume():
 	var saves = SaveState.get_saved_games_for_current(main, wrightscript.root_path+current_case())
 	if saves:
 		$Control/ScrollContainer2/VBoxContainer/ResumeButton.visible = true
-		$Control/ScrollContainer2/VBoxContainer/ResumeButton.connect("pressed", self, "launch_game", [null, saves[-1]])
+		$Control/ScrollContainer2/VBoxContainer/ResumeButton.connect("pressed", self, "launch_game", [null, saves[-1][1]])
 	
 func _scroll(direction):
 	SignalUtils.remove_all($Control/ArrowLeft)

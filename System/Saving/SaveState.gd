@@ -179,10 +179,11 @@ static func delete_selected_save_file(main, filename):
 	var d = Directory.new()
 	d.remove(full_save_path)
 	
-static func save_new_file(main):
+static func save_new_file(main, new_filename):
 	var save_path_name = _get_save_path_name(main)
 	var date = Time.get_datetime_dict_from_system()
-	var new_filename = Time.get_datetime_string_from_datetime_dict(date, true)
+	if not new_filename:
+		new_filename = Time.get_datetime_string_from_datetime_dict(date, true)
 	new_filename = new_filename.replace(":","-")
 	var full_save_path = "user://game_saves/"+"/".join([save_path_name, new_filename+".save"])
 	save_game(main.get_tree(), full_save_path)
@@ -206,9 +207,10 @@ static func get_saved_games_for_current(main, save_path_name=null):
 			if file_name.begins_with(".") or d.current_is_dir():
 				pass
 			else:
-				save_files.append(file_name)
+				save_files.append([path, file_name])
 			file_name = d.get_next()
 	else:
 		print("An error occurred when trying to access the path %s." % path)
-	save_files.sort()
+	save_files.sort_custom(Filesystem, "sort_files_by_time")
 	return save_files
+
