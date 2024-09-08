@@ -240,12 +240,6 @@ func is_macro(command):
 		return command
 	return ""
 
-# TODO we should watch for search strings in LINES, would be more flexible
-func watched(command):
-	if command in main.stack.watched_commands:
-		return true
-	return false
-
 func get_processed_macro_lines(macro_name, arguments, line_num):
 	var input_str = PoolStringArray(main.stack.macros[macro_name]).join("\n")
 	input_str = input_str.replace("$0", str(line_num))
@@ -267,18 +261,12 @@ func call_macro(macro_name, script, arguments):
 		return
 	var command = is_macro(macro_name)
 	if not command:
-		if watched(macro_name):
-			print("macro not found:"+command)
-			return DEBUG
 		return
 	var script_lines = get_processed_macro_lines(macro_name, arguments, script.line_num)
 	var new_script = main.stack.add_script(PoolStringArray(script_lines).join("\n"), script.root_path)
 	new_script.filename = "{"+command+"}"
 	# TODO not sure if this is how to handle macros that try to goto
 	new_script.allow_goto_parent_script = true
-	if watched(macro_name):
-		print("macro ran:"+macro_name)
-		return DEBUG
 	return YIELD
 	
 func macro_or_label(key, script, arguments):
