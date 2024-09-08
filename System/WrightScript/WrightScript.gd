@@ -378,19 +378,25 @@ func process_wrightscript() -> Frame:
 	print("SCRIPT EXECUTION:", to_string())
 	self.stack.emit_signal("line_executed", lines[line_num])
 	line = split_line(lines[line_num])
+	var watch_sig = Commands.NEXTLINE
+	for watch_search in main.stack.watched_commands:
+		if watch_search.to_lower() in line.to_lower():
+			watch_sig = Commands.DEBUG
+			break
 	if not line:
-		return Frame.new(self, line_num, line, Commands.NEXTLINE)
+		return Frame.new(self, line_num, line, watch_sig)
 	if allowed_commands.size() > 0 and not line.split(" ")[0] in allowed_commands:
-		return Frame.new(self, line_num, line, Commands.NEXTLINE)
+		return Frame.new(self, line_num, line, watch_sig)
 	# TODO should be able to use # inside at least a text string, if not inside an argument
 	if line[0] == '"' or line[0] == "'":
 		line = "text "+line
-		
 	var split = line.split(" ") as Array
 	var call_command = split[0].to_lower()
 	var sig = Commands.call_command(
 		call_command, self, split.slice(1, split.size())
 	)
+	if watch_sig == Commands.DEBUG:
+		sig = watch_sig
 	print("SIGNAL:", sig)
 	if sig == null:
 		sig = Commands.NEXTLINE
