@@ -111,6 +111,8 @@ func init_game(path, init_script="intro.txt"):
 	load_macros_from_path("res://macros")
 	# TODO - if we are loading a subfolder of a game, we should load macros
 	#		 from the parent folder as well
+	#		 except... we already loaded the macros for the game when we ran the games intro.txt,
+	#		 and those macros should stick around
 	load_script(path+"/"+init_script)
 	if not scripts[-1].lines.size():
 		add_script("casemenu", path)
