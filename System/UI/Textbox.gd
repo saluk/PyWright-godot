@@ -115,7 +115,7 @@ class TextPack:
 			if t:
 				c = t[min(rich_text_label.visible_characters-1,t.length()-1)]
 				next_ticks += textbox.process_text_character(c)
-		if next_ticks < 0:
+		if next_ticks < 1.0:
 			next_ticks = 1.0
 		textbox.next_ticks_per_update = next_ticks
 			
