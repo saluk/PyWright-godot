@@ -319,6 +319,40 @@ margin_right = 256.0
 margin_bottom = 392.0
 mouse_filter = 2
 
+[node name="ModesFilter" type="Node2D" parent="Screens"]
+unique_name_in_owner = true
+script = ExtResource( 13 )
+
+[node name="Debugging" type="Node2D" parent="Screens/ModesFilter"]
+modulate = Color( 1, 1, 1, 0.596078 )
+
+[node name="ColorRect2" type="ColorRect" parent="Screens/ModesFilter/Debugging"]
+margin_right = 5.0
+margin_bottom = 393.0
+mouse_filter = 2
+
+[node name="ColorRect3" type="ColorRect" parent="Screens/ModesFilter/Debugging"]
+margin_left = 250.5
+margin_top = 0.5
+margin_right = 258.5
+margin_bottom = 391.5
+mouse_filter = 2
+
+[node name="FastForward" type="Node2D" parent="Screens/ModesFilter"]
+modulate = Color( 1, 1, 1, 0.698039 )
+
+[node name="ColorRect" type="ColorRect" parent="Screens/ModesFilter/FastForward"]
+margin_right = 261.0
+margin_bottom = 4.0
+mouse_filter = 2
+
+[node name="ColorRect4" type="ColorRect" parent="Screens/ModesFilter/FastForward"]
+margin_left = -1.0
+margin_top = 381.0
+margin_right = 260.0
+margin_bottom = 390.0
+mouse_filter = 2
+
 [node name="DebugLayer" type="Node2D" parent="."]
 script = ExtResource( 6 )
 
@@ -385,38 +419,5 @@ text = "Options"
 [node name="InputController" type="Control" parent="."]
 focus_mode = 2
 script = ExtResource( 11 )
-
-[node name="ModesFilter" type="Node2D" parent="."]
-unique_name_in_owner = true
-script = ExtResource( 13 )
-
-[node name="Debugging" type="Node2D" parent="ModesFilter"]
-modulate = Color( 1, 1, 1, 0.596078 )
-
-[node name="ColorRect2" type="ColorRect" parent="ModesFilter/Debugging"]
-margin_right = 5.0
-margin_bottom = 393.0
-mouse_filter = 2
-
-[node name="ColorRect3" type="ColorRect" parent="ModesFilter/Debugging"]
-margin_left = 254.0
-margin_right = 262.0
-margin_bottom = 391.0
-mouse_filter = 2
-
-[node name="FastForward" type="Node2D" parent="ModesFilter"]
-modulate = Color( 1, 1, 1, 0.698039 )
-
-[node name="ColorRect" type="ColorRect" parent="ModesFilter/FastForward"]
-margin_right = 261.0
-margin_bottom = 4.0
-mouse_filter = 2
-
-[node name="ColorRect4" type="ColorRect" parent="ModesFilter/FastForward"]
-margin_left = -1.0
-margin_top = 381.0
-margin_right = 260.0
-margin_bottom = 390.0
-mouse_filter = 2
 
 [connection signal="gui_input" from="Screens" to="." method="_on_Screens_gui_input"]

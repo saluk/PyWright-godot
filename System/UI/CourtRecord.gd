@@ -180,6 +180,8 @@ func load_page_button():
 	)
 	b.cannot_save = true
 	b.position = Vector2(256-b.width, 0)
+	if not main.stack.variables.get_truth("ev_show_modebutton", true):
+		b.modulate.a = 0.0
 	var l = Label.new()
 	Fonts.set_element_font(l, "itemset_big", stack)
 	l.rect_position += Vector2(
