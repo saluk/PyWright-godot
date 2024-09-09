@@ -60,8 +60,8 @@ margin_right = 256.0
 margin_bottom = 65.0
 mouse_filter = 2
 bbcode_enabled = true
-bbcode_text = "Some [color=#FFFF00]text[/color] that has [color=#FF0000]colors[/color]."
-text = "Some text that has colors."
+bbcode_text = "This{n}text{n}is vary &long but wont break on spaces:andshouldgoto4lineswhichmeansthatthereshouldactually&be3textboxeswhereyouclickoneanditmovesontothenextone."
+text = "This{n}text{n}is vary &long but wont break on spaces:andshouldgoto4lineswhichmeansthatthereshouldactually&be3textboxeswhereyouclickoneanditmovesontothenextone."
 scroll_active = false
 
 [node name="NametagImage" type="Node2D" parent="Handle"]
@@ -101,9 +101,9 @@ text = "Somebody"
 
 [node name="WidthChecker" type="RichTextLabel" parent="."]
 visible = false
-margin_left = 4.0
+margin_left = 2.0
 margin_top = 77.0
-margin_right = 254.0
+margin_right = 256.0
 margin_bottom = 108.0
 custom_colors/default_color = Color( 0.352941, 0.898039, 0.92549, 1 )
 script = SubResource( 2 )
