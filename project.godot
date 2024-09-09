@@ -216,7 +216,6 @@ StandardVar="*res://System/WrightScript/StandardVar.gd"
 gdscript/warnings/unused_variable=false
 gdscript/warnings/shadowed_variable=false
 gdscript/warnings/unused_argument=false
-gdscript/warnings/return_value_discarded=false
 gdscript/warnings/integer_division=false
 
 [display]
@@ -314,8 +313,7 @@ quality/intended_usage/framebuffer_allocation=0
 quality/intended_usage/framebuffer_allocation.mobile=1
 threads/thread_model=2
 misc/lossless_compression/force_png=true
-2d/options/use_software_skinning=false
 gles2/compatibility/disable_half_float=true
+batching/precision/uv_contract=true
 environment/default_clear_color=Color( 0, 0, 0, 1 )
-quality/filters/use_fxaa=true
 environment/default_environment="res://default_env.tres"

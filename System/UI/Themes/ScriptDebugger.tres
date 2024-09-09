@@ -7,7 +7,7 @@
 [sub_resource type="DynamicFont" id=1]
 size = 9
 outline_size = 1
-outline_color = Color( 0.14902, 0.0392157, 0.137255, 1 )
+outline_color = Color( 0.0117647, 0.0509804, 0.184314, 1 )
 use_mipmaps = true
 use_filter = true
 extra_spacing_space = -1
@@ -21,4 +21,5 @@ PopupMenu/fonts/font = SubResource( 2 )
 TabContainer/constants/side_margin = 0
 TabContainer/fonts/font = SubResource( 1 )
 TextEdit/colors/line_number_color = Color( 0.984314, 0.560784, 0.560784, 1 )
+TextEdit/fonts/font = SubResource( 1 )
 WindowDialog/fonts/title_font = SubResource( 3 )
