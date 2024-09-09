@@ -83,39 +83,41 @@ class TextPack:
 			#textbox.printed += self.text
 			leftover =  self.textbox.strip_bbcode(self.text).length()
 		
-		var delta # Number of characters to add to the display
+		var delta = null # Number of characters to add to the display
 		var while_loops = 0
-		while (not delta or delta > 1 and leftover) and while_loops < textbox.MAX_WHILE:
-			if not textbox.is_processing() and not force:
+		if not textbox.is_processing() and not force:
+			return
+		while_loops += 1
+		var characters_per_tick = float(textbox.characters_per_update) / float(textbox.ticks_per_update * textbox.next_ticks_per_update)
+		if characters_per_tick < 0.01 or force:
+			delta = leftover
+		else:
+			var characters_per_second = characters_per_tick * 60.0
+			
+			time_elapsed += dt
+			delta = time_elapsed * characters_per_second
+			if delta < 1:
 				return
-			while_loops += 1
-			var characters_per_tick = float(textbox.characters_per_update) / float(textbox.ticks_per_update * textbox.next_ticks_per_update)
-			if characters_per_tick < 0.01 or force:
-				delta = leftover
-			else:
-				var characters_per_second = characters_per_tick * 60.0
-				
-				time_elapsed += dt
-				delta = time_elapsed * characters_per_second
-				if delta < 1:
-					return
-				delta = int(delta)
-				delta = 1
-				time_elapsed -= delta/characters_per_second
-			rich_text_label.visible_characters += delta
-			print("last delta:", delta)
-			leftover -= delta
-			if delta >= 1:
-				emit_signal("text_printed")
-			# TODO this is pretty hacky - Textbox really needs another rewrite
-			var t = self.textbox.strip_bbcode(self.textbox.printed)
-			if t:
-				var c = t[min(rich_text_label.visible_characters-1,t.length()-1)]
-				textbox.process_text_character(c)
-			if force or characters_per_tick <= 0.01:
+			delta = int(delta)
+			delta = 1
+			time_elapsed -= delta/characters_per_second
+		var t
+		var c
+		var next_ticks = 0
+		while delta > 0:
+			rich_text_label.visible_characters += 1
+			delta -= 1
+			leftover -= 1
+			emit_signal("text_printed")
+			if textbox.has_finished:
 				break
-		if while_loops >= textbox.MAX_WHILE:
-			pass
+			t = self.textbox.strip_bbcode(self.textbox.printed)
+			if t:
+				c = t[min(rich_text_label.visible_characters-1,t.length()-1)]
+				next_ticks += textbox.process_text_character(c)
+		if next_ticks < 0:
+			next_ticks = 1.0
+		textbox.next_ticks_per_update = next_ticks
 			
 	# execute pack command and change the provided textbox accordingly
 	func consume(dt:float, force = false):
@@ -294,14 +296,12 @@ func _on_text_printed():
 	printed = text_label.text.substr(0,text_label.visible_characters+1)
 	if not printed:
 		return
-	print(printed)
-	print(text_label.get_visible_line_count())
-	print(text_label.get_content_height())
-	if printed[-1] == "&":
-		pass
 	printed_lines = printed.split("\n")
 	if printed_lines.size() > 2:
-		if printed_lines.size() > 3 or (printed_lines.size() == 3 and get_number_of_lines_for(printed_lines[2]) > 1):
+		if printed_lines.size() > 3 or (printed_lines.size() == 3 and get_number_of_lines_for(printed) > 3):
+			# TODO if the last line is long with no spaces, we may reach this point
+			# where text_label has already wrapped to 4 lines; but the widthchecker is still wrapping to 3
+			# When we cut off the new textbox we should cut off the number of lines based on the whole text of text_label
 			queue_next_textbox()
 	elif printed_lines.size() == 2:
 		if get_number_of_lines_for(printed_lines[1]) > 2:
@@ -350,15 +350,25 @@ func queue_next_textbox():
 	next_packs[0].leftover = null
 	packs = []
 	has_finished = true
-		
+
+var lc = null
 func process_text_character(c):
+	print("CHAR:",c)
 	var punctuation = main.stack.variables.get_string("_punctuation")
+	var next_ticks = 1.0
 	if c and not in_paren:
 		_set_speaking_animation("talk")
-	if c == " ":
-		next_ticks_per_update = 0.1
-	elif c in punctuation and wait_mode == "auto":
-		next_ticks_per_update = 2.0
+	if c in punctuation and wait_mode == "auto":
+		next_ticks = 1.0
+		if c == " " and lc!=null:
+			if lc in ".?":
+				next_ticks = 6.0
+			if lc in "!":
+				next_ticks = 8.0
+			if lc in ",":
+				next_ticks = 4.0
+			if lc in "-":
+				next_ticks = 4.0
 	elif c in "([":
 		_set_speaking_animation("blink")
 		in_paren = c
@@ -366,8 +376,10 @@ func process_text_character(c):
 		_set_speaking_animation("talk")
 		in_paren = ""
 	else:
-		next_ticks_per_update = 1.0
+		next_ticks = 1.0
+	lc = c
 	visible = true
+	return next_ticks
 
 func play_sound(path=null):
 	if path == null:
