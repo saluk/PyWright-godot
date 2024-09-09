@@ -135,6 +135,8 @@ static func _create_texture(data:PoolByteArray):
 	var tex:ImageTexture = ImageTexture.new()
 	img.load_png_from_buffer(data)
 	tex.create_from_image(img)
+	if debug:
+		print("    Created texture is "+str(tex))
 	return tex
 
 static func _get_texture(mtl_filepath, tex_filename):
