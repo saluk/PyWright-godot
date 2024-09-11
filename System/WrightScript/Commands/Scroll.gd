@@ -31,23 +31,7 @@ class Scroller extends Node:
 		tween = Tween.new()
 		add_child(tween)
 		for o in objects:
-			if "position" in o:
-				var next_pos
-				if start_positions:
-					next_pos = start_positions.pop_front()
-				else:
-					next_pos = o.position
-				var end_pos = Vector2(next_pos.x+total.x, next_pos.y+total.y)
-				tween.interpolate_property(
-					o, 
-					"position", 
-					next_pos, 
-					end_pos, 
-					total_time, 
-					Tween.TRANS_LINEAR
-				)
-				save_start_positions.append(next_pos)
-			elif "translation" in o:
+			if o is PWMesh:
 				var next_pos
 				if start_positions:
 					next_pos = start_positions.pop_front()
@@ -68,6 +52,24 @@ class Scroller extends Node:
 				print(total)
 				print(next_pos+total)
 				save_start_positions.append(next_pos)
+			elif "position" in o:
+				print(o.position)
+				var next_pos
+				if start_positions:
+					next_pos = start_positions.pop_front()
+				else:
+					next_pos = o.position
+				var end_pos = Vector2(next_pos.x+total.x, next_pos.y+total.y)
+				tween.interpolate_property(
+					o, 
+					"position", 
+					next_pos, 
+					end_pos, 
+					total_time, 
+					Tween.TRANS_LINEAR
+				)
+				save_start_positions.append(next_pos)
+			
 		tween.start()
 	func getscrollable(objects):
 		var return_list = []
