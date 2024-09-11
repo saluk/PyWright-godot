@@ -355,7 +355,8 @@ func save_node(data):
 		if blocker is SceneTreeTimer:
 			data["blockers"].append({"type": "SceneTreeTimer", "time_left":blocker.time_left})
 		else:
-			data["blockers"].append({"type": "Node", "node_path": blocker.get_path()})
+			if blocker.has_method("get_path"):
+				data["blockers"].append({"type": "Node", "node_path": blocker.get_path()})
 	data["blocked_scripts"] = []
 	for script in blocked_scripts:
 		data["blocked_scripts"].append(script.u_id)

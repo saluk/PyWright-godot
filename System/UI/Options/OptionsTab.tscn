@@ -102,6 +102,7 @@ disabled = true
 text = "Save New State"
 
 [node name="AvailableSaves" type="ItemList" parent="vbox/SaveLoad"]
+unique_name_in_owner = true
 margin_top = 40.0
 margin_right = 188.0
 margin_bottom = 100.0
