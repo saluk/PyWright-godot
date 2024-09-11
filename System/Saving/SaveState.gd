@@ -58,7 +58,8 @@ static func _save_node(node):
 	
 static func _load_node(tree, ob, ob_data):
 	load_properties(ob, ob_data)
-	ob.load_node(tree, ob_data)
+	if ob:
+		ob.load_node(tree, ob_data)
 	
 static func save_properties(node, save):
 	for prop in node.save_properties + ["name"]:
@@ -93,6 +94,8 @@ static func save_properties(node, save):
 		save["_groups_"] = node.get_groups()
 		
 static func load_properties(node, data):
+	if not node:
+		return
 	if not "save_properties" in node:
 		return
 	for prop in node.save_properties + ["name"]:
