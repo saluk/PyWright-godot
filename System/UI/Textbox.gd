@@ -84,10 +84,8 @@ class TextPack:
 			leftover =  self.textbox.strip_bbcode(self.text).length()
 		
 		var delta = null # Number of characters to add to the display
-		var while_loops = 0
 		if not textbox.is_processing() and not force:
 			return
-		while_loops += 1
 		var characters_per_tick = float(textbox.characters_per_update) / float(textbox.ticks_per_update * textbox.next_ticks_per_update)
 		if characters_per_tick < 0.01 or force:
 			delta = leftover
@@ -104,7 +102,9 @@ class TextPack:
 		var t
 		var c
 		var next_ticks = 0
-		while delta > 0:
+		var while_loops = 0
+		while delta > 0 and while_loops < textbox.MAX_WHILE:
+			while_loops += 1
 			rich_text_label.visible_characters += 1
 			delta -= 1
 			leftover -= 1
@@ -115,6 +115,8 @@ class TextPack:
 			if t:
 				c = t[min(rich_text_label.visible_characters-1,t.length()-1)]
 				next_ticks += textbox.process_text_character(c)
+		if while_loops >= textbox.MAX_WHILE:
+			GlobalErrors.log_error("Max loops while _print_text")
 		if next_ticks < 1.0:
 			next_ticks = 1.0
 		textbox.next_ticks_per_update = next_ticks
@@ -336,7 +338,8 @@ func queue_next_textbox():
 		var break_on_spaces = true
 		if not " " in next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1):
 			break_on_spaces = false
-		while get_number_of_lines_for(PoolStringArray(printed_lines).join("\n")) > 3 or last_char != " ":
+		var while_loops = 0
+		while (get_number_of_lines_for(PoolStringArray(printed_lines).join("\n")) > 3 or last_char != " ") and while_loops < MAX_WHILE:
 			last_char = printed_lines[-1][-1]
 			if not break_on_spaces:
 				last_char = " "
@@ -344,6 +347,8 @@ func queue_next_textbox():
 			print("break_on_spaces", break_on_spaces, " last_char:", last_char, " printed_lines[-1]", printed_lines[-1])
 			next_packs[0].leftover += 1
 			print("leftover:", next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1))
+		if while_loops >= MAX_WHILE:
+			GlobalErrors.log_error("Line is too long")
 	#next_lines = [carryover]
 	if next_packs[0].leftover:
 		next_packs[0].text = next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1)
@@ -626,9 +631,10 @@ func clean_up():
 func finish_text():
 	var while_loops = 0
 	while (not created_packs or packs) and while_loops < MAX_WHILE:
+		while_loops += 1
 		update_textbox(0, true)
 	if while_loops >= MAX_WHILE:
-		pass
+		GlobalErrors.log_error("Too many while loops for textbox")
 			
 func click_continue(immediate_skip=false):
 	if not has_finished and not main.stack.variables.get_truth("_textbox_allow_skip", false):
@@ -678,6 +684,7 @@ func get_next_pack(text, connect_signals=false):
 	var found_bracket = false
 	var while_loops = 0
 	while (i < text.length() and while_loops < MAX_WHILE):
+		while_loops += 1
 		var c = text[i]
 		pack += c
 		if not found_bracket and i == 0 and c == '{':
@@ -690,7 +697,7 @@ func get_next_pack(text, connect_signals=false):
 			return [TextPack.new(pack.left(pack.length()-1), self, connect_signals),text.substr(i)]
 		i += 1
 	if while_loops >= MAX_WHILE:
-		pass
+		GlobalErrors.log_error("Max loops reached in get_next_pack")
 	return [TextPack.new(pack, self, connect_signals), ""]
 	
 
@@ -709,7 +716,7 @@ func tokenize_text(text, connect_signals=false):
 		next_pack = v[0]
 		text = v[1]
 	if while_loops >= MAX_WHILE:
-		pass
+		GlobalErrors.log_error("Max loops reached whole tokenize_text")
 	packs.append(next_pack)
 	return packs
 
