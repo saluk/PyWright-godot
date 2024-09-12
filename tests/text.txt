@@ -86,7 +86,6 @@ set green 050
 "{center}centered{center}{n}new line, not centered"
 "{c900}red{c} not red"
 
-label current
 "This is {c090}some{c} text.{next}"
 #bg black
 "{spd0}{$_last_written_text}{spd1} And some more text."

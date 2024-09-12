@@ -340,6 +340,7 @@ func queue_next_textbox():
 			break_on_spaces = false
 		var while_loops = 0
 		while (get_number_of_lines_for(PoolStringArray(printed_lines).join("\n")) > 3 or last_char != " ") and while_loops < MAX_WHILE:
+			while_loops += 1
 			last_char = printed_lines[-1][-1]
 			if not break_on_spaces:
 				last_char = " "
