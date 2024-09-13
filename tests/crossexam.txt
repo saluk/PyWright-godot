@@ -1,4 +1,5 @@
-addev test
+addev test_success
+addev test_fail
 
 set show_d false
 
@@ -24,6 +25,13 @@ cross_restart
 label press a
 "press or present a, adding statement d to court record"
 set show_d true
+# presenting and then resuming
+present
+label none
+"label none: You presented after a press, now back to cross examination"
+resume
+label test_success
+"label test: You presented after a press, now back to cross examination"
 resume
 
 label press b
@@ -32,7 +40,7 @@ clearcross
 goto next
 
 label press c
-"press c, dont clear crossexam. present test"
+"press c, dont clear crossexam. present test_success"
 present
 goto next
 
@@ -42,11 +50,11 @@ resume
 
 # Statement e cannot be pressed
 
-label test
+label test_success
 "jumped to 'test'"
 resume
 
-label test a
+label test_success a
 "jumped to 'test a'
 resume
 

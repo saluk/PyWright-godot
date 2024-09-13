@@ -84,12 +84,21 @@ func ws_resume(script, arguments):
 func ws_present(script, arguments):
 	# If we are running this, we should be outside of the cross examination
 	Commands.delete_object_group(Commands.COURT_RECORD_GROUP)
+	# nopress and noclearcross are internal arguments
 	var present = not "nopresent" in arguments
 	arguments.erase("nopresent")
 	var clearcross = not "noclearcross" in arguments
 	arguments.erase("noclearcross")
 	if clearcross and present:
+		var resume = main.stack.variables.get_string("_cross_resume_line","")
 		ws_endcross(script, [])
+		if resume:
+			main.stack.variables.set_val("_cross_resume_line",resume)
+	else:
+		var cross_script = main.cross_exam_script()
+		if cross_script:
+			# At the context in which ws_callpresent is called, cross_script.line_num is the line after a statement's textbox
+			main.stack.variables.set_val("_cross_resume_line", cross_script.line_num)
 	var cr = ObjectFactory.create_from_template(
 		script,
 		"court_record",
@@ -129,14 +138,12 @@ func ws_callpresent(script, arguments):
 	Commands.delete_object_group(Commands.TEXTBOX_GROUP)
 	var ev = main.stack.variables.get_string("_selected")
 	var statement = main.stack.variables.get_string("_statement")
+	var fail = ""
 	if statement:
 		ev = ev + " " + statement
-	var cross_script = main.cross_exam_script()
-	if cross_script:
-		# At the context in which ws_callpresent is called, cross_script.line_num is the line after a statement's textbox
-		main.stack.variables.set_val("_cross_resume_line", cross_script.line_num)
+		fail = "fail="+StandardVar.COURT_FAIL_LABEL.retrieve()
 	Commands.call_command(
 		"goto",
 		main.stack.scripts[-1],
-		[ev, "fail="+StandardVar.COURT_FAIL_LABEL.retrieve()]
+		[ev, fail]
 	)
