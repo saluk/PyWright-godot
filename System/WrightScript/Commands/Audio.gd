@@ -10,6 +10,7 @@ func _init(commands):
 func ws_mus(script, arguments):
 	if not len(arguments):
 		MusicPlayer.stop_music()
+		main.stack.variables.del_val("_music_loop")
 	else:
 		var song = Commands.join(arguments)
 		main.stack.variables.set_val("_music_loop", song)

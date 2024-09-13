@@ -1,6 +1,20 @@
 mus dark-pad.ogg
+mus dark-pad.ogg
+mus  # should stop here
+"no music heard"
+
+mus dark-pad.ogg
 set _music_loop dark-piano.ogg
-"start with pad, transition to piano"
+mus
+"no music heard"
+
+mus dark-pad.ogg
+set _music_loop dark-piano.ogg
+"piano looping (wait a bit)"
+
+mus dark-pad.ogg
+"pad looping (wait a bit)"
+
 music_fade_out
 mus
 "no music is playing"

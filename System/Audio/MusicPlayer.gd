@@ -6,8 +6,10 @@ var playing_path
 var root_path = ""
 
 var music_volume:float
-
-func _ready():
+	
+func add_player():
+	if is_instance_valid(audio_player):
+		audio_player.queue_free()
 	audio_player = AudioStreamPlayer.new()
 	audio_player.connect("finished", self, "_player_finished")
 	add_child(audio_player)
@@ -36,6 +38,7 @@ func _load_audio_stream(path):
 			stream = ResourceLoader.load(path)
 		SoundFileCache.set_get_cached([path], stream)
 	if stream:
+		add_player()
 		audio_player.stream = stream
 		music_volume = get_volume()
 		audio_player.volume_db = linear2db(music_volume * Configuration.user.global_volume)
@@ -49,7 +52,7 @@ func get_volume():
 
 func alter_volume():
 	get_volume()
-	if playing:
+	if playing and is_instance_valid(audio_player):
 		var pos = audio_player.get_playback_position()
 		playing = false
 		audio_player.stop()
@@ -59,7 +62,8 @@ func alter_volume():
 
 func stop_music():
 	playing = false
-	audio_player.stop()
+	if is_instance_valid(audio_player):
+		audio_player.queue_free()
 	
 func play_music(path, root_path, force=false):
 	self.root_path = root_path
@@ -72,7 +76,7 @@ func play_music(path, root_path, force=false):
 		return
 	playing = true
 	playing_path = found_path
-	var audio_stream = _load_audio_stream(found_path)
+	_load_audio_stream(found_path)
 
 func _player_finished():
 	var main = get_tree().get_nodes_in_group("Main")[0]
@@ -82,7 +86,10 @@ func _player_finished():
 			music_loop_track = Filesystem.path_join("music", music_loop_track)
 			play_music(music_loop_track, root_path, true)
 			return
-		audio_player.play(0)
+		if not is_instance_valid(audio_player):
+			_load_audio_stream(playing_path)
+		else:
+			audio_player.play(0)
 
 # SAVE/LOAD
 var save_properties = [
