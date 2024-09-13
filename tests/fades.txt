@@ -1,0 +1,17 @@
+char phoenix fade
+"I faded in before text printed"
+clear
+
+char phoenix fade nowait
+"I fade in while text is printed"
+clear
+
+char phoenix
+fade name=phoenix start=0 end=100 nowait
+"I fade in while text is printed"
+clear
+
+char phoenix
+fade name=phoenix start=0 end=100
+"I faded in before text is printed"
+clear

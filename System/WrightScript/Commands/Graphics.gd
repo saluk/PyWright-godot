@@ -47,15 +47,17 @@ func ws_delete(script, arguments):
 				
 func apply_fader(script, obj, arguments):
 	if not "fade" in arguments:
-		return
+		return obj
 	var start = 0.0
 	var end = 100.0
 	var speed = 5.0
-	var wait = true
+	var wait = not "nowait" in arguments
 	var fader = FadeLib.Fader.new(start, end, speed, wait)
 	fader.control_all_named(obj.script_name)
 	script.screen.add_child(fader)
-	return fader
+	if wait:
+		return fader
+	return obj
 				
 func ws_obj(script, arguments):
 	if not main.get_tree():
@@ -66,10 +68,7 @@ func ws_obj(script, arguments):
 		{},
 		arguments
 	)
-	var fader = apply_fader(script, obj, arguments)
-	if fader:
-		return fader
-	return obj
+	return apply_fader(script, obj, arguments)
 	
 func ws_bg(script, arguments):
 	if not main.get_tree():
@@ -77,15 +76,13 @@ func ws_bg(script, arguments):
 	if not "stack" in arguments:
 		Commands.delete_object_group(Commands.CLEAR_GROUP)
 	var bg:Node = ObjectFactory.create_from_template(script, "bg", {}, arguments)
-	apply_fader(script, bg, arguments)
-	return bg
+	return apply_fader(script, bg, arguments)
 	
 func ws_fg(script, arguments):
 	if not main.get_tree():
 		return
 	var fg:Node = ObjectFactory.create_from_template(script, "fg", {}, arguments)
-	apply_fader(script, fg, arguments)
-	return fg
+	return apply_fader(script, fg, arguments)
 
 # TODO support more commands
 # priority=
@@ -129,8 +126,7 @@ func ws_char(script, arguments):
 			character.set_sprite(character.sprites.keys()[0])
 	# Called last because _speaking has a setter that sets _speaking_name
 	main.stack.variables.set_val("_speaking", character.base_path)
-	apply_fader(script, character, arguments)
-	return character
+	return apply_fader(script, character, arguments)
 	
 func ws_emo(script, arguments):
 	var kw = Commands.keywords(arguments, true)
@@ -174,8 +170,7 @@ func ws_ev(script, arguments):
 		},
 		arguments
 	)
-	apply_fader(script, ev, arguments)
-	return ev
+	return apply_fader(script, ev, arguments)
 
 func ws_addev(script, arguments):
 	#tag, [page]
