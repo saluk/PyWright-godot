@@ -17,7 +17,7 @@ label statement_e
 statement e
 "statement e"
 label endcross
-endcross
+#endcross
 "back to start: {$currentcross}"
 cross_restart
 
@@ -52,7 +52,7 @@ resume
 
 label next
 "Current cross should be empty: {$currentcross}"
-resume
+goto top
 
 label failtest
 "good"

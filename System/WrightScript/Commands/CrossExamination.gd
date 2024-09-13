@@ -39,6 +39,7 @@ func ws_next_statement(script, arguments):
 	if cross:
 		cross.next_statement()
 	Commands.delete_object_group(Commands.TEXTBOX_GROUP)
+	main.stack.variables.set_val("_in_statement", "true")
 	
 func ws_prev_statement(script, arguments):
 	var cross = main.cross_exam_script()
@@ -75,6 +76,7 @@ func ws_callpress(script, arguments):
 # if there is a `currentcross`
 func ws_resume(script, arguments):
 	script.resume()
+	return
 
 # Show the court record to allow an evidence to be selected to present
 # Also used internally to trigger creating the court record ui

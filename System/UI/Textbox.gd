@@ -527,8 +527,6 @@ func _ready():
 		get_node("%NametagLabel").rect_position.y = alter_nt_text_y
 
 	update_nametag()
-		
-	Commands.refresh_arrows(main.stack.scripts[-1])
 
 func update_nametag():
 	var nt_image = main.stack.variables.get_string("_nt_image", null)
@@ -627,7 +625,6 @@ func clean_up():
 	# TODO we could check whether tboff needs to be called or not
 	# In pywright, it's only called when _tb_on is true
 	Commands.call_command("tboff", main.top_script(), [])
-	reset_statement()
 	
 func finish_text():
 	var while_loops = 0
@@ -767,9 +764,9 @@ func trigger_text_end_events():
 	update_arrows(true)
 		
 func update_arrows(disable_click=null):
-	var arrow = Commands.get_objects("_main_button_arrow")
-	var button = Commands.get_objects("_main_button_fg")
-	if not arrow or not button:
+	var arrows = Commands.get_objects("_main_button_arrow")
+	var buttons = Commands.get_objects("_main_button_fg")
+	if not arrows or not buttons:
 		return
 	if disable_click==null:
 		if not has_finished:
@@ -778,13 +775,17 @@ func update_arrows(disable_click=null):
 			disable_click=false
 	if disable_click:
 		if not main.stack.variables.get_truth("_textbox_allow_skip", false):
-			arrow[0].visible = false
-			if button[0].click_area:
-				button[0].click_area.enabled = false
+			for a in arrows:
+				a.visible = false
+			for b in buttons:
+				if b.click_area:
+					b.click_area.enabled = false
 	else:
-		arrow[0].visible = true
-		if button[0].click_area:
-			button[0].click_area.enabled = true
+		for a in arrows:
+			a.visible = true
+		for b in buttons:
+			if b.click_area:
+				b.click_area.enabled = true
 
 func reset_statement():
 	main.stack.variables.del_val("_in_statement")
