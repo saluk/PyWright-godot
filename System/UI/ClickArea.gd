@@ -34,11 +34,11 @@ func _enter_tree():
 	connect("mouse_exited", self, "on_mouse_exited")
 	connect("gui_input", self, "on_gui_input")
 	sync_area()
-	
+
 func set_debug_text():
 	if debuglabel:
 		debuglabel.text = "o:"+str(over)+" c:"+str(clicked)
-	
+
 func sync_area():
 	var current_sprite:PWSprite = parent.current_sprite
 	if current_sprite:
@@ -68,12 +68,12 @@ func on_mouse_entered():
 			Commands.call_command(select_macro, parent.wrightscript, select_args)
 	set_highlight()
 	set_debug_text()
-	
+
 func on_mouse_exited():
 	over = false
 	set_highlight()
 	set_debug_text()
-	
+
 func on_gui_input(event):
 	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
 		if event.pressed:
@@ -85,7 +85,7 @@ func on_gui_input(event):
 			#if over:
 			perform_action()
 	set_debug_text()
-			
+
 func perform_action():
 	if not enabled:
 		return
@@ -97,7 +97,7 @@ func perform_action():
 		Commands.call_command(click_macro, parent.wrightscript, click_args)
 	else:
 		parent.wrightscript.goto_label(click_macro)
-				
+
 
 # TODO - allow customize click colors in wrightscript
 # TODO - allow change clicked graphic for gui Button
@@ -121,6 +121,6 @@ func set_highlight():
 	parent.set_sprite(final_sprite)
 	if parent.current_sprite:
 		parent.current_sprite.set_colorize(final_color, final_amount)
-		
+
 func _process(dt):
 	set_highlight()

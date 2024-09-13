@@ -26,7 +26,7 @@ func _init(path):
 	mesh_path = path
 	load_mesh()
 	add_to_node3d()
-	
+
 func get_screen():
 	return node3d.get_screen()
 
@@ -67,11 +67,11 @@ func add_region(label, plane):
 		return
 	regions.append(plane)
 	region_labels.append(label)
-	
+
 func clear_regions():
 	regions = []
 	region_labels = []
-	
+
 func update_click_regions():
 	if not click_mesh:
 		return false

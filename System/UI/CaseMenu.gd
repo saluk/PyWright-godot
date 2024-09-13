@@ -12,7 +12,7 @@ var case_chosen = 0
 
 var z = 2
 var game_data = {}
-		
+
 func get_data():
 	var path = wrightscript.root_path + "data.txt"
 	var data = {
@@ -30,7 +30,7 @@ func get_data():
 				data[key_value[0]] = key_value[1]
 		f.close()
 	return data
-	
+
 func _ready():
 	game_data = get_data()
 	var game_name
@@ -45,7 +45,7 @@ func _ready():
 	build_scene()
 	connect_arrows()
 	load_last_case()
-	
+
 func get_last_case_file():
 	if not "title" in game_data:
 		return null
@@ -54,7 +54,7 @@ func get_last_case_file():
 	Filesystem.make_if_not_exists_dir(last_case)
 	last_case+=game_name
 	return last_case
-	
+
 func load_last_case():
 	var last_case = get_last_case_file()
 	if not last_case:
@@ -68,7 +68,7 @@ func load_last_case():
 			while cases[case_chosen] != case_name:
 				_scroll(1)
 				yield(self, "SCROLL_FINISHED")
-				
+
 func save_last_case():
 	var last_case = get_last_case_file()
 	if not last_case:
@@ -77,10 +77,10 @@ func save_last_case():
 	f.open(last_case, File.WRITE)
 	f.store_line(cases[case_chosen])
 	f.close()
-	
+
 func current_case():
 	return cases[case_chosen]
-	
+
 func set_user_defined_background():
 	var case_screen = current_case() + "/case_screen"
 	Commands.call_command(
@@ -90,7 +90,7 @@ func set_user_defined_background():
 		"noclear",
 		"return"
 	])
-	
+
 func build_scene():
 	set_user_defined_background()
 	SignalUtils.remove_all($Control/ScrollContainer2/VBoxContainer/NewGameButton)
@@ -106,7 +106,7 @@ func build_scene():
 	Fonts.set_element_font($Control/ScrollContainer2/VBoxContainer/NewGameButton/NewGame, "new_resume", wrightscript.stack)
 	Fonts.set_element_font($Control/ScrollContainer2/VBoxContainer/ResumeButton/Resume, "new_resume", wrightscript.stack)
 	connect_resume()
-	
+
 func connect_arrows():
 	if case_chosen < cases.size()-1:
 		$Control/ArrowRight.visible = true
@@ -114,14 +114,14 @@ func connect_arrows():
 	if case_chosen > 0:
 		$Control/ArrowLeft.visible = true
 		$Control/ArrowLeft.connect("pressed", self, "prev_case")
-		
+
 func connect_resume():
 	var main = get_tree().get_nodes_in_group("Main")[0]
 	var saves = SaveState.get_saved_games_for_current(main, wrightscript.root_path+current_case())
 	if saves:
 		$Control/ScrollContainer2/VBoxContainer/ResumeButton.visible = true
 		$Control/ScrollContainer2/VBoxContainer/ResumeButton.connect("pressed", self, "launch_game", [null, saves[-1][1]])
-	
+
 func _scroll(direction):
 	SignalUtils.remove_all($Control/ArrowLeft)
 	SignalUtils.remove_all($Control/ArrowRight)
@@ -130,7 +130,7 @@ func _scroll(direction):
 	add_child(tween)
 	var start_pos = $Control/ScrollContainer2.rect_position
 	tween.interpolate_property($Control/ScrollContainer2, "rect_position",
-			start_pos, 
+			start_pos,
 			start_pos - Vector2(256,0) * direction, 0.2,
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()
@@ -143,13 +143,13 @@ func _scroll(direction):
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()
 	yield(tween,"tween_completed")
-	remove_child(tween)
+	tween.queue_free()
 	connect_arrows()
 	emit_signal("SCROLL_FINISHED")
 
 func next_case():
 	_scroll(1)
-	
+
 func prev_case():
 	_scroll(-1)
 

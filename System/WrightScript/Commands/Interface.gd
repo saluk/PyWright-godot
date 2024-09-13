@@ -43,12 +43,12 @@ func ws_localmenu(script, arguments):
 			menu.enabled_options.append(option)
 	menu.fail_label = kw.get("fail", "none")
 	return menu
-	
+
 func ws_lmenu(script, arguments):
 	return ws_localmenu(script, arguments)
 
 # Note - we handle region definitions in a bit of a weird way
-#  - in pywright, we create the examine interface, and then 
+#  - in pywright, we create the examine interface, and then
 #    step through the script adding regions to the object
 #  - no other object functions this way in wrightscript
 #  - From now on, we will add a command showexamine, similar to showlist
@@ -65,10 +65,10 @@ func ws_examine(script, arguments):
 	}
 	next_examine["hidden"] = "hide" in arguments
 	next_examine["fail"] = Commands.keywords(arguments).get("fail", "none")
-	
+
 func ws_region(script, arguments):
 	next_examine["regions"].append(arguments)
-	
+
 # NEW
 func ws_showexamine(script, arguments):
 	if not next_examine:
@@ -96,7 +96,7 @@ func ws_showexamine(script, arguments):
 var regions_to_add = []
 func ws_region3d(script, arguments):
 	regions_to_add.append([arguments[4], Plane(arguments[0], arguments[1], arguments[2], arguments[3])])
-	
+
 func ws_examine3d(script, arguments):
 	if regions_to_add:
 		for obj in Commands.get_objects(null):
@@ -125,7 +125,7 @@ func ws_list(script, arguments):
 	if noback or not main.stack.variables.get_truth("_list_back_button"):
 		list_menu.allow_back_button = false
 	list_menu.update()
-	
+
 func ws_li(script, arguments):
 	var list_menu = main.get_tree().get_nodes_in_group(Commands.LIST_GROUP)
 	if not list_menu:
@@ -150,7 +150,7 @@ func ws_lo(script, arguments):
 		GlobalErrors.log_error("Couldn't find list menu to set list options for", {"script": script})
 		return
 	list_menu[0].set_list_item_options(kw)
-	
+
 func ws_showlist(script, arguments):
 	var list_menu = main.get_tree().get_nodes_in_group(Commands.LIST_GROUP)
 	if not list_menu:

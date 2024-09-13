@@ -71,7 +71,7 @@ script = ExtResource( 3 )
 [node name="SaveLoad" type="VBoxContainer" parent="vbox"]
 margin_top = 106.0
 margin_right = 188.0
-margin_bottom = 227.0
+margin_bottom = 217.0
 alignment = 1
 
 [node name="Saves" type="Label" parent="vbox/SaveLoad"]
@@ -105,16 +105,15 @@ text = "Save New State"
 unique_name_in_owner = true
 margin_top = 40.0
 margin_right = 188.0
-margin_bottom = 100.0
-rect_min_size = Vector2( 0, 60 )
-size_flags_vertical = 3
+margin_bottom = 90.0
+rect_min_size = Vector2( 0, 50 )
 size_flags_stretch_ratio = 7.31
 items = [ "test1", null, false, "test 2", null, false ]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="vbox/SaveLoad"]
-margin_top = 104.0
+margin_top = 94.0
 margin_right = 188.0
-margin_bottom = 121.0
+margin_bottom = 111.0
 
 [node name="Load Selected Save" type="Button" parent="vbox/SaveLoad/HBoxContainer"]
 margin_right = 93.0
@@ -129,31 +128,49 @@ margin_bottom = 17.0
 text = "Delete"
 
 [node name="MarginContainer2" type="MarginContainer" parent="vbox"]
-margin_top = 231.0
+margin_top = 221.0
 margin_right = 188.0
-margin_bottom = 241.0
+margin_bottom = 231.0
 rect_min_size = Vector2( 0, 10 )
 
 [node name="Tools" type="Label" parent="vbox"]
-margin_top = 245.0
+margin_top = 235.0
 margin_right = 188.0
-margin_bottom = 256.0
+margin_bottom = 246.0
 text = "Tools"
 
 [node name="Debugger" type="Button" parent="vbox"]
-margin_top = 260.0
+margin_top = 250.0
 margin_right = 188.0
-margin_bottom = 277.0
+margin_bottom = 267.0
 text = "Enable Debugger"
 
 [node name="Framelog" type="Button" parent="vbox"]
-margin_top = 281.0
+margin_top = 271.0
 margin_right = 188.0
-margin_bottom = 298.0
+margin_bottom = 288.0
 text = "Enable Framelog"
 
 [node name="DirectoryCacheList Toggle" type="Button" parent="vbox"]
-margin_top = 302.0
+margin_top = 292.0
 margin_right = 188.0
-margin_bottom = 319.0
+margin_bottom = 309.0
 text = "Enable DirectoryCacheList"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="vbox"]
+margin_top = 313.0
+margin_right = 188.0
+margin_bottom = 330.0
+
+[node name="MemoryLeak" type="Button" parent="vbox/HBoxContainer2"]
+unique_name_in_owner = true
+margin_right = 66.0
+margin_bottom = 17.0
+text = "MemoryLeak"
+
+[node name="FreeOrphans" type="Button" parent="vbox/HBoxContainer2"]
+unique_name_in_owner = true
+margin_left = 70.0
+margin_right = 136.0
+margin_bottom = 17.0
+text = "FreeOrphans"

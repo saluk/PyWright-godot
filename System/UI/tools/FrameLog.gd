@@ -5,7 +5,7 @@ var enabled = false
 
 func _ready():
 	$EnableButton.connect("button_down", self, "enable_disable")
-	
+
 func enable_disable():
 	enabled = not enabled
 	$EnableButton.text = {true: "disable", false: "enable"}[enabled]
@@ -19,11 +19,13 @@ func log_frame_end(frame):
 	t += ">" + frame.line + "\n"
 	t += str(Time.get_ticks_msec()) + "\n"
 	if frame.sig is int:
-		t += "-" + str(frame.sig) + "\n"
+		t += "signal-standard:" + str(frame.sig) + "\n"
 	elif "name" in frame.sig:
-		t += "o:" + frame.sig.name + "\n"
+		t += "signal-object:" + frame.sig.name + "\n"
 	elif frame.sig is SceneTreeTimer:
-		t += "timer\n"
+		t += "signal-timer\n"
+	else:
+		t += "signal-unknown\n"
 	t += ">>>\n\n"
 	t = $TextLog.text + t
 	t = t.substr(0, MAX_LENGTH)

@@ -30,7 +30,7 @@ static func load_obj_from_buffer(obj_data:String,materials:Dictionary)->Mesh:
 #Create materials
 static func load_mtl_from_buffer(mtl_data:String,textures:Dictionary)->Dictionary:
 	return _create_mtl(mtl_data,textures)
-	
+
 #Get data from file path
 static func get_data(path:String)->String:
 	if path!="":
@@ -125,7 +125,7 @@ static func _get_image(mtl_filepath:String, tex_filename:String)->Image:
 	var filetype := texfilepath.get_extension()
 	if debug:
 		print("    Debug: texture file path: " + texfilepath + " of type " + filetype)
-	
+
 	var img:Image = Image.new()
 	img.load(texfilepath)
 	return img
@@ -159,7 +159,7 @@ static func _create_obj(obj:String,mats:Dictionary)->Mesh:
 	var firstSurface := true
 	var mat_name := "default"
 	var count_mtl:=0
-	
+
 	# Parse
 	var lines := obj.split("\n", false)
 	for line in lines:

@@ -31,19 +31,17 @@ func free_members():
 	if animated_sprite and is_instance_valid(animated_sprite) and not animated_sprite.is_queued_for_deletion():
 		animated_sprite.free()
 
-func free():
-	print("freeing pwsprite "+name)
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_PREDELETE:
+			on_predelete()
+
+func on_predelete() -> void:
 	free_members()
-	return .free()
-	
-func queue_free():
-	print("queuing pwsprite "+name)
-	free_members()
-	return .queue_free()
-	
+
 func can_wait():
 	return animated_sprite.frames.get_frame_count("default") > 1 and not animated_sprite.frames.get_animation_loop("default")
-	
+
 func set_wait(b):
 	print(animated_sprite.frames.get_frame_count("default"))
 	print(animated_sprite.frames.get_animation_loop("default"))
@@ -148,9 +146,9 @@ func _load_info(path:String):
 func _load_animation(path:String, sub_rect=null):
 	sprite_path = path
 	# Load pwv
-	
+
 	print("txt:", info)
-	
+
 	if AnimationFramesCache.has_cached([path, sub_rect]):
 		frames = AnimationFramesCache.get_cached([path, sub_rect])
 	else:
@@ -162,7 +160,7 @@ func _load_animation(path:String, sub_rect=null):
 			)
 		else:
 			frames = Filesystem.load_atlas_frames(
-				path, 
+				path,
 				int(info['horizontal']),
 				int(info['vertical']),
 				int(info['length'])
@@ -175,7 +173,7 @@ func _load_animation(path:String, sub_rect=null):
 			GlobalErrors.log_error("Sprite frames has no size: %s" % path)
 			return
 		loaded = true
-	
+
 	# Build animated sprite
 	animated_sprite = AnimatedSprite.new()
 	animated_sprite.name = path.replace(":", "|").replace("/",";")
@@ -203,18 +201,18 @@ func _load_animation(path:String, sub_rect=null):
 	else:
 		animated_sprite.frames.set_animation_loop("default", true)
 	rescale(width, height)
-	
+
 	material = ShaderMaterial.new()
 	material.shader = load("res://System/Graphics/image_filters.shader")
-	
+
 	animated_sprite.connect("animation_finished", self, "finish_playing")
 	if "wbench" in sprite_path:
 		pass
 	return self
-	
+
 func finish_playing():
 	self.emit_signal("finished_playing")
-		
+
 func from_frame(frame):
 	width = frame.region.size.x
 	height = frame.region.size.y
@@ -225,7 +223,7 @@ func from_frame(frame):
 	animated_sprite.frames.add_frame("default", frame)
 	material = ShaderMaterial.new()
 	material.shader = load("res://System/Graphics/image_filters.shader")
-	
+
 func rescale(size_x, size_y):
 	var sc_w = float(size_x)/float(max(1, width))
 	var sc_h = float(size_y)/float(max(1, height))
@@ -237,7 +235,7 @@ func rescale(size_x, size_y):
 		animated_sprite.position = Vector2(width/2, height/2)
 		animated_sprite.position = Vector2(width/2, height/2)
 	self.emit_signal("size_changed")
-	
+
 
 func set_grey(value):
 	if material:

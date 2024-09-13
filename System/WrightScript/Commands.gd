@@ -39,7 +39,9 @@ signal button_clicked
 func on_screen(screen, nodes):
 	# Return nodes that are in a given screen
 	var onscreen = []
-	var children = screen.get_children()
+	var children = []
+	if screen:
+		children = screen.get_children()
 	for n in nodes:
 		if n in children:
 			onscreen.append(n)
@@ -68,7 +70,7 @@ func get_objects(script_name, last=null, group=SPRITE_GROUP, screen=null):
 				if not script_name or mesh.script_name == script_name:
 					objects.append(mesh)
 	return on_screen(screen, objects)
-	
+
 func delete_object_group(group, screen=null):
 	if not screen:
 		screen = ScreenManager.top_screen()
@@ -76,18 +78,18 @@ func delete_object_group(group, screen=null):
 	for n in nodes:
 		n.queue_free()
 	#get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, group, "queue_free")
-		
+
 func load_command_engine():
 	main = get_tree().get_nodes_in_group("Main")[0]
 	index_commands()
-	
+
 func value_replace(value):
 	# Replace from variables if starts with $
 	# TODO move to stack
 	if value.begins_with("$"):
 		return main.stack.variables.get_string(value.substr(1))
 	return value
-	
+
 func keywords(arguments, remove=false):
 	# TODO determine if we actually ALWAYS want to replace $ variables here
 	var newargs = []
@@ -101,7 +103,7 @@ func keywords(arguments, remove=false):
 	if remove:
 		return [d, newargs]
 	return d
-	
+
 func join(l, sep=" "):
 	return PoolStringArray(l).join(sep)
 
@@ -111,7 +113,7 @@ func create_textbox(script, line) -> Node:
 	l.text_to_print = line
 	script.screen.add_child(l)
 	return l
-	
+
 func refresh_arrows(script):
 	# If a cross examination happens, refresh arrows based on cross exam script
 	var cross = main.cross_exam_script()
@@ -146,7 +148,7 @@ func hide_arrows(script):
 	call_macro("hide_present_button", script, [])
 	call_macro("hide_press_button", script, [])
 	call_macro("hide_main_button_all", script, [])
-	
+
 func get_speaking_char(speaking=null):
 	if not speaking:
 		speaking = main.stack.variables.get_string("_speaking", null)
@@ -165,7 +167,7 @@ func get_speaking_char(speaking=null):
 	# assume the case author means to make SOMEBODY talk
 	for character in characters:
 		return character
-	
+
 # Gets nametag for currently speaking character
 func get_nametag():
 	var nametag = main.stack.variables.get_string("_speaking_name", "")
@@ -210,13 +212,13 @@ func index_commands():
 		var extern = load(command_file).new(self)
 		for command in get_call_methods(extern):
 			external_commands[command] = extern
-			
+
 func is_macro_or_command(command):
 	return is_macro(command) or has_method("ws_"+command) or "ws_"+command in external_commands
 
 func call_command(command, script, arguments):
 	command = value_replace(command)
-	
+
 	var args = []
 	for arg in arguments:
 		args.append(value_replace(arg))
@@ -225,7 +227,7 @@ func call_command(command, script, arguments):
 	# gui Buttons use {} to mean either a macro or a label
 	if command.begins_with("{") and command.ends_with("}"):
 		command = command.substr(1,command.length()-2)
-		
+
 	if is_macro(command):
 		return call_macro(command, script, arguments)
 
@@ -235,12 +237,12 @@ func call_command(command, script, arguments):
 	if "ws_"+command in external_commands:
 		var extern = external_commands["ws_"+command]
 		return extern.callv("ws_"+command, [script, arguments])
-		
+
 	for object in get_objects(null):
 		if object.has_method("ws_"+command):
 			return object.callv("ws_"+command, [script, arguments])
 	return UNDEFINED
-	
+
 func is_macro(command):
 	if main.stack.macros.has(command):
 		return command
@@ -258,8 +260,8 @@ func get_processed_macro_lines(macro_name, arguments, line_num):
 			input_str = input_str.replace("$"+str(i), arg)
 			i += 1
 	return input_str.split("\n", false)
-	
-# TODO - may need to support actually replacing macro text with the arguments passed, 
+
+# TODO - may need to support actually replacing macro text with the arguments passed,
 # but wont implement till we actually need to
 func call_macro(macro_name, script, arguments):
 	# FIXME Something weird happened here
@@ -274,18 +276,18 @@ func call_macro(macro_name, script, arguments):
 	# TODO not sure if this is how to handle macros that try to goto
 	new_script.allow_goto_parent_script = true
 	return YIELD
-	
+
 func macro_or_label(key, script, arguments):
 	var is_macro = is_macro(key)
 	if is_macro:
 		return call_macro(is_macro, script, [])
 	return script.goto_label(key)
-	
+
 # Script commands
 
 func ws_draw_off(script, arguments):
 	pass # No op, old pywright needed the user to determine when to pause to load many graphics
-	
+
 func ws_draw_on(script, arguments):
 	pass
 

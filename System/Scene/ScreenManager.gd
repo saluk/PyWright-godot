@@ -11,7 +11,7 @@ func _init_screens():
 func _ready():
 	_init_screens()
 	get_tree().connect("tree_changed", self, "_on_tree_changed")
-	
+
 func top_screen():
 	var children = screens.get_children()
 	var child
@@ -19,11 +19,13 @@ func top_screen():
 		child = children[children.size()-i-1]
 		if child is Screen:
 			return child
-	
+
 func get_main_screen():
 	# If main screen is gone, we should get our handles again
 	if _main_screen and is_instance_valid(_main_screen):
 		return _main_screen
+	if not is_instance_valid(screens):
+		return null
 	if not screens.get_children():
 		return null
 	_main_screen = screens.get_node("%MainScreen")
@@ -35,7 +37,7 @@ func get_screens():
 		if screen is Screen:
 			screen_array.append(screen)
 	return screen_array
-	
+
 func _on_tree_changed():
 	if not is_instance_valid(_main_screen):
 		_init_screens()

@@ -37,6 +37,7 @@ func _init():
 	save_properties.append_array(["x_offset", "reloaded_scroll", "fail"])
 
 func _ready():
+	._ready()
 	setup_clickarea()
 	wait_signal = "tree_exited"
 	var use_objects = main.stack.variables.get_string("_examine_use", null)
@@ -54,25 +55,26 @@ func _ready():
 	# On the other hand, while it's excessive copying it shouldn't hurt anything
 	for bg_ob in bg_obs_original:
 		bg_ob = bg_ob.duplicate()
+		bg_ob.main = main
 		bg_obs.append(bg_ob)
 		add_child(bg_ob)
 		bg_ob.cannot_save = true
 	setup_crosshair()
-	
+
 func setup_clickarea():
 	var click_area:Control = Control.new()
 	click_area.set_size(Vector2(256, 192))
 	add_child(click_area)
 	click_area.connect("mouse_entered", self, "enter_examine_clickarea")
 	click_area.connect("mouse_exited", self, "exit_examine_clickarea")
-	
+
 var mouse_active := false
 func enter_examine_clickarea():
 	mouse_active = true
-	
+
 func exit_examine_clickarea():
 	mouse_active = false
-	
+
 func setup_crosshair():
 	crosshair = Crosshair.new()
 	crosshair.parent = self
@@ -100,14 +102,14 @@ func setup_crosshair():
 		)
 		cross_img.cannot_save = true
 	add_child(cross_area)
-		
+
 func set_crosshair_pos(x, y):
 	if x<0 or y<0:
 		return
 	#print("CROSS X Y ",x," ",y)
 	crosshair.crosshair_position = Vector2(int(x), int(y))
 	update()
-			
+
 class Region extends Area2D:
 	var label
 	var size
@@ -117,7 +119,7 @@ class Region extends Area2D:
 		position = Vector2(x,y)
 	func is_point_inside(point):
 		#print(point, ',', position, ',', size)
-		if (point.x >= position.x and point.x <= position.x+size.x and 
+		if (point.x >= position.x and point.x <= position.x+size.x and
 			point.y >= position.y and point.y <= position.y+size.y):
 			return true
 		return false
@@ -125,7 +127,7 @@ class Region extends Area2D:
 		pass
 	func save_node(data):
 		pass
-		
+
 func update_x_offset():
 	var MAX = 100000
 	var left_side = MAX
@@ -176,10 +178,10 @@ func _get_scroll_direction():
 		return 1
 	else:
 		return 0
-	
+
 func add_region_args(arguments):
 	region_args.append(arguments)
-	
+
 func build_regions():
 	if built_regions:
 		return
@@ -192,7 +194,7 @@ func build_regions():
 		region.label = arguments[4]
 		add_child(region)
 	built_regions = true
-	
+
 func ws_check_from_examine(script, arguments):
 	queue_free()
 	var label = fail
@@ -212,7 +214,7 @@ func ws_check_from_examine(script, arguments):
 func ws_back_from_examine(script, arguments):
 	queue_free()
 	Commands.call_command("sound_examine_menu_cancel", script, [])
-	
+
 func ws_scroll_from_examine(script, arguments):
 	scrolling = true
 	if arguments:
@@ -241,7 +243,7 @@ func ws_scroll_from_examine(script, arguments):
 			str(x_offset)
 		)
 		update()
-	
+
 func reload_scroll_regions():
 	if reloaded_scroll:
 		return
@@ -255,7 +257,7 @@ func reload_scroll_regions():
 		var scroll_dir = -(x_offset-saved_scroll)
 		ws_scroll_from_examine(null, [scroll_dir/abs(scroll_dir)])
 		update_x_offset()
-	
+
 func _process(dt):
 	if scrolling: return
 	if not mouse_active: return
@@ -263,7 +265,7 @@ func _process(dt):
 		var pos = get_parent().get_local_mouse_position()-position
 		set_crosshair_pos(pos.x, pos.y)
 		update()
-		
+
 func _select():
 	for child in get_children():
 		var region = child as Region
@@ -274,7 +276,7 @@ func _select():
 			current_region = region
 			#print("SET CURRENT REGION")
 			return
-		
+
 func update():
 	update_x_offset()
 	build_regions()

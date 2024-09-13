@@ -34,7 +34,7 @@ var characters_per_update:float = 1.0
 var ticks_per_update:float = 2.0
 var next_ticks_per_update:float = 1.0
 var override_sound = null
-var wait_mode = "auto"   
+var wait_mode = "auto"
 # auto - character delay is at full speed for normal characters and half speed for punctuation
 # manual - character delay is always at full speed
 
@@ -62,17 +62,17 @@ class TextPack:
 	var delete = false
 	var time_elapsed = 0.0
 	signal text_printed
-	
+
 	func _init(text, textbox, connect_signals=false):
 		self.text = text
 		self.textbox = textbox
 		if connect_signals:
 			self.connect("text_printed", self.textbox, "_on_text_printed")
-		
-	func _run(force = false): 
+
+	func _run(force = false):
 		has_run = true
 		return null
-		
+
 	# add all text to label, then increase visible characters each frame
 	# if characters per frame is INF, will print text immediately
 	func _print_text(dt:float, force):
@@ -82,7 +82,7 @@ class TextPack:
 			rich_text_label.bbcode_text += self.text
 			#textbox.printed += self.text
 			leftover =  self.textbox.strip_bbcode(self.text).length()
-		
+
 		var delta = null # Number of characters to add to the display
 		if not textbox.is_processing() and not force:
 			return
@@ -91,7 +91,7 @@ class TextPack:
 			delta = leftover
 		else:
 			var characters_per_second = characters_per_tick * 60.0
-			
+
 			time_elapsed += dt
 			delta = time_elapsed * characters_per_second
 			if delta < 1:
@@ -120,7 +120,7 @@ class TextPack:
 		if next_ticks < 1.0:
 			next_ticks = 1.0
 		textbox.next_ticks_per_update = next_ticks
-			
+
 	# execute pack command and change the provided textbox accordingly
 	func consume(dt:float, force = false):
 		var run_return
@@ -133,7 +133,7 @@ class TextPack:
 		_print_text(dt, force)
 		if not leftover or leftover <= 0: self.delete = true
 		# figure out how much to print here
-		
+
 	func duplicate():
 		var p = get_script().new(text, textbox, true)
 		p.text = text
@@ -144,20 +144,20 @@ class TextPack:
 		p.delete = false
 		p.time_elapsed = time_elapsed
 		return p
-		
+
 
 class CommandPack extends TextPack:
 	var command_args := ""
 	var command
 	var args = []
 	var matched_text = false
-	
+
 	func _init(line, textbox, connect_signals=false).(line, textbox, connect_signals):
 		self.command_args = line
 		self.textbox = textbox
 		self.parse_command()
 		self.text = _to_text(self.textbox)
-		
+
 	func parse_command():
 		# parse pack text
 		var args
@@ -170,7 +170,7 @@ class CommandPack extends TextPack:
 		args = []
 		for command in [
 			"sfx", "sound", "delay", "spd", "_fullspeed", "_endfullspeed",
-			"wait", "center", "type", "next", "tbon", "tboff", 
+			"wait", "center", "type", "next", "tbon", "tboff",
 			"e", "f", "s", "p", "c", "$"
 		]:
 			# TODO because of single letter items, we may not allow macros that start with those letters
@@ -185,7 +185,7 @@ class CommandPack extends TextPack:
 				return
 		print("command not found:", self.command_args)
 		command = command_args
-		
+
 	# text-only changes. Resolved before typing: variables, bbcode
 	func _to_text(tb):
 		var ret = ""
@@ -215,8 +215,8 @@ class CommandPack extends TextPack:
 					ret += p.text
 				matched_text = true
 		return ret
-		
-	
+
+
 	# executed during typing: speed change, animations, sounds, etc
 	# TODO finish execute markup base commands
 	# TODO execute macros
@@ -283,7 +283,7 @@ class CommandPack extends TextPack:
 				self.textbox.refresh_arrows_on_next_pack = true
 				var old_script = self.textbox.main.top_script()
 				Commands.call_command(self.command, old_script, args)
-				
+
 				# TODO macros in text is still very broken
 				#textbox.set_process(false)
 				#while self.textbox.main.top_script() != old_script:
@@ -293,7 +293,7 @@ class CommandPack extends TextPack:
 				#self.textbox.main.stack.variables.del_val("_return")
 		has_run = true
 		return run_return
-		
+
 func _on_text_printed():
 	printed = text_label.text.substr(0,text_label.visible_characters+1)
 	if not printed:
@@ -314,12 +314,12 @@ func _on_text_printed():
 	if Time.get_ticks_msec()-last_text_sound_played > text_sound_rate * 1000:
 		play_sound()
 		last_text_sound_played = Time.get_ticks_msec()
-		
+
 func get_number_of_lines_for(text):
 	var width_checker = get_node("WidthChecker")
 	width_checker.text = text
 	return int(width_checker.get_content_height()/15)
-		
+
 func queue_next_textbox():
 	next_packs = []
 	for line in printed_lines.slice(3, printed_lines.size()):
@@ -328,8 +328,12 @@ func queue_next_textbox():
 		next_packs.append(pack.duplicate())
 	# TODO even bigger hack on determining size of text
 	if printed_lines.size() < 4:
-		print("leftover start:", next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1))	
-		var last_char = printed_lines[-1][-1]
+		print("leftover start:", next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1))
+		var last_char = ""
+		if printed_lines[-1].length() > 0:
+			last_char = printed_lines[-1][-1]
+		else:
+			return
 		print("last_char:", last_char)
 		var offset = 0
 		# Don't know why this here
@@ -341,7 +345,11 @@ func queue_next_textbox():
 		var while_loops = 0
 		while (get_number_of_lines_for(PoolStringArray(printed_lines).join("\n")) > 3 or last_char != " ") and while_loops < MAX_WHILE:
 			while_loops += 1
-			last_char = printed_lines[-1][-1]
+			last_char = " "
+			if printed_lines[-1].length() > 0:
+				last_char = printed_lines[-1][-1]
+			else:
+				break
 			if not break_on_spaces:
 				last_char = " "
 			printed_lines[-1] = printed_lines[-1].substr(0, printed_lines[-1].length()-1)
@@ -420,7 +428,7 @@ func get_char_sound():
 # will be text once the markup has been processed. It doesn't
 # guarantee that there *won't* be text, but does guarantee that there will be
 # If a textbox won't have text, treat it as if it is just a bucket of commands,
-# and don't show the textbox unless text has been added to it. 
+# and don't show the textbox unless text has been added to it.
 # If there will be text, show the textbox immediately
 func will_there_be_text(text):
 	print("WILL THERE BE TEXT")
@@ -457,7 +465,7 @@ func _ready():
 	var font_nt = main.font_cache.get_cached([font_nt_name, font_nt_size])
 	if not font:
 		font_tb_name = Filesystem.lookup_file(
-			font_tb_name, 
+			font_tb_name,
 			main.top_script().root_path
 		)
 		font = DynamicFont.new()
@@ -468,7 +476,7 @@ func _ready():
 		#font.set_spacing(DynamicFont.SPACING_SPACE, -2)
 	if not font_nt:
 		font_nt_name = Filesystem.lookup_file(
-			font_nt_name, 
+			font_nt_name,
 			main.top_script().root_path
 		)
 		font_nt = DynamicFont.new()
@@ -477,15 +485,15 @@ func _ready():
 		font_nt.font_data = load(font_nt_name)
 		font_nt.size = font_nt_size
 		#font_nt.set_spacing(DynamicFont.SPACING_SPACE, -2)
-	
+
 	tb_timer = get_node(tb_timer)
 	tb_timer.one_shot = true
-	
+
 	if main.stack.variables.get_truth("_textbox_skipupdate",false):
 		wait_signal = ""
 	if not main:
 		return
-		
+
 	#connect("tree_exited", Commands, "hide_arrows", [main.stack.scripts[-1]])
 
 	get_node("%NametagLabel").text = ""
@@ -544,7 +552,7 @@ func update_nametag():
 		get_node("%NametagImage").add_child(nt_sprite)
 		nt_sprite.position = Vector2(0,0)
 		return
-	# Lookup character name 
+	# Lookup character name
 	var nametag = main.stack.variables.get_string("_speaking_name")
 	if not nametag:
 		get_node("%NametagBackdrop").visible = false
@@ -552,7 +560,7 @@ func update_nametag():
 		get_node("%NametagLabel").text = nametag
 		get_node("%NametagBackdrop").visible = true
 		update_nametag_size()
-	
+
 func update_nametag_size():
 	var label = get_node("%NametagLabel")
 	var size = label.get_font("font").get_string_size(label.text)
@@ -598,11 +606,11 @@ func update_nametag_size():
 		nt_right_sprite.cannot_save = true
 		nt_right_sprite.position = Vector2(nt_middle_sprite.position.x+int(size.x/2),0)
 	get_node("%NametagBackdrop").move_child(get_node("%NametagLabel"), get_node("%NametagBackdrop").get_child_count()-1)
-		
+
 func stop_timer():
 	set_process(true)
 	tb_timer.disconnect("timeout", self, "stop_timer")
-		
+
 func pause(args, pack):
 	_set_speaking_animation("blink")
 	set_process(false)
@@ -613,19 +621,24 @@ func pause(args, pack):
 func _on_Area2D_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton and event.is_pressed():
 		click_continue()
-		
-func queue_free():
+
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_PREDELETE:
+			on_predelete()
+
+func on_predelete() -> void:
 	clean_up()
 	emit_signal("textbox_deleting")
 	# delete on the next frame
 	is_deleting = true
-	
+
 func clean_up():
 	trigger_text_end_events()
 	# TODO we could check whether tboff needs to be called or not
 	# In pywright, it's only called when _tb_on is true
 	Commands.call_command("tboff", main.top_script(), [])
-	
+
 func finish_text():
 	var while_loops = 0
 	while (not created_packs or packs) and while_loops < MAX_WHILE:
@@ -633,7 +646,7 @@ func finish_text():
 		update_textbox(0, true)
 	if while_loops >= MAX_WHILE:
 		GlobalErrors.log_error("Too many while loops for textbox")
-			
+
 func click_continue(immediate_skip=false):
 	if not has_finished and not main.stack.variables.get_truth("_textbox_allow_skip", false):
 		return
@@ -667,7 +680,7 @@ func click_continue(immediate_skip=false):
 		queue_free()
 		Commands.call_command("sound_textbox_continue", main.stack.scripts[0], [])
 	return true
-		
+
 func click_next():
 	if click_continue(true):
 		main.stack.scripts[-1].next_statement()
@@ -675,7 +688,7 @@ func click_next():
 func click_prev():
 	if click_continue(true):
 		main.stack.scripts[-1].prev_statement()
-		
+
 func get_next_pack(text, connect_signals=false):
 	var i = 0
 	var pack = ""
@@ -697,7 +710,7 @@ func get_next_pack(text, connect_signals=false):
 	if while_loops >= MAX_WHILE:
 		GlobalErrors.log_error("Max loops reached in get_next_pack")
 	return [TextPack.new(pack, self, connect_signals), ""]
-	
+
 
 
 func tokenize_text(text, connect_signals=false):
@@ -727,7 +740,7 @@ func _set_speaking_animation(name):
 		last_speaking = name
 		if character:
 			character.set_sprite(name)
-		
+
 func strip_bbcode(source:String) -> String:
 	var regex = RegEx.new()
 	regex.compile("\\[.+?\\]")
@@ -752,7 +765,7 @@ func update_textbox(dt:float, force = false):
 			packs.remove(0)
 	else:
 		trigger_text_end_events()
-			
+
 func trigger_text_end_events():
 	if not has_finished:
 		has_finished = true
@@ -762,7 +775,7 @@ func trigger_text_end_events():
 		_set_speaking_animation("blink")
 		main.emit_signal("text_finished")
 	update_arrows(true)
-		
+
 func update_arrows(disable_click=null):
 	var arrows = Commands.get_objects("_main_button_arrow")
 	var buttons = Commands.get_objects("_main_button_fg")
@@ -789,7 +802,7 @@ func update_arrows(disable_click=null):
 
 func reset_statement():
 	main.stack.variables.del_val("_in_statement")
-		
+
 func _process(dt):
 	# FIXME this may be something we want to apply to all WrightObjects too
 	# Essentially, when something is queue_free() during the _process() chain,
@@ -819,7 +832,7 @@ static func create_node(saved_data:Dictionary):
 	var ob = load("res://System/UI/Textbox.tscn").instance()
 	ob.text_to_print = saved_data["text_to_print"]
 	return ob
-	
+
 func load_node(tree, saved_data:Dictionary):
 	main = tree.get_nodes_in_group("Main")[0]
 	ScreenManager.top_screen().add_child(self)

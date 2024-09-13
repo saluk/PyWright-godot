@@ -4,7 +4,7 @@ var main
 
 func _init(commands):
 	main = commands.main
-	
+
 func gui_button(script, arguments):
 	var click_macro = arguments.pop_front()
 	var spl = Commands.keywords(arguments, true)
@@ -48,7 +48,7 @@ class GuiWait:
 # TODO make macro script that executes while waiting
 func gui_wait(script, arguments):
 	return GuiWait.new(script)
-	
+
 func gui_back(script, arguments):
 	var click_macro = "{gui_back_clicked}"
 	var template = ObjectFactory.get_template("button")
@@ -68,7 +68,7 @@ func gui_back(script, arguments):
 	button.wait_signal = "tree_exited"
 	button.click_area.click_args = [button.name]
 	return button
-	
+
 # TODO IMPLEMENT
 func gui_input(script, arguments):
 	pass

@@ -17,8 +17,8 @@ var ready = false
 func _init():
 	script_name = "surf3d"
 	z = ZLayers.z_sort["surf3d"]
-	
-	
+
+
 func _ready():
 	view_container = get_node("%view_container")
 	view_viewport = get_node("%view_viewport")
@@ -42,7 +42,7 @@ func get_meshes():
 
 func get_screen():
 	return get_parent()
-	
+
 func set_size(size_args=[]):
 	if size_args:
 		screen_w = size_args[0]
@@ -56,7 +56,7 @@ func set_size(size_args=[]):
 		click_container.rect_size = Vector2(screen_w, screen_h)
 		view_viewport.size = Vector2(render_w, render_h)
 		click_viewport.size = Vector2(render_w, render_h)
-	
+
 func _gui_input(event):
 	if event is InputEventMouseButton and event.pressed == true and event.button_index == BUTTON_LEFT:
 		var click_image = click_viewport.get_texture().get_data()
@@ -84,7 +84,7 @@ func _gui_input(event):
 
 
 # Copy over all meshes from viewport 1, set their override material
-	
+
 func _process(dt):
 	var copied_meshes = []
 	var click_meshes = []

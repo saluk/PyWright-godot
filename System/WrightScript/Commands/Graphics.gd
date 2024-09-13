@@ -25,7 +25,7 @@ func ws_clear(script, arguments):
 	if "top" in arguments:
 		bottom = false
 	script.screen.clear(top, bottom)
-	
+
 # NEW: all argument
 func ws_delete(script, arguments):
 	var name = Commands.keywords(arguments).get("name", null)
@@ -44,7 +44,8 @@ func ws_delete(script, arguments):
 					break
 		for child in deleted:
 			script.screen.remove_child(child)
-				
+			child.queue_free()
+
 func apply_fader(script, obj, arguments):
 	if not "fade" in arguments:
 		return obj
@@ -58,7 +59,7 @@ func apply_fader(script, obj, arguments):
 	if wait:
 		return fader
 	return obj
-				
+
 func ws_obj(script, arguments):
 	if not main.get_tree():
 		return
@@ -69,7 +70,7 @@ func ws_obj(script, arguments):
 		arguments
 	)
 	return apply_fader(script, obj, arguments)
-	
+
 func ws_bg(script, arguments):
 	if not main.get_tree():
 		return
@@ -77,7 +78,7 @@ func ws_bg(script, arguments):
 		Commands.delete_object_group(Commands.CLEAR_GROUP)
 	var bg:Node = ObjectFactory.create_from_template(script, "bg", {}, arguments)
 	return apply_fader(script, bg, arguments)
-	
+
 func ws_fg(script, arguments):
 	if not main.get_tree():
 		return
@@ -127,7 +128,7 @@ func ws_char(script, arguments):
 	# Called last because _speaking has a setter that sets _speaking_name
 	main.stack.variables.set_val("_speaking", character.base_path)
 	return apply_fader(script, character, arguments)
-	
+
 func ws_emo(script, arguments):
 	var kw = Commands.keywords(arguments, true)
 	arguments = kw[1]
@@ -149,7 +150,7 @@ func ws_emo(script, arguments):
 		characters[0].change_variant(emotion)
 		if mode:
 			characters[0].set_sprite(mode)
-			
+
 # TODO test
 func ws_bemo(script, arguments):
 	arguments.append("mode=blink")
@@ -187,7 +188,7 @@ func ws_addev(script, arguments):
 	if not tag in page_arr:
 		page_arr.append(tag)
 		main.stack.evidence_pages[page] = page_arr
-		
+
 func ws_delev(script, arguments):
 	for page in main.stack.evidence_pages:
 		var page_array = main.stack.evidence_pages[page]

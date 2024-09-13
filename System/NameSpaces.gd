@@ -51,13 +51,13 @@ var main
 func _init():
 	global_namespace = Variables.new()
 	game_namespace = Variables.new()
-	
+
 func reset():
 	global_namespace = Variables.new()
 	game_namespace = Variables.new()
 	for k in DEFAULTS.keys():
 		global_namespace.store[k] = DEFAULTS[k]
-	
+
 func init_game_namespace(game_file):
 	pass
 	# TODO load game file and populate the game_namespace
@@ -65,7 +65,7 @@ func init_game_namespace(game_file):
 
 class NOT_FOUND:
 	pass
-	
+
 class Accessor:
 	var key:String
 	var namespace:Variables
@@ -192,11 +192,11 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 		variable = ".".join(parts)
 	else:
 		variable = ""
-		
+
 	# Expand variables further
 	if next.begins_with("$"):
 		next = get_accessor(next.substr(1), null, setting).get_val("string", "")
-		
+
 	if not namespace and next and variable:
 		if next == "script":
 			return get_accessor(variable, script.variables, setting)
@@ -205,16 +205,16 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 		# See if next is an object
 		for object in Commands.get_objects(next):
 			return get_accessor(variable, object.variables, setting)
-		
+
 	if not namespace:
 		namespace = global_namespace
-		
+
 	var accessor = Accessor.new(next, namespace, self)
-	
+
 	# We are at the end of the line, let caller figure out what to do with the address
 	if not variable:
 		return accessor
-		
+
 	if accessor.exists():
 		if accessor.is_namespace():
 			return get_accessor(variable, accessor.get_val(), setting)
@@ -235,7 +235,7 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 func set_val(key, value):
 	var a = get_accessor(key, null, true)
 	return a.set_val(value)
-	
+
 func del_val(key):
 	return get_accessor(key, null, true).del_val()
 
@@ -244,10 +244,10 @@ func get_string(key, default=""):
 
 func get_int(key, default=0):
 	return get_accessor(key).get_val("int", default)
-	
+
 func get_float(key, default=0.0):
 	return get_accessor(key).get_val("float", default)
-	
+
 func get_num(key, default=0.0):
 	return get_accessor(key).get_val("num", default)
 
@@ -274,7 +274,7 @@ func save_node(data):
 
 static func create_node(saved_data:Dictionary):
 	pass # Not called
-	
+
 func load_node(tree, saved_data:Dictionary):
 	SaveState._load_node(tree, global_namespace, saved_data["global_namespace"])
 	SaveState._load_node(tree, game_namespace, saved_data["game_namespace"])

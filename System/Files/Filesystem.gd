@@ -7,20 +7,20 @@ static func sanitize_text_for_path(text, remove_slashes=true):
 	if remove_slashes:
 		text = text.replace("/",".")
 	return text
-	
+
 static func make_if_not_exists_dir(path):
 	var d = Directory.new()
 	# Ensure save folder exists
 	if not d.dir_exists(path):
 		d.make_dir(path)
-	
+
 static func path_join(a, b):
 	if a.ends_with("/"):
 		a = a.substr(0, a.length()-1)
 	if b.begins_with("/"):
 		b = b.substr(1, b.length()-1)
 	return a+"/"+b
-	
+
 static func path_split(path:String):
 	var parts = []
 	if path.begins_with("res://"):
@@ -29,16 +29,16 @@ static func path_split(path:String):
 	for segment in path.split("/"):
 		parts.append(segment)
 	return parts
-	
+
 static func lookup_file(sub_path:String, current_path:String, exts=[], print_errors=true):
 	if FilePathCache.has_cached([sub_path, current_path]):
 		return FilePathCache.get_cached([sub_path, current_path])
 	var file = _lookup_file(sub_path, current_path, exts, print_errors)
 	return FilePathCache.set_get_cached([sub_path, current_path], file)
-	
+
 static func _lookup_file(sub_path:String, current_path:String, exts=[], print_errors=true):
 	var searched_paths = []
-	
+
 	# Searching for a specific extension
 	# Remove the extension from the sub_path and search
 	# for all possible versions of the file
@@ -54,7 +54,7 @@ static func _lookup_file(sub_path:String, current_path:String, exts=[], print_er
 
 	# TODO - some cases may need this to be more advanced
 	# For now we will search the path that was given, the parent path, and the res:// folder
-	
+
 	var state = "given_path"
 	while 1:
 		print("DEBUG search ", sub_path, " at ", current_path)
@@ -65,24 +65,24 @@ static func _lookup_file(sub_path:String, current_path:String, exts=[], print_er
 		if joined_exists:
 			print("returning found:", joined_exists)
 			return joined_exists
-		
+
 		if state == "given_path":
 			state = "game_path"
 			while current_path.ends_with("/"):
 				current_path = current_path.substr(0, current_path.length()-1)
 			current_path = current_path.rsplit("/", true, 1)[0]
 			continue
-			
+
 		elif state == "game_path":
 			state = "res"
 			current_path = "res://"
 			continue
-			
+
 		elif state == "res":
 			if 1:#print_errors:
-				GlobalErrors.log_error("File Error Root: Unable to find or load file, searched [%s]" % [",".join(searched_paths)])	
+				GlobalErrors.log_error("File Error Root: Unable to find or load file, searched [%s]" % [",".join(searched_paths)])
 			break
-		
+
 static func load_resource(path:String):
 	if ResourceLoader.exists(path):
 		var resource = ResourceLoader.load(path, "", true)
@@ -135,10 +135,10 @@ static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -
 	elif image.get_size().length() > 0:
 		texture = ImageTexture.new()
 		texture.create_from_image(image, ImageTexture.FLAG_FILTER)
-		
+
 	if not texture or not image.get_size().length() > 0:
 		return []
-	
+
 	# Build frames
 	var frames = []
 	var x = 0
@@ -172,10 +172,10 @@ static func load_atlas_specific(path:String, rect_list:Array) -> Array:
 	else:
 		texture = ImageTexture.new()
 		texture.create_from_image(image, 0)
-		
+
 	if not texture or not image:
 		return []
-	
+
 	# Build frames
 	var frames = []
 	for i in range(rect_list.size()):

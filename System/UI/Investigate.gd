@@ -27,7 +27,7 @@ func _ready():
 	script_name = "invest_menu"
 	wait_signal = "tree_exited"
 	wait = true
-	
+
 func _process(dt):
 	if not options_added:
 		var bg_script = main.stack.variables.get_string("script._override_bg", null)
@@ -49,7 +49,7 @@ func _process(dt):
 	if not called_court_record_button:
 		Commands.call_macro("show_court_record_button", wrightscript, [])
 		called_court_record_button = true
-	
+
 func load_art(root_path):
 	pass
 
@@ -74,6 +74,8 @@ func add_option(option):
 		(256/2-button.width) + rect_offset.x*button.width,
 		(192/2-button.height) + rect_offset.y*button.height+192
 	)
+	print(button.owner)
+
 
 func ws_investigate_option(script, args):
 	#bg.free()
@@ -105,7 +107,7 @@ func save_node(data):
 static func create_node(saved_data:Dictionary):
 	var ob = load("res://System/UI/Investigate.gd").new()
 	return ob
-	
+
 func load_node(tree, saved_data:Dictionary):
 	.load_node(tree, saved_data)
 

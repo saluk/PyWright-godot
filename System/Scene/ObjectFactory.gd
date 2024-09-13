@@ -3,10 +3,10 @@ extends Node
 var _main
 
 var main setget , get_main
-	
+
 func get_main():
 	return get_tree().get_nodes_in_group("Main")[0]
-	
+
 # TODO make these auto discoverable
 var classes = {
 	"WrightObject": "res://System/Scene/WrightObject.gd",
@@ -49,7 +49,7 @@ var DEFAULT_TEMPLATE = {
 	"centerx": false,
 	"centery": false
 }
-	
+
 var TEMPLATES = {
 	"bg":
 		{
@@ -358,7 +358,7 @@ func get_template(key, modified_data={}):
 	t.merge(overlay, true)
 	t.merge(modified_data, true)
 	return t
-	
+
 # Helper functions to modify a template
 
 # Add, remove, or update a sprite
@@ -368,12 +368,12 @@ func update_sprite(template, key, data={}):
 		template["sprites"][key] = data
 	else:
 		template["sprites"][key].merge(data, true)
-		
+
 # Update potentially all values in the template
 func update_template(template, data={}):
 	data = data.duplicate(true)
 	template.merge(data, true)
-	
+
 func consume_keyword(arguments, key, default=null):
 	var keyword_arguments = Commands.keywords(arguments)
 	if key in keyword_arguments:
@@ -394,22 +394,22 @@ func consume_keyword(arguments, key, default=null):
 #         template key
 # fade - shorthand that also creates a fader object (should be implemented as part of the scripting layer)
 func create_from_template(
-		script, 
-		template_key_or_template, 
-		modify_template={}, 
+		script,
+		template_key_or_template,
+		modify_template={},
 		arguments=[],
 		parent_name=null
 	):
 
-	
+
 	# Load and modify template
 	var template = template_key_or_template
 	if template_key_or_template is String:
 		template = get_template(template_key_or_template, modify_template)
-	
+
 	# Make object
 	var object:Node = load(classes[template["class"]]).new()
-	
+
 	# Find parent and add object to it
 	var parent
 	if not parent_name:
@@ -424,13 +424,14 @@ func create_from_template(
 			GlobalErrors.log_error("Failed to find parent:"+parent_name, {"frame": script.get_frame(null)})
 		else:
 			parent = parent[0]
-	
+
 	# Initialize object values
 	object.main = get_main()
 	object.wrightscript = script
 	object.stack = get_main().stack
-	
+
 	parent.add_child(object)
+	object.owner = parent
 
 	var x=int(consume_keyword(arguments, "x", template["position"][0]))
 	var y=int(consume_keyword(arguments, "y", template["position"][1]))
@@ -453,7 +454,7 @@ func create_from_template(
 	var bt = consume_keyword(arguments, "button_text", null)
 	if bt:
 		template["button_text"] = bt
-		
+
 	object.load_sprites(template)
 	Commands.last_object = object
 	if arguments:
@@ -470,7 +471,7 @@ func create_from_template(
 
 	for group in template["groups"]:
 		object.add_to_group(group)
-		
+
 	# This is just to help debugging in godot
 	# Godot .name should be unique in the scene but WrightScript can have duplicate names
 	object.name = object.script_name

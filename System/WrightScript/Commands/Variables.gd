@@ -12,14 +12,14 @@ func ws_set(script, arguments):
 	var key = arguments.pop_front()
 	var value = Commands.join(arguments)
 	main.stack.variables.set_val(key, value)
-	
+
 func ws_setvar(script, arguments):
 	return ws_set(script, arguments)
-	
+
 # NEW
 func ws_delvar(script, arguments):
 	main.stack.variables.del_val(arguments[0])
-	
+
 # TODO IMPLEMENT
 #    @category([VALUE("variable","variable name to set"),COMBINED("expression2","The results of the expression will be stored in the variable.")],type="logic")
 #    def _set_ex(self,command,variable,*args):
@@ -30,7 +30,7 @@ func ws_set_ex(script, arguments):
 	var variableName = arguments.pop_front()
 	var value = WSExpression.EVAL_STR(Commands.join(arguments))
 	main.stack.variables.set_val(variableName, value)
-	
+
 func ws_setvar_ex(script, arguments):
 	return ws_set_ex(script, arguments)
 
@@ -38,7 +38,7 @@ func ws_getvar(script, arguments):
 	var save_to = arguments.pop_front()
 	var get_from = Commands.join(arguments, "")
 	main.stack.variables.set_val(save_to, main.stack.variables.get_string(get_from))
-	
+
 func ws_get(script, arguments):
 	return ws_getvar(script, arguments)
 
@@ -69,7 +69,7 @@ func ws_setprop(script, arguments):
 		elif kw["prop"] == "frame":
 			value = main.stack.variables.get_int(variable)
 			object.current_sprite.animated_sprite.frame = value
-	
+
 # TODO IMPLEMENT
 #    @category([VALUE("variable","variable name to save random value to"),VALUE("start","smallest number to generate"),VALUE("end","largest number to generate")],type="logic")
 #    def _random(self,command,variable,start,end):
@@ -83,7 +83,7 @@ func ws_random(script, arguments):
 	var key = arguments.pop_front()
 	var minimum = Values.to_num(arguments.pop_front())
 	var maximum = Values.to_num(arguments.pop_front())
-	var random_integer = rng.randi() % (maximum - minimum  + 1) + minimum 
+	var random_integer = rng.randi() % (maximum - minimum  + 1) + minimum
 	main.stack.variables.set_val(key, random_integer)
 
 func ws_joinvar(script, arguments):
@@ -113,7 +113,7 @@ func ws_mulvar(script, arguments):
 	if numa==null:
 		return GlobalErrors.log_error(arguments[0]+"="+str(numa)+" not a number", {"script": script})
 	main.stack.variables.set_val(arguments[0], numa * numb)
-	
+
 func ws_divvar(script, arguments):
 	var numa = main.stack.variables.get_num(arguments[0])
 	var numb = Values.to_num(arguments[1])
@@ -126,7 +126,7 @@ func ws_absvar(script, arguments):
 	if inta==null:
 		return GlobalErrors.log_error(arguments[0]+"="+str(inta)+" not a number", {"script": script})
 	main.stack.variables.set_val(arguments[0], abs(inta))
-	
+
 # TODO IMPLEMENT
 #@category([VALUE("filename","file to export variables into, relative to the case folder"),
 #            ETC("variable_names",
@@ -148,10 +148,10 @@ func ws_absvar(script, arguments):
 #        f.close()
 func ws_exportvars(script, arguments):
 	pass
-	
+
 func ws_filewrite(script, arguments):
 	return Commands.NOTIMPLEMENTED
-	
+
 # TODO IMPLEMENT
 #    @category([VALUE("filename","file to import variables from, relative to the case folder")],type="files")
 #    def _importvars(self,command,filename):
@@ -204,11 +204,11 @@ func ws_flag(script, arguments:Array, return_true=true):
 
 func ws_setflag(script, arguments):
 	main.stack.variables.set_val(arguments[0], "true")
-	
+
 func ws_delflag(script, arguments):
 	if main.stack.variables.get_string(arguments[0], null) != null:
 		main.stack.variables.del_val(arguments[0])
-		
+
 func ws_noflag(script, arguments):
 	# NOT YET IMPLEMENTED
 	return ws_flag(
@@ -216,7 +216,7 @@ func ws_noflag(script, arguments):
 	)
 
 # NOTE:
-# If you use ? AND fail, a success will send the script to the next line, 
+# If you use ? AND fail, a success will send the script to the next line,
 # while a failure will to to the fail label. It's valid but a bit weird.
 # You should ONLY use one of (?) or (label + fail=)
 func ws_is(script, arguments):
@@ -234,7 +234,7 @@ func ws_is(script, arguments):
 		script.succeed(label)
 	else:
 		script.fail(label, fail)
-		
+
 func ws_isnot(script, arguments):
 	var removed = Commands.keywords(arguments, true)
 	var keywords = removed[0]
@@ -250,7 +250,7 @@ func ws_isnot(script, arguments):
 		script.succeed(label)
 	else:
 		script.fail(label, fail)
-		
+
 func ws_isempty(script, arguments):
 	var removed = Commands.keywords(arguments, true)
 	var keywords = removed[0]
@@ -267,7 +267,7 @@ func ws_isempty(script, arguments):
 		script.succeed(label)
 	else:
 		script.fail(label, fail)
-		
+
 func ws_isnotempty(script, arguments):
 	var removed = Commands.keywords(arguments, true)
 	var keywords = removed[0]
@@ -284,7 +284,7 @@ func ws_isnotempty(script, arguments):
 		script.fail(label, fail)
 	else:
 		script.succeed(label)
-		
+
 func ws_is_ex(script, arguments):
 	var removed = Commands.keywords(arguments, true)
 	var keywords = removed[0]

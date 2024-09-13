@@ -41,7 +41,7 @@ func _ready():
 		watched_panel = get_node(watched_panel)
 		watched_textedit = get_node(watched_textedit)
 		node_scripts = get_node(node_scripts)
-	
+
 	node_scripts.remove_child(script_tab)
 	# TODO conceal buttons if game is not playing to prevent error
 	step.connect("button_up", self, "step_over")
@@ -50,7 +50,7 @@ func _ready():
 	speed.connect("button_up", self, "set_speed")
 	slow.connect("button_up", self, "toggle_slow")
 	show_watched_panel.connect("button_up", self, "_show_watched_panel")
-	
+
 	goto_line_button_template = get_node("GotoLineButton")
 	goto_line_button_template.get_parent().remove_child(goto_line_button_template)
 
@@ -72,7 +72,7 @@ func get_script_data(script):
 	for script_data in scripts:
 		if script_data["script"] == script:
 			return script_data
-		
+
 func edit_script(script):
 	var d = get_script_data(script)
 	script.load_string(d["editor"].text)
@@ -83,7 +83,7 @@ func goto_line(row, script):
 		script.goto_line_number(row)
 		current_stack.force_clear_blockers()
 	get_script_data(script)["editor"].set_line_as_breakpoint(row, false)
-	
+
 func all_ev():
 	var found = false
 	for var_key in current_stack.variables.evidence_keys():
@@ -100,7 +100,7 @@ func all_ev():
 	p.add_child(l)
 	get_parent().add_child(p)
 	p.popup_centered()
-	
+
 func debug_line(line):
 	print("watching line", line)
 	if stepping_over >= 0:
@@ -111,7 +111,7 @@ func debug_line(line):
 		stepping_over = -1
 	debug_last_state = current_stack.state
 	current_stack.state = current_stack.STACK_DEBUG
-	
+
 func step_over():
 	if in_debugger:
 		if stepping_over == -1:
@@ -119,7 +119,7 @@ func step_over():
 			current_stack.state = current_stack.STACK_READY
 			while scripts.size() > 1:
 				yield(get_tree(), "idle_frame")
-		
+
 func set_speed():
 	if speed.text == ">>>":
 		Engine.time_scale = 100.0
@@ -127,7 +127,7 @@ func set_speed():
 	else:
 		Engine.time_scale = 1.0
 		speed.text = ">>>"
-		
+
 func toggle_slow():
 	if slow_mode:
 		slow_mode = false
@@ -137,15 +137,17 @@ func toggle_slow():
 		slow_mode = true
 		slow.text = "(slow)"
 		Engine.time_scale = 0.05
-		
+
 func _process(delta):
+	if not current_stack:
+		update_current_stack()
 	if slow_mode:
 		OS.delay_msec(200)
-		
+
 func add_new_script(script):
 	var editor_container = script_tab.duplicate()
 	var d = {
-		"script": script, 
+		"script": script,
 		"editor_container": editor_container,
 		"editor": editor_container.get_node("CurrentScriptEditor"),
 		"highlighted_line": null,
@@ -169,7 +171,9 @@ func rebuild():
 	for i in range(scripts.size()-1, 0, -1):
 		if not scripts[i]["script"] in current_stack.scripts:
 			scripts.remove(i)
-			node_scripts.remove_child(node_scripts.get_child(i))
+			var node_at = node_scripts.get_child(i)
+			node_at.queue_free()
+			node_scripts.remove_child(node_at)
 			change = true
 	# STEP 2 - add scripts in the current stack that aren't in our scripts
 	var has_scripts = []
@@ -196,13 +200,18 @@ func rebuild():
 		node_scripts.current_tab = scripts.size()-1
 	return
 
-func update_current_stack(stack):
+
+
+func update_current_stack():
 	var main = get_tree().get_nodes_in_group("Main")[0]
 	if not Configuration.user.debugger_enabled:
 		return
-	if current_stack != stack:
-		current_stack = stack
+	if current_stack != main.stack:
+		current_stack = main.stack
 		current_stack.connect("enter_debugger", self, "start_debugger", [true])
+		current_stack.connect("update_debugger", self, "update_current_stack")
+	if not current_stack:
+		return
 	rebuild()
 	# Update each editor
 	for i in range(len(scripts)):
@@ -229,7 +238,7 @@ func _input(evt:InputEvent):
 			var popup_menu = PopupMenu.new()
 			popup_menu.add_item("Copy", COPY)
 			popup_menu.connect("id_pressed", self, "menu_id_pressed")
-			
+
 func menu_id_pressed(id):
 	if id == COPY:
 		pass

@@ -14,7 +14,7 @@ func ws_cross(script, arguments):
 		StandardVar.COURT_FAIL_LABEL.store(fail)
 	else:
 		StandardVar.COURT_FAIL_LABEL.delete()
-	
+
 func ws_endcross(script, arguments):
 	main.stack.variables.set_val("_statement", "")
 	main.stack.variables.del_val("_in_statement")
@@ -40,7 +40,7 @@ func ws_next_statement(script, arguments):
 		cross.next_statement()
 	Commands.delete_object_group(Commands.TEXTBOX_GROUP)
 	main.stack.variables.set_val("_in_statement", "true")
-	
+
 func ws_prev_statement(script, arguments):
 	var cross = main.cross_exam_script()
 	if cross:

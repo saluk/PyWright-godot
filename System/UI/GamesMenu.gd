@@ -18,7 +18,7 @@ func add_game_button(path:String, game:String):
 	if not path.ends_with("/"):
 		path += "/"
 	game_item_select_list.append(path+game)
-	
+
 func add_test_button(path):
 	var hbox = HBoxContainer.new()
 	var b = Button.new()
@@ -58,35 +58,36 @@ func _populate_games(folder, types):
 		if types == "test" and next_file_name.ends_with(".txt"):
 			add_test_button(next_file_name)
 		next_file_name = listing.get_next()
-	
-	
+
+
 func _ready():
+	name = "GamesMenu"
 	get_node("%MainLabel").text = "GodotWright version "+Configuration.builtin.version
-	
+
 	choose_game_dir_dialog = $Control/ChooseGameDirDialog
 	choose_game_dir_dialog.connect("dir_selected", self, "_game_dir_selected")
-	
+
 	_clear_games()
-	
+
 	if Configuration.user.game_list == "internal":
 		choose_builtin_games()
 	else:
 		_populate_games(Configuration.user.game_folder, "folder")
 
 	_populate_games("res://tests/", "test")
-	
+
 	$Control/HBoxContainer/ChooseGameDir.connect("pressed", self, "choose_game_dir")
 	$Control/HBoxContainer/BuiltinGames.connect("pressed", self, "choose_builtin_games")
 	$Control/ItemList.connect("item_selected", self, "item_selected")
 	$Control/ItemList.connect("item_activated", self, "item_activated")
 	$Control/PlayButton.connect("pressed", self, "play_item_selected")
-	
+
 func item_selected(index):
 	$Control/PlayButton.visible = true
-	
+
 func item_activated(index):
 	play_item_selected()
-	
+
 func play_item_selected():
 	var indexes = $Control/ItemList.get_selected_items()
 	if indexes:
@@ -99,21 +100,21 @@ func choose_game_dir():
 		d.current_path = Configuration.user.game_folder+"/"
 	d.show()
 	d.invalidate()
-	
+
 func choose_builtin_games():
 	_clear_games()
 	_populate_games("user://", "pack")
 	_populate_games("res://games/", "folder")
 	Configuration.user.game_list = "internal"
 	Configuration.save_config()
-	
+
 func _game_dir_selected(dir):
 	_clear_games()
 	Configuration.user.game_list = "external"
 	Configuration.user.game_folder = dir
 	Configuration.save_config()
 	_populate_games(dir, "folder")
-	
+
 func launch_game(path, mode="play"):
 	emit_signal("game_loaded", path, mode)
 	queue_free()

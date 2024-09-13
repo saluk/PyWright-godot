@@ -15,7 +15,7 @@ class Scroller extends Node:
 	var script_name = "scroll"
 	var z = 0
 	var save_start_positions := []
-	
+
 	var controlled  # for saving
 	func _init(x, y, z, speed, wait, filter):
 		name = "scroll"
@@ -40,11 +40,11 @@ class Scroller extends Node:
 				# TODO kind of hacky to invert and clamp the z movement
 				var end_pos = Vector3(next_pos.x+total.x, next_pos.y+total.y, clamp(next_pos.z-total.z, o.maxz, -o.minz))
 				tween.interpolate_property(
-					o, 
-					"translation", 
-					next_pos, 
-					end_pos, 
-					total_time, 
+					o,
+					"translation",
+					next_pos,
+					end_pos,
+					total_time,
 					Tween.TRANS_LINEAR
 				)
 				print(o.name)
@@ -61,15 +61,15 @@ class Scroller extends Node:
 					next_pos = o.position
 				var end_pos = Vector2(next_pos.x+total.x, next_pos.y+total.y)
 				tween.interpolate_property(
-					o, 
-					"position", 
-					next_pos, 
-					end_pos, 
-					total_time, 
+					o,
+					"position",
+					next_pos,
+					end_pos,
+					total_time,
 					Tween.TRANS_LINEAR
 				)
 				save_start_positions.append(next_pos)
-			
+
 		tween.start()
 	func getscrollable(objects):
 		var return_list = []
@@ -98,7 +98,7 @@ class Scroller extends Node:
 			new_objects.append(o)
 		objects = new_objects
 		controlled = ["control_filter", screen]
-		pass	
+		pass
 	func _process(dt):
 		#tween.seek(total_time-time_left)
 		time_left -= dt
@@ -116,7 +116,7 @@ class Scroller extends Node:
 		data["save_start_positions"] = []
 		for pos in save_start_positions:
 			data["save_start_positions"].append([pos.x, pos.y])
-		
+
 	func load_node(tree, saved_data:Dictionary):
 		# TODO we should be added to correct scene. save load doesn't handle screens yet
 		ScreenManager.main_screen.add_child(self)
@@ -139,7 +139,7 @@ class Scroller extends Node:
 static func create_node(saved_data:Dictionary):
 	var ob = Scroller.new(20,0,0,1,0,"")
 	return ob
-	
+
 static func ws_scroll(script, arguments):
 	var kw = Commands.keywords(arguments)
 	var x = int(kw.get("x", 0))
@@ -149,7 +149,7 @@ static func ws_scroll(script, arguments):
 	var last = "last" in arguments
 	var wait = not "nowait" in arguments
 	var script_name = kw.get("name", null)
-	var filter = kw.get("filter", "top")   
+	var filter = kw.get("filter", "top")
 	#filter is top or bottom - when no name, only scroll objects on this screen.
 	#if its not top or bottom, it has no effect
 	var scroller = Scroller.new(x, y, z, speed, wait, filter)

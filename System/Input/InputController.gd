@@ -27,7 +27,7 @@ func scan_objects(action, button_names=[]):
 func _unhandled_input(event):
 	if event.is_action_released("button_advance"):
 		stop_hold("advance")
-		
+
 var held = {}
 func start_hold(action):
 	if not action in held:
@@ -52,4 +52,4 @@ func _process(delta):
 			scan_objects("advance", "_main_button_fg")
 			if not just_started:
 				stop_hold("advance")
-		
+

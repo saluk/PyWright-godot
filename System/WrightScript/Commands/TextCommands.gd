@@ -4,7 +4,7 @@ var main
 
 func _init(commands):
 	main = commands.main
-	
+
 func ws_textbox(script, arguments):
 	#There can be only one!
 	for obj in Commands.get_objects(null, null, Commands.TEXTBOX_GROUP):
@@ -19,7 +19,7 @@ func ws_textbox(script, arguments):
 	if script.is_inside_statement():
 		text = "{c292}" + text
 	return Commands.create_textbox(script, text)
-	
+
 func ws_text(script, arguments):
 	return ws_textbox(script, arguments)
 
@@ -28,7 +28,7 @@ func ws_nt(script, arguments):
 	main.stack.variables.set_val("_speaking", "")    		  # Set no character as speaking
 	main.stack.variables.set_val("_speaking_name", nametag)   # Next character will have this name
 
-# NEW 
+# NEW
 # finds the textbox and makes it continue
 func ws_advance_text(script, arguments):
 	for obj in Commands.get_objects(null, null, Commands.TEXTBOX_GROUP):

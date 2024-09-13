@@ -6,7 +6,7 @@ export var root_path:String = "res://"
 export var base_path:String    # The base path ("edgeworth") before variants and sprites
 export var variant_path:String # The variant path ("normal") before sprites are loaded
 export var script_name:String  # How to identify the object
-var variables:Variables # Object local variables accessed via [script_name].x 
+var variables:Variables # Object local variables accessed via [script_name].x
 
 var char_name:String    # What this character is called for nametag purposes
 
@@ -29,7 +29,7 @@ var _width_override = null
 var _height_override = null
 var width setget set_width_override, get_width
 var height setget set_height_override, get_height
-var click_area  # S 
+var click_area  # S
 var button # S
 
 var template:Dictionary # Remember the template we were initialized with, useful for save/load
@@ -48,7 +48,7 @@ signal sprite_changed
 
 ## Internal use ##
 var sprites:Dictionary = {
-	
+
 }
 
 var main
@@ -70,13 +70,13 @@ func set_height_override(height):
 func get_width():
 	if _width_override != null:
 		return _width_override
-	if current_sprite:
+	if is_instance_valid(current_sprite):
 		return current_sprite.width
 	return 0
 func get_height():
 	if _height_override != null:
 		return _height_override
-	if current_sprite:
+	if is_instance_valid(current_sprite):
 		return current_sprite.height
 	return 0
 
@@ -84,27 +84,35 @@ func get_height():
 
 func free_members():
 	sprite_key = ""
-	# Current sprite *should* be cleared as its in the tree but just in case
-	if current_sprite:
+	if is_instance_valid(current_sprite):
 		current_sprite.queue_free()
 		current_sprite = null
 	for sprite in sprites.values():
 		if is_instance_valid(sprite) and not sprite.is_queued_for_deletion():
 			sprite.queue_free()
 	sprites.clear()
+	if is_instance_valid(sprite_root) and not sprite_root.is_queued_for_deletion():
+		sprite_root.queue_free()
 
-func queue_free():
-	print("queuing pwchar "+name)
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_PREDELETE:
+			on_predelete()
+
+func on_predelete() -> void:
 	free_members()
-	return .queue_free()
-	
-func free():
-	print("freeing pwchar "+name)
-	free_members()
-	return .free()
+
+# Use the FreeOrphans function to delete all orphaned wrightobjects, only for fixing memory leak bugs
+func _free_orphan():
+	if not is_inside_tree():
+		print("freeing orphaned wrightobject "+name)
+		queue_free()
 
 func _init():
 	variables = Variables.new()
+
+func _ready():
+	main.connect("freeing_orphans", self, "_free_orphan")
 
 func init_sprite_root():
 	if not sprite_root:
@@ -153,20 +161,20 @@ func add_sprite(sprite_key, sprite_template):
 	if not sprite_paths_searched:
 		sprites[sprite_key] = sprite
 		return sprite
-	
+
 func load_sprites(template, sprite_key=null):
 	sprite_paths_searched = []
 
-	init_sprite_root()
 	self.template = template
 	free_members()
+	init_sprite_root()
 	for sprite_key in template["sprites"]:
 		var sprite_options = template["sprites"][sprite_key]
 		add_sprite(sprite_key, sprite_options)
-	
+
 	# (combined) files turn into talk and blink animations
 	process_combined()
-	
+
 	# if specific (required) animation types are not loaded, use the default
 	process_missing()
 
@@ -176,7 +184,7 @@ func load_sprites(template, sprite_key=null):
 	mirror.x = template["mirror"][0]
 	mirror.y = template["mirror"][1]
 	scrollable = template["scrollable"]
-	
+
 	if template["clickable"]:
 		click_area = ClickArea.new()
 		click_area.name = "ClickArea"
@@ -185,7 +193,7 @@ func load_sprites(template, sprite_key=null):
 		click_area.select_macro = template.get("select_macro",[])
 		click_area.select_args = template.get("select_args",[])
 		add_child(click_area)
-	
+
 	# Just the visual of the button, use click area to drive the game
 	if template["button_text"]:
 		button = Button.new()
@@ -193,15 +201,15 @@ func load_sprites(template, sprite_key=null):
 		button.name = "Button:"+template["button_text"]
 		button.connect("button_up", click_area, "perform_action")
 		add_child(button)
-		
+
 	set_sprite(sprite_key)
 	if template["sprites"] and not sprites:
 		var search_str = "'" + "', '".join(sprite_paths_searched) + "'"
-		GlobalErrors.log_error("File Error: Unable to find or load a valid graphic file, searched [%s] at root path %s" % [search_str, root_path])	
+		GlobalErrors.log_error("File Error: Unable to find or load a valid graphic file, searched [%s] at root path %s" % [search_str, root_path])
 
 func has_sprite(sprite_key):
 	return sprite_key in sprites
-	
+
 # If we have a combined talk/blink sprite, separate the
 # Frames into a separate talk sprite and blink sprite
 func process_combined():
@@ -228,7 +236,7 @@ func process_missing():
 			if has_sprite(tsprites[key]["fallback"]) and not has_sprite(key):
 				sprites[key] = sprites[tsprites[key]["fallback"]]
 
-	
+
 func set_sprite(new_sprite_key):
 	if not new_sprite_key in sprites:
 		return
@@ -289,7 +297,7 @@ func set_wait(value):
 func sprite_finished_playing():
 	emit_signal("finished_playing")
 
-# Effects 
+# Effects
 func set_grey(value):
 	for sprite in sprites.values():
 		sprite.set_grey(value)
@@ -304,7 +312,7 @@ func get_texture():
 	var frames = sprite.frames
 	var texture = frames.get_frame(sprite.animation, sprite.frame)
 	return texture
-	
+
 func get_display_rect():
 	if not current_sprite:
 		return null
@@ -360,7 +368,7 @@ static func create_node(saved_data:Dictionary):
 		return null
 	var ob = load(ObjectFactory.classes[saved_data["template"]["class"]]).new()
 	return ob
-	
+
 func load_node(tree, saved_data:Dictionary):
 	main = tree.get_nodes_in_group("Main")[0]
 	stack = main.stack
@@ -379,6 +387,6 @@ func after_load(tree:SceneTree, saved_data:Dictionary):
 	print("error no script id found")
 	# TODO we really should be air-tight in associating scripts correctly
 	# but we can ensure things dont break by adding us to the top script
-	# I think this happens because "wrightscript" is a reference, 
+	# I think this happens because "wrightscript" is a reference,
 	# and that script can actually be gone from the stack when the object is saved
 	wrightscript = tree.get_nodes_in_group("Main")[0].top_script()

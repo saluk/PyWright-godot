@@ -16,7 +16,7 @@ func ws_grey(script, arguments):
 	for o in obs:
 		if o.has_method("set_grey"):
 			o.set_grey(value)
-			
+
 # TODO IMPLEMENT
 #    @category([KEYWORD("degrees","How many degrees to rotate"),KEYWORD("speed","How many degrees to rotate per frame"),
 #    KEYWORD("axis","which axis to rotate on, z is the only valid value","z"),
@@ -41,7 +41,7 @@ func ws_rotate(script, arguments):
 	var obj = Commands.get_objects(name)
 	if obj and obj[0] is PWMesh:
 		obj[0].do_rotate(axis, degrees, speed, nowait)
-	
+
 # TODO IMPLEMENT
 #    @category([KEYWORD("start","Color tint to start at","'ffffff' or no tint (full color)"),
 #    KEYWORD("end","Color tint to end at","'000000' or full black tint"),
@@ -60,7 +60,7 @@ func ws_rotate(script, arguments):
 #            return True
 func ws_tint(script, arguments):
 	pass
-	
+
 # TODO IMPLEMENT
 #    @category([KEYWORD("value","Whether an object should be inverted or not: 1=inverted 0=not","1"),
 #    KEYWORD("name","Name a specific object to tint","Will try to tint all objects")],type="effect")
@@ -73,7 +73,7 @@ func ws_tint(script, arguments):
 #        self.add_object(invertanim(obs=self.obs,**kwargs))
 func ws_invert(script, arguments):
 	pass
-	
+
 # TODO IMPLEMENT ALL ARGUMENTS
 #    @category([VALUE("ttl","Time for shake to last in frames","30"),
 #    VALUE("offset","How many pixels away to move the screen (how violent)","15"),
@@ -173,7 +173,7 @@ func ws_flash(script, arguments):
 	yield(main.get_tree().create_timer(delay), "timeout")
 	if flash and is_instance_valid(flash):
 		flash.queue_free()
-	
+
 # TODO IMPLEMENT
 #@category([KEYWORD("mag","How many times to magnify","1 (will magnify 1 time, which is 2x magnification)"),
 #    KEYWORD("frames","how many frames for the zoom to take","1"),
@@ -211,7 +211,7 @@ func ws_flash(script, arguments):
 #        if name:
 #            zzzooom.control(name)
 #        self.add_object(zzzooom)
-#        if wait: 
+#        if wait:
 #            return True
 func ws_zoom(script, arguments):
 	pass
@@ -222,7 +222,7 @@ func ws_zoom(script, arguments):
 #    TOKEN("b","Select blinking animation for char objects"),
 #    TOKEN("t","Select talking animation for char objects")],type="animation")
 #    def _globaldelay(self,command,spd,*args):
-#        """Changes the default delay value for either all running animations or specific ones. First create the animation 
+#        """Changes the default delay value for either all running animations or specific ones. First create the animation
 #with a char, bg, fg, etc command, then call globaldelay to adjust the rate the animation will play. Use b or t to choose
 #blinking or talking animations if used with char. Normally, you will use the delay values stored with the animations themselves,
 #in the .txt files that go alongside the graphics. However, sometimes you may wish something to happen faster or slower."""

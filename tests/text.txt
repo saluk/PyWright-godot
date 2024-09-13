@@ -1,3 +1,6 @@
+char phoenix
+"{sound} I don't have any text blip sound"
+
 set _textbox_allow_skip true
 
 label textbox_positioning

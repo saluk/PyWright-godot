@@ -6,14 +6,14 @@ var playing_path
 var root_path = ""
 
 var music_volume:float
-	
+
 func add_player():
 	if is_instance_valid(audio_player):
 		audio_player.queue_free()
 	audio_player = AudioStreamPlayer.new()
 	audio_player.connect("finished", self, "_player_finished")
 	add_child(audio_player)
-	
+
 func _load_music_data(path):
 	if not path:
 		return null
@@ -64,7 +64,7 @@ func stop_music():
 	playing = false
 	if is_instance_valid(audio_player):
 		audio_player.queue_free()
-	
+
 func play_music(path, root_path, force=false):
 	self.root_path = root_path
 	var found_path = Filesystem.lookup_file(path, root_path, ["ogg"])

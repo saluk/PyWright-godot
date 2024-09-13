@@ -7,7 +7,7 @@ var scripts := []
 # Contains all namespaces except for scripts and objects
 var variables:NameSpaces
 var evidence_pages := {
-	
+
 }
 
 var macros := {}
@@ -50,6 +50,7 @@ signal enter_debugger
 signal line_executed   # emit when any script executes a line
 signal script_added
 signal script_removed
+signal update_debugger
 
 var macro_scripts_found = 0
 
@@ -97,12 +98,12 @@ func load_macros_from_path(path):
 	for script in macro_scripts:
 		print("MACRO LOADED: ", script.root_path, ":", script.filename)
 		script.preprocess_lines()
-		
+
 func run_macro_set(l):
 	if scripts:
 		for macro in l:
 			Commands.call_macro(macro, scripts[-1], [])
-		
+
 func init_game(path, init_script="intro.txt"):
 	DirectoryCache.init_game(path)
 	# Used to load a game and then a case inside the game
@@ -119,7 +120,7 @@ func init_game(path, init_script="intro.txt"):
 	run_macro_set(run_macros_on_game_start)
 	if not macro_scripts_found:
 		print("MACRO ERROR")
-	
+
 func add_script(script_text, root_path="res://"):
 	var new_script = WrightScript.new(main, self)
 	new_script.load_string(script_text)
@@ -127,7 +128,7 @@ func add_script(script_text, root_path="res://"):
 	scripts.append(new_script)
 	emit_signal("script_added")
 	return new_script
-	
+
 func load_script(script_path):
 	# TODO not sure if this is the "correct" time to load the macros
 	print("load script macros")
@@ -137,28 +138,26 @@ func load_script(script_path):
 	scripts.append(new_script)
 	emit_signal("script_added")
 	return new_script
-	
+
 func remove_script(script):
 	if script in scripts:
 		scripts.erase(script)
 		emit_signal("script_removed")
 		script.end()
-		
+
 func clear_scripts():
 	while scripts:
 		scripts[0].end()
 		scripts.erase(scripts[0])
 		emit_signal("script_removed")
-		
+
 func show_in_debugger():
 	if not main or not is_instance_valid(main) or not main.get_tree():
 		return
 	if not Configuration.user.debugger_enabled:
 		return
-	var debugger = main.get_tree().get_nodes_in_group("ScriptDebugger")
-	if debugger:
-		debugger[0].update_current_stack(self)
-		
+	emit_signal("update_debugger")
+
 func show_frame(frame, begin=false):
 	if not variables.get_truth("render", true):
 		return
@@ -170,7 +169,7 @@ func show_frame(frame, begin=false):
 			framelog[0].log_frame_begin()
 		else:
 			framelog[0].log_frame_end(frame)
-		
+
 func clean_scripts():
 	"""Remove any scripts that should be ended"""
 	var newscripts = []
@@ -186,7 +185,7 @@ func clean_scripts():
 		emit_signal("script_removed")
 		ScreenManager.clean(scripts)
 	show_in_debugger()
-	
+
 func new_state(state):
 	self.state = state
 
@@ -205,16 +204,21 @@ func add_blocker(script, block_obj, next_line = true):
 	var sig = "timeout"
 	if block_obj.get("wait_signal"):
 		sig = block_obj.get("wait_signal")
-	block_obj.connect(sig, self, "remove_blocker", [script, block_obj, next_line], CONNECT_ONESHOT)
+	var original_id
+	if "name" in block_obj:
+		original_id = block_obj.name
+	else:
+		original_id = block_obj
+	block_obj.connect(sig, self, "remove_blocker", [sig, script, block_obj, original_id, next_line], CONNECT_ONESHOT)
 
-func remove_blocker(script, block_obj, next_line):
+func remove_blocker(sig, script, block_obj, original_id, next_line):
 	if block_obj in blockers:
 		blockers.erase(block_obj)
 		if script in blocked_scripts:
 			if next_line:
 				script.next_line()
 			blocked_scripts.erase(script)
-			
+
 func force_clear_blockers():
 	for obj in blockers:
 		if is_instance_valid(obj) and obj is SceneTreeTimer:
@@ -335,7 +339,7 @@ var save_properties = [
 	# "macros",
 	"state",
 	"mode",
-	# "blockers", 
+	# "blockers",
 	# "blocked_scripts",
 	#  "yields",
 	# "macro_scripts_found"
@@ -363,7 +367,7 @@ func save_node(data):
 
 static func create_node(saved_data:Dictionary):
 	pass
-	
+
 func load_node(tree, saved_data:Dictionary):
 	pass
 

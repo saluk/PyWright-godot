@@ -40,7 +40,7 @@ static func save_game(tree:SceneTree, filename:String):
 		to_json(objects)
 	)
 	file.close()
-			
+
 static func _save_node(node):
 	if node.has_method("save_node"):
 		var save = {}
@@ -55,12 +55,12 @@ static func _save_node(node):
 				save_properties(node, save)
 			return save
 	return null
-	
+
 static func _load_node(tree, ob, ob_data):
 	load_properties(ob, ob_data)
 	if ob:
 		ob.load_node(tree, ob_data)
-	
+
 static func save_properties(node, save):
 	for prop in node.save_properties + ["name"]:
 		if prop in node:
@@ -92,7 +92,7 @@ static func save_properties(node, save):
 			save[prop] = val
 	if node.has_method("get_groups"):
 		save["_groups_"] = node.get_groups()
-		
+
 static func load_properties(node, data):
 	if not node:
 		return
@@ -112,11 +112,11 @@ static func load_properties(node, data):
 	if "_groups_" in data:
 		for group in data["_groups_"]:
 			node.add_to_group(group)
-	
+
 static func load_game(tree:SceneTree, filename:String):
 	GlobalErrors.log_info("Loading game: %s" % filename)
 	DirectoryCache.clear()
-	
+
 	var file = File.new()
 	var err = file.open(filename, File.READ)
 	if err != OK:
@@ -124,9 +124,9 @@ static func load_game(tree:SceneTree, filename:String):
 	var json = file.get_as_text()
 	var data = parse_json(json)
 	file.close()
-	
+
 	ScreenManager.clear()
-	
+
 	var after_load = []
 
 	for ob_data in data:
@@ -150,7 +150,7 @@ static func to_node_path(ob:Object):
 	if not ob:
 		return null
 	return (ob as Node).get_path()
-	
+
 static func from_node_path(tree:SceneTree, path:String):
 	return tree.root.get_node(path)
 
@@ -175,13 +175,13 @@ static func load_selected_save_file(main, filename):
 	var save_path_name = _get_save_path_name(main)
 	var full_save_path = "user://game_saves/"+"/".join([save_path_name, filename])
 	load_game(main.get_tree(), full_save_path)
-	
+
 static func delete_selected_save_file(main, filename):
 	var save_path_name = _get_save_path_name(main)
 	var full_save_path = "user://game_saves/"+"/".join([save_path_name, filename])
 	var d = Directory.new()
 	d.remove(full_save_path)
-	
+
 static func save_new_file(main, new_filename):
 	var save_path_name = _get_save_path_name(main)
 	var date = Time.get_datetime_dict_from_system()
@@ -196,11 +196,11 @@ static func get_saved_games_for_current(main, save_path_name=null):
 	var d
 	var path = "user://game_saves"
 	Filesystem.make_if_not_exists_dir(path)
-		
+
 	# Ensure save folder exists for this game
 	path += "/" + save_path_name
 	Filesystem.make_if_not_exists_dir(path)
-		
+
 	var save_files = []
 	d = Directory.new()
 	if d.open(path) == OK:

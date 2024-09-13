@@ -25,19 +25,19 @@ func ws_debug(script, arguments):
 		print(" OBJECT LIST - class:" + script_name + "  id_name:"+id_name+"  id:"+object.to_string()+"  pos:"+str(object.position)+"  fade:"+str(object.modulate))
 	print(" END OBJECT LIST ")
 	return Commands.DEBUG
-	
+
 func ws_print(script, arguments):
 	print("OUTPUT: ", Commands.join(arguments))
-	
+
 # TODO IMPLEMENT
 # Steps through pywright debugger
 func ws_step(script, arguments):
 	pass
-	
+
 func ws_goto(script, arguments):
 	var fail = Commands.keywords(arguments).get("fail", null)
 	return script.goto_label(arguments[0], fail)
-	
+
 func ws_top(script, arguments):
 	script.goto_line_number(0)
 
@@ -90,15 +90,13 @@ func ws_label(script, arguments):
 #        print "SCRIPT DEFAULTS"
 #        self.execute_macro("defaults")
 func ws_script(script, arguments, script_text=null):
-	print("STRAY NODES")
-	main.print_stray_nodes()
 	var args = Commands.keywords(arguments, true)
 	var label = args[0].get("label",null)
 	arguments = args[1]
-	
+
 	var new_screen = false
 	var replace_script = true
-	
+
 	if "stack" in arguments:
 		new_screen = true
 		replace_script = false
@@ -110,7 +108,7 @@ func ws_script(script, arguments, script_text=null):
 
 	if replace_script:
 		main.stack.clear_scripts()
-		
+
 	if not "noclear" in arguments:
 		script.screen.clear()
 	else:
@@ -134,20 +132,20 @@ func ws_script(script, arguments, script_text=null):
 		scr.goto_label(label)
 	main.stack.run_macro_set(main.stack.run_macros_on_scene_change)
 	return Commands.YIELD
-	
+
 # TODO IMPLEMENT
 #    @category([VALUE("game","Path to game. Should be from the root, i.e. games/mygame or games/mygame/mycase"),
 #                    VALUE("script","Script to look for in the game folder to run first","intro")],type="gameflow")
 func ws_game(script, arguments):
 	pass
-	
+
 func ws_endscript(script, arguments):
 	script.end()
 	return Commands.NEXTLINE
 
 func ws_exit(script, arguments):
 	return ws_endscript(script, arguments)
-	
+
 # TODO IMPLEMENT
 # we should detect any click anywhere or the enter key
 func ws_waitenter(script, arguments):
@@ -156,9 +154,9 @@ func ws_waitenter(script, arguments):
 # TODO implement - not hard
 func ws_savegame(script, arguments):
 	return Commands.NOTIMPLEMENTED
-	
+
 func ws_loadgame(script, arguments):
 	return Commands.NOTIMPLEMENTED
-	
+
 func ws_screenshot(script, arguments):
 	return Commands.NOTIMPLEMENTED

@@ -38,7 +38,7 @@ func _init(main, stack, screen:Screen=null):
 		self.screen = ScreenManager.top_screen()
 	u_id = OS.get_system_time_msecs()
 	variables = Variables.new()
-		
+
 func has_script(scene_name) -> String:
 	var names = [scene_name+".script.txt", scene_name+".txt"]
 	for name in names:
@@ -46,9 +46,9 @@ func has_script(scene_name) -> String:
 		var found = Filesystem.lookup_file(name, root_path)
 		if found:
 			return found
-	GlobalErrors.log_error("File Error: Unable to find or load script, searched [%s] at root path %s" % [",".join(names), root_path])	
+	GlobalErrors.log_error("File Error: Unable to find or load script, searched [%s] at root path %s" % [",".join(names), root_path])
 	return ""
-	
+
 func fullpath() -> String:
 	return Filesystem.path_join(root_path, filename)
 
@@ -68,7 +68,7 @@ func load_txt_file(path:String):
 		preprocess_lines()
 	else:
 		print("Error loading wrightscript file ", path)
-	
+
 func load_string(string:String):
 	lines = []
 	if not root_path:
@@ -77,14 +77,14 @@ func load_string(string:String):
 	for line in string.split("\n"):
 		lines.append(line)
 	preprocess_lines()
-	
+
 func add_label(label, line_num):
 	if not label in labels:
 		labels[label] = []
 	if not line_num in labels[label]:
 		labels[label].append(line_num)
 	labels[label].sort()
-	
+
 var label_statements = [
 	"label", "list", "statement", "result", "cross"
 ]
@@ -94,7 +94,7 @@ var statement_args = {
 	"statement": [],
 	"cross": []
 }
-	
+
 func preprocess_lines():
 	var line:String
 	var segments:Array
@@ -127,7 +127,7 @@ func preprocess_lines():
 				lines[i] = "#> "+lines[i]
 				i += 1
 			continue
-			
+
 		# See comment above ws_examine
 		if examining:
 			if segments and segments[0]!="region" and segments[0].strip_edges():
@@ -137,7 +137,7 @@ func preprocess_lines():
 					i += 1
 		elif segments and segments[0] == "examine":
 			examining = true
-				
+
 		if segments and segments[0] in label_statements and segments.size()>1:
 			var tag = segments[1].strip_edges()
 			var args = Array(tag.split(" "))
@@ -175,12 +175,12 @@ func preprocess_lines():
 				GlobalErrors.log_error("no macro found to include:"+command)
 		i += 1
 	print("SCRIPT STARTING:", to_string())
-		
+
 func get_next_line(offset:int):
 	if line_num+offset >= lines.size():
 		return ""
 	return lines[line_num+offset]
-	
+
 func goto_line_number(offset:int, relative:bool=false):
 	allow_next_line = false
 	if relative:
@@ -189,7 +189,7 @@ func goto_line_number(offset:int, relative:bool=false):
 		line_num = offset
 	if line_num < 0:
 		line_num = 0
-		
+
 func next_line():
 	# Goto the next line - unless we have used goto recently
 	if allow_next_line:
@@ -250,26 +250,26 @@ func succeed(label):
 	if label == "?":
 		return
 	goto_label(label)
-	
+
 # Go to the dest, unless label is ? in which case we skip the next line
 func fail(label, dest=null):
 	if label == "?":
 		line_num += 1
 	elif dest:
 		goto_label(dest)
-		
+
 func is_statement(line):
 	line = split_line(line).to_lower()
 	return line.begins_with("statement ") or line.strip_edges() == "statement"
-	
+
 func is_cross(line):
 	line = split_line(line).to_lower()
 	return line.begins_with("cross ") or line.strip_edges() == "cross"
-	
+
 func is_endcross(line):
 	line = split_line(line).to_lower()
 	return line.begins_with("endcross ") or line.strip_edges() == "endcross"
-		
+
 func is_inside_cross():
 	var currentcross = stack.variables.get_int("currentcross", null)
 	if currentcross==null:
@@ -282,7 +282,7 @@ func is_inside_cross():
 	if not is_cross(lines[currentcross]):
 		return false
 	return true
-	
+
 func is_inside_statement():
 	return is_inside_cross() and stack.variables.get_truth("_in_statement", null)
 
@@ -292,7 +292,7 @@ func next_statement():
 	# Some case writers include logic BEFORE a statement tag to determine
 	# whether the statement should appear or not
 	return
-		
+
 func get_prev_statement():
 	if not is_inside_cross():
 		print("NOT INSIDE CROSS SO NO PREV STATEMENT")
@@ -303,7 +303,7 @@ func get_prev_statement():
 		print("SEEN STATEMENTS:", seen_statements," so no left arrow")
 		return null
 	return int(seen_statements[-2])
-		
+
 func prev_statement():
 	var si = get_prev_statement()
 	if si != null:
@@ -335,7 +335,7 @@ func read_macro():
 	stack.macros[macro_name] = macro_lines
 	if line_num >= lines.size():
 		end()
-		
+
 class Frame:
 	var scr
 	var line_num
@@ -352,10 +352,10 @@ class Frame:
 			var spl = Array(line.split(" "))
 			command = spl.pop_front()
 			args = spl
-			
+
 func get_frame(sig):
 	return Frame.new(self, line_num, line, sig)
-	
+
 # Returns the part of the line that doesn't have a command and has non-blank text
 func split_line(line):
 	var comment
@@ -369,7 +369,7 @@ func split_line(line):
 	elif "//" in line:
 		line = line.rsplit("//", true, 1)[0]
 	return line.strip_edges()
-		
+
 func process_wrightscript() -> Frame:
 	allow_next_line = true
 	if not main:
@@ -403,7 +403,7 @@ func process_wrightscript() -> Frame:
 	if sig == null:
 		sig = Commands.NEXTLINE
 	return get_frame(sig)
-	
+
 func to_string():
 	var l = ""
 	if line_num < lines.size():
@@ -430,7 +430,7 @@ func save_node(data):
 
 static func create_node(saved_data:Dictionary):
 	pass
-	
+
 func load_node(tree, saved_data:Dictionary):
 	SaveState._load_node(tree, variables, saved_data["variables"])
 

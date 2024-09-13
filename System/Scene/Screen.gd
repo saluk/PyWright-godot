@@ -6,8 +6,8 @@ func _ready():
 
 func _process(dt):
 	sort_children()
-	
-# TODO using a manual, slow sorting algorithm here because godot's sort_custom uses heapsort which is not stable	
+
+# TODO using a manual, slow sorting algorithm here because godot's sort_custom uses heapsort which is not stable
 func sort_children():
 	var children = get_children()
 	for i in range(children.size()):
@@ -26,7 +26,7 @@ func sort_children():
 			children.remove(i+1)
 	for i in range(children.size()):
 		move_child(children[i], i)
-		
+
 func clear(top=true, bottom=true):
 	for child in get_children():
 		if not bottom and child.global_position.y >= 192:
@@ -35,7 +35,6 @@ func clear(top=true, bottom=true):
 			continue
 		# TODO probably unnecesary to remove the child AND free it
 		remove_child(child)
-		# Forces custom queue_free to be called when we clear
 		child.queue_free()
 
 #func sort_children():

@@ -49,14 +49,14 @@ func reset():
 func load_game_from_pack(path):
 	reset()
 	ProjectSettings.load_resource_pack("user://"+path)
-	
+
 	# Find the game in the directory
 	var game
 	var d = Directory.new()
 	if d.open("res://games") == OK:
 		d.list_dir_begin()
 		game = d.get_next()
-	
+
 	if game:
 		load_game("res://games/"+game)
 	else:
@@ -67,7 +67,7 @@ func load_game(path):
 	current_game = path
 	stack.init_game(path)
 	emit_signal("stack_initialized")
-		
+
 func load_script_from_path(path):
 	reset()
 	#stack.load_script("res://tests/"+path)
@@ -75,7 +75,7 @@ func load_script_from_path(path):
 	current_game = "res://tests"
 	stack.init_game(current_game, path)
 	emit_signal("stack_initialized")
-	
+
 func set_resolution(res:Vector2, scale_factor:float):
 	Engine.target_fps = 60
 	var h = res.y
@@ -84,7 +84,7 @@ func set_resolution(res:Vector2, scale_factor:float):
 	var screen_size:Vector2 = OS.get_screen_size()
 	OS.window_position = Vector2(screen_size.x/2-w*scale_factor/2, screen_size.y/2-h*scale_factor/2)
 	#get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_2D, SceneTree.STRETCH_ASPECT_KEEP, Vector2(w, h), 1)
-	
+
 func window_resize():
 	var v_size = get_viewport_rect().size
 	var lauthored_size = authored_size
@@ -105,9 +105,10 @@ func window_resize():
 			$TabContainer.rect_position.x = tab_button.rect_position.x
 
 func _ready():
+	ScreenManager._init_screens()
 	screens = get_tree().get_nodes_in_group("Screens")[0]
 	timecounter = TimeCounter.new()
-	
+
 	tab_button = get_tree().get_nodes_in_group("TabButton")[0]
 	tab_button.connect("toggled", self, "_toggle_button")
 	if not Configuration.user.options_open:
@@ -123,15 +124,15 @@ func _ready():
 		$TabContainer.rect_position = Vector2(0, 16)
 	elif Configuration.builtin.screen_format == "horizontal":
 		set_resolution(Vector2(256 * 2,384), 2.0)
-	
+
 	stack = WrightScriptStack.new(self)
 	stack.connect("stack_empty", self, "reload")
 	Commands.load_command_engine()
-	
+
 	# TODO move tests for this elsewhere
 	test_eval()
 	stack.variables.reset()
-	
+
 	var loader = load("res://System/UI/GamesMenu.tscn").instance()
 	ScreenManager.main_screen.add_child(loader)
 	var array = yield(loader, "game_loaded")
@@ -143,14 +144,14 @@ func _ready():
 		load_script_from_path(path)
 	else:
 		load_game(path)
-	
+
 	if mode == "test":
 		screens.rect_global_position = Vector2(0,0)
 	stack.mode = mode
-	
+
 	stack.connect("script_added", self, "check_saving_enabled")
 	stack.connect("script_removed", self, "check_saving_enabled")
-		
+
 func test_eval():
 	stack.variables.set_val("is_true", "true")
 	stack.variables.set_val("is_false", "false")
@@ -196,7 +197,7 @@ func test_eval():
 	assert(WSExpression.EVAL_STR(
 		WSExpression.SIMPLE_TO_EXPR("$is_int < 1011")) == "true")
 	assert(WSExpression.EVAL_STR(
-		WSExpression.SIMPLE_TO_EXPR("$is_int > 500")) == "true")	
+		WSExpression.SIMPLE_TO_EXPR("$is_int > 500")) == "true")
 	assert(WSExpression.SIMPLE_TO_EXPR("$is_true == true") == "is_true == 'true'")
 	assert(WSExpression.EVAL_STR(
 		WSExpression.SIMPLE_TO_EXPR("$is_true == true")) == "true")
@@ -259,7 +260,7 @@ func is_saving_enabled():
 		if "casemenu" in line.strip_edges():
 			return false
 	return true
-	
+
 func check_saving_enabled():
 	if is_saving_enabled():
 		emit_signal("enable_saveload_buttons", true)
@@ -286,6 +287,20 @@ func hide_tabs():
 	window_resize()
 	Configuration.set_and_save("options_open", false)
 
+# TODO hacky way to handle orphans
+signal freeing_orphans
+func free_orphans():
+	emit_signal("freeing_orphans")
+func connect_potential_orphan(obj):
+	connect("freeing_orphans", obj, "_free_orphan")
+
+# Input
+
+func _on_Screens_gui_input(event):
+	var owner = get_node("InputController").get_focus_owner()
+	if owner:
+		owner.release_focus()
+
 # SAVE/LOAD
 var save_properties = [
 	"current_game"
@@ -296,7 +311,7 @@ func save_node(data):
 
 static func create_node(saved_data:Dictionary):
 	pass
-	
+
 func load_node(tree, saved_data:Dictionary):
 	load_game(current_game)
 	timecounter.set_elapsed_time(saved_data["timecounter.elapsed"])
@@ -305,9 +320,3 @@ func load_node(tree, saved_data:Dictionary):
 func after_load(tree, saved_data:Dictionary):
 	stack.state = stack.STACK_READY
 	stack.after_load(tree, saved_data["stack"])
-
-
-func _on_Screens_gui_input(event):
-	var owner = get_node("InputController").get_focus_owner()
-	if owner:
-		owner.release_focus()
