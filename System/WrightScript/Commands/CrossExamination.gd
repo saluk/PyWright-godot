@@ -66,7 +66,8 @@ func ws_callpress(script, arguments):
 	Commands.delete_object_group(Commands.TEXTBOX_GROUP)
 	var cross_script = main.cross_exam_script()
 	if cross_script:
-		main.stack.variables.set_val("_cross_resume_line", cross_script.line_num+1)
+		# At the context in which ws_callpresent is called, cross_script.line_num is the line after a statement's textbox
+		main.stack.variables.set_val("_cross_resume_line", cross_script.line_num)
 	return script.goto_label(
 		"press "+main.stack.variables.get_string("_statement"),
 		StandardVar.COURT_FAIL_LABEL.retrieve()
@@ -132,7 +133,8 @@ func ws_callpresent(script, arguments):
 		ev = ev + " " + statement
 	var cross_script = main.cross_exam_script()
 	if cross_script:
-		main.stack.variables.set_val("_cross_resume_line", cross_script.line_num+1)
+		# At the context in which ws_callpresent is called, cross_script.line_num is the line after a statement's textbox
+		main.stack.variables.set_val("_cross_resume_line", cross_script.line_num)
 	Commands.call_command(
 		"goto",
 		main.stack.scripts[-1],

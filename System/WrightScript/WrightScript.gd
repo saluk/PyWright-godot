@@ -242,8 +242,7 @@ func resume_cross():
 	stack.variables.del_val("_cross_resume_line")
 	stack.variables.del_val("_lastline")
 	stack.variables.set_val("_in_statement", "true")
-	# FIXME the -1 is a hack because I couldn't figure out why the script is going to the wrong place
-	goto_line_number(resume_line-1)
+	goto_line_number(resume_line)
 	return true
 
 # Go to the label, unless label is ? in which case we execute the next line
