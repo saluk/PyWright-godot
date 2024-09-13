@@ -175,6 +175,7 @@ func ws_flag(script, arguments:Array, return_true=true):
 	var label = arguments.pop_back()
 	var fail = Commands.keywords([label]).get("fail", null)
 	if fail:
+		# FIXME - should make sure we are removing the fail= keyword from the arguments not just the last one
 		label = arguments.pop_back()
 	if label.ends_with("?"):
 		arguments.append(label.substr(0, label.length()-1))
@@ -198,8 +199,8 @@ func ws_flag(script, arguments:Array, return_true=true):
 	var result = expression.execute()
 	if result == return_true:
 		script.succeed(label)
-	if fail:
-		script.fail(label, fail)
+		return
+	script.fail(label, fail)
 
 func ws_setflag(script, arguments):
 	main.stack.variables.set_val(arguments[0], "true")
