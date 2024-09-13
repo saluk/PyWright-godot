@@ -113,6 +113,10 @@ func create_textbox(script, line) -> Node:
 	return l
 	
 func refresh_arrows(script):
+	# If a cross examination happens, refresh arrows based on cross exam script
+	var cross = main.cross_exam_script()
+	if cross:
+		script = cross
 	if script.get_prev_statement() == null:
 		main.stack.variables.set_val("_cross_exam_start", "true")
 	else:
@@ -132,6 +136,8 @@ func refresh_arrows(script):
 	# Called at "end" because it becomes the top of the stack and will execute first
 	# TODO: maybe we should make our internal call function unwind it so it makes more sense
 	call_macro("hide_main_button_all", script, [])
+	# Once arrows are up to date, we don't need to remember that we are in a statement
+	main.stack.variables.del_val("_in_statement")
 
 # TODO may not need this
 func hide_arrows(script):

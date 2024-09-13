@@ -356,6 +356,8 @@ func save_node(data):
 	# PROPERTIES SAVED AFTER THIS
 
 static func create_node(saved_data:Dictionary):
+	if not "class" in saved_data["template"]:
+		return null
 	var ob = load(ObjectFactory.classes[saved_data["template"]["class"]]).new()
 	return ob
 	

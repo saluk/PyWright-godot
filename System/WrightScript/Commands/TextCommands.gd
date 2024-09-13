@@ -7,7 +7,8 @@ func _init(commands):
 	
 func ws_textbox(script, arguments):
 	#There can be only one!
-	ws_advance_text(script, [])
+	for obj in Commands.get_objects(null, null, Commands.TEXTBOX_GROUP):
+		obj.queue_free()
 	var text = Commands.join(arguments)
 	var quote_char = text.substr(0,1)
 	text = text.substr(1,text.length())

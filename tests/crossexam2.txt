@@ -1,0 +1,189 @@
+label resetce
+// unset flags for gameovers
+delflag demo1press
+delflag demo2press
+delflag demo3press
+delflag demo4press
+delflag demo5press
+delflag demo6press
+delflag demo7press
+label start
+cross demoexam
+
+statement demo1
+bg witness
+flag fadein?
+fade start=100 end=0 name=dramafadeobj
+delete name=dramafadeobj
+delflag fadein
+"Statement 1"
+
+statement demo2
+bg witness
+flag fadein?
+fade start=100 end=0 name=dramafadeobj
+delete name=dramafadeobj
+delflag fadein
+"Statement 2"
+
+statement demo3
+bg witness
+flag fadein?
+fade start=100 end=0 name=dramafadeobj
+delete name=dramafadeobj
+delflag fadein
+"Statement 3"
+
+statement demo4
+bg witness
+flag fadein?
+fade start=100 end=0 name=dramafadeobj
+delete name=dramafadeobj
+delflag fadein
+"Statement 4"
+
+statement demo5
+bg witness
+flag fadein?
+fade start=100 end=0 name=dramafadeobj
+delete name=dramafadeobj
+delflag fadein
+"Statement 5"
+
+statement demo6
+bg witness
+flag fadein?
+fade start=100 end=0 name=dramafadeobj
+delete name=dramafadeobj
+delflag fadein
+"Statement 6"
+
+statement demo7
+bg witness
+flag fadein?
+fade start=100 end=0 name=dramafadeobj
+delete name=dramafadeobj
+delflag fadein
+"Statement 7"
+
+endcross
+
+label afterlast
+bg helper
+flag fadein?
+fade start=100 end=0 name=dramafadeobj
+delete name=dramafadeobj
+delflag fadein
+"afterlast"
+obj bg/black z=9 name=dramafadeobj fade
+setflag fadein
+goto start
+
+label press demo1
+delete name=penalty suppress
+"demo 1 press"
+setflag demo1press
+goto faderesume
+
+label press demo2
+delete name=penalty suppress
+"demo 2 press"
+setflag demo2press
+goto faderesume
+
+label press demo3
+delete name=penalty suppress
+flag demo3press?
+goto demo3press_alt
+"demo 3 press (first press){n}flag set"
+setflag demo3press
+goto faderesume
+
+label demo3press_alt
+"demo 3 press (second press){n}no flag set"
+goto faderesume
+
+label press demo4
+delete name=penalty suppress
+"demo 4 press"
+setflag demo4press
+goto faderesume
+
+label press demo5
+delete name=penalty suppress
+"demo 5 press"
+setflag demo5press
+goto faderesume
+
+label press demo6
+delete name=penalty suppress
+"demo 6 press"
+setflag demo6press
+goto faderesume
+
+label press demo7
+delete name=penalty suppress
+"demo 7 press"
+setflag demo7press
+goto faderesume
+
+label none
+penalty threat=20
+random rand_wrong 1 2 // Pick a random present dialogue
+setvar dynamic_wrong wrongpresent $rand_wrong
+goto $dynamic_wrong fail=wrongpresent_invalid
+
+label wrongpresent_1
+penalty -20
+is penalty 0 gameover
+goto faderesume2
+
+label wrongpresent_2
+penalty -20
+is penalty 0 gameover
+goto faderesume2
+
+label wrongpresent_invalid
+penalty -20
+pause 60
+delete name=explodes
+is penalty 0 gameover
+goto faderesume2
+
+label faderesume
+obj bg/black z=9 name=dramafadeobj fade
+setflag fadein
+flag demo1press AND demo2press AND demo3press AND demo4press AND demo5press AND demo6press AND demo7press?
+goto demoend
+penalty
+resume
+
+label faderesume2
+obj bg/black z=9 name=dramafadeobj fade
+setflag fadein
+penalty
+goto start
+
+label demoend
+pause 20
+bg black
+delete name=dramafadeobj
+bg judge
+"all flags set, testimony end"
+script none
+
+label gameover
+set _cr_button false
+set _textbox_allow_skip false
+bg judge
+"guilty"
+guilty
+pause 60
+bg black
+"reset"
+sfx healthbarrestored
+penalty 100
+bg black z=5 stack fade
+set _cr_button true
+set _textbox_allow_skip true
+goto resetce
