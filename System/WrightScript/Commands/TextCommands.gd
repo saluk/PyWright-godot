@@ -17,7 +17,7 @@ func ws_textbox(script, arguments):
 		text = text.substr(0, text.length()-1)
 	# Default to green text in cross examine
 	if script.is_inside_statement():
-		text = "{c292}" + text
+		text = "{c292}{tbon}" + text
 	return Commands.create_textbox(script, text)
 
 func ws_text(script, arguments):

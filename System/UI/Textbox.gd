@@ -280,7 +280,7 @@ class CommandPack extends TextPack:
 				if not force:
 					self.textbox.pause(args, self)
 			_:
-				self.textbox.refresh_arrows_on_next_pack = true
+				#self.textbox.refresh_arrows_on_next_pack = true
 				var old_script = self.textbox.main.top_script()
 				Commands.call_command(self.command, old_script, args)
 
@@ -611,7 +611,8 @@ func clean_up():
 	trigger_text_end_events()
 	# TODO we could check whether tboff needs to be called or not
 	# In pywright, it's only called when _tb_on is true
-	Commands.call_command("tboff", main.top_script(), [])
+	if is_instance_valid(main):
+		Commands.call_command("tboff", main.top_script(), [])
 
 func finish_text():
 	var while_loops = 0

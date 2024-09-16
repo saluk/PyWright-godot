@@ -93,6 +93,7 @@ func free_members():
 	sprites.clear()
 	if is_instance_valid(sprite_root) and not sprite_root.is_queued_for_deletion():
 		sprite_root.queue_free()
+		sprite_root = null
 
 func _notification(what: int) -> void:
 	match what:
@@ -240,8 +241,10 @@ func process_missing():
 func set_sprite(new_sprite_key):
 	if not new_sprite_key in sprites:
 		return
+	if not is_instance_valid(sprite_root):
+		return
 	if sprite_key != new_sprite_key:
-		if current_sprite:
+		if is_instance_valid(current_sprite) and is_instance_valid(sprite_root):
 			SignalUtils.remove_all(current_sprite)
 			sprite_root.remove_child(current_sprite)
 		sprite_key = new_sprite_key
