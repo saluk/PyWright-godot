@@ -77,6 +77,7 @@ func ws_statement(script, arguments):
 		if not main.stack.variables.get_truth(test):
 			script.next_statement()
 			return
+	# These values should be applied to the next textbox that is created
 	main.stack.variables.set_val("_statement", arguments[0])
 	main.stack.variables.set_val("_in_statement", "true")
 	add_statement(script.main, script.line_num, arguments[0])

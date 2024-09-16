@@ -283,9 +283,6 @@ func is_inside_cross():
 		return false
 	return true
 
-func is_inside_statement():
-	return is_inside_cross() and stack.variables.get_truth("_in_statement", null)
-
 func next_statement():
 	# not actually implemented, on purpose
 	# the cross exam arrow right just calls main_button_advance_text
