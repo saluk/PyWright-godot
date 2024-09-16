@@ -110,38 +110,17 @@ func join(l, sep=" "):
 func create_textbox(script, line) -> Node:
 	var l = textboxScene.instance()
 	l.main = main
+	l.in_statement = main.stack.variables.get_truth("_in_statement", false)
+	if l.in_statement:
+		line = "{c292}{tbon}" + line
 	l.text_to_print = line
+	main.stack.variables.del_val("_in_statement")
 	script.screen.add_child(l)
 	return l
 
-func refresh_arrows(script):
-	# If a cross examination happens, refresh arrows based on cross exam script
-	var cross = main.cross_exam_script()
-	if cross:
-		script = cross
-	if script.get_prev_statement() == null:
-		main.stack.variables.set_val("_cross_exam_start", "true")
-	else:
-		main.stack.variables.set_val("_cross_exam_start", "false")
-	if script.is_inside_statement():
-		call_macro("show_cross_buttons", script, [])
-	else:
-		call_macro("show_main_button", script, [])
-
-	if script.is_inside_statement():
-		call_macro("show_present_button", script, [])
-		call_macro("show_press_button", script, [])
-	else:
-		call_macro("hide_present_button", script, [])
-		call_macro("hide_press_button", script, [])
-		call_macro("show_court_record_button", script, [])
-	# Called at "end" because it becomes the top of the stack and will execute first
-	# TODO: maybe we should make our internal call function unwind it so it makes more sense
-	call_macro("hide_main_button_all", script, [])
-	# Once arrows are up to date, we don't need to remember that we are in a statement
-	main.stack.variables.del_val("_in_statement")
-
 # TODO may not need this
+# Although it might be needed for press/present
+# Also todo, all the other arrow functions are in textbox... move this there?
 func hide_arrows(script):
 	call_macro("hide_main_button", script, [])
 	call_macro("hide_court_record_button", script, [])
@@ -174,6 +153,9 @@ func get_nametag():
 	var character = get_speaking_char()
 	if character:
 		nametag = character.char_name
+		# Hide nametag if character sprites didn't load
+		if character.sprites and not nametag:
+			nametag = character.base_path.capitalize()
 	return nametag
 
 # Call interface

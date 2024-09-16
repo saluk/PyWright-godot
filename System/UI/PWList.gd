@@ -29,22 +29,22 @@ func _init():
 func _ready():
 	script_name = "listmenu"
 	wait_signal = "tree_exited"
-	
+
 	# Set these after initialization  with `lo`
 	check_image = main.stack.variables.get_string("_list_checked_img","general/checkmark")
 	check_offset_x = main.stack.variables.get_int("_list_checked_x",-10)
 	check_offset_y = main.stack.variables.get_int("_list_checked_y",-10)
-	
+
 func _get_checked_list():
 	if not tag:
 		return []
 	var checked = main.stack.variables.get_string("_pwlist_checked_items_"+tag, "")
 	checked = checked.split(";;")
 	return checked
-	
+
 func is_checked(label):
 	return label in _get_checked_list()
-	
+
 func set_checked(label):
 	if not tag:
 		return
@@ -52,7 +52,7 @@ func set_checked(label):
 	if not label in checked:
 		checked.append(label)
 		main.stack.variables.set_val("_pwlist_checked_items_"+tag, checked.join(";;"))
-	
+
 func build():
 	add_list_items()
 	if allow_back_button and not back_button:
@@ -77,7 +77,7 @@ func build():
 	if not called_court_record_button:
 		Commands.call_macro("show_court_record_button", wrightscript, [])
 		called_court_record_button = true
-	
+
 func add_item(text, result, options={}):
 	_items.append([text, result, options])
 
@@ -123,7 +123,7 @@ func add_list_items():
 		button_y += button.height+5
 		# TODO we could probably bake this into button text
 		var button_label := Label.new()
-		Fonts.set_element_font(button_label, "list", main.stack)
+		Fonts.set_element_font(button_label, "list", main)
 		button_label.set("custom_colors/font_color", Colors.string_to_color(main.stack.variables.get_string("_list_text_color", "6e1414")))
 		button_label.align = Label.ALIGN_CENTER
 		button_label.valign = Label.VALIGN_CENTER
@@ -149,14 +149,14 @@ func add_list_items():
 			)
 			check_ob.position = Vector2(lcheck_offset_x, lcheck_offset_y)
 			check_ob.cannot_save = true
-		
+
 func set_list_item_options(options):
 	_items[-1][2] = options
-	
+
 func ws_click_back_from_list(script, arguments):
 	queue_free()
 	Commands.call_command("sound_list_menu_cancel", script, [])
-	
+
 func ws_click_list_item(script, arguments):
 	set_checked(" ".join(arguments))
 	Commands.call_command(
@@ -168,7 +168,7 @@ func ws_click_list_item(script, arguments):
 	)
 	Commands.call_command("sound_list_menu_confirm", stack.scripts[0], [])
 	queue_free()
-	
+
 func ws_select_list_item(script, arguments):
 	var result = arguments[0]
 	for item in _items:

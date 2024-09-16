@@ -40,6 +40,11 @@ _global_script_classes=[ {
 "path": "res://System/Colors.gd"
 }, {
 "base": "Reference",
+"class": "CrossExamination",
+"language": "GDScript",
+"path": "res://System/WrightScript/Commands/CrossExamination.gd"
+}, {
+"base": "Reference",
 "class": "FadeLib",
 "language": "GDScript",
 "path": "res://System/WrightScript/Commands/Fade.gd"
@@ -161,6 +166,7 @@ _global_script_class_icons={
 "ClickArea": "",
 "ClickMesh": "",
 "Colors": "",
+"CrossExamination": "",
 "FadeLib": "",
 "Filesystem": "",
 "Fonts": "",

@@ -112,10 +112,10 @@ func ws_char(script, arguments):
 		character.visible = false
 		Commands.delete_object_group(Commands.HIDDEN_CHAR_GROUP)
 		character.add_to_group(Commands.HIDDEN_CHAR_GROUP)
-	# This should maybe be a "property" (variable namespaced on the object)
+	# TODO This should maybe be a "property" (variable namespaced on the object)
 	character.char_name = main.stack.variables.get_string(
 		"char_"+character.base_path+"_name",
-		character.base_path.capitalize()
+		""
 	)
 	if "nametag" in kw:
 		character.char_name = kw["nametag"]

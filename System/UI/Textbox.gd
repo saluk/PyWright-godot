@@ -12,6 +12,9 @@ var has_finished := false
 var wait_signal := "textbox_deleting"
 var is_deleting := false  # Use to kill this on the next frame
 
+# cross exam status
+var in_statement:bool    # statement tag we are in
+
 # If there are more packs, when we continue the text, we should show those instead
 var next_packs := []
 var NEW_TEXTBOX_WIDTH = 10
@@ -280,7 +283,7 @@ class CommandPack extends TextPack:
 				if not force:
 					self.textbox.pause(args, self)
 			_:
-				self.textbox.refresh_arrows_on_next_pack = true
+				#self.textbox.refresh_arrows_on_next_pack = true
 				var old_script = self.textbox.main.top_script()
 				Commands.call_command(self.command, old_script, args)
 
@@ -457,34 +460,6 @@ func _ready():
 	# show it immediately
 	if not will_there_be_text(text_to_print):
 		visible = false
-	var font_tb_name = "fonts/"+main.stack.variables.get_string("_font_tb","pwinternational.ttf")
-	var font_tb_size = main.stack.variables.get_int("_font_tb_size",10)
-	var font_nt_name = "fonts/"+main.stack.variables.get_string("_font_nt","arial.ttf")
-	var font_nt_size = main.stack.variables.get_int("_font_nt_size",10)
-	var font = main.font_cache.get_cached([font_tb_name, font_tb_size])
-	var font_nt = main.font_cache.get_cached([font_nt_name, font_nt_size])
-	if not font:
-		font_tb_name = Filesystem.lookup_file(
-			font_tb_name,
-			main.top_script().root_path
-		)
-		font = DynamicFont.new()
-		font.use_filter = true
-		font.use_mipmaps = true
-		font.font_data = load(font_tb_name)
-		font.size = font_tb_size
-		#font.set_spacing(DynamicFont.SPACING_SPACE, -2)
-	if not font_nt:
-		font_nt_name = Filesystem.lookup_file(
-			font_nt_name,
-			main.top_script().root_path
-		)
-		font_nt = DynamicFont.new()
-		font_nt.use_filter = true
-		font_nt.use_mipmaps = true
-		font_nt.font_data = load(font_nt_name)
-		font_nt.size = font_nt_size
-		#font_nt.set_spacing(DynamicFont.SPACING_SPACE, -2)
 
 	tb_timer = get_node(tb_timer)
 	tb_timer.one_shot = true
@@ -506,9 +481,11 @@ func _ready():
 	if tb_lines < 3:
 		get_node("%TextLabel").margin_bottom = 14
 		get_node("%TextLabel").set("custom_constants/line_separation", 8)
-	get_node("%TextLabel").set("custom_fonts/normal_font", font)
-	$WidthChecker.set("custom_fonts/normal_font", font)
-	get_node("%NametagLabel").set("custom_fonts/font", font_nt)
+
+	Fonts.set_element_font(get_node("%TextLabel"), "tb", main)
+	Fonts.set_element_font($WidthChecker, "tb", main)
+	Fonts.set_element_font(get_node("%NametagLabel"), "nt", main)
+
 	z = ZLayers.z_sort["textbox"]
 	add_to_group(Commands.TEXTBOX_GROUP)
 
@@ -637,7 +614,8 @@ func clean_up():
 	trigger_text_end_events()
 	# TODO we could check whether tboff needs to be called or not
 	# In pywright, it's only called when _tb_on is true
-	Commands.call_command("tboff", main.top_script(), [])
+	if is_instance_valid(main):
+		Commands.call_command("tboff", main.top_script(), [])
 
 func finish_text():
 	var while_loops = 0
@@ -755,10 +733,10 @@ func update_textbox(dt:float, force = false):
 		packs = tokenize_text(text_to_print, true)
 		text_label.visible_characters = 0
 		created_packs = true
-		Commands.refresh_arrows(main.stack.scripts[-1])
+		refresh_arrows(main.stack.scripts[-1])
 	if packs:
 		if refresh_arrows_on_next_pack:
-			Commands.refresh_arrows(main.stack.scripts[-1])
+			refresh_arrows(main.stack.scripts[-1])
 			refresh_arrows_on_next_pack = false
 		packs[0].consume(dt, force)
 		if packs and packs[0].delete:
@@ -775,6 +753,34 @@ func trigger_text_end_events():
 		_set_speaking_animation("blink")
 		main.emit_signal("text_finished")
 	update_arrows(true)
+
+func is_inside_statement():
+	return in_statement
+
+func refresh_arrows(script):
+	# If a cross examination happens, refresh arrows based on cross exam script
+	var cross = main.cross_exam_script()
+	if cross:
+		script = cross
+	if script.get_prev_statement() == null:
+		main.stack.variables.set_val("_cross_exam_start", "true")
+	else:
+		main.stack.variables.set_val("_cross_exam_start", "false")
+	if is_inside_statement():
+		Commands.call_macro("show_cross_buttons", script, [])
+	else:
+		Commands.call_macro("show_main_button", script, [])
+
+	if is_inside_statement():
+		Commands.call_macro("show_present_button", script, [])
+		Commands.call_macro("show_press_button", script, [])
+	else:
+		Commands.call_macro("hide_present_button", script, [])
+		Commands.call_macro("hide_press_button", script, [])
+		Commands.call_macro("show_court_record_button", script, [])
+	# Called at "end" because it becomes the top of the stack and will execute first
+	# TODO: maybe we should make our internal call function unwind it so it makes more sense
+	Commands.call_macro("hide_main_button_all", script, [])
 
 func update_arrows(disable_click=null):
 	var arrows = Commands.get_objects("_main_button_arrow")
@@ -800,9 +806,6 @@ func update_arrows(disable_click=null):
 			if b.click_area:
 				b.click_area.enabled = true
 
-func reset_statement():
-	main.stack.variables.del_val("_in_statement")
-
 func _process(dt):
 	# FIXME this may be something we want to apply to all WrightObjects too
 	# Essentially, when something is queue_free() during the _process() chain,
@@ -823,7 +826,8 @@ var save_properties = [
 	"z",
 	"characters_per_update",
 	"ticks_per_update",
-	"override_sound"
+	"override_sound",
+	"in_statement"
 ]
 func save_node(data):
 	data["loader_class"] = "res://System/UI/Textbox.gd"
