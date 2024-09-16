@@ -41,7 +41,7 @@ func _ready():
 		game_name = game_name.rstrip("/")
 		game_name = game_name.split("/")[-1]
 	$Control/GameTitle.text = game_name
-	Fonts.set_element_font($Control/GameTitle, "gametitle", wrightscript.stack)
+	Fonts.set_element_font($Control/GameTitle, "gametitle", wrightscript.main)
 	build_scene()
 	connect_arrows()
 	load_last_case()
@@ -98,13 +98,13 @@ func build_scene():
 	SignalUtils.remove_all($Control/ArrowRight)
 	SignalUtils.remove_all($Control/ScrollContainer2/VBoxContainer/ResumeButton)
 	get_node("%CaseTitle").bbcode_text = "[center][b]%s[/b][/center]"%current_case().replace("_"," ")
-	Fonts.set_element_font(get_node("%CaseTitle"), "gametitle", wrightscript.stack)
+	Fonts.set_element_font(get_node("%CaseTitle"), "gametitle", wrightscript.main)
 	$Control/ArrowLeft.visible = false
 	$Control/ArrowRight.visible = false
 	$Control/ScrollContainer2/VBoxContainer/NewGameButton.connect("pressed", self, "launch_game")
 	$Control/ScrollContainer2/VBoxContainer/ResumeButton.visible = false
-	Fonts.set_element_font($Control/ScrollContainer2/VBoxContainer/NewGameButton/NewGame, "new_resume", wrightscript.stack)
-	Fonts.set_element_font($Control/ScrollContainer2/VBoxContainer/ResumeButton/Resume, "new_resume", wrightscript.stack)
+	Fonts.set_element_font($Control/ScrollContainer2/VBoxContainer/NewGameButton/NewGame, "new_resume", wrightscript.main)
+	Fonts.set_element_font($Control/ScrollContainer2/VBoxContainer/ResumeButton/Resume, "new_resume", wrightscript.main)
 	connect_resume()
 
 func connect_arrows():

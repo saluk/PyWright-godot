@@ -1,3 +1,6 @@
+char hideme
+"No character loaded, so there is no nametag"
+
 nt narrator
 "I am the narrator"
 set char_maya_name Maya Fey

@@ -232,8 +232,10 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 
 # Passthrough functions to namespace
 
-func set_val(key, value):
+func set_val(key, value, split_on=null):
 	var a = get_accessor(key, null, true)
+	if split_on != null:
+		value = Variables.array_to_string(value, split_on)
 	return a.set_val(value)
 
 func del_val(key):
@@ -256,6 +258,11 @@ func get_truth(key, default="false"):
 
 func get_truth_string(key, default="false"):
 	return get_accessor(key).get_val("truth_string", default)
+
+# Keep the default a string here
+func get_array(key, default="", split_on=","):
+	var val = get_accessor(key).get_val("string", default)
+	return Variables.string_to_array(val, split_on)
 
 func evidence_keys():
 	var ev_keys = {}

@@ -4,18 +4,23 @@ class VariableDef extends Reference:
 	var name:String
 	var default_value
 	var default_type:String
-	func _init(name, default_type="string", default_value=null):
+	var split_on
+	func _init(name, default_type="string", default_value=null, split_on=null):
 		self.name = name
 		self.default_value = default_value
 		self.default_type = default_type
+		self.split_on = split_on
 	func retrieve(source=null):
 		if not source:
 			source = ObjectFactory.get_main().stack.variables
-		return source.call("get_"+default_type, name, default_value)
+		if self.split_on != null:
+			return source.call("get_"+default_type, name, default_value, self.split_on)
+		else:
+			return source.call("get_"+default_type, name, default_value)
 	func store(value, source=null):
 		if not source:
 			source = ObjectFactory.get_main().stack.variables
-		return source.set_val(name, value)
+		return source.set_val(name, value, self.split_on)
 	func delete(source=null):
 		if not source:
 			source = ObjectFactory.get_main().stack.variables
@@ -40,3 +45,6 @@ var NT_Y := VariableDef.new("_nt_y", "int", null)
 var NT_TEXT_X := VariableDef.new("_nt_text_x", "int", null)
 var NT_TEXT_Y := VariableDef.new("_nt_text_y", "int", null)
 var TEXTBOX_LINES := VariableDef.new("_textbox_lines", "string", "auto")
+
+var STATEMENTS := VariableDef.new("_statements", "array", "", ",")
+var STATEMENT_LABELS := VariableDef.new("_statement_labels", "array", "", "{")

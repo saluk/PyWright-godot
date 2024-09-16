@@ -17,7 +17,7 @@ def convert_wave(dirpath, filename, extension):
     
 def magick_identify(full_file):
     result = subprocess.run(["magick","identify","-format","%f %m %wx%h delay=%T\n",full_file], capture_output=True)
-    output = str(result.stdout.strip()).replace(full_file,"").strip()
+    output = str(result.stdout.strip()).replace(full_file,"").strip().replace("\\r","")
     output = [line.strip().split(" ") for line in output.split("\\n") if line.strip()]
     return output
 
@@ -87,7 +87,7 @@ def start_conversion(game_folder, clean=True):
             filename_only, extension = get_extension(filename)
             if extension.lower() == "wav":
                 convert_wave(dirpath, filename_only, extension)
-            if extension.lower() in ["png","jpeg","jpg","gif"]:
+            elif extension.lower() in ["png","jpeg","jpg","gif"]:
                 convert_gif(dirpath, filename_only, extension)
             elif extension.lower() == "backup" and clean:
                 clean_backup(dirpath, filename)
@@ -97,5 +97,8 @@ def start_conversion(game_folder, clean=True):
                 fix_extension(dirpath, filename_only, extension)
 
 if __name__ == "__main__":
-    game_folder = sys.argv[1]
+    game_folder = sys.argv[1].replace("\\", "/")
+    if game_folder.endswith("/"):
+        game_folder = game_folder[:-1]
+    print(game_folder)
     start_conversion(game_folder)
