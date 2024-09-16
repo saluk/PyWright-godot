@@ -18,22 +18,22 @@ func reset():
 	has_objects = false
 	for child in get_children():
 		child.queue_free()
-	
+
 func _process(dt):
 	if has_objects:
 		return
 	has_objects = true
 	load_text()
-	
+
 func load_text():
 	var desc:Label = Label.new()
-	Fonts.set_element_font(desc, "block", stack)
+	Fonts.set_element_font(desc, "block", main)
 	desc.rect_position = Vector2(1,1)
 	desc.rect_size = Vector2(
 		text_width,
 		text_height
 	)
-	desc.set("custom_constants/line_spacing", 
+	desc.set("custom_constants/line_spacing",
 		StandardVar.FONT_BLOCK_LINEHEIGHT.retrieve()
 	)
 	desc.set("custom_colors/font_color", Colors.string_to_color(text_color))

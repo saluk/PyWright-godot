@@ -457,34 +457,6 @@ func _ready():
 	# show it immediately
 	if not will_there_be_text(text_to_print):
 		visible = false
-	var font_tb_name = "fonts/"+main.stack.variables.get_string("_font_tb","pwinternational.ttf")
-	var font_tb_size = main.stack.variables.get_int("_font_tb_size",10)
-	var font_nt_name = "fonts/"+main.stack.variables.get_string("_font_nt","arial.ttf")
-	var font_nt_size = main.stack.variables.get_int("_font_nt_size",10)
-	var font = main.font_cache.get_cached([font_tb_name, font_tb_size])
-	var font_nt = main.font_cache.get_cached([font_nt_name, font_nt_size])
-	if not font:
-		font_tb_name = Filesystem.lookup_file(
-			font_tb_name,
-			main.top_script().root_path
-		)
-		font = DynamicFont.new()
-		font.use_filter = true
-		font.use_mipmaps = true
-		font.font_data = load(font_tb_name)
-		font.size = font_tb_size
-		#font.set_spacing(DynamicFont.SPACING_SPACE, -2)
-	if not font_nt:
-		font_nt_name = Filesystem.lookup_file(
-			font_nt_name,
-			main.top_script().root_path
-		)
-		font_nt = DynamicFont.new()
-		font_nt.use_filter = true
-		font_nt.use_mipmaps = true
-		font_nt.font_data = load(font_nt_name)
-		font_nt.size = font_nt_size
-		#font_nt.set_spacing(DynamicFont.SPACING_SPACE, -2)
 
 	tb_timer = get_node(tb_timer)
 	tb_timer.one_shot = true
@@ -506,9 +478,11 @@ func _ready():
 	if tb_lines < 3:
 		get_node("%TextLabel").margin_bottom = 14
 		get_node("%TextLabel").set("custom_constants/line_separation", 8)
-	get_node("%TextLabel").set("custom_fonts/normal_font", font)
-	$WidthChecker.set("custom_fonts/normal_font", font)
-	get_node("%NametagLabel").set("custom_fonts/font", font_nt)
+
+	Fonts.set_element_font(get_node("%TextLabel"), "tb", main)
+	Fonts.set_element_font($WidthChecker, "tb", main)
+	Fonts.set_element_font(get_node("%NametagLabel"), "nt", main)
+
 	z = ZLayers.z_sort["textbox"]
 	add_to_group(Commands.TEXTBOX_GROUP)
 

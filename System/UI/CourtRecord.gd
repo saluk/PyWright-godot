@@ -95,7 +95,7 @@ func _process(dt):
 	z = ZLayers.z_sort[script_name]
 
 	name_label = Label.new()
-	Fonts.set_element_font(name_label, "itemname", stack)
+	Fonts.set_element_font(name_label, "itemname", main)
 	name_label.name = "Name Label"
 	name_label.rect_position = Vector2(
 		stack.variables.get_int("ev_currentname_x"),
@@ -104,7 +104,7 @@ func _process(dt):
 	name_label.text = ""
 
 	page_label = Label.new()
-	Fonts.set_element_font(page_label, "itemset", stack)
+	Fonts.set_element_font(page_label, "itemset", main)
 	page_label.name = "Page Label"
 	page_label.rect_position = Vector2(
 		stack.variables.get_int("ev_mode_x"),
@@ -183,7 +183,7 @@ func load_page_button():
 	if not main.stack.variables.get_truth("ev_show_modebutton", true):
 		b.modulate.a = 0.0
 	var l = Label.new()
-	Fonts.set_element_font(l, "itemset_big", stack)
+	Fonts.set_element_font(l, "itemset_big", main)
 	l.rect_position += Vector2(
 		stack.variables.get_int("ev_modebutton_x", 0),
 		stack.variables.get_int("ev_modebutton_y", 0)
@@ -281,7 +281,7 @@ func load_page_zoom():
 
 		# TODO make this a textblock after textblock is implemented
 		var desc:Label = Label.new()
-		Fonts.set_element_font(desc, "block", stack)
+		Fonts.set_element_font(desc, "block", main)
 		desc.rect_position = Vector2(
 			stack.variables.get_int("ev_z_textbox_x", 0),  # zero so we can ensure it loads the variable
 			stack.variables.get_int("ev_z_textbox_y", 0)
