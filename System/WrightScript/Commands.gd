@@ -174,6 +174,9 @@ func get_nametag():
 	var character = get_speaking_char()
 	if character:
 		nametag = character.char_name
+		# Hide nametag if character sprites didn't load
+		if character.sprites and not nametag:
+			nametag = character.base_path.capitalize()
 	return nametag
 
 # Call interface
