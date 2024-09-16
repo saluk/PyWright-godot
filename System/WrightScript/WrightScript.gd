@@ -298,7 +298,7 @@ func get_prev_statement():
 		print("NOT INSIDE CROSS SO NO PREV STATEMENT")
 		return null
 	var si = line_num-1
-	var seen_statements = stack.variables.get_string("_statements","").split(",", false)
+	var seen_statements = StandardVar.STATEMENTS.retrieve()
 	if seen_statements.size() < 2:
 		print("SEEN STATEMENTS:", seen_statements," so no left arrow")
 		return null
@@ -307,9 +307,7 @@ func get_prev_statement():
 func prev_statement():
 	var si = get_prev_statement()
 	if si != null:
-		var seen_statements = stack.variables.get_string("_statements","").split(",", false)
-		seen_statements.remove(seen_statements.size()-1)
-		stack.variables.set_val("_statements", seen_statements.join(","))
+		CrossExamination.pop_rightmost_statement(main)
 		return goto_line_number(si)
 
 func read_macro():
