@@ -264,13 +264,6 @@ func get_array(key, default="", split_on=","):
 	var val = get_accessor(key).get_val("string", default)
 	return Variables.string_to_array(val, split_on)
 
-func evidence_keys():
-	var ev_keys = {}
-	for key in global_namespace.store.keys():
-		if key.ends_with("_name") or key.ends_with("_pic") or key.ends_with("_desc"):
-			ev_keys[key.split("_")[0]] = 1
-	return ev_keys.keys()
-
 
 # SAVE/LOAD
 var save_properties = [

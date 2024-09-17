@@ -19,6 +19,13 @@ func get_page_data(page):
 	for ev_key in stack.evidence_pages[page]:
 		datas.append(ev_db[ev_key])
 	return datas
+func get_defined_tags():
+	var stack = ObjectFactory.get_main().stack
+	var tags = {}
+	for variable in stack.variables.global_namespace.store.keys():
+		if variable.ends_with("_name") or variable.ends_with("_pic") or variable.ends_with("_check") or variable.ends_with("_desc"):
+			tags[variable.split("_")[0]] = 1
+	return tags.keys()
 
 func retrieve_all(tag):
 	var root_path = ObjectFactory.get_main().top_script().root_path

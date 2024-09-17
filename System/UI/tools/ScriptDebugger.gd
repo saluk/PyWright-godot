@@ -86,8 +86,8 @@ func goto_line(row, script):
 
 func all_ev():
 	var found = false
-	for var_key in current_stack.variables.evidence_keys():
-		Commands.call_command("addev", current_stack.scripts[-1], [var_key])
+	for ev_tag in StandardVar.EV_DATA.get_defined_tags():
+		Commands.call_command("addev", current_stack.scripts[-1], [ev_tag])
 		found = true
 	var p = PopupPanel.new()
 	p.rect_scale = Vector2(4,4)
