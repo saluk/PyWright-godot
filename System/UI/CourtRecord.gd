@@ -1,4 +1,3 @@
-# TODO - make it save your place, implement the ability to check
 extends WrightObject
 
 var PAGE_SIZE = 8
@@ -13,8 +12,6 @@ func set_offset(new_offset):
 	stack.variables.set_val("_cr_current_page", str(int(offset / PAGE_SIZE)))
 
 var zoom = false
-
-var ev_db = {}
 
 var in_presentation_context = false
 
@@ -52,9 +49,6 @@ func get_available_pages():
 		if main.stack.variables.get_truth("_%s_enabled" % p, true):
 			pages_return.append(p)
 	return pages_return
-
-func evidence_name(evidence_tag):
-	return evidence_tag.trim_suffix("$")
 
 func verify_pages():
 	var pages = get_available_pages()
@@ -223,6 +217,7 @@ func ws_record_click_direction(script, arguments):
 	return
 
 func load_page():
+	StandardVar.EV_DATA.refresh()
 	page_label.text = ""
 	if stack.variables.get_truth("ev_show_mode_text", true):
 		page_label.text = page.capitalize()
@@ -248,7 +243,7 @@ func load_page_zoom():
 	var count = 0
 	var left_arrow = false
 	var right_arrow = false
-	for evname in stack.evidence_pages.get(page, []):
+	for ev_data in StandardVar.EV_DATA.get_page_data(page):
 		i += 1
 		if i < offset:
 			# We're trying to draw before the offset, show left arrow
@@ -259,17 +254,9 @@ func load_page_zoom():
 			right_arrow = true
 			break
 		count += 1
-		var key_name = stack.variables.get_string(evname+"_name", evname)
-		var key_desc = stack.variables.get_string(evname+"_desc", "")
-		var key_pic = stack.variables.get_string(evname+"_pic", evname)
-		var key_check = stack.variables.get_string(evname+"_check", null)
-		ev_db[evname] = {
-			"name": key_name, "desc": key_desc, "pic": key_pic, "check": key_check
-		}
 		var pic = PWSprite.new()
-		pic.name = "ZoomedEv"+key_pic
-		if pic.load_animation("art/ev/"+key_pic+".png", root_path) is Array:
-			pic.load_animation("art/ev/envelope.png", root_path)
+		pic.name = "ZoomedEv"+ev_data["name"]
+		pic.load_animation(ev_data["pic_path"], root_path)
 		pic.rescale(
 			stack.variables.get_int("ev_big_width")+1,
 			stack.variables.get_int("ev_big_height")+1
@@ -277,7 +264,7 @@ func load_page_zoom():
 		pic.position = Vector2(x, y)
 		add_child(pic)
 
-		name_label.text = evidence_name(key_name)
+		name_label.text = ev_data["name"]
 
 		# TODO make this a textblock after textblock is implemented
 		var desc:Label = Label.new()
@@ -294,13 +281,13 @@ func load_page_zoom():
 			stack.variables.get_int("textblock_line_height", 10)
 		)
 		desc.set("custom_colors/font_color", Colors.string_to_color(stack.variables.get_string("ev_z_text_col")))
-		desc.text = key_desc.replace("{n}","\n")
+		desc.text = ev_data["desc"].replace("{n}","\n")
 		desc.clip_text = true
 		desc.autowrap = true
 		add_child(desc)
 
-		if can_present() and stack.variables.get_truth(evname+"_presentable", true):
-			select(evname)
+		if can_present() and ev_data["presentable"]:
+			select(ev_data["tag"])
 			var present_button = ObjectFactory.create_from_template(
 				main.top_script(),
 				"button",
@@ -310,7 +297,7 @@ func load_page_zoom():
 						"highlight": {"path":"art/general/press/present2_high.png"}
 					},
 					"click_macro": "{record_click_present}",
-					"click_args": [evname]
+					"click_args": [ev_data["tag"]]
 				},
 				[],
 				script_name
@@ -318,14 +305,14 @@ func load_page_zoom():
 			present_button.cannot_save = true
 			present_button.position = Vector2(100,0)
 
-		load_check_button(evname)
+		load_check_button(ev_data)
 	if left_arrow:
 		load_arrow("L")
 	if right_arrow:
 		load_arrow("R")
 
-func load_check_button(evname):
-	var check_script_or_macro = stack.variables.get_string(evname+"_check")
+func load_check_button(ev_data):
+	var check_script_or_macro = ev_data["check"]
 	if not check_script_or_macro:
 		return
 	var check_img = stack.variables.get_string("ev_check_img")
@@ -338,7 +325,7 @@ func load_check_button(evname):
 				"highlight": {"path": "art/"+check_img+"_high.png"}
 			},
 			"click_macro": "{record_click_check}",
-			"click_args": [evname, check_script_or_macro]
+			"click_args": [ev_data["tag"], check_script_or_macro]
 		},
 		[],
 		script_name
@@ -357,7 +344,7 @@ func load_page_overview():
 	var count = 0
 	var left_arrow = false
 	var right_arrow = false
-	for evname in stack.evidence_pages.get(page, []):
+	for ev_data in StandardVar.EV_DATA.get_page_data(page):
 		i += 1
 		if i < offset:
 			# We're trying to draw before the offset, show left arrow
@@ -368,29 +355,15 @@ func load_page_overview():
 			right_arrow = true
 			break
 		count += 1
-		var key_name = stack.variables.get_string(evname+"_name", evname)
-		var key_desc = stack.variables.get_string(evname+"_desc", "")
-		var key_pic = stack.variables.get_string(evname+"_pic", evname)
-		var key_check = stack.variables.get_string(evname+"_check", null)
-		ev_db[evname] = {
-			"name": key_name, "desc": key_desc, "pic": key_pic, "check": key_check
-		}
-		var lookup_path = "art/ev/"+key_pic+".png"
-		var ev_path = Filesystem.lookup_file(
-			"art/ev/"+key_pic+".png",
-			self.root_path
-		)
-		if not ev_path:
-			lookup_path = "art/ev/envelope.png"
 		var ev_button = ObjectFactory.create_from_template(
 			main.top_script(),
 			"button",
 			{
 				"sprites": {
-					"default": {"path":lookup_path}
+					"default": {"path":ev_data["pic_path"]}
 				},
 				"click_macro": "{record_zoom_evidence}",
-				"click_args": [evname]
+				"click_args": [ev_data["tag"]]
 			},
 			[],
 			script_name
@@ -402,7 +375,7 @@ func load_page_overview():
 				stack.variables.get_int("ev_small_width"),
 				stack.variables.get_int("ev_small_height")
 			)
-		ev_button.click_area.connect("mouse_entered", self, "highlight_evidence", [evname])
+		ev_button.click_area.connect("mouse_entered", self, "highlight_evidence", [ev_data])
 
 		# Move to next spot
 		x += stack.variables.get_int("ev_spacing_x")
@@ -414,9 +387,9 @@ func load_page_overview():
 	if right_arrow:
 		load_arrow("R")
 
-func highlight_evidence(evname):
+func highlight_evidence(ev_data):
 	if not zoom:
-		name_label.text = evidence_name(ev_db[evname]["name"])
+		name_label.text = ev_data["name"]
 		Commands.call_command("sound_court_record_scroll", wrightscript, [])
 
 func ws_record_zoom_evidence(script, arguments):

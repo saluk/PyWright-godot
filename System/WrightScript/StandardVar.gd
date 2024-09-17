@@ -1,31 +1,5 @@
 extends Node
 
-class VariableDef extends Reference:
-	var name:String
-	var default_value
-	var default_type:String
-	var split_on
-	func _init(name, default_type="string", default_value=null, split_on=null):
-		self.name = name
-		self.default_value = default_value
-		self.default_type = default_type
-		self.split_on = split_on
-	func retrieve(source=null):
-		if not source:
-			source = ObjectFactory.get_main().stack.variables
-		if self.split_on != null:
-			return source.call("get_"+default_type, name, default_value, self.split_on)
-		else:
-			return source.call("get_"+default_type, name, default_value)
-	func store(value, source=null):
-		if not source:
-			source = ObjectFactory.get_main().stack.variables
-		return source.set_val(name, value, self.split_on)
-	func delete(source=null):
-		if not source:
-			source = ObjectFactory.get_main().stack.variables
-		return source.del_val(name)
-
 var COURT_FAIL_LABEL := VariableDef.new("_court_fail_label", "string", "none")
 
 var FONT_LIST := VariableDef.new("_font_list", "string", "pwinternational.ttf")
@@ -48,3 +22,5 @@ var TEXTBOX_LINES := VariableDef.new("_textbox_lines", "string", "auto")
 
 var STATEMENTS := VariableDef.new("_statements", "array", "", ",")
 var STATEMENT_LABELS := VariableDef.new("_statement_labels", "array", "", "{")
+
+var EV_DATA := EvDef.new("", "string", null)

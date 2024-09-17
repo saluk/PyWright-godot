@@ -18,7 +18,7 @@ static func save_pywright_checkpoint(main, filename:String):
 	#	lists: {}
 	# Create script objects
 	var objects = []
-	
+
 	# Asset object
 	var assets = ["Assets", [], {"items":[], "_track": null, "_loop":0, "variables":{}, "lists":{}}, null]
 	for page in main.stack.evidence_pages.keys():
@@ -26,7 +26,7 @@ static func save_pywright_checkpoint(main, filename:String):
 			assets[2]["items"].append({"id": ev, "page": page})
 	assets[2]["variables"] = main.stack.variables.global_namespace.store
 	objects.append(assets)
-	
+
 	# Script objects,
 	var stack_index = 0
 	for script in main.stack.scripts:
@@ -46,7 +46,7 @@ static func save_pywright_checkpoint(main, filename:String):
 		}
 		stack_index += 1
 		objects.append(script_ob)
-		
+
 	var file = File.new()
 	if file.open(filename, File.WRITE) != OK:
 		print("Couldn't open file for saving")

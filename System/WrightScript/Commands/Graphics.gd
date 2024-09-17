@@ -158,14 +158,14 @@ func ws_bemo(script, arguments):
 
 func ws_ev(script, arguments):
 	var ev_name = arguments[0]
-	var pic = Commands.main.stack.variables.get_string(ev_name+"_pic", ev_name)
+	var pic_path = StandardVar.EV_DATA.retrieve_all(ev_name)["pic_path"]
 	var ev = ObjectFactory.create_from_template(
 		script,
 		"ev",
 		{
 			"sprites": {
 				"default": {
-					"path": "art/ev/"+pic+".png"
+					"path": pic_path
 				}
 			}
 		},

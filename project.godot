@@ -44,6 +44,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://System/WrightScript/Commands/CrossExamination.gd"
 }, {
+"base": "VariableDef",
+"class": "EvDef",
+"language": "GDScript",
+"path": "res://System/WrightScript/EvDef.gd"
+}, {
 "base": "Reference",
 "class": "FadeLib",
 "language": "GDScript",
@@ -140,6 +145,11 @@ _global_script_classes=[ {
 "path": "res://System/Values.gd"
 }, {
 "base": "Reference",
+"class": "VariableDef",
+"language": "GDScript",
+"path": "res://System/WrightScript/VariableDef.gd"
+}, {
+"base": "Reference",
 "class": "Variables",
 "language": "GDScript",
 "path": "res://System/Variables.gd"
@@ -167,6 +177,7 @@ _global_script_class_icons={
 "ClickMesh": "",
 "Colors": "",
 "CrossExamination": "",
+"EvDef": "",
 "FadeLib": "",
 "Filesystem": "",
 "Fonts": "",
@@ -186,6 +197,7 @@ _global_script_class_icons={
 "TimeCounter": "",
 "UserConfig": "",
 "Values": "",
+"VariableDef": "",
 "Variables": "",
 "WrightObject": "",
 "WrightScript": "",
