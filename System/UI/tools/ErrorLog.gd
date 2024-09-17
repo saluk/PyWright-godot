@@ -33,7 +33,7 @@ func log_info(msg, context={}):
 	textlog.text = t
 	scroll()
 	print(" error logged: " + msg)
-	
+
 func scroll():
 	textlog.cursor_set_line(textlog.get_line_count())
 	textlog.cursor_set_column(0)

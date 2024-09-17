@@ -224,6 +224,11 @@ func top_script():
 		return stack.scripts[-1]
 	return null
 
+func bottom_script():
+	if stack.scripts.size() > 0:
+		return stack.scripts[0]
+	return null
+
 # Return topmost script that is in a cross examination
 func cross_exam_script():
 	if stack.scripts.size() > 0:
@@ -253,7 +258,8 @@ func pause(paused=true, toggle=false):
 func is_saving_enabled():
 	if not stack:
 		return false
-	var script:WrightScript = top_script()
+	# The bottom most script should be running the intro.txt for our game or case
+	var script:WrightScript = bottom_script()
 	if not script:
 		return false
 	for line in script.lines:

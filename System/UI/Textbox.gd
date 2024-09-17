@@ -605,6 +605,8 @@ func _notification(what: int) -> void:
 			on_predelete()
 
 func on_predelete() -> void:
+	if not is_instance_valid(main):
+		return
 	clean_up()
 	emit_signal("textbox_deleting")
 	# delete on the next frame

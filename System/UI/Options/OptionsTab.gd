@@ -9,6 +9,9 @@ onready var available_saves:ItemList = get_node("%AvailableSaves")
 onready var memory_leak:Button = get_node("%MemoryLeak")
 onready var free_orphans:Button = get_node("%FreeOrphans")
 
+var saves_enabled = false
+var last_save_files = []
+
 func _ready():
 	main = get_tree().get_nodes_in_group("Main")[0]
 	$vbox/MainMenu.connect("button_up", self, "_main_menu")
@@ -89,7 +92,6 @@ func _volume_changed(val):
 
 func _create_save():
 	SaveState.save_new_file(main, save_name.text)
-	available_saves.clear()
 	_populate_load_games()
 
 func _load_save():
@@ -108,8 +110,13 @@ func _delete_save():
 		available_saves.select(item_num)
 		return
 
-func _populate_load_games():
-	var save_files = SaveState.get_saved_games_for_current(main)
+func _populate_load_games(save_files=null):
+	if save_files==null:
+		save_files = SaveState.get_saved_games_for_current(main)
+	if save_files == last_save_files:
+		return
+	available_saves.clear()
+	last_save_files = save_files
 	for file in save_files:
 		available_saves.add_item(file[1].rsplit(".save",true,1)[0])
 
@@ -118,7 +125,6 @@ func _enable_saveload_buttons(enabled=false):
 		new_save_button.disabled = false
 		$"vbox/SaveLoad/HBoxContainer/Load Selected Save".disabled = false
 		$"vbox/SaveLoad/HBoxContainer/Delete Selected Save".disabled = false
-		available_saves.clear()
 		_populate_load_games()
 		$vbox/SaveLoad.visible = true
 		# TODO find all saves
@@ -126,7 +132,7 @@ func _enable_saveload_buttons(enabled=false):
 		new_save_button.disabled = true
 		$"vbox/SaveLoad/HBoxContainer/Load Selected Save".disabled = true
 		$"vbox/SaveLoad/HBoxContainer/Delete Selected Save".disabled = true
-		available_saves.clear()
+		_populate_load_games([])
 		$vbox/SaveLoad.visible = false
 
 func _select_available_save(item_index):
