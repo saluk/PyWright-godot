@@ -88,7 +88,7 @@ func load_macros_from_path(path):
 				print("Info: Adding macros from %s" % file_name)
 				var script = WrightScript.new(main, self)
 				script.stack = self
-				script.load_txt_file(Filesystem.path_join(path, file_name))
+				script.load_txt_file(Filesystem.path_join(path, file_name), false)
 				macro_scripts.insert(0, script)
 				macro_scripts_found += 1
 	else:
@@ -130,9 +130,6 @@ func add_script(script_text, root_path="res://"):
 	return new_script
 
 func load_script(script_path):
-	# TODO not sure if this is the "correct" time to load the macros
-	print("load script macros")
-	load_macros_from_path(script_path.rsplit("/", true, 1)[0])
 	var new_script = WrightScript.new(main, self)
 	new_script.load_txt_file(script_path)
 	scripts.append(new_script)

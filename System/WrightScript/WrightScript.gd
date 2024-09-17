@@ -52,7 +52,10 @@ func has_script(scene_name) -> String:
 func fullpath() -> String:
 	return Filesystem.path_join(root_path, filename)
 
-func load_txt_file(path:String):
+func load_txt_file(path:String, load_macros=true):
+	if load_macros:
+		print("load script macros")
+		stack.load_macros_from_path(path.rsplit("/", true, 1)[0])
 	lines = []
 	root_path = path.get_base_dir()+"/"
 	filename = path.get_file()
