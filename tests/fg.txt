@@ -1,0 +1,3 @@
+fg takethatanim
+fg testimonyanim
+"Anim plays a sound and clears after its done"

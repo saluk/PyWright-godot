@@ -19,6 +19,7 @@ var pivot_center = true  # Whether the pivot point for the sprite should be in t
 
 var wait = false   # Pause script until animation has finished playing
 var wait_signal = "finished_playing"
+var autoclear := false	  # Will remove the object when finished animating
 var loaded = false
 signal finished_playing
 signal size_changed
@@ -134,6 +135,8 @@ func _load_info(path:String):
 			var key_value = line.split(" ")
 			if key_value.size() == 2:
 				info[key_value[0]] = key_value[1]
+			elif key_value.size() == 1:
+				info[key_value[0]] = true
 			elif key_value[0] == "framedelay":
 				info["delays"][int(key_value[1])] = int(key_value[2])
 			elif key_value[0] == "sfx":
@@ -142,6 +145,7 @@ func _load_info(path:String):
 		f.close()
 	else:
 		return false
+	autoclear = info.get('autoclear', false)
 
 func _load_animation(path:String, sub_rect=null):
 	sprite_path = path

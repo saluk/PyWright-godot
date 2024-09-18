@@ -1,2 +1,3 @@
 horizontal 11
 loops 0
+autoclear

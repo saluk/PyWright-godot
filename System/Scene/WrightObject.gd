@@ -299,6 +299,8 @@ func set_wait(value):
 
 func sprite_finished_playing():
 	emit_signal("finished_playing")
+	if current_sprite.autoclear:
+		queue_free()
 
 # Effects
 func set_grey(value):
