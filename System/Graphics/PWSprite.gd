@@ -25,6 +25,7 @@ signal finished_playing
 signal size_changed
 
 var sound_frames = {}
+var real_frame_values = []
 
 # TODO needs to handle different animation modes, loop, once, and blink mode at minimum
 
@@ -192,9 +193,11 @@ func _load_animation(path:String, sub_rect=null):
 			# TODO get default frame delay
 			for delay in info["delays"].get(frame_i, 6.0):
 				animated_sprite.frames.add_frame("default", frame)
+				real_frame_values.append(frame_i)
 			frame_i += 1
 	elif frames:
 		animated_sprite.frames.add_frame("default", frames[0])
+		real_frame_values.append(0)
 	else:
 		return
 	animated_sprite.frames.set_animation_speed("default", 60.0)
@@ -260,6 +263,6 @@ func get_animation_progress():
 func _process(dt):
 	# TODO only plays sounds once, doesn't handle loops
 	for sound_frame in sound_frames.keys():
-		if animated_sprite.frame >= sound_frame:
+		if real_frame_values[animated_sprite.frame] >= sound_frame:
 			Commands.call_command("sfx", Commands.main.top_script(), [sound_frames[sound_frame]])
 			sound_frames.erase(sound_frame)
