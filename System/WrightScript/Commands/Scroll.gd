@@ -20,7 +20,6 @@ class Scroller extends Node:
 	func _init(x, y, z, speed, wait, filter):
 		name = "scroll"
 		total = Vector3(float(x), float(y), float(z))
-		objects = getscrollable(Commands.get_objects(null, false))
 		move = total.normalized() * (float(speed)/0.02)
 		if (speed/0.02) > 0:
 			time_left = float(total.length())/(speed/0.02)
@@ -84,7 +83,7 @@ class Scroller extends Node:
 		return return_list
 	func control(script_name):
 		controlled = ["control", script_name]
-		objects = getscrollable(Commands.get_objects(script_name))
+		objects = Commands.get_objects(script_name)
 		if objects:
 			objects = [objects[-1]]
 		pass
@@ -95,7 +94,7 @@ class Scroller extends Node:
 			controlled = ["control_last", objects[0].get_path()]
 	func control_filter(screen):
 		var new_objects = []
-		for o in objects:
+		for o in getscrollable(Commands.get_objects(null, false)):
 			if screen == "top" and o.position.y >= 192:
 				continue
 			if screen == "bottom" and o.position.y < 192:

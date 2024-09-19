@@ -10,6 +10,7 @@ var printed := ""
 var printed_lines:Array = []
 var has_finished := false
 var wait_signal := "textbox_deleting"
+var script_name := "_textbox_"
 var is_deleting := false  # Use to kill this on the next frame
 
 # cross exam status
@@ -488,6 +489,7 @@ func _ready():
 
 	z = ZLayers.z_sort["textbox"]
 	add_to_group(Commands.TEXTBOX_GROUP)
+	add_to_group(Commands.SPRITE_GROUP)
 
 	var alter_x = StandardVar.TEXTBOX_X.retrieve()
 	var alter_y = StandardVar.TEXTBOX_Y.retrieve()
