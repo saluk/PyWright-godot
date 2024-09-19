@@ -1,4 +1,4 @@
-goto offset
+
 
 set x 30
 set y 60
@@ -44,6 +44,10 @@ fg offset
 pause 60
 
 label blinksplit
+clear
+char test e=combined
+"Shows t when talking and b when blinking"
+
 label blinkmode
 label blipsound
 label framedelay

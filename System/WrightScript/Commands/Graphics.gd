@@ -101,6 +101,7 @@ func ws_char(script, arguments):
 		arguments
 	)
 	# TODO "e" is handled in ObjectFactory. probably should pick a lane here
+	# FIXME - only compatible with graphic files that end in (blink)!
 	if "be" in kw:
 		character.add_sprite("blink", {
 			"path": "art/port/{base}/"+kw["be"]+"(blink).png",

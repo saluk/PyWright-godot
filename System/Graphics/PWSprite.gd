@@ -29,8 +29,9 @@ var times_to_play = 0   # If greater than 1, when the animation finishes play mo
 signal finished_playing
 signal size_changed
 
+var frame = 0
+var frametime := 0.0
 var sound_frames = {}
-var real_frame_values = []
 var current_real_frame
 
 # TODO needs to handle different animation modes, loop, once, and blink mode at minimum
@@ -189,7 +190,6 @@ func _load_animation(path:String, sub_rect=null):
 	animated_sprite = AnimatedSprite.new()
 	animated_sprite.name = path.replace(":", "|").replace("/",";")
 	animated_sprite.use_parent_material = true
-	add_child(animated_sprite)
 	animated_sprite.frames = SpriteFrames.new()
 	animated_sprite.connect("frame_changed", self, "_frame_changed")
 	# TODO this is a hack, we are adding frames to slow the animation down when we should use an animationplayer to interpolate instead
@@ -200,15 +200,15 @@ func _load_animation(path:String, sub_rect=null):
 			# TODO get default frame delay
 			for delay in info["delays"].get(frame_i, float(info['globaldelay'])):
 				animated_sprite.frames.add_frame("default", frame)
-				real_frame_values.append(frame_i)
+				break
 			frame_i += 1
 	elif frames:
 		animated_sprite.frames.add_frame("default", frames[0])
-		real_frame_values.append(0)
 	else:
 		return
 	animated_sprite.frames.set_animation_speed("default", 60.0)
 	animated_sprite.play("default")
+	animated_sprite.playing = false
 	print("good")
 	if info.get('loops') != "1" and info.get('loops') != "yes" and info.get('loops') != "true":
 		animated_sprite.frames.set_animation_loop("default", false)
@@ -226,6 +226,7 @@ func _load_animation(path:String, sub_rect=null):
 	if "wbench" in sprite_path:
 		pass
 	Pauseable.new(self)
+	add_child(animated_sprite)
 	return self
 
 var lastplaying
@@ -240,8 +241,9 @@ func set_process(enabled):
 
 func finish_playing():
 	if times_to_play > 1:
+		frame = 0
 		animated_sprite.frame = 0
-		animated_sprite.play("default")
+		#animated_sprite.play("default")
 		times_to_play -= 1
 		return
 	self.emit_signal("finished_playing")
@@ -291,13 +293,28 @@ func get_animation_progress():
 	return float(animated_sprite.frame/count)
 
 func _frame_changed():
-	var real_frame = real_frame_values[animated_sprite.frame]
-	if current_real_frame != real_frame:
-		current_real_frame = real_frame
-		_real_frame_changed()
-
-func _real_frame_changed():
 	for sound_frame in sound_frames.keys():
-		if current_real_frame == sound_frame:
+		if frame == sound_frame:
 			Commands.call_command("sfx", Commands.main.top_script(), [sound_frames[sound_frame]])
 
+func _process(dt):
+	frametime += dt
+	var delay = info['delays'].get(animated_sprite.frame, float(info['globaldelay'])) / 60.0
+	while frametime >= delay:
+		next_frame()
+		frametime = frametime - delay
+
+# TODO more hacks, this is an intermediate step of not actually playing the AnimatedSprite,
+# but just setting the frame individually
+func next_frame():
+	frame += 1
+	if frame >= animated_sprite.frames.get_frame_count("default"):
+		if animated_sprite.frames.get_animation_loop("default"):
+			animated_sprite.emit_signal("animation_finished")
+			frame = 0
+			#_frame_changed()
+		else:
+			animated_sprite.emit_signal("animation_finished")
+			#_frame_changed()
+			return
+	animated_sprite.frame = frame
