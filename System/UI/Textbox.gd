@@ -480,7 +480,7 @@ func _ready():
 	else:
 		tb_lines = int(tb_lines_var)
 	if tb_lines < 3:
-		get_node("%TextLabel").margin_bottom = 14
+		get_node("%TextLabel").margin_top = 8
 		get_node("%TextLabel").set("custom_constants/line_separation", 8)
 
 	Fonts.set_element_font(get_node("%TextLabel"), "tb", main)

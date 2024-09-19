@@ -366,7 +366,7 @@ static func create_node(saved_data:Dictionary):
 	pass
 
 func load_node(tree, saved_data:Dictionary):
-	pass
+	SaveState._load_node(tree, variables, saved_data["variables"])
 
 func after_load(tree, saved_data:Dictionary):
 	scripts.clear()
@@ -377,7 +377,6 @@ func after_load(tree, saved_data:Dictionary):
 		var script = WrightScript.new(main, self)
 		SaveState._load_node(tree, script, script_data)
 		scripts.append(script)
-	SaveState._load_node(tree, variables, saved_data["variables"])
 	#show_in_debugger()
 	if "blockers" in saved_data:
 		for blocker in saved_data["blockers"]:
