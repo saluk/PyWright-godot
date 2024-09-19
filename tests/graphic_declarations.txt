@@ -1,28 +1,58 @@
-goto loops
+goto offset
+
+set x 30
+set y 60
 
 label loops
 clear
+textblock $x $y 200 20 animation plays once
+pause 60
 fg loops0
-"zero loops"
+pause 60
+
 clear
+textblock $x $y 200 40 animation plays forever with one sound per loop
+pause 60
 fg loops1
-"one loop"
+pause 300
+
 clear
+textblock $x $y 200 20 animation plays twice
+pause 60
 fg loops2
-"two loops"
+pause 60
 
 label framedelay
 clear
+textblock $x $y 200 20 animation waits on the "w"'s
+pause 60
 fg framedelay
+pause 60
 
 label sfx
 clear
+textblock $x $y 200 20 different sounds on the vertical lines
+pause 60
 fg sfx
+pause 60
 
 label offset
+clear
+textblock $x $y 200 20 upper right corner
+pause 60
+fg offset
+pause 60
+
 label blinksplit
 label blinkmode
 label blipsound
 label framedelay
+
 label globaldelay
+clear
+textblock $x $y 200 20 animation is slower, half a second between frames
+pause 60
+fg globaldelay
+pause 60
+
 label blinkspeed

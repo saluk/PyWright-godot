@@ -4,7 +4,11 @@ class_name PWSprite
 var info:Dictionary = {
 	'horizontal': '1',
 	'vertical': '1',
-	'delays': {}
+	'delays': {},
+	'globaldelay': '6',
+	'loops': '0',
+	'offsetx': '0',
+	'offsety': '0'
 }
 var animated_sprite:AnimatedSprite
 var sprite_path:String
@@ -194,7 +198,7 @@ func _load_animation(path:String, sub_rect=null):
 		var frame_i = 0
 		for frame in frames:
 			# TODO get default frame delay
-			for delay in info["delays"].get(frame_i, 6.0):
+			for delay in info["delays"].get(frame_i, float(info['globaldelay'])):
 				animated_sprite.frames.add_frame("default", frame)
 				real_frame_values.append(frame_i)
 			frame_i += 1
@@ -212,6 +216,7 @@ func _load_animation(path:String, sub_rect=null):
 			times_to_play = int(info.get('loops'))
 	else:
 		animated_sprite.frames.set_animation_loop("default", true)
+
 	rescale(width, height)
 
 	material = ShaderMaterial.new()
@@ -259,9 +264,13 @@ func rescale(size_x, size_y):
 	animated_sprite.scale.y = sc_h
 	width = size_x
 	height = size_y
+	animated_sprite.position = Vector2(0,0)
 	if pivot_center:
 		animated_sprite.position = Vector2(width/2, height/2)
 		animated_sprite.position = Vector2(width/2, height/2)
+	# TODO we may need to consider how applying offset in this way affects mouse clicking
+	animated_sprite.position.x += int(info['offsetx'])
+	animated_sprite.position.y += int(info['offsety'])
 	self.emit_signal("size_changed")
 
 
