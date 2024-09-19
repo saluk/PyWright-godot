@@ -21,11 +21,13 @@ var wait = false   # Pause script until animation has finished playing
 var wait_signal = "finished_playing"
 var autoclear := false	  # Will remove the object when finished animating
 var loaded = false
+var times_to_play = 0   # If greater than 1, when the animation finishes play more times
 signal finished_playing
 signal size_changed
 
 var sound_frames = {}
 var real_frame_values = []
+var current_real_frame
 
 # TODO needs to handle different animation modes, loop, once, and blink mode at minimum
 
@@ -185,6 +187,7 @@ func _load_animation(path:String, sub_rect=null):
 	animated_sprite.use_parent_material = true
 	add_child(animated_sprite)
 	animated_sprite.frames = SpriteFrames.new()
+	animated_sprite.connect("frame_changed", self, "_frame_changed")
 	# TODO this is a hack, we are adding frames to slow the animation down when we should use an animationplayer to interpolate instead
 	# Also, avoid doing this if there is only one frame. it's not an animation at that point
 	if frames.size() > 1:
@@ -205,6 +208,8 @@ func _load_animation(path:String, sub_rect=null):
 	print("good")
 	if info.get('loops') != "1" and info.get('loops') != "yes" and info.get('loops') != "true":
 		animated_sprite.frames.set_animation_loop("default", false)
+		if int(info.get('loops', 0)) > 1:
+			times_to_play = int(info.get('loops'))
 	else:
 		animated_sprite.frames.set_animation_loop("default", true)
 	rescale(width, height)
@@ -229,6 +234,11 @@ func set_process(enabled):
 	.set_process(enabled)
 
 func finish_playing():
+	if times_to_play > 1:
+		animated_sprite.frame = 0
+		animated_sprite.play("default")
+		times_to_play -= 1
+		return
 	self.emit_signal("finished_playing")
 
 func from_frame(frame):
@@ -271,9 +281,14 @@ func get_animation_progress():
 	var count = animated_sprite.frames.get_frame_count(animated_sprite.animation)
 	return float(animated_sprite.frame/count)
 
-func _process(dt):
-	# TODO only plays sounds once, doesn't handle loops
+func _frame_changed():
+	var real_frame = real_frame_values[animated_sprite.frame]
+	if current_real_frame != real_frame:
+		current_real_frame = real_frame
+		_real_frame_changed()
+
+func _real_frame_changed():
 	for sound_frame in sound_frames.keys():
-		if real_frame_values[animated_sprite.frame] >= sound_frame:
+		if current_real_frame == sound_frame:
 			Commands.call_command("sfx", Commands.main.top_script(), [sound_frames[sound_frame]])
-			sound_frames.erase(sound_frame)
+

@@ -1,0 +1,7 @@
+horizontal 10
+vertical 1
+length 10
+loops 0
+framedelay 5 60
+sfx 1 bloop.ogg
+sfx 7 Bwaaah.ogg

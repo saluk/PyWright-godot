@@ -1,0 +1,28 @@
+goto loops
+
+label loops
+clear
+fg loops0
+"zero loops"
+clear
+fg loops1
+"one loop"
+clear
+fg loops2
+"two loops"
+
+label framedelay
+clear
+fg framedelay
+
+label sfx
+clear
+fg sfx
+
+label offset
+label blinksplit
+label blinkmode
+label blipsound
+label framedelay
+label globaldelay
+label blinkspeed
