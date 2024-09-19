@@ -20,6 +20,7 @@ class Fader extends Node:
 		objects = Commands.get_objects(null, false)
 		if wait:
 			wait_signal = "tree_exited"
+		Pauseable.new(self)
 	func control_all_named(script_name):
 		objects = Commands.get_objects(script_name)
 	func control_last():

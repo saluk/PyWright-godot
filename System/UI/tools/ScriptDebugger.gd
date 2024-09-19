@@ -27,6 +27,9 @@ var debug_last_state = null
 
 var goto_line_button_template:Button
 
+signal debug_state_on
+signal debug_state_off
+
 # {"script": WrightScript, "editor": TextEdit, "highlighted_line":int, "bookmark_line": int}
 
 func _ready():
@@ -61,11 +64,13 @@ func start_debugger(force=false):
 			pause.text = "Pause"
 			current_stack.disconnect("line_executed", self, "debug_line")
 			current_stack.state = current_stack.STACK_READY
+			emit_signal("debug_state_off")
 	else:
 		in_debugger = true
 		pause.text = "Resume"
 		current_stack.connect("line_executed", self, "debug_line")
 		current_stack.state = current_stack.STACK_DEBUG
+		emit_signal("debug_state_on")
 
 
 func get_script_data(script):

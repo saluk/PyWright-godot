@@ -27,6 +27,11 @@ class Scroller extends Node:
 		total_time = time_left
 		if wait and time_left > 0.02:
 			wait_signal = "tree_exited"
+		Pauseable.new(self)
+	func set_process(enabled):
+		if tween:
+			tween.set_active(enabled)
+		.set_process(enabled)
 	func make_tweens(start_positions=[]):
 		tween = Tween.new()
 		add_child(tween)

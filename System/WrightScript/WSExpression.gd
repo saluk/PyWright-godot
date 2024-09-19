@@ -7,7 +7,7 @@ func NUM(n:String):
 	if "." in n:
 		return float(n)
 	return int(n)
-	
+
 func EVAL(code:String):
 	var code_spaces = Array(code.split(" ", true, 2))
 	if len(code_spaces) == 1:
@@ -44,7 +44,7 @@ func GV(v:String):
 	if val and val[0].is_valid_integer():
 		return NUM(val)
 	return val
-	
+
 func bool_to_string(b:bool):
 	return {
 		true: "true",
@@ -55,7 +55,7 @@ func string_to_bool(s):
 	if s in ["on", "1", "true"]:
 		return true
 	return false
-	
+
 var hello
 
 func ADD(statements:Array):
@@ -94,7 +94,7 @@ func OR2(statements:Array):
 		if string_to_bool(statement):
 			return "true"
 	return "false"
-	
+
 func EXPR(line:String, level=0):
 	var levels = ""
 	for i in range(level):
@@ -165,7 +165,7 @@ func EXPR(line:String, level=0):
 #			print(levels+"MATCHED:", word)
 #	print(levels+"STATEMENTS:", statements)
 	return statements
-	
+
 class OpsSorter:
 	static func sorter(a, b):
 		var oop = ["MUL", "DIV", "ADD", "MINUS", "EQ", "LT", "GT", "LTEQ", "GTEQ", "OR2", "AND"]
@@ -215,7 +215,7 @@ func EVAL_EXPR(expr):
 	expr[op[0]-1] = result
 #	print("NEWEXPR:", expr)
 	return EVAL_EXPR(expr)
-	
+
 func EVAL_STR(s:String):
 	return EVAL_EXPR(EXPR(s))
 
@@ -228,7 +228,7 @@ func EVAL_SIMPLE(s:String):
 	return true
 
 # Convert an is expression to an is_ex expression
-# Main differences: 
+# Main differences:
 #    $variable -> variable
 #    word -> 'word'
 #    = -> ==

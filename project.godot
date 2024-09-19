@@ -99,6 +99,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://System/Graphics/PWSprite.gd"
 }, {
+"base": "Node",
+"class": "Pauseable",
+"language": "GDScript",
+"path": "res://System/Scene/Pauseable.gd"
+}, {
 "base": "WrightObject",
 "class": "Penalty",
 "language": "GDScript",
@@ -129,7 +134,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://System/Scene/TextBlock.gd"
 }, {
-"base": "Reference",
+"base": "Node",
 "class": "TimeCounter",
 "language": "GDScript",
 "path": "res://System/TimeCounter.gd"
@@ -188,6 +193,7 @@ _global_script_class_icons={
 "ObjParse": "",
 "PWMesh": "",
 "PWSprite": "",
+"Pauseable": "",
 "Penalty": "",
 "SaveState": "",
 "Screen": "",

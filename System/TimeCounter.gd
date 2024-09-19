@@ -1,26 +1,28 @@
-extends Reference
+extends Node
 class_name TimeCounter
 
-var ticks_offset:int
+var elapsed_time := 0.0
 
 func _ready():
 	reset()
-	
+	Pauseable.new(self)
+
 func reset():
-	ticks_offset = Time.get_ticks_msec()
-	
+	elapsed_time = 0.0
+
 func get_current_elapsed_time():
-	return Time.get_ticks_msec() - ticks_offset
-	
-func set_elapsed_time(ticks):
-	ticks_offset = Time.get_ticks_msec() - ticks
+	return elapsed_time
+
+func set_elapsed_time(seconds):
+	elapsed_time = seconds
 
 func get_string():
-	var msec = Time.get_ticks_msec() - ticks_offset
-	var sec = int(msec / 1000)
-	msec = msec - (sec * 1000)
+	var sec = elapsed_time
 	var minutes = int(sec / 60)
 	sec = sec - (minutes * 60)
 	var hours = int(minutes / 60)
 	minutes = minutes - (hours * 60)
-	return str(hours) + ":" + str(minutes) + ":" + str(sec) + ":" + str(msec)
+	return "%02d:%02d:%02d" % [hours, minutes, sec]
+
+func _process(dt):
+	elapsed_time += dt

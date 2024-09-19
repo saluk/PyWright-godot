@@ -215,7 +215,18 @@ func _load_animation(path:String, sub_rect=null):
 	animated_sprite.connect("animation_finished", self, "finish_playing")
 	if "wbench" in sprite_path:
 		pass
+	Pauseable.new(self)
 	return self
+
+var lastplaying
+func set_process(enabled):
+	if animated_sprite:
+		if enabled == false:
+			lastplaying = animated_sprite.playing
+			animated_sprite.playing = false
+		else:
+			animated_sprite.playing = lastplaying
+	.set_process(enabled)
 
 func finish_playing():
 	self.emit_signal("finished_playing")

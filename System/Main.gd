@@ -108,6 +108,7 @@ func _ready():
 	ScreenManager._init_screens()
 	screens = get_tree().get_nodes_in_group("Screens")[0]
 	timecounter = TimeCounter.new()
+	add_child(timecounter)
 
 	tab_button = get_tree().get_nodes_in_group("TabButton")[0]
 	tab_button.connect("toggled", self, "_toggle_button")
