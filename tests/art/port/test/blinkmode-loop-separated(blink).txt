@@ -1,0 +1,6 @@
+horizontal 10
+vertical 1
+loops 2
+blinkmode loop
+# This line should be ignored
+blinkspeed 30 180

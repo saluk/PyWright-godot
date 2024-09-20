@@ -161,6 +161,11 @@ func add_sprite(sprite_key, sprite_template):
 	sprite_paths_searched = sprite.load_animation(search_path, root_path, template["rect"])
 	if not sprite_paths_searched:
 		sprites[sprite_key] = sprite
+		if sprite_key == "blink":
+			sprite.apply_blink_settings(sprite_template)
+		if sprite_key == "talk":
+			if sprite.info.get("blipsound", null):
+				variables.set_val("blipsound", sprite.info["blipsound"])
 		return sprite
 
 func load_sprites(template, sprite_key=null):
@@ -216,17 +221,18 @@ func has_sprite(sprite_key):
 func process_combined():
 	if has_sprite("combined"):
 		var count = sprites["combined"].animated_sprite.frames.get_frame_count("default")
+		var blinksplit = int(sprites["combined"].info.get("blinksplit", count/2))
 		if not "talk" in sprites:
 			add_sprite("talk", template["sprites"]["combined"])
 			# Remove blink frames
 			if count > 1:
-				while sprites["talk"].animated_sprite.frames.get_frame_count("default") > count/2:
-					sprites["talk"].animated_sprite.frames.remove_frame("default", count/2)
+				while sprites["talk"].animated_sprite.frames.get_frame_count("default") > blinksplit:
+					sprites["talk"].animated_sprite.frames.remove_frame("default", blinksplit)
 		if not "blink" in sprites:
 			add_sprite("blink", template["sprites"]["combined"])
 			# Remove talk frames
 			if count > 1:
-				while sprites["blink"].animated_sprite.frames.get_frame_count("default") > count/2:
+				while sprites["blink"].animated_sprite.frames.get_frame_count("default") > count-blinksplit:
 					sprites["blink"].animated_sprite.frames.remove_frame("default", 0)
 
 

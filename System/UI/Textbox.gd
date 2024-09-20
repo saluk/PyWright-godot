@@ -415,8 +415,10 @@ func get_char_sound():
 	var character = Commands.get_speaking_char()
 	var blipsound = null
 	if character:
-		blipsound = main.stack.variables.get_string(
-			"char_"+character.base_path+"_defsound")
+		blipsound = character.variables.get_val("blipsound", null)
+		if not blipsound:
+			blipsound = main.stack.variables.get_string(
+				"char_"+character.base_path+"_defsound")
 		if not blipsound:
 			for key in DEFAULT_SOUNDS:
 				if character.base_path in DEFAULT_SOUNDS[key]:

@@ -1,0 +1,5 @@
+horizontal 10
+vertical 1
+blinksplit 7
+loops 1
+blinkmode stop

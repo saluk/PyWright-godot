@@ -1,0 +1,86 @@
+set x 30
+set y 60
+
+label loops
+clear
+textblock $x $y 200 20 animation plays once
+pause 60
+fg loops0
+pause 60
+
+clear
+textblock $x $y 200 40 animation plays forever with one sound per loop
+pause 60
+fg loops1
+pause 300
+
+clear
+textblock $x $y 200 20 animation plays twice
+pause 60
+fg loops2
+pause 60
+
+label framedelay
+clear
+textblock $x $y 200 20 animation waits on the "w"'s
+pause 60
+fg framedelay
+pause 60
+
+label sfx
+clear
+textblock $x $y 200 20 different sounds on the vertical lines
+pause 60
+fg sfx
+pause 60
+
+label offset
+clear
+textblock $x $y 200 20 upper right corner
+pause 60
+fg offset
+pause 60
+
+label blipsound
+clear
+char blipsound
+"I talk like the jury!"
+
+label globaldelay
+clear
+textblock $x $y 200 20 animation is slower, half a second between frames
+pause 60
+fg globaldelay
+pause 60
+
+label blinkspeed
+label blinkmode
+
+clear
+char test e=blinkmode-blink-separated
+"t animates and b randomly plays. 1/2 to 3 seconds each. b should rest on frame 1."
+
+clear
+char test e=blinkmode-stop-separated
+"t animates but b plays once and stops"
+
+clear
+char test e=blinkmode-loop-separated
+"t animates and b continuously loops"
+
+clear
+char test e=blinkmode-blink-combined
+"t animates and b randomly plays. (1/2 to 3 seconds). b should rest on blue dot."
+
+clear
+char test e=blinkmode-stop-combined
+"t animates but b plays once and stops"
+
+clear
+char test e=blinkmode-loop-combined
+"t animates and b continuously loops"
+
+label blinksplit
+clear
+char test e=combined
+"Shows t when talking and b when blinking"

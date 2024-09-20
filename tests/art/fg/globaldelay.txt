@@ -1,0 +1,4 @@
+horizontal 10
+vertical 1
+length 10
+globaldelay 30
