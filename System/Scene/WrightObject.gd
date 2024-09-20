@@ -163,6 +163,9 @@ func add_sprite(sprite_key, sprite_template):
 		sprites[sprite_key] = sprite
 		if sprite_key == "blink":
 			sprite.apply_blink_settings(sprite_template)
+		if sprite_key == "talk":
+			if sprite.info.get("blipsound", null):
+				variables.set_val("blipsound", sprite.info["blipsound"])
 		return sprite
 
 func load_sprites(template, sprite_key=null):

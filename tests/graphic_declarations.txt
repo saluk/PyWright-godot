@@ -42,7 +42,9 @@ fg offset
 pause 60
 
 label blipsound
-label framedelay
+clear
+char blipsound
+"I talk like the jury!"
 
 label globaldelay
 clear
@@ -52,7 +54,6 @@ fg globaldelay
 pause 60
 
 label blinkspeed
-
 label blinkmode
 
 clear

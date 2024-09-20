@@ -1,0 +1,7 @@
+horizontal 10
+vertical 1
+blinksplit 7
+loops 1
+blinkmode blink
+blinkspeed 30 180
+blipsound Jury

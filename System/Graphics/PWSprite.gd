@@ -147,14 +147,15 @@ func _load_info(path:String):
 			if key_value.size() == 2:
 				info[key_value[0]] = key_value[1]
 			elif key_value.size() > 2:
-				info[key_value[0]] = Array(key_value).slice(1, key_value.size()-1)
+				if key_value[0] == "framedelay":
+					info["delays"][int(key_value[1])] = int(key_value[2])
+				elif key_value[0] == "sfx":
+					# TODO can only have one sound effect per frame
+					sound_frames[int(key_value[1])] = key_value[2]
+				else:
+					info[key_value[0]] = Array(key_value).slice(1, key_value.size()-1)
 			elif key_value.size() == 1:
 				info[key_value[0]] = true
-			elif key_value[0] == "framedelay":
-				info["delays"][int(key_value[1])] = int(key_value[2])
-			elif key_value[0] == "sfx":
-				# TODO can only have one sound effect per frame
-				sound_frames[int(key_value[1])] = key_value[2]
 		f.close()
 	else:
 		return false
@@ -196,7 +197,7 @@ func _load_animation(path:String, sub_rect=null):
 	animated_sprite.name = path.replace(":", "|").replace("/",";")
 	animated_sprite.use_parent_material = true
 	animated_sprite.frames = SpriteFrames.new()
-	animated_sprite.connect("frame_changed", self, "_frame_changed")
+	#animated_sprite.connect("frame_changed", self, "_frame_changed")
 	# TODO this is a hack, we are adding frames to slow the animation down when we should use an animationplayer to interpolate instead
 	# Also, avoid doing this if there is only one frame. it's not an animation at that point
 	if frames.size() > 1:
@@ -348,9 +349,10 @@ func next_frame():
 		if animated_sprite.frames.get_animation_loop("default"):
 			animated_sprite.emit_signal("animation_finished")
 			frame = 0
-			#_frame_changed()
+			_frame_changed()
 		else:
+			_frame_changed()
 			animated_sprite.emit_signal("animation_finished")
-			#_frame_changed()
 			return
 	animated_sprite.frame = frame
+	_frame_changed()
