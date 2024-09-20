@@ -24,3 +24,6 @@ var STATEMENTS := VariableDef.new("_statements", "array", "", ",")
 var STATEMENT_LABELS := VariableDef.new("_statement_labels", "array", "", "{")
 
 var EV_DATA := EvDef.new("", "string", null)
+
+var BLINKSPEED_GLOBAL := VariableDef.new("_blinkspeed_global", "string", "100 200")
+var BLINKSPEED_NEXT := VariableDef.new("_blinkspeed_next", "string", null)

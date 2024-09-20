@@ -62,40 +62,6 @@ func set_wait(b):
 		return
 	wait = false
 
-# TODO implement remaining textfile commands
-#for l in lines:
-#    spl = l.split(" ")
-#    if l.startswith("horizontal "): self.horizontal = int(spl[1])
-#    if l.startswith("vertical "): self.vertical = int(spl[1])
-#    if l.startswith("length "):
-#        self.length = int(spl[1])
-#        setlength = True
-#    if l.startswith("loops "): self.loops = int(spl[1])
-#    if l.startswith("sfx "):
-#        self.sounds[int(spl[1])] = " ".join(spl[2:])
-#    if l.startswith("offsetx "): self.offsetx = int(spl[1])
-#    if l.startswith("offsety "): self.offsety = int(spl[1])
-#    if l.startswith("framecompress "):
-#        fc = l.replace("framecompress ","").split(",")
-#        if len(fc)==1:
-#            self.framecompress = [0,int(fc[0])]
-#        else:
-#            self.framecompress = [int(x) for x in fc]
-#    if l.startswith("blinksplit "):
-#        self.split = int(l.replace("blinksplit ",""))
-#    if l.startswith("blinkmode "):
-#        self.blinkmode = l.replace("blinkmode ","")
-#    if l.startswith("blipsound "):
-#        self.blipsound = l.replace("blipsound ","").strip()
-#    if l.startswith("framedelay "):
-#        frame,delay = l.split(" ")[1:]
-#        self.delays[int(frame)] = int(delay)
-#    if l.startswith("globaldelay "):
-#        self.speed = float(l.split(" ",1)[1])
-#    if l.startswith("blinkspeed "):
-#        self.blinkspeed = [int(x) for x in l.split(" ")[1:]]
-#f.close()
-
 func _search_file(search_paths:Array, root_path:String):
 	var filename
 	var sprite_paths_searched = []
@@ -315,7 +281,13 @@ func apply_blink_settings(template):
 		times_to_play = 1
 		animated_sprite.frames.set_animation_loop("default", false)
 	else:
-		var blinkspeed = info.get("blinkspeed", ["100", "200"])
+		var blinkspeed = StandardVar.BLINKSPEED_NEXT.retrieve()
+		if not blinkspeed:
+			blinkspeed = info.get("blinkspeed", null)
+		if not blinkspeed:
+			blinkspeed = StandardVar.BLINKSPEED_GLOBAL.retrieve()
+		if blinkspeed is String:
+			blinkspeed = blinkspeed.split(" ", 1)
 		random_loop = true
 		random_min = float(blinkspeed[0])
 		random_max = float(blinkspeed[1])

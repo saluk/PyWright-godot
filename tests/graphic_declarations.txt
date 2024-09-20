@@ -1,5 +1,6 @@
 set x 30
 set y 60
+goto blinkspeed
 
 label loops
 clear
@@ -54,6 +55,16 @@ fg globaldelay
 pause 60
 
 label blinkspeed
+clear
+set _blinkspeed_next 180 360
+char test e=blinkmode-blink-separated
+"t animates and b randomly plays. 3 to 6 seconds each. b should rest on frame 1."
+
+clear
+set _blinkspeed_global 180 360
+char test e=combined
+"t animates and b randomly plays. 3 to 6 seconds each."
+
 label blinkmode
 
 clear
