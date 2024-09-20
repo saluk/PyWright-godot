@@ -21,7 +21,7 @@ func has_cached(key_elements):
 	var key = to_key(key_elements)
 	if cache.has(key):
 		return true
-		
+
 func get_cached(key_elements, default=null):
 	var key = to_key(key_elements)
 	if not cache.has(key):
@@ -38,7 +38,7 @@ func clear():
 	# TODO iterate through items and determine if they need to be freed()
 	cache = {}
 
-# FIXME because we pass value in blank, it's actually creating
+# TODO because we pass value in blank, it's actually creating
 # that value in memory
 func set_get_cached(key_elements, value):
 	var key = to_key(key_elements)
@@ -64,6 +64,6 @@ func _shrink_cache():
 	for i in range(MAX_CACHE/2):
 		var row = array[i+MAX_CACHE/2]
 		cache[row[0]] = row[1]
-	
+
 func custom_array_sort(a, b):
 	return a[1][0] < b[1][0]
