@@ -73,9 +73,11 @@ char maya
 "I'm not surprised.{n}{esurprised}I'm surprised!"
 "Some text. {p200}(Some text). Some more text! Some, text."
 
-
+label spd
 "{spd0.1}Slow typing {_fullspeed} super fast typing all the way{_endfullspeed}back to slow typing"
-
+"the next two texts should be DIFFERENT speeds"
+"{spd1}Speed 1, 60 delay:{p60}done!"
+"{spd0.5}Speed 0.5, 60 delay:{p60}done!"
 
 set james_name {c009}James{c}
 "Oh look, it's {$james_name}! (in blue)"

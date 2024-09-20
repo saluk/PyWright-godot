@@ -282,7 +282,7 @@ class CommandPack extends TextPack:
 				Commands.call_command("shake", self.textbox.main.top_script(), args)
 			"p":
 				if not force:
-					self.textbox.pause(args, self)
+					self.textbox.pause(float(args[0]) / textbox.characters_per_update, self)
 			_:
 				#self.textbox.refresh_arrows_on_next_pack = true
 				var old_script = self.textbox.main.top_script()
@@ -592,10 +592,10 @@ func stop_timer():
 	set_process(true)
 	tb_timer.disconnect("timeout", self, "stop_timer")
 
-func pause(args, pack):
+func pause(seconds, pack):
 	_set_speaking_animation("blink")
 	set_process(false)
-	tb_timer.wait_time = float(args[0])/60.0
+	tb_timer.wait_time = float(seconds)/60.0
 	tb_timer.connect("timeout", self, "stop_timer")
 	tb_timer.start()
 
