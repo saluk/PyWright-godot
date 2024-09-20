@@ -173,8 +173,6 @@ func ws_forgetlistitem(script, arguments):
 			items.erase(item)
 		main.stack.variables.set_val("_pwlist_checked_items_"+tag, PoolStringArray(items).join(";;"))
 
-# TODO IMPLEMENT
-# still needs graphics
 func ws_casemenu(script, arguments):
 	var cases = []
 	var case_num = 1

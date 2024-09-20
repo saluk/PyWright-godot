@@ -29,10 +29,9 @@ func ws_debug(script, arguments):
 func ws_print(script, arguments):
 	print("OUTPUT: ", Commands.join(arguments))
 
-# TODO IMPLEMENT
-# Steps through pywright debugger
+# No need to implement
 func ws_step(script, arguments):
-	pass
+	return Commands.NOTIMPLEMENTED
 
 func ws_goto(script, arguments):
 	var fail = Commands.keywords(arguments).get("fail", null)
@@ -146,12 +145,12 @@ func ws_endscript(script, arguments):
 func ws_exit(script, arguments):
 	return ws_endscript(script, arguments)
 
-# TODO IMPLEMENT
+# FIXME IMPLEMENT
 # we should detect any click anywhere or the enter key
 func ws_waitenter(script, arguments):
 	pass
 
-# TODO implement - not hard
+# FIXME implement - not hard
 func ws_savegame(script, arguments):
 	return Commands.NOTIMPLEMENTED
 

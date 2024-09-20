@@ -69,7 +69,7 @@ func gui_back(script, arguments):
 	button.click_area.click_args = [button.name]
 	return button
 
-# TODO IMPLEMENT
+# FIXME IMPLEMENT
 func gui_input(script, arguments):
 	pass
 

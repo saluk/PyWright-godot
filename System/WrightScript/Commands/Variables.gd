@@ -20,12 +20,6 @@ func ws_setvar(script, arguments):
 func ws_delvar(script, arguments):
 	main.stack.variables.del_val(arguments[0])
 
-# TODO IMPLEMENT
-#    @category([VALUE("variable","variable name to set"),COMBINED("expression2","The results of the expression will be stored in the variable.")],type="logic")
-#    def _set_ex(self,command,variable,*args):
-#        """Sets a variable to some value based on an expression"""
-#        value = EVAL_EXPR(EXPR(" ".join(args)))
-#        assets.variables[variable]=value
 func ws_set_ex(script, arguments):
 	var variableName = arguments.pop_front()
 	var value = WSExpression.EVAL_STR(Commands.join(arguments))
@@ -70,15 +64,6 @@ func ws_setprop(script, arguments):
 			value = main.stack.variables.get_int(variable)
 			object.current_sprite.animated_sprite.frame = value
 
-# TODO IMPLEMENT
-#    @category([VALUE("variable","variable name to save random value to"),VALUE("start","smallest number to generate"),VALUE("end","largest number to generate")],type="logic")
-#    def _random(self,command,variable,start,end):
-#        """Generates a random integer with a minimum
-#        value of START, a maximum value of END, and
-#        stores that value to VARIABLE"""
-#        random.seed(pygame.time.get_ticks()+random.random())
-#        value = random.randint(int(start),int(end))
-#        assets.variables[variable]=str(value)
 func ws_random(script, arguments):
 	var key = arguments.pop_front()
 	var minimum = Values.to_num(arguments.pop_front())
@@ -127,7 +112,7 @@ func ws_absvar(script, arguments):
 		return GlobalErrors.log_error(arguments[0]+"="+str(inta)+" not a number", {"script": script})
 	main.stack.variables.set_val(arguments[0], abs(inta))
 
-# TODO IMPLEMENT
+# FIXME IMPLEMENT
 #@category([VALUE("filename","file to export variables into, relative to the case folder"),
 #            ETC("variable_names",
 #                "The names of variables to export. If none are listed, all variables will be exported",
@@ -152,7 +137,7 @@ func ws_exportvars(script, arguments):
 func ws_filewrite(script, arguments):
 	return Commands.NOTIMPLEMENTED
 
-# TODO IMPLEMENT
+# FIXME IMPLEMENT
 #    @category([VALUE("filename","file to import variables from, relative to the case folder")],type="files")
 #    def _importvars(self,command,filename):
 #        """Restores previously exported variables from the file."""
@@ -305,7 +290,7 @@ func ws_is_ex(script, arguments):
 	else:
 		script.fail(label, fail)
 
-# TODO IMPLEMENT
+# FIXME IMPLEMENT
 #    @category([VALUE('variable','Variable to check if it exists'),
 #                    CHOICE([VALUE('label','a label to jump to if the variable has been set and is not blank'),TOKEN('?','execute next line only if variable is set and not blank')])],type="logic")
 #    def _isnumber(self,command,*args):

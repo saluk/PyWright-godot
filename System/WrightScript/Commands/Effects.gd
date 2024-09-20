@@ -17,7 +17,7 @@ func ws_grey(script, arguments):
 		if o.has_method("set_grey"):
 			o.set_grey(value)
 
-# TODO IMPLEMENT
+# FIXME IMPLEMENT
 #    @category([KEYWORD("degrees","How many degrees to rotate"),KEYWORD("speed","How many degrees to rotate per frame"),
 #    KEYWORD("axis","which axis to rotate on, z is the only valid value","z"),
 #    KEYWORD("name","Name a specific object to rotate","Will try to rotate all objects (not what you might expect)"),
@@ -42,7 +42,7 @@ func ws_rotate(script, arguments):
 	if obj and obj[0] is PWMesh:
 		obj[0].do_rotate(axis, degrees, speed, nowait)
 
-# TODO IMPLEMENT
+# FIXME IMPLEMENT
 #    @category([KEYWORD("start","Color tint to start at","'ffffff' or no tint (full color)"),
 #    KEYWORD("end","Color tint to end at","'000000' or full black tint"),
 #    KEYWORD("speed","How many color steps per frame",1),
@@ -61,7 +61,7 @@ func ws_rotate(script, arguments):
 func ws_tint(script, arguments):
 	pass
 
-# TODO IMPLEMENT
+# FIXME IMPLEMENT
 #    @category([KEYWORD("value","Whether an object should be inverted or not: 1=inverted 0=not","1"),
 #    KEYWORD("name","Name a specific object to tint","Will try to tint all objects")],type="effect")
 #    def _invert(self,command,*args):
@@ -74,7 +74,7 @@ func ws_tint(script, arguments):
 func ws_invert(script, arguments):
 	pass
 
-# TODO IMPLEMENT ALL ARGUMENTS
+# FIXME IMPLEMENT ALL ARGUMENTS
 #    @category([VALUE("ttl","Time for shake to last in frames","30"),
 #    VALUE("offset","How many pixels away to move the screen (how violent)","15"),
 #    TOKEN("nowait","Continue executing script during shake"),
@@ -174,7 +174,7 @@ func ws_flash(script, arguments):
 	if flash and is_instance_valid(flash):
 		flash.queue_free()
 
-# TODO IMPLEMENT
+# FIXME IMPLEMENT
 #@category([KEYWORD("mag","How many times to magnify","1 (will magnify 1 time, which is 2x magnification)"),
 #    KEYWORD("frames","how many frames for the zoom to take","1"),
 #    KEYWORD("name","Which object to magnify","tries to magnify everything"),
@@ -216,7 +216,7 @@ func ws_flash(script, arguments):
 func ws_zoom(script, arguments):
 	pass
 
-# TODO IMPLEMENT
+# FIXME IMPLEMENT
 #    @category([VALUE("speed","The speed to set the selected animation to - this is the number of display frames to wait before showing the next animation frame."),
 #    KEYWORD("name","Only change the animation speed of objects with the given name","Change animation speed of all objects (if you want to mimic fastforward or slowdown you want to leave name= off)"),
 #    TOKEN("b","Select blinking animation for char objects"),
@@ -247,7 +247,7 @@ func ws_zoom(script, arguments):
 func ws_globaldelay(script, arguments):
 	pass
 
-# TODO IMPLEMENT
+# FIXME IMPLEMENT
 #@category([KEYWORD("name","Named object to control","Will alter animation of all current objects - not recommended to use the default value."),
 #    KEYWORD("start","Alter the starting frame of the animation","Leave starting frame what it was."),
 #    KEYWORD("end","Alter ending frame of the animation","Leave ending frame what it was."),

@@ -14,7 +14,7 @@ func ws_ut_assert(script, arguments):
 	print(unit_test_command)
 	var testing = Testing.new()
 	testing.run(unit_test_command, true)
-	
+
 func ws_ut_do(script, arguments):
 	if not main.stack.mode == "test":
 		return
@@ -22,7 +22,7 @@ func ws_ut_do(script, arguments):
 	print(unit_test_command)
 	var testing = Testing.new()
 	testing.run(unit_test_command, false)
-	
+
 class After extends Reference:
 	var times
 	var command
@@ -46,12 +46,12 @@ func ws_ut_assert_after(script, arguments):
 	if not main.stack.mode == "test":
 		return
 	_ut_command(script, arguments, true)
-	
+
 func ws_ut_after(script, arguments):
 	if not main.stack.mode == "test":
 		return
 	_ut_command(script, arguments, false)
-	
+
 func _ut_command(script, arguments, do_assert):
 	var mode = arguments.pop_front()
 	var mode_parts = mode.split("=")
@@ -60,7 +60,7 @@ func _ut_command(script, arguments, do_assert):
 	var unit_test_command = PoolStringArray(arguments).join(" ")
 	var after = After.new(1, unit_test_command, waiters, do_assert)
 	_add_waiter(mode, mode_config, after)
-	
+
 func _add_waiter(mode, mode_config, after):
 	waiters.append(after)
 	if mode == "lines":
