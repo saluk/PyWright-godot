@@ -26,13 +26,16 @@ var wait_signal = "finished_playing"
 var autoclear := false	  # Will remove the object when finished animating
 var loaded = false
 var times_to_play = 0   # If greater than 1, when the animation finishes play more times
+var random_loop := false   # If true, ignore times_to_play. Randomly play again.
+var random_min := 100.0
+var random_max := 200.0
 signal finished_playing
 signal size_changed
 
 var frame = 0
 var frametime := 0.0
 var sound_frames = {}
-var current_real_frame
+var animation_finish_fired = false
 
 # TODO needs to handle different animation modes, loop, once, and blink mode at minimum
 
@@ -143,6 +146,8 @@ func _load_info(path:String):
 			var key_value = line.split(" ")
 			if key_value.size() == 2:
 				info[key_value[0]] = key_value[1]
+			elif key_value.size() > 2:
+				info[key_value[0]] = Array(key_value).slice(1, key_value.size()-1)
 			elif key_value.size() == 1:
 				info[key_value[0]] = true
 			elif key_value[0] == "framedelay":
@@ -240,11 +245,24 @@ func set_process(enabled):
 	.set_process(enabled)
 
 func finish_playing():
-	if times_to_play > 1:
+	if animation_finish_fired:
+		return
+	animation_finish_fired = true
+	if random_loop:
+		animated_sprite.frame = 0
+		var sec = rand_range(random_min / 60.0, random_max / 60.0)
+		var t = get_tree().create_timer(sec)
+		yield(t, "timeout")
+		frame = 0
+		animated_sprite.frame = 0
+		animation_finish_fired = false
+		return
+	elif times_to_play > 1:
 		frame = 0
 		animated_sprite.frame = 0
 		#animated_sprite.play("default")
 		times_to_play -= 1
+		animation_finish_fired = false
 		return
 	self.emit_signal("finished_playing")
 
@@ -284,6 +302,24 @@ func set_colorize(color, amount):
 	if material:
 		material.set_shader_param("to_color", color)
 		material.set_shader_param("to_color_amount", amount)
+
+func apply_blink_settings(template):
+	# TODO template could overwrite the settings
+	var blinkmode = info.get("blinkmode", "blink")
+
+	if blinkmode == "loop":
+		times_to_play = 0
+		animated_sprite.frames.set_animation_loop("default", true)
+	elif blinkmode == "stop":
+		times_to_play = 1
+		animated_sprite.frames.set_animation_loop("default", false)
+	else:
+		var blinkspeed = info.get("blinkspeed", ["100", "200"])
+		random_loop = true
+		random_min = float(blinkspeed[0])
+		random_max = float(blinkspeed[1])
+		animated_sprite.frames.set_animation_loop("default", false)
+
 
 # mostly used for tests
 func get_animation_progress():

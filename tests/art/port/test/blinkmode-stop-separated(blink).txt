@@ -1,0 +1,7 @@
+horizontal 10
+vertical 1
+# this line should be ignored
+loops 2
+blinkmode stop
+# this line should be ignored
+blinkspeed 30 180

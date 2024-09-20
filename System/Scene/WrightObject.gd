@@ -161,6 +161,8 @@ func add_sprite(sprite_key, sprite_template):
 	sprite_paths_searched = sprite.load_animation(search_path, root_path, template["rect"])
 	if not sprite_paths_searched:
 		sprites[sprite_key] = sprite
+		if sprite_key == "blink":
+			sprite.apply_blink_settings(sprite_template)
 		return sprite
 
 func load_sprites(template, sprite_key=null):

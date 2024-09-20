@@ -1,5 +1,3 @@
-
-
 set x 30
 set y 60
 
@@ -43,12 +41,6 @@ pause 60
 fg offset
 pause 60
 
-label blinksplit
-clear
-char test e=combined
-"Shows t when talking and b when blinking"
-
-label blinkmode
 label blipsound
 label framedelay
 
@@ -60,3 +52,34 @@ fg globaldelay
 pause 60
 
 label blinkspeed
+
+label blinkmode
+
+clear
+char test e=blinkmode-blink-separated
+"t animates and b randomly plays. 1/2 to 3 seconds each. b should rest on frame 1."
+
+clear
+char test e=blinkmode-stop-separated
+"t animates but b plays once and stops"
+
+clear
+char test e=blinkmode-loop-separated
+"t animates and b continuously loops"
+
+clear
+char test e=blinkmode-blink-combined
+"t animates and b randomly plays. (1/2 to 3 seconds). b should rest on blue dot."
+
+clear
+char test e=blinkmode-stop-combined
+"t animates but b plays once and stops"
+
+clear
+char test e=blinkmode-loop-combined
+"t animates and b continuously loops"
+
+label blinksplit
+clear
+char test e=combined
+"Shows t when talking and b when blinking"

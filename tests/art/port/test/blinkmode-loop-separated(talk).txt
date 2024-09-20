@@ -1,0 +1,6 @@
+horizontal 10
+vertical 1
+loops 1
+# These should be ignored
+#blinkmode stop
+#blinkspeed 1 2
