@@ -282,6 +282,8 @@ func apply_blink_settings(template):
 		animated_sprite.frames.set_animation_loop("default", false)
 	else:
 		var blinkspeed = StandardVar.BLINKSPEED_NEXT.retrieve()
+		if blinkspeed:
+			StandardVar.BLINKSPEED_NEXT.delete()
 		if not blinkspeed:
 			blinkspeed = info.get("blinkspeed", null)
 		if not blinkspeed:
