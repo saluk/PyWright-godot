@@ -4,7 +4,7 @@ class_name Variables
 var store := {}
 
 var setters := ["_speaking", "_music_fade"]
-var getters := ["_version"]
+var getters := ["_version", "_engine"]
 
 func _init():
 	assert(string_to_array("", ",")==PoolStringArray([]))
@@ -50,6 +50,9 @@ func setter__music_fade(val):
 
 func getter__version():
 	return str(Configuration.builtin.version)
+
+func getter__engine():
+	return str(Configuration.builtin.engine)
 
 # "" -> []
 # "," -> [""]

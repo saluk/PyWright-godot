@@ -6,3 +6,4 @@
 script = ExtResource( 1 )
 version = "0.4"
 screen_format = "horizontal"
+engine = "godotwright"
