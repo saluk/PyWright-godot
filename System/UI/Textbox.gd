@@ -62,9 +62,10 @@ class TextPack:
 	var textbox
 	var leftover
 	var has_run = false
-	var characters_per_frame = 1
+	var characters_per_frame := 1
+	var next_ticks := 1.0
 	var delete = false
-	var time_elapsed = 0.0
+	var time_elapsed := 0.0
 	signal text_printed
 
 	func _init(text, textbox, connect_signals=false):
@@ -87,30 +88,39 @@ class TextPack:
 			#textbox.printed += self.text
 			leftover =  self.textbox.strip_bbcode(self.text).length()
 
-		var delta = null # Number of characters to add to the display
 		if not textbox.is_processing() and not force:
 			return
-		var characters_per_tick = float(textbox.characters_per_update) / float(textbox.ticks_per_update * textbox.next_ticks_per_update)
-		if characters_per_tick < 0.01 or force:
-			delta = leftover
-		else:
-			var characters_per_second = characters_per_tick * 60.0
 
-			time_elapsed += dt
-			delta = time_elapsed * characters_per_second
-			if delta < 1:
-				return
-			delta = int(delta)
-			delta = 1
-			time_elapsed -= delta/characters_per_second
-		var t
-		var c
-		var next_ticks = 0
-		var while_loops = 0
-		while delta > 0 and while_loops < textbox.MAX_WHILE:
-			while_loops += 1
+		# changed code
+		var characters_per_tick = 0
+		var characters_per_second = 0
+
+		# Increase how much time we should be processing
+		time_elapsed += dt
+		var next_ticks = textbox.next_ticks_per_update
+		while (time_elapsed > 0 or force or textbox.characters_per_update < 0.001) and leftover > 0:
+			force = force or textbox.characters_per_update < 0.001
+
+			# calculate speeds
+			characters_per_tick = float(textbox.characters_per_update) / float(textbox.ticks_per_update * next_ticks)
+			characters_per_second = characters_per_tick * 60.0
+
+			if not force:
+				# This is a problem, text wont print at all
+				if characters_per_second == 0:
+					break
+				var seconds_per_character = 1.0/characters_per_second
+				# break if we dont have enough time left in the update to add characters
+				if seconds_per_character > time_elapsed:
+					break
+				time_elapsed -= seconds_per_character
+			else:
+				time_elapsed = 0
+
+			var t
+			var c
+
 			rich_text_label.visible_characters += 1
-			delta -= 1
 			leftover -= 1
 			emit_signal("text_printed")
 			if textbox.has_finished:
@@ -118,11 +128,9 @@ class TextPack:
 			t = self.textbox.strip_bbcode(self.textbox.printed)
 			if t:
 				c = t[min(rich_text_label.visible_characters-1,t.length()-1)]
-				next_ticks += textbox.process_text_character(c)
-		if while_loops >= textbox.MAX_WHILE:
-			GlobalErrors.log_error("Max loops while _print_text")
-		if next_ticks < 1.0:
-			next_ticks = 1.0
+				next_ticks = textbox.process_text_character(c)
+			if next_ticks < 1.0:
+				next_ticks = 1.0
 		textbox.next_ticks_per_update = next_ticks
 
 	# execute pack command and change the provided textbox accordingly
@@ -376,17 +384,16 @@ func process_text_character(c):
 	var next_ticks = 1.0
 	if c and not in_paren:
 		_set_speaking_animation("talk")
-	if c in punctuation and wait_mode == "auto":
+	if c == " " and (lc and lc in punctuation) and wait_mode == "auto":
 		next_ticks = 1.0
-		if c == " " and lc!=null:
-			if lc in ".?":
-				next_ticks = 6.0
-			if lc in "!":
-				next_ticks = 8.0
-			if lc in ",":
-				next_ticks = 4.0
-			if lc in "-":
-				next_ticks = 4.0
+		if lc in ".?":
+			next_ticks = 6.0
+		if lc in "!":
+			next_ticks = 8.0
+		if lc in ",":
+			next_ticks = 4.0
+		if lc in "-":
+			next_ticks = 4.0
 	elif c in "([":
 		_set_speaking_animation("blink")
 		in_paren = c
