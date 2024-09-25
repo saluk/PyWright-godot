@@ -518,9 +518,9 @@ func _ready():
 	var alter_nt_text_x = StandardVar.NT_TEXT_X.retrieve()
 	var alter_nt_text_y = StandardVar.NT_TEXT_Y.retrieve()
 	if alter_nt_text_x != null:
-		get_node("%NametagLabel").rect_position.x = alter_nt_text_x
+		get_node("%NametagLabel").rect_position.x += alter_nt_text_x
 	if alter_nt_text_y != null:
-		get_node("%NametagLabel").rect_position.y = alter_nt_text_y
+		get_node("%NametagLabel").rect_position.y += alter_nt_text_y
 
 	update_nametag()
 

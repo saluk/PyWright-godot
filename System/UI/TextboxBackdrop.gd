@@ -1,5 +1,6 @@
 extends Node
 
+ # TODO move this into textbox, so the backdrop can center itself if it is not 256 pixels wide
 func _ready():
 	var bg = StandardVar.TEXTBOX_BG.retrieve()
 	if not bg:
@@ -8,7 +9,7 @@ func _ready():
 		var PWSpriteC = load("res://System/Graphics/PWSprite.gd")
 		var sprite = PWSpriteC.new()
 		sprite.name = "PWSprite:"+bg
-		#sprite.pivot_center = false
+		sprite.pivot_center = false
 		sprite.load_animation("art/"+bg+".png", Commands.main.stack.scripts[-1].root_path)
 		add_child(sprite)
 		move_child(sprite, 0)

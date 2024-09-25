@@ -54,9 +54,9 @@ shape = SubResource( 1 )
 [node name="TextLabel" type="RichTextLabel" parent="Handle/Backdrop"]
 unique_name_in_owner = true
 anchor_right = 10.0
-margin_left = 2.0
+margin_left = 6.0
 margin_top = 2.0
-margin_right = 256.0
+margin_right = 250.0
 margin_bottom = 65.0
 mouse_filter = 2
 bbcode_enabled = true
@@ -79,14 +79,14 @@ centered = false
 
 [node name="NtMiddle" type="Sprite" parent="Handle/NametagBackdrop"]
 visible = false
-position = Vector2( 100, 0 )
-scale = Vector2( 200, 1 )
+position = Vector2( 2, 0 )
+scale = Vector2( 70, 1 )
 texture = ExtResource( 3 )
 centered = false
 
 [node name="NtRight" type="Sprite" parent="Handle/NametagBackdrop"]
 visible = false
-position = Vector2( 200, 0 )
+position = Vector2( 72, 0 )
 texture = ExtResource( 2 )
 centered = false
 
@@ -101,9 +101,9 @@ text = "Somebody"
 
 [node name="WidthChecker" type="RichTextLabel" parent="."]
 visible = false
-margin_left = 2.0
+margin_left = 6.0
 margin_top = 77.0
-margin_right = 256.0
+margin_right = 250.0
 margin_bottom = 108.0
 custom_colors/default_color = Color( 0.352941, 0.898039, 0.92549, 1 )
 script = SubResource( 2 )
