@@ -42,9 +42,6 @@ var wait_mode = "auto"
 # auto - character delay is at full speed for normal characters and half speed for punctuation
 # manual - character delay is always at full speed
 
-var last_text_sound_played = 0.0
-var text_sound_rate = 0.04
-
 # Signal that we may need to refresh the arrows
 var refresh_arrows_on_next_pack = false
 
@@ -323,9 +320,6 @@ func _on_text_printed():
 	elif printed_lines.size() == 1:
 		if get_number_of_lines_for(printed_lines[0]) > 3:
 			queue_next_textbox()
-	if Time.get_ticks_msec()-last_text_sound_played > text_sound_rate * 1000:
-		play_sound()
-		last_text_sound_played = Time.get_ticks_msec()
 
 func get_number_of_lines_for(text):
 	var width_checker = get_node("WidthChecker")
@@ -401,18 +395,25 @@ func process_text_character(c):
 		_set_speaking_animation("talk")
 		in_paren = ""
 	else:
+		if c != " ":
+			play_sound(null, 0.07)
 		next_ticks = 1.0
 	lc = c
 	visible = true
 	return next_ticks
 
-func play_sound(path=null):
+func play_sound(path=null, rate=null):
 	if path == null:
 		path = get_char_sound()
 		if override_sound != null:
 			path = override_sound
 	if path and path.strip_edges():
-		Commands.call_command("sfx", main.top_script(), [path])
+		SoundPlayer.play_sound(
+			Filesystem.path_join("sfx", path),
+			main.top_script().root_path,
+			1.0,
+			rate
+		)
 
 var DEFAULT_SOUNDS = {
 	"blipmale.ogg": "4judge acro apollo armando armstrong atmey ben brother cody daian edgeworth edgeworthDA edgeworth-young ese gant godot grey grossberg grossberg-young gumshoe gumshoe-young hamigaki hobo hotti jake judge kagerou karma kawadzu killer kirihito kyouya kyouya-young larry maki matt max meekins moe mugitsura payne paynette payne-young phoenix phoenix-young redd romaine ron sahwit sal takita terry tigre tsunekatsu varan varan-young victor wellington will yanni zakku".split(" "),

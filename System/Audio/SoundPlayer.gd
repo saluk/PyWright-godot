@@ -10,8 +10,22 @@ var cur_volume = 1.0
 var SOUND_VOLUME = 1.0
 var NUM_PLAYERS = 100
 
+var default_min_repeat_delay := 0.05  # How many seconds before allowed to play the same sound again
+var files_playing = {}
+
 class AudioStreamProgress extends AudioStreamPlayer:
 	var path:String
+
+class PlayingFile extends Reference:
+	var key:String
+	var played_at:int
+	var player:AudioStreamProgress
+	var repeat_delay:float
+	func _init(key, played_at, player, repeat_delay):
+		self.key = key
+		self.played_at = played_at
+		self.player = player
+		self.repeat_delay = repeat_delay
 
 func _ready():
 	for i in range(NUM_PLAYERS):
@@ -67,7 +81,17 @@ func get_free_player() -> AudioStreamPlayer:
 	players.append(next_player)
 	return next_player
 
-func play_sound(path, current_path, volume=1.0):
+func play_sound(path, current_path, volume=1.0, min_repeat=null):
+	if not min_repeat:
+		min_repeat = default_min_repeat_delay
+	var key = current_path+path
+	if key in files_playing:
+		var elapsed = (Time.get_ticks_msec()-files_playing[key].played_at)/1000.0
+		if elapsed >= files_playing[key].repeat_delay:
+			files_playing[key].player.stop()
+			files_playing.erase(key)
+		else:
+			return
 	cur_volume = volume
 	#path = Filesystem.lookup_file(path, root_path)
 	var found = Filesystem.lookup_file(path, current_path, ["ogg", "mp3", "wav", "oggi"])
@@ -77,6 +101,13 @@ func play_sound(path, current_path, volume=1.0):
 	playing = true
 	playing_path = path
 	var audio_stream = _load_audio_stream(found)
+	if audio_stream:
+		files_playing[key] = PlayingFile.new(key, Time.get_ticks_msec(), audio_stream, min_repeat)
+		audio_stream.connect("finished", self, "sound_finished", [key])
+
+func sound_finished(key):
+	if key in files_playing:
+		files_playing.erase(key)
 
 # TODO implement stop_sounds
 func stop_sounds():
