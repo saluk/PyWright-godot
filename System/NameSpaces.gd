@@ -99,7 +99,7 @@ class Accessor:
 		if not namespace.store[key] is Array:
 			return []
 		return namespace.store[key]
-	func get_val(type=null, default=null):
+	func get_val(type="string", default=null):
 		var val = namespace.get_val(key, NOT_FOUND.new())
 		if access_item != null:
 			if not val is Array:
@@ -199,6 +199,8 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 
 	if not namespace and next and variable:
 		if next == "script":
+			if not script:
+				return get_accessor(variable, Variables.new(), setting)
 			return get_accessor(variable, script.variables, setting)
 		if next == "game":
 			return get_accessor(variable, game_namespace, setting)
