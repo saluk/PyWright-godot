@@ -58,7 +58,7 @@ func alter_volume():
 	for player in players:
 		if player.playing:
 			player.volume_db = linear2db(SOUND_VOLUME * Configuration.user.global_volume * cur_volume)
-		
+
 func get_free_player() -> AudioStreamPlayer:
 	for check_player in players:
 		if not check_player.playing:
@@ -66,7 +66,7 @@ func get_free_player() -> AudioStreamPlayer:
 	var next_player:AudioStreamPlayer = players.pop_front()
 	players.append(next_player)
 	return next_player
-	
+
 func play_sound(path, current_path, volume=1.0):
 	cur_volume = volume
 	#path = Filesystem.lookup_file(path, root_path)

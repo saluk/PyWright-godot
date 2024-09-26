@@ -116,7 +116,7 @@ func ws_char(script, arguments):
 	# TODO This should maybe be a "property" (variable namespaced on the object)
 	character.char_name = main.stack.variables.get_string(
 		"char_"+character.base_path+"_name",
-		""
+		character.base_path.capitalize()
 	)
 	if "nametag" in kw:
 		character.char_name = kw["nametag"]
@@ -236,6 +236,8 @@ func ws_penalty(script, arguments):
 
 func ws_surf3d(script, arguments):
 	var surf3d = load("res://System/Graphics/Node3D.tscn").instance()
+	surf3d.main = main
+	surf3d.wrightscript = script
 	surf3d.add_to_group(Commands.SPRITE_GROUP)
 	surf3d.add_to_group(Commands.CLEAR_GROUP)
 	surf3d.script_name = "surf3d"

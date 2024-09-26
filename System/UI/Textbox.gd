@@ -500,6 +500,7 @@ func _ready():
 	add_to_group(Commands.TEXTBOX_GROUP)
 	add_to_group(Commands.SPRITE_GROUP)
 
+	update_backdrop()
 	var alter_x = StandardVar.TEXTBOX_X.retrieve()
 	var alter_y = StandardVar.TEXTBOX_Y.retrieve()
 	if alter_x != null:
@@ -523,6 +524,23 @@ func _ready():
 		get_node("%NametagLabel").rect_position.y += alter_nt_text_y
 
 	update_nametag()
+
+func update_backdrop():
+	var backdrop = get_node("%Backdrop")
+	var bg = StandardVar.TEXTBOX_BG.retrieve()
+	if not bg:
+		return
+	if bg != "general/textbox_2":
+		var PWSpriteC = load("res://System/Graphics/PWSprite.gd")
+		var sprite = PWSpriteC.new()
+		sprite.name = "PWSprite:"+bg
+		sprite.pivot_center = false
+		sprite.load_animation("art/"+bg+".png", Commands.main.stack.scripts[-1].root_path)
+		backdrop.add_child(sprite)
+		backdrop.move_child(sprite, 0)
+		backdrop.get_node("Textbox2").queue_free()
+		get_node("%Handle").position = Vector2(256/2-sprite.width/2, 192-sprite.height)
+
 
 func update_nametag():
 	var nt_image = main.stack.variables.get_string("_nt_image", null)
@@ -578,7 +596,7 @@ func update_nametag_size():
 			get_node("%NametagBackdrop")
 		)
 		nt_middle_sprite.cannot_save = true
-		nt_middle_sprite.position = Vector2(nt_left_sprite.width-1+int(size.x/2),0)
+		nt_middle_sprite.position = Vector2(nt_left_sprite.position[0]+nt_left_sprite.width,0)
 		nt_middle_sprite.scale.x = size.x
 	if not nt_right_sprite:
 		nt_right_sprite = ObjectFactory.create_from_template(
@@ -592,7 +610,7 @@ func update_nametag_size():
 			get_node("%NametagBackdrop")
 		)
 		nt_right_sprite.cannot_save = true
-		nt_right_sprite.position = Vector2(nt_middle_sprite.position.x+int(size.x/2),0)
+		nt_right_sprite.position = Vector2(nt_middle_sprite.position.x+nt_middle_sprite.width*nt_middle_sprite.scale.x,0)
 	get_node("%NametagBackdrop").move_child(get_node("%NametagLabel"), get_node("%NametagBackdrop").get_child_count()-1)
 
 func stop_timer():

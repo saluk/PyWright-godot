@@ -19,7 +19,7 @@ var frames
 var width:int = 1
 var height:int = 1
 
-var pivot_center = true  # Whether the pivot point for the sprite should be in the center (true) or upper left (false)
+var pivot_center = false  # Whether the pivot point for the sprite should be in the center (true) or upper left (false)
 
 var wait = false   # Pause script until animation has finished playing
 var wait_signal = "finished_playing"
@@ -255,6 +255,9 @@ func rescale(size_x, size_y):
 	if pivot_center:
 		animated_sprite.position = Vector2(width/2, height/2)
 		animated_sprite.position = Vector2(width/2, height/2)
+		animated_sprite.centered = true
+	else:
+		animated_sprite.centered = false
 	# TODO we may need to consider how applying offset in this way affects mouse clicking
 	animated_sprite.position.x += int(info['offsetx'])
 	animated_sprite.position.y += int(info['offsety'])
@@ -288,11 +291,13 @@ func apply_blink_settings(template):
 			blinkspeed = info.get("blinkspeed", null)
 		if not blinkspeed:
 			blinkspeed = StandardVar.BLINKSPEED_GLOBAL.retrieve()
-		if blinkspeed is String:
+
+		if blinkspeed is String and blinkspeed != "default":
 			blinkspeed = blinkspeed.split(" ", 1)
 		random_loop = true
-		random_min = float(blinkspeed[0])
-		random_max = float(blinkspeed[1])
+		if blinkspeed is PoolStringArray or blinkspeed is Array:
+			random_min = float(blinkspeed[0])
+			random_max = float(blinkspeed[1])
 		animated_sprite.frames.set_animation_loop("default", false)
 
 
@@ -309,6 +314,8 @@ func _frame_changed():
 			Commands.call_command("sfx", Commands.main.top_script(), [sound_frames[sound_frame]])
 
 func _process(dt):
+	if not animated_sprite:
+		return
 	frametime += dt
 	var delay = info['delays'].get(animated_sprite.frame, float(info['globaldelay'])) / 60.0
 	while frametime >= delay:
@@ -325,6 +332,7 @@ func next_frame():
 			frame = 0
 			_frame_changed()
 		else:
+			frame = animated_sprite.frames.get_frame_count("default")
 			_frame_changed()
 			animated_sprite.emit_signal("animation_finished")
 			return

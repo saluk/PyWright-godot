@@ -16,7 +16,7 @@ var TEXTBOX_X := VariableDef.new("_textbox_x", "int", null)
 var TEXTBOX_Y := VariableDef.new("_textbox_y", "int", null)
 var NT_X := VariableDef.new("_nt_x", "int", null)
 var NT_Y := VariableDef.new("_nt_y", "int", null)
-var NT_TEXT_X := VariableDef.new("_nt_text_x", "int", null)
+var NT_TEXT_X := VariableDef.new("_nt_text_x", "int", null)  # relative to original position
 var NT_TEXT_Y := VariableDef.new("_nt_text_y", "int", null)
 var TEXTBOX_LINES := VariableDef.new("_textbox_lines", "string", "auto")
 

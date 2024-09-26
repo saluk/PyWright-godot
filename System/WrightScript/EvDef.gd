@@ -16,6 +16,8 @@ func refresh():
 func get_page_data(page):
 	var stack = ObjectFactory.get_main().stack
 	var datas := []
+	if not page in stack.evidence_pages:
+		return datas
 	for ev_key in stack.evidence_pages[page]:
 		datas.append(ev_db[ev_key])
 	return datas
