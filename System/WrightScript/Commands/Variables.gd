@@ -39,7 +39,7 @@ func ws_get(script, arguments):
 func ws_getprop(script, arguments):
 	var variable = arguments.pop_front()
 	var kw = Commands.keywords(arguments)
-	for object in Commands.get_objects(kw["name"]):
+	for object in ScreenManager.get_objects(kw["name"]):
 		var value
 		if kw["prop"] in "xy":
 			value = object.position[{"x":0, "y":1}[kw["prop"]]]
@@ -53,7 +53,7 @@ func ws_setprop(script, arguments):
 	var variable = arguments.pop_front()
 	var kw = Commands.keywords(arguments)
 	var value
-	for object in Commands.get_objects(kw["name"]):
+	for object in ScreenManager.get_objects(kw["name"]):
 		if kw["prop"] in "xy":
 			value = main.stack.variables.get_int(variable)
 			object.position[{"x":0, "y":1}[kw["prop"]]] = value

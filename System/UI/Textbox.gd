@@ -54,6 +54,11 @@ var MAX_WHILE = 400
 signal run_returned
 signal textbox_deleting
 
+var _screen
+
+func get_screen():
+	return _screen
+
 class TextPack:
 	var text = ""
 	var textbox
@@ -467,6 +472,7 @@ func will_there_be_text(text):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	_screen = get_parent()
 	# Disable showing textbox until there is text, otherwise if we know there will be,
 	# show it immediately
 	if not will_there_be_text(text_to_print):
@@ -815,8 +821,8 @@ func refresh_arrows(script):
 	Commands.call_macro("hide_main_button_all", script, [])
 
 func update_arrows(disable_click=null):
-	var arrows = Commands.get_objects("_main_button_arrow")
-	var buttons = Commands.get_objects("_main_button_fg")
+	var arrows = get_screen().get_objects("_main_button_arrow")
+	var buttons = get_screen().get_objects("_main_button_fg")
 	if not arrows or not buttons:
 		return
 	if disable_click==null:
@@ -871,6 +877,7 @@ static func create_node(saved_data:Dictionary):
 
 func load_node(tree, saved_data:Dictionary):
 	main = tree.get_nodes_in_group("Main")[0]
+	# TODO eliminate top_screen()
 	ScreenManager.top_screen().add_child(self)
 
 func after_load(tree:SceneTree, saved_data:Dictionary):

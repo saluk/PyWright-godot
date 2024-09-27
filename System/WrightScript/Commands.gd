@@ -49,35 +49,6 @@ func on_screen(screen, nodes):
 			if n.get_screen() == screen:
 				onscreen.append(n)
 	return onscreen
-func get_objects(script_name, last=null, group=SPRITE_GROUP, screen=null):
-	# TODO not sure if this is the right way to handle getting objects
-	if not screen:
-		screen = ScreenManager.top_screen()
-	if not get_tree():
-		return on_screen(screen, [])
-	if last:
-		if last_object and not last_object.is_queued_for_deletion():
-			return on_screen(screen, [last_object])
-		return on_screen(screen, [])
-	var objects = []
-	for object in get_tree().get_nodes_in_group(group):
-		if object.is_queued_for_deletion():
-			continue
-		if not script_name or object.script_name == script_name:
-			objects.append(object)
-		if object.has_method("get_meshes"):
-			for mesh in object.get_meshes():
-				if not script_name or mesh.script_name == script_name:
-					objects.append(mesh)
-	return on_screen(screen, objects)
-
-func delete_object_group(group, screen=null):
-	if not screen:
-		screen = ScreenManager.top_screen()
-	var nodes = on_screen(screen, get_tree().get_nodes_in_group(group))
-	for n in nodes:
-		n.queue_free()
-	#get_tree().call_group_flags(SceneTree.GROUP_CALL_REALTIME, group, "queue_free")
 
 func load_command_engine():
 	main = get_tree().get_nodes_in_group("Main")[0]
@@ -133,7 +104,7 @@ func get_speaking_char(speaking=null):
 		speaking = main.stack.variables.get_string("_speaking", null)
 	if not speaking:
 		return null
-	var characters = get_objects(null, null, CHAR_GROUP)
+	var characters = ScreenManager.get_objects(null, null, CHAR_GROUP)
 	var found = null
 	for character in characters:
 		if character.script_name == speaking:
@@ -220,7 +191,7 @@ func call_command(command, script, arguments):
 		var extern = external_commands["ws_"+command]
 		return extern.callv("ws_"+command, [script, arguments])
 
-	for object in get_objects(null):
+	for object in script.screen.get_objects(null):
 		if object.has_method("ws_"+command):
 			return object.callv("ws_"+command, [script, arguments])
 	return UNDEFINED

@@ -69,7 +69,7 @@ func _process(dt):
 	if not evbg_path:
 		evbg_path = stack.variables.get_string("ev_mode_bg_evidence")
 	var bg = ObjectFactory.create_from_template(
-		main.top_script(),
+		wrightscript,
 		"graphic",
 		{},
 		[evbg_path],
@@ -118,7 +118,7 @@ func load_back_button():
 		if not stack.variables.get_truth("_cr_back_button", true):
 			return
 	var back_button = ObjectFactory.create_from_template(
-		main.top_script(),
+		wrightscript,
 		"button",
 		{
 			"sprites": {
@@ -159,7 +159,7 @@ func load_page_button():
 		return
 	var next_page = pages[cur_i]
 	var b = ObjectFactory.create_from_template(
-		main.top_script(),
+		wrightscript,
 		"button",
 		{
 			"sprites": {
@@ -190,7 +190,7 @@ func load_arrow(direction):
 	if direction == "R":
 		pos.x = 241
 	var b = ObjectFactory.create_from_template(
-		main.top_script(),
+		wrightscript,
 		"button",
 		{
 				"sprites": {
@@ -289,7 +289,7 @@ func load_page_zoom():
 		if can_present() and ev_data["presentable"]:
 			select(ev_data["tag"])
 			var present_button = ObjectFactory.create_from_template(
-				main.top_script(),
+				wrightscript,
 				"button",
 				{
 					"sprites": {
@@ -317,7 +317,7 @@ func load_check_button(ev_data):
 		return
 	var check_img = stack.variables.get_string("ev_check_img")
 	var check_button = ObjectFactory.create_from_template(
-		main.top_script(),
+		wrightscript,
 		"button",
 		{
 			"sprites": {
@@ -356,7 +356,7 @@ func load_page_overview():
 			break
 		count += 1
 		var ev_button = ObjectFactory.create_from_template(
-			main.top_script(),
+			wrightscript,
 			"button",
 			{
 				"sprites": {

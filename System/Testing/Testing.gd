@@ -17,10 +17,10 @@ static func command():
 """
 
 static func objects(name=null):
-	return Commands.get_objects(name)
+	return ScreenManager.get_objects(name)
 
 static func textbox():
-	var obs = Commands.get_objects(null, null, Commands.TEXTBOX_GROUP)
+	var obs = ScreenManager.get_objects(null, null, Commands.TEXTBOX_GROUP)
 	if obs:
 		return obs[0]
 

@@ -127,8 +127,6 @@ static func load_game(tree:SceneTree, filename:String):
 
 	ScreenManager.clear()
 
-	var after_load = []
-
 	for ob_data in data:
 		GlobalErrors.log_info("Load Object %s" % ob_data["original_node_path"])
 		print(ob_data)
@@ -141,7 +139,6 @@ static func load_game(tree:SceneTree, filename:String):
 		else:
 			continue
 		_load_node(tree, ob, ob_data)
-		after_load.append([ob, ob_data])
 		tree.connect("idle_frame", ob, "after_load", [tree, ob_data], tree.CONNECT_ONESHOT)
 	#for ob_data_arr in after_load:
 	#	ob_data_arr[0].after_load(tree, ob_data_arr[1])

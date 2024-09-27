@@ -418,7 +418,8 @@ func create_from_template(
 		if not parent_name is String:
 			parent = [parent_name]
 		else:
-			parent = Commands.get_objects(parent_name)
+			# TODO we should really be getting based on the script's screen
+			parent = ScreenManager.get_objects(parent_name, null, null)
 		if not parent:
 			parent = script.screen
 			GlobalErrors.log_error("Failed to find parent:"+parent_name, {"frame": script.get_frame(null)})

@@ -15,7 +15,7 @@ func _init(commands):
 #            assets.variables["_debug"] = "off"
 func ws_debug(script, arguments):
 	print(" OBJECT LIST ")
-	for object in ScreenManager.top_screen().get_children():
+	for object in ScreenManager.get_objects():
 		var script_name = ""
 		if object.get_script():
 			script_name = object.get_script().resource_name

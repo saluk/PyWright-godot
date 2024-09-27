@@ -42,13 +42,13 @@ func _ready():
 	wait_signal = "tree_exited"
 	var use_objects = main.stack.variables.get_string("_examine_use", null)
 	if not use_objects:
-		bg_obs_original = Commands.get_objects(null, null, Commands.BG_GROUP)
+		bg_obs_original = get_screen().get_objects(null, null, Commands.BG_GROUP)
 	else:
-		bg_obs_original = Commands.get_objects(use_objects, null, Commands.SPRITE_GROUP)
+		bg_obs_original = get_screen().get_objects(use_objects, null, Commands.SPRITE_GROUP)
 	if not bg_obs_original:
 		# We treid to find backgrounds to use and found none.
 		# As a failsafe, use any background objects that are on the second screen
-		for ob in Commands.get_objects(null, null, Commands.BG_GROUP):
+		for ob in get_screen().get_objects(null, null, Commands.BG_GROUP):
 			if ob.position.y >= 192:
 				bg_obs_original.append(ob)
 	# TODO don't do this if someone has scrolled a screen down?
@@ -90,7 +90,7 @@ func setup_crosshair():
 	var cross_img = main.stack.variables.get_string("_examine_cursor_img", null)
 	if cross_img:
 		cross_img = ObjectFactory.create_from_template(
-			get_tree().root.get_node("Main").top_script(),
+			wrightscript,
 			"graphic",
 			{
 				"sprites": {
@@ -197,7 +197,7 @@ func build_regions():
 
 func ws_check_from_examine(script, arguments):
 	queue_free()
-	var label = fail
+	var label = ""
 	if current_region:
 		label = current_region.label
 	stack.variables.set_val("_examine_clickx", str(crosshair.real_position().x))
@@ -206,7 +206,7 @@ func ws_check_from_examine(script, arguments):
 		"goto",
 		stack.scripts[-1],
 		[
-			label
+			label, "fail=none"
 		]
 	)
 	Commands.call_command("sound_examine_check", stack.scripts[0], [])
@@ -289,7 +289,7 @@ func update():
 	name = script_name
 	if main.stack.variables.get_truth("_examine_showbars", true) and not bars_bg:
 		bars_bg = ObjectFactory.create_from_template(
-			get_tree().root.get_node("Main").top_script(),
+			wrightscript,
 			"graphic",
 			{
 				"sprites": {
@@ -302,7 +302,7 @@ func update():
 		bars_bg.cannot_save = true
 	if allow_back_button and not back_button:
 		back_button = ObjectFactory.create_from_template(
-			get_tree().root.get_node("Main").top_script(),
+			wrightscript,
 			"button",
 			{
 				"sprites": {
@@ -321,7 +321,7 @@ func update():
 		back_button.cannot_save = true
 	if not examine_button:
 		examine_button = ObjectFactory.create_from_template(
-			get_tree().root.get_node("Main").top_script(),
+			wrightscript,
 			"button",
 			{
 				"sprites": {
@@ -343,7 +343,7 @@ func update():
 		if scroll_button:
 			scroll_button.queue_free()
 		scroll_button = ObjectFactory.create_from_template(
-			get_tree().root.get_node("Main").top_script(),
+			wrightscript,
 			"button",
 			{
 				"sprites": {

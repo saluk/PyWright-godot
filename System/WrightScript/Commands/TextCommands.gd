@@ -6,9 +6,7 @@ func _init(commands):
 	main = commands.main
 
 func ws_textbox(script, arguments):
-	#There can be only one!
-	for obj in Commands.get_objects(null, null, Commands.TEXTBOX_GROUP):
-		obj.queue_free()
+	script.screen.delete_objects(null, null, Commands.TEXTBOX_GROUP)
 	var text = Commands.join(arguments)
 	var quote_char = text.substr(0,1)
 	text = text.substr(1,text.length())
@@ -28,7 +26,7 @@ func ws_nt(script, arguments):
 # NEW
 # finds the textbox and makes it continue
 func ws_advance_text(script, arguments):
-	for obj in Commands.get_objects(null, null, Commands.TEXTBOX_GROUP):
+	for obj in ScreenManager.get_objects(null, null, Commands.TEXTBOX_GROUP):
 		obj.click_continue()
 		return
 

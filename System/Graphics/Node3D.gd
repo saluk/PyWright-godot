@@ -78,7 +78,7 @@ func _gui_input(event):
 		for mesh in get_node("%Meshes").get_children():
 			var jump_label = mesh.get_label_for_click(u)
 			if jump_label:
-				Commands.call_command("goto", Commands.main.top_script(), [jump_label])
+				Commands.call_command("goto", wrightscript, [jump_label])
 				return true
 	return false
 

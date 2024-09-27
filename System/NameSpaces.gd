@@ -205,7 +205,7 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 		if next == "game":
 			return get_accessor(variable, game_namespace, setting)
 		# See if next is an object
-		for object in Commands.get_objects(next):
+		for object in ScreenManager.get_objects(next):
 			return get_accessor(variable, object.variables, setting)
 
 	if not namespace:

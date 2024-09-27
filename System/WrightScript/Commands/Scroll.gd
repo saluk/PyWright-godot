@@ -27,6 +27,8 @@ class Scroller extends Node:
 		if wait and time_left > 0.02:
 			wait_signal = "tree_exited"
 		Pauseable.new(self)
+	func get_screen():
+		return get_parent()
 	func set_process(enabled):
 		if tween:
 			tween.set_active(enabled)
@@ -83,18 +85,18 @@ class Scroller extends Node:
 		return return_list
 	func control(script_name):
 		controlled = ["control", script_name]
-		objects = Commands.get_objects(script_name)
+		objects = get_screen().get_objects(script_name)
 		if objects:
 			objects = [objects[-1]]
 		pass
 	func control_last():
-		objects = getscrollable(Commands.get_objects(null, true))
+		objects = getscrollable(get_screen().get_objects(null, true))
 		if objects:
 			objects = [objects[0]]
 			controlled = ["control_last", objects[0].get_path()]
 	func control_filter(screen):
 		var new_objects = []
-		for o in getscrollable(Commands.get_objects(null, false)):
+		for o in getscrollable(get_screen().get_objects(null, false)):
 			if screen == "top" and o.position.y >= 192:
 				continue
 			if screen == "bottom" and o.position.y < 192:
@@ -157,12 +159,12 @@ static func ws_scroll(script, arguments):
 	#filter is top or bottom - when no name, only scroll objects on this screen.
 	#if its not top or bottom, it has no effect
 	var scroller = Scroller.new(x, y, z, speed, wait, filter)
+	script.screen.add_child(scroller)
 	if script_name:
 		scroller.control(script_name)
 	elif last:
 		scroller.control_last()
 	else:
 		scroller.control_filter(filter)
-	ScreenManager.top_screen().add_child(scroller)
 	scroller.make_tweens()
 	return scroller
