@@ -35,10 +35,8 @@ func load_mesh():
 
 func add_to_node3d(node3d=null):
 	if not node3d:
-		for screen in ScreenManager.get_screens():
-			var surfs = Commands.get_objects("surf3d", null, Commands.SPRITE_GROUP, screen)
-			if not surfs:
-				continue
+		var surfs = ScreenManager.get_objects("surf3d", null, Commands.SPRITE_GROUP)
+		if surfs:
 			node3d = surfs[0]
 	if not node3d:
 		GlobalErrors.log_error("No surface found for mesh to be put on")

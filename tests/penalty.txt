@@ -1,5 +1,3 @@
-goto test_penalty_script
-
 clear
 set penalty 50
 penalty +24

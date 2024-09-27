@@ -6,7 +6,7 @@ onready var screens = main.screens
 
 # TODO this is pretty hacky
 func scan_objects(action, button_names=[]):
-	var objects:Array = Commands.get_objects(null)
+	var objects:Array = ScreenManager.top_screen().get_objects()
 	var found_object = null
 	for i in range(objects.size()-1, 0, -1):
 		var ob = objects[i]

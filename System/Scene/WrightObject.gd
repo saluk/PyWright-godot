@@ -80,6 +80,15 @@ func get_height():
 		return current_sprite.height
 	return 0
 
+func get_screen():
+	var screen = null
+	var parent = get_parent()
+	while parent and not parent is Screen:
+		parent = parent.get_parent()
+	if not parent:
+		GlobalErrors.log_error("WrightObject trying to get_screen that is not parented!")
+	return parent
+
 # Cleanup
 
 func free_members():
@@ -383,8 +392,15 @@ static func create_node(saved_data:Dictionary):
 func load_node(tree, saved_data:Dictionary):
 	main = tree.get_nodes_in_group("Main")[0]
 	stack = main.stack
+	# TODO overengineered - screens should be saved, and the object can just parent to it like anything else
 	# FIXME we should include in save system which screen object is on
-	ScreenManager.top_screen().add_child(self)
+	# We should have a parent screen though
+	# 1. If the parent exists, add to the parent
+	# 2. If the parent doesn't exist, add the screen to the screen manager, and add to that parent
+	var screen_name = saved_data.get("parent_path", "/MainScreen").rsplit("/", false, 1)[-1]
+	if not ScreenManager.has_screen(screen_name):
+		ScreenManager.add_screen(screen_name)
+	ScreenManager.get_screen(screen_name).add_child(self)
 	load_sprites(saved_data["template"])
 	set_sprite(sprite_key)
 	SaveState._load_node(tree, variables, saved_data["variables"])
@@ -400,4 +416,7 @@ func after_load(tree:SceneTree, saved_data:Dictionary):
 	# but we can ensure things dont break by adding us to the top script
 	# I think this happens because "wrightscript" is a reference,
 	# and that script can actually be gone from the stack when the object is saved
-	wrightscript = tree.get_nodes_in_group("Main")[0].top_script()
+	# TODO - I almost think it shouldn't be associated with a script AT ALL but
+	# merely with a screen... which can just be what it is parented to
+	# So, in this hack - associate us with the script that matches our screen
+	wrightscript = tree.get_nodes_in_group("Main")[0].top_script(get_parent())

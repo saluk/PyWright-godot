@@ -41,20 +41,20 @@ func _ready():
 	add_child(right)
 	add_child(good)
 	add_child(bad)
-	
+
 	threat_section = PWSprite.new()
 	threat_section.from_frame(atlas[2])
 	add_child(threat_section)
-	
+
 func begin():
 	start_value = clamp(start_value, 0, 100)
 	end_value = clamp(end_value, 0, 100)
 	if not threat_amount:
 		threat_section.visible = false
-	
+
 func get_value():
 	return stack.variables.get_float(variable, 100)
-	
+
 func set_value(value):
 	stack.variables.set_val(variable, value)
 	if value <= 0:
@@ -66,7 +66,7 @@ func execute_fail():
 		script = script.split(" ", false, 1)
 		Commands.call_command(
 			"script",
-			Commands.main.top_script(),
+			wrightscript,
 			[script[0], "label="+script[1]]
 		)
 
