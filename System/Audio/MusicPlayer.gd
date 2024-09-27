@@ -96,7 +96,7 @@ var save_properties = [
 	"playing", "root_path", "playing_path", "music_volume"
 ]
 func save_node(data):
-	if playing:
+	if playing and is_instance_valid(audio_player):
 		data["song_position"] = audio_player.get_playback_position()
 
 func load_node(tree, saved_data:Dictionary):
