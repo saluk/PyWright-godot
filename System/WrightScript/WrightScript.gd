@@ -245,7 +245,6 @@ func resume_cross():
 		return false
 	stack.variables.del_val("_cross_resume_line")
 	stack.variables.del_val("_lastline")
-	stack.variables.set_val("_in_statement", "true")
 	goto_line_number(resume_line)
 	return true
 
