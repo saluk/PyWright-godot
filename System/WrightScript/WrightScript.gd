@@ -16,6 +16,7 @@ var u_id # For saving
 
 var allow_goto_parent_script := false
 var allowed_commands := []  #If any commands are in this list, only process those commands
+var blockers = []  # Script wont be processed while blockers are present
 
 var allow_next_line = true
 
@@ -244,7 +245,6 @@ func resume_cross():
 		return false
 	stack.variables.del_val("_cross_resume_line")
 	stack.variables.del_val("_lastline")
-	stack.variables.set_val("_in_statement", "true")
 	goto_line_number(resume_line)
 	return true
 
@@ -425,12 +425,30 @@ var save_properties = [
 ]
 func save_node(data):
 	data["variables"] = SaveState._save_node(variables)
+	data["screen_name"] = screen.name
+	data["blockers"] = []
+	for blocker in blockers:
+		if not is_instance_valid(blocker):
+			continue
+		if blocker is SceneTreeTimer:
+			data["blockers"].append({"type": "SceneTreeTimer", "time_left":blocker.time_left})
+		else:
+			if blocker.has_method("get_path"):
+				data["blockers"].append({"type": "Node", "node_path": blocker.get_path()})
 
 static func create_node(saved_data:Dictionary):
 	pass
 
 func load_node(tree, saved_data:Dictionary):
 	SaveState._load_node(tree, variables, saved_data["variables"])
+	screen = ScreenManager.get_or_create(saved_data.get("screen_name", "MainScreen"))
 
 func after_load(tree, saved_data:Dictionary):
-	pass
+	if "blockers" in saved_data:
+		for blocker in saved_data["blockers"]:
+			if blocker["type"] == "SceneTreeTimer":
+				pass # todo implement
+			elif blocker["type"] == "Node":
+				var n = main.get_tree().root.get_node(blocker["node_path"])
+				if n:
+					stack.add_blocker(self, n, true)

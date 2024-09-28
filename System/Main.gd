@@ -41,7 +41,6 @@ func reset():
 	MusicPlayer.stop_music()
 	SoundPlayer.stop_sounds()
 	stack.clear_scripts()
-	stack.blockers = []
 	ScreenManager.clear()
 	font_cache.clear()
 	timecounter.reset()
@@ -220,7 +219,11 @@ func _process(_delta):
 		stack.show_in_debugger()
 	emit_signal("frame_drawn")
 
-func top_script():
+func top_script(screen=null):
+	if screen:
+		for i in range(stack.scripts.size()):
+			if stack.scripts[-i].screen == screen:
+				return stack.scripts[-i]
 	if stack.scripts.size() > 0:
 		return stack.scripts[-1]
 	return null

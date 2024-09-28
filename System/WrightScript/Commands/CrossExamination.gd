@@ -62,14 +62,14 @@ func ws_next_statement(script, arguments):
 	var cross = main.cross_exam_script()
 	if cross:
 		cross.next_statement()
-	Commands.delete_object_group(Commands.TEXTBOX_GROUP)
+	script.screen.delete_objects(null, null, Commands.TEXTBOX_GROUP)
 	main.stack.variables.set_val("_in_statement", "true")
 
 func ws_prev_statement(script, arguments):
 	var cross = main.cross_exam_script()
 	if cross:
 		cross.prev_statement()
-	Commands.delete_object_group(Commands.TEXTBOX_GROUP)
+	script.screen.delete_objects(null, null, Commands.TEXTBOX_GROUP)
 
 func ws_statement(script, arguments):
 	var test = Commands.keywords(arguments).get("test", "")
@@ -84,7 +84,7 @@ func ws_statement(script, arguments):
 
 # Press the current statement
 func ws_callpress(script, arguments):
-	Commands.delete_object_group(Commands.TEXTBOX_GROUP)
+	script.screen.delete_objects(null, null, Commands.TEXTBOX_GROUP)
 	var cross_script = main.cross_exam_script()
 	if cross_script:
 		main.stack.variables.set_val("_cross_resume_line", cross_script.line_num+1)
@@ -103,7 +103,7 @@ func ws_resume(script, arguments):
 # Also used internally to trigger creating the court record ui
 func ws_present(script, arguments):
 	# If we are running this, we should be outside of the court record
-	Commands.delete_object_group(Commands.COURT_RECORD_GROUP)
+	script.screen.delete_objects(null, null, Commands.COURT_RECORD_GROUP)
 	# nopress and noclearcross are internal arguments
 	var present = not "nopresent" in arguments
 	arguments.erase("nopresent")
@@ -154,10 +154,10 @@ func ws_showrecord(script, arguments):
 # goto the label '[_statement] maya' if we are in a statement
 # goto the label 'maya' if we are not in a statement
 func ws_callpresent(script, arguments):
-	Commands.delete_object_group(Commands.TEXTBOX_GROUP)
+	script.screen.delete_objects(null, null, Commands.TEXTBOX_GROUP)
 	var ev = main.stack.variables.get_string("_selected")
 	var statement = main.stack.variables.get_string("_statement")
-	var fail = ""
+	var fail = "fail=none"
 	if statement:
 		ev = ev + " " + statement
 		fail = "fail="+StandardVar.COURT_FAIL_LABEL.retrieve()

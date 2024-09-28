@@ -56,7 +56,7 @@ func load_art(root_path):
 func add_option(option):
 	var rect_offset = relative_positions[option]
 	var button = ObjectFactory.create_from_template(
-		get_tree().root.get_node("Main").top_script(),
+		wrightscript,
 		"button",
 		{"sprites":{
 			"default": {"path": "art/general/talkbuttons.png"},

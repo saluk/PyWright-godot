@@ -10,9 +10,9 @@ func ws_grey(script, arguments):
 	var value = Commands.keywords(arguments).get("value", 1)
 	var obs
 	if name:
-		obs = Commands.get_objects(name, null)
+		obs = script.screen.get_objects(name, null)
 	else:
-		obs = Commands.get_objects(null, null)
+		obs = script.screen.get_objects(null, null)
 	for o in obs:
 		if o.has_method("set_grey"):
 			o.set_grey(value)
@@ -38,7 +38,7 @@ func ws_rotate(script, arguments):
 	var axis = kw.get("axis", "z")
 	var name = kw.get("name", null)
 	var nowait = "nowait" in arguments
-	var obj = Commands.get_objects(name)
+	var obj = script.screen.get_objects(name)
 	if obj and obj[0] is PWMesh:
 		obj[0].do_rotate(axis, degrees, speed, nowait)
 

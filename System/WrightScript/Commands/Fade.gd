@@ -17,18 +17,20 @@ class Fader extends Node:
 		self.end = float(end)
 		self.speed = float(speed)
 		name = "fade"
-		objects = Commands.get_objects(null, false)
+		objects = []
 		if wait:
 			wait_signal = "tree_exited"
 		Pauseable.new(self)
+	func get_screen():
+		return get_parent()
 	func control_all_named(script_name):
-		objects = Commands.get_objects(script_name)
+		objects = get_screen().get_objects(script_name)
 	func control_last():
-		objects = [Commands.get_objects(null, true)]
+		objects = [get_screen().get_objects(null, true)]
 		if objects:
 			objects = [objects[-1]]
 	func control_all(screen):
-		objects = Commands.get_objects(null, true)
+		objects = get_screen().get_objects(null, true)
 	func set_fade():
 		for object in objects:
 			if is_instance_valid(object):
@@ -67,11 +69,11 @@ static func ws_fade(script, arguments):
 	var wait = not "nowait" in arguments
 	var script_name = kw.get("name", null)
 	var fader = Fader.new(start, end, speed, wait)
+	script.screen.add_child(fader)
 	if script_name:
 		fader.control_all_named(script_name)
 	elif last:
 		fader.control_last()
 	else:
 		fader.control_all()
-	script.screen.add_child(fader)
 	return fader

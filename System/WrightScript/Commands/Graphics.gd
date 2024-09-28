@@ -54,8 +54,8 @@ func apply_fader(script, obj, arguments):
 	var speed = 5.0
 	var wait = not "nowait" in arguments
 	var fader = FadeLib.Fader.new(start, end, speed, wait)
-	fader.control_all_named(obj.script_name)
 	script.screen.add_child(fader)
+	fader.control_all_named(obj.script_name)
 	if wait:
 		return fader
 	return obj
@@ -75,7 +75,7 @@ func ws_bg(script, arguments):
 	if not main.get_tree():
 		return
 	if not "stack" in arguments:
-		Commands.delete_object_group(Commands.CLEAR_GROUP)
+		script.screen.delete_objects(null, null, Commands.CLEAR_GROUP)
 	var bg:Node = ObjectFactory.create_from_template(script, "bg", {}, arguments)
 	return apply_fader(script, bg, arguments)
 
@@ -93,7 +93,7 @@ func ws_char(script, arguments):
 	var kw = Commands.keywords(arguments)
 	# If we don't "stack" then delete existing character
 	if not "stack" in arguments and not "hide" in arguments:
-		Commands.delete_object_group(Commands.CHAR_GROUP)
+		script.screen.delete_objects(null, null, Commands.CHAR_GROUP)
 	var character = ObjectFactory.create_from_template(
 		script,
 		"portrait",
@@ -111,7 +111,7 @@ func ws_char(script, arguments):
 		})
 	if "hide" in arguments:
 		character.visible = false
-		Commands.delete_object_group(Commands.HIDDEN_CHAR_GROUP)
+		script.screen.delete_objects(null, null, Commands.HIDDEN_CHAR_GROUP)
 		character.add_to_group(Commands.HIDDEN_CHAR_GROUP)
 	# TODO This should maybe be a "property" (variable namespaced on the object)
 	character.char_name = main.stack.variables.get_string(
@@ -145,7 +145,7 @@ func ws_emo(script, arguments):
 		if speaking:
 			characters = [speaking]
 	else:
-		characters = Commands.get_objects(name, false, Commands.CHAR_GROUP)
+		characters = script.screen.get_objects(name, false, Commands.CHAR_GROUP)
 	# TODO should this be the first or last found character if multiple characters have the same name?
 	if characters:
 		characters[0].change_variant(emotion)
@@ -211,7 +211,7 @@ func ws_penalty(script, arguments):
 		delay = 50
 		if not damage_amount or threat:
 			delay = 0
-	Commands.delete_object_group(Commands.PENALTY_GROUP)
+	script.screen.delete_objects(null, null, Commands.PENALTY_GROUP)
 	var penalty = ObjectFactory.create_from_template(
 		script,
 		"penalty",
@@ -251,7 +251,7 @@ func ws_surf3d(script, arguments):
 	surf3d.position.x = x
 	surf3d.position.y = y
 	surf3d.set_size([container_w, container_h, resolution_w, resolution_h])
-	ScreenManager.top_screen().add_child(surf3d)
+	script.screen.add_child(surf3d)
 	if main.examine_meshes:
 		ws_mesh(script, main.examine_meshes[0])
 

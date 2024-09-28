@@ -57,7 +57,7 @@ func build():
 	add_list_items()
 	if allow_back_button and not back_button:
 		back_button = ObjectFactory.create_from_template(
-			get_tree().root.get_node("Main").top_script(),
+			wrightscript,
 			"button",
 			{
 				"sprites": {
@@ -83,7 +83,7 @@ func add_item(text, result, options={}):
 
 func add_list_items():
 	var bg = ObjectFactory.create_from_template(
-		main.top_script(),
+		wrightscript,
 		"graphic",
 		{},
 		[main.stack.variables.get_string("_list_bg_image", "general/main2")],
@@ -103,7 +103,7 @@ func add_list_items():
 		var result = item[1]
 		var options = item[2]
 		var button = ObjectFactory.create_from_template(
-			get_tree().root.get_node("Main").top_script(),
+			wrightscript,
 			"button",
 			{
 				"sprites": {
@@ -137,7 +137,7 @@ func add_list_items():
 			var lcheck_offset_x = options.get("check_x", check_offset_x)
 			var lcheck_offset_y = options.get("check_y", check_offset_y)
 			var check_ob = ObjectFactory.create_from_template(
-				get_tree().root.get_node("Main").top_script(),
+				wrightscript,
 				"graphic",
 				{
 					"sprites": {

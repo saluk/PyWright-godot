@@ -83,7 +83,7 @@ func ws_gui(script, arguments):
 
 # NEW (internal)
 func ws_gui_back_clicked(script, arguments):
-	for node in ScreenManager.top_screen().get_children():
+	for node in ScreenManager.get_objects():
 		if node.name == arguments[0]:
 			Commands.call_command("sound_back_button_cancel", script, [])
 			node.queue_free()

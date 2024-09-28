@@ -26,8 +26,6 @@ var state = STACK_READY
 
 var mode = "play"  # play = play game normally, test = running unit tests
 
-var blockers = []
-var blocked_scripts = []
 var yields = []  # functions to resume
 
 var REPEAT_MAX = 6  #If nonzero, and the same line is attempted to execute more than this value, drop to the debugger
@@ -189,15 +187,13 @@ func new_state(state):
 # TODO script blockers feel overengineered.
 
 func blocked(scr):
-	if scr in blocked_scripts:
+	if scr.blockers:
 		return true
 
 func add_blocker(script, block_obj, next_line = true):
-	if block_obj in blockers:
+	if block_obj in script.blockers:
 		return
-	blockers.append(block_obj)
-	if not script in blocked_scripts:
-		blocked_scripts.append(script)
+	script.blockers.append(block_obj)
 	var sig = "timeout"
 	if block_obj.get("wait_signal"):
 		sig = block_obj.get("wait_signal")
@@ -209,23 +205,16 @@ func add_blocker(script, block_obj, next_line = true):
 	block_obj.connect(sig, self, "remove_blocker", [sig, script, block_obj, original_id, next_line], CONNECT_ONESHOT)
 
 func remove_blocker(sig, script, block_obj, original_id, next_line):
-	if block_obj in blockers:
-		blockers.erase(block_obj)
-		if script in blocked_scripts:
+	if block_obj in script.blockers:
+		script.blockers.erase(block_obj)
+		if not script.blockers:
 			if next_line:
 				script.next_line()
-			blocked_scripts.erase(script)
 
 func force_clear_blockers():
-	for obj in blockers:
-		if is_instance_valid(obj) and obj is SceneTreeTimer:
-			pass
-		elif obj:
-			obj.queue_free()
-	blockers = []
-	for scr in blocked_scripts:
-		scr.next_line()
-	blocked_scripts = []
+	for script in scripts:
+		for blocker in script.blockers:
+			remove_blocker(null, script, blocker, null, false)
 
 # TODO simplify process, we have more states than we need now that we almost never yield or return from the while loop
 func process():
@@ -261,7 +250,7 @@ func process():
 		clean_scripts()
 		if not scripts:
 			return new_state(STACK_YIELD)
-		if blocked(scripts[-1]) and blockers:
+		if blocked(scripts[-1]):
 			if variables.get_truth("render", true):
 				yield(main.get_tree(), "idle_frame")
 				continue
@@ -348,19 +337,6 @@ func save_node(data):
 		saved_scripts.append(SaveState._save_node(script))
 	data["scripts"] = saved_scripts
 	data["variables"] = SaveState._save_node(variables)
-	# blocked scripts
-	data["blockers"] = []
-	for blocker in blockers:
-		if not is_instance_valid(blocker):
-			continue
-		if blocker is SceneTreeTimer:
-			data["blockers"].append({"type": "SceneTreeTimer", "time_left":blocker.time_left})
-		else:
-			if blocker.has_method("get_path"):
-				data["blockers"].append({"type": "Node", "node_path": blocker.get_path()})
-	data["blocked_scripts"] = []
-	for script in blocked_scripts:
-		data["blocked_scripts"].append(script.u_id)
 
 static func create_node(saved_data:Dictionary):
 	pass
@@ -370,25 +346,29 @@ func load_node(tree, saved_data:Dictionary):
 
 func after_load(tree, saved_data:Dictionary):
 	scripts.clear()
-	blockers = []
-	blocked_scripts = []
 	# Add a script and copy its state
 	for script_data in saved_data["scripts"]:
 		var script = WrightScript.new(main, self)
 		SaveState._load_node(tree, script, script_data)
 		scripts.append(script)
+		script.after_load(tree, script_data)
 	#show_in_debugger()
-	if "blockers" in saved_data:
-		for blocker in saved_data["blockers"]:
-			if blocker["type"] == "SceneTreeTimer":
-				pass # todo implement
-			elif blocker["type"] == "Node":
-				var n = main.get_tree().root.get_node(blocker["node_path"])
-				if n:
-					add_blocker(main.top_script(), n, true)
-	if "blocked_scripts" in saved_data:
+	old_save_blocker_fix(tree, saved_data)
+
+# We used to save blockers a different way
+func old_save_blocker_fix(tree, saved_data:Dictionary):
+	if "blocked_scripts" in saved_data and "blockers" in saved_data:
+		var uid_script = {}
 		for script in scripts:
-			if script.u_id in saved_data["blocked_scripts"]:
-				blocked_scripts.append(script)
-	if blocked_scripts and not blockers:
-		force_clear_blockers()
+			uid_script[script.u_id] = script
+		for i in range(min(saved_data["blocked_scripts"].size(), saved_data["blockers"].size())):
+			var script_uid = saved_data["blocked_scripts"][i]
+			if not script_uid in uid_script:
+				continue
+			var script = uid_script[script_uid]
+			var blocker_data = saved_data["blockers"][i]
+			var blocker
+			if blocker_data["type"] == "Node":
+				blocker = main.get_node(blocker_data["node_path"])
+			if blocker:
+				add_blocker(script, blocker, true)
