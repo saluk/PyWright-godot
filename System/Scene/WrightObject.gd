@@ -357,6 +357,12 @@ func visible_within(collide_rect:Rect2):
 	main.pause(false)
 	return false
 
+# For tweens
+func set_sprite_material_param(k, v):
+	if not current_sprite:
+		return
+	for sprite in sprites.values():
+		sprite.material.set_shader_param(k, v)
 
 
 # SAVE/LOAD

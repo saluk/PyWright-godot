@@ -1,0 +1,9 @@
+bg defence name=b
+fg dbench name=a
+warp name=b sulx=256 sllx=256 time=100 nowait
+warp name=a sulx=50 surx=-50 suly=192 sury=192 time=100 nowait
+pause 50
+char phoenix name=p
+warp name=p sulx=128 surx=-128 sllx=128 slrx=-128 time=50 nowait
+pause 25
+"This is silly."
