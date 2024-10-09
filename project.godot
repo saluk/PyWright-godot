@@ -159,6 +159,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://System/Variables.gd"
 }, {
+"base": "Reference",
+"class": "WarpLib",
+"language": "GDScript",
+"path": "res://System/WrightScript/Commands/Warp.gd"
+}, {
 "base": "Node2D",
 "class": "WrightObject",
 "language": "GDScript",
@@ -205,6 +210,7 @@ _global_script_class_icons={
 "Values": "",
 "VariableDef": "",
 "Variables": "",
+"WarpLib": "",
 "WrightObject": "",
 "WrightScript": "",
 "WrightScriptStack": ""

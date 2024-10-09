@@ -7,6 +7,10 @@ func _ready():
 func _process(dt):
 	sort_children()
 
+func getz(o):
+	if "z" in o:
+		return o.z
+	return 0
 # TODO using a manual, slow sorting algorithm here because godot's sort_custom uses heapsort which is not stable
 func sort_children():
 	var children = get_children()
@@ -17,7 +21,7 @@ func sort_children():
 		var nexti = i-1
 		var seti = i
 		while nexti >= 0:
-			if child.z >= children[nexti].z:
+			if getz(child) >= getz(children[nexti]):
 				break
 			seti = nexti
 			nexti -= 1
