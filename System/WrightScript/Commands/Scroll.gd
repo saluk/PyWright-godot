@@ -8,7 +8,6 @@ class Scroller extends Node:
 	var tween:Tween
 	var wait_signal = ""
 	var total = Vector3(0.0, 0.0, 0.0)
-	var move = Vector3(0.0, 0.0, 0.0)
 	var speed = 1   # Pixels to scroll per frame
 	var time_left = 0.0
 	var total_time = 0.0
@@ -20,7 +19,6 @@ class Scroller extends Node:
 	func _init(x, y, z, speed, wait, filter):
 		name = "scroll"
 		total = Vector3(float(x), float(y), float(z))
-		move = total.normalized() * (float(speed)/0.02)
 		if (speed/0.02) > 0:
 			time_left = float(total.length())/(speed/0.02)
 		total_time = time_left
@@ -112,7 +110,7 @@ class Scroller extends Node:
 			queue_free()
 	# SAVE/LOAD
 	var save_properties = [
-		"wait_signal", "total", "move", "speed", "time_left", "total_time",
+		"wait_signal", "total", "speed", "time_left", "total_time",
 		"script_name", "z", "controlled"
 	]
 	func save_node(data):

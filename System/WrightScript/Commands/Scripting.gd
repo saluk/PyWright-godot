@@ -22,7 +22,12 @@ func ws_debug(script, arguments):
 		var id_name = "(None)"
 		if "script_name" in object:
 			id_name = object.script_name
-		print(" OBJECT LIST - class:" + script_name + "  id_name:"+id_name+"  id:"+object.to_string()+"  pos:"+str(object.position)+"  fade:"+str(object.modulate))
+		var s = " OBJECT LIST - class:" + script_name + "  id_name:"+id_name+"  id:"+object.to_string()
+		if "position" in object:
+			s += "  pos:"+str(object.position)
+		if "modulate" in object:
+			s += "  fade:"+str(object.modulate)
+		print(s)
 	print(" END OBJECT LIST ")
 	return Commands.DEBUG
 
