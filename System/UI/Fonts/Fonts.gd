@@ -9,7 +9,7 @@ static func get_font_for_type(type, main):
 	return {
 		"font_path": main.stack.variables.get_string("_font_"+type, "arial.ttf"),
 		"font_size": main.stack.variables.get_int("_font_"+type+"_size", 16),
-		"font_spacing": main.stack.variables.get_int("_font_"+type+"_spacing", -2)
+		"font_spacing": main.stack.variables.get_int("_font_"+type+"_spacing", spacing)
 	}
 
 static func get_font(type, main):

@@ -13,6 +13,9 @@ var case_chosen = 0
 var z = 2
 var game_data = {}
 
+onready var newgame = $Control/ScrollContainer2/VBoxContainer/NewGameButton/NewGame
+onready var resume = $Control/ScrollContainer2/VBoxContainer/ResumeButton/Resume
+
 func get_data():
 	var path = wrightscript.root_path + "data.txt"
 	var data = {
@@ -97,14 +100,16 @@ func build_scene():
 	SignalUtils.remove_all($Control/ArrowLeft)
 	SignalUtils.remove_all($Control/ArrowRight)
 	SignalUtils.remove_all($Control/ScrollContainer2/VBoxContainer/ResumeButton)
-	get_node("%CaseTitle").bbcode_text = "[center][b]%s[/b][/center]"%current_case().replace("_"," ")
 	Fonts.set_element_font(get_node("%CaseTitle"), "gametitle", wrightscript.main)
+	get_node("%CaseTitle").bbcode_text = "[center][b]%s[/b][/center]"%current_case().replace("_"," ")
 	$Control/ArrowLeft.visible = false
 	$Control/ArrowRight.visible = false
 	$Control/ScrollContainer2/VBoxContainer/NewGameButton.connect("pressed", self, "launch_game")
 	$Control/ScrollContainer2/VBoxContainer/ResumeButton.visible = false
-	Fonts.set_element_font($Control/ScrollContainer2/VBoxContainer/NewGameButton/NewGame, "new_resume", wrightscript.main)
-	Fonts.set_element_font($Control/ScrollContainer2/VBoxContainer/ResumeButton/Resume, "new_resume", wrightscript.main)
+	Fonts.set_element_font(newgame, "new_resume", wrightscript.main)
+	Fonts.set_element_font(resume, "new_resume", wrightscript.main)
+	newgame.bbcode_text = "[center][b]%s[/b][/center]"%"New Game"
+	resume.bbcode_text = "[center][b]%s[/b][/center]"%"Resume"
 	connect_resume()
 
 func connect_arrows():
