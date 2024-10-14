@@ -1,14 +1,13 @@
 extends Node
 
 var players = []
-var playing = false
-var loop = true
+
 var playing_path
 
 var cur_volume = 1.0
 
 var SOUND_VOLUME = 1.0
-var NUM_PLAYERS = 100
+var NUM_PLAYERS = 30
 
 var default_min_repeat_delay := 0.05  # How many seconds before allowed to play the same sound again
 var files_playing = {}
@@ -31,6 +30,7 @@ func _ready():
 	for i in range(NUM_PLAYERS):
 		var audio_player = AudioStreamProgress.new()
 		add_child(audio_player)
+		audio_player.name = "audio channel %d" % i
 		players.append(audio_player)
 
 func _load_audio_stream(path):
@@ -44,13 +44,6 @@ func _load_audio_stream(path):
 		if not stream:
 			if ResourceLoader.exists(path):
 				stream = load(path)
-				if stream:
-					if stream is AudioStreamSample:
-						stream.loop_mode = AudioStreamSample.LOOP_DISABLED
-					elif stream is AudioStreamMP3:
-						(stream as AudioStreamMP3).loop = false
-					elif stream is AudioStreamOGGVorbis:
-						(stream as AudioStreamOGGVorbis).loop = false
 		if not stream:
 			# Uses an extension to load more audio types
 			# TODO not really needed if we are converting everything
@@ -64,6 +57,12 @@ func _load_audio_stream(path):
 		next_player.stream = stream
 		next_player.volume_db = linear2db(SOUND_VOLUME * Configuration.user.global_volume * cur_volume)
 		next_player.play(0)
+		if next_player.stream is AudioStreamSample:
+			next_player.stream.loop_mode = AudioStreamSample.LOOP_DISABLED
+		elif next_player.stream is AudioStreamMP3:
+			(next_player.stream as AudioStreamMP3).loop = false
+		elif next_player.stream is AudioStreamOGGVorbis:
+			next_player.stream.set_loop(false)
 		next_player.name = path
 		next_player.path = path
 		return next_player
@@ -88,7 +87,6 @@ func play_sound(path, current_path, volume=1.0, min_repeat=null):
 	if key in files_playing:
 		var elapsed = (Time.get_ticks_msec()-files_playing[key].played_at)/1000.0
 		if elapsed >= files_playing[key].repeat_delay:
-			files_playing[key].player.stop()
 			files_playing.erase(key)
 		else:
 			return
@@ -98,7 +96,6 @@ func play_sound(path, current_path, volume=1.0, min_repeat=null):
 	if not found:
 		print("couldn't find path ", path, ">", current_path)
 		return
-	playing = true
 	playing_path = path
 	var audio_stream = _load_audio_stream(found)
 	if audio_stream:
@@ -115,8 +112,9 @@ func stop_sounds():
 
 
 # SAVE/LOAD
+# FIXME save files playing
 var save_properties = [
-	"playing", "loop", "playing_path"
+	"playing_path"
 ]
 func save_node(data):
 	var save_players = []

@@ -1,3 +1,7 @@
+
+mus BEAT this week.ogg
+"seamless looping?"
+
 mus dark-pad.ogg
 mus dark-pad.ogg
 mus  # should stop here

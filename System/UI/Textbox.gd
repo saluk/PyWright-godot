@@ -105,7 +105,7 @@ class TextPack:
 
 			# calculate speeds
 			characters_per_tick = float(textbox.characters_per_update) / float(textbox.ticks_per_update * next_ticks)
-			characters_per_second = characters_per_tick * 60.0
+			characters_per_second = characters_per_tick * 60.0 * 0.925   #Artificially slow text a little
 
 			if not force:
 				# This is a problem, text wont print at all
@@ -124,15 +124,15 @@ class TextPack:
 
 			rich_text_label.visible_characters += 1
 			leftover -= 1
-			emit_signal("text_printed")
-			if textbox.has_finished:
-				break
 			t = self.textbox.strip_bbcode(self.textbox.printed)
 			if t:
 				c = t[min(rich_text_label.visible_characters-1,t.length()-1)]
 				next_ticks = textbox.process_text_character(c)
 			if next_ticks < 1.0:
 				next_ticks = 1.0
+			emit_signal("text_printed")
+			if textbox.has_finished:
+				break
 		textbox.next_ticks_per_update = next_ticks
 
 	# execute pack command and change the provided textbox accordingly
@@ -377,6 +377,7 @@ func queue_next_textbox():
 	has_finished = true
 
 var lc = null
+var blip_this_frame = false
 func process_text_character(c):
 	print("CHAR:",c)
 	var punctuation = main.stack.variables.get_string("_punctuation")
@@ -401,7 +402,9 @@ func process_text_character(c):
 		in_paren = ""
 	else:
 		if c != " ":
-			play_sound(null, 0.07)
+			if not blip_this_frame:
+				play_sound(null, 0.07)
+				blip_this_frame = true
 		next_ticks = 1.0
 	lc = c
 	visible = true
@@ -416,7 +419,7 @@ func play_sound(path=null, rate=null):
 		SoundPlayer.play_sound(
 			Filesystem.path_join("sfx", path),
 			main.top_script().root_path,
-			1.0,
+			rand_range(0.6, 1.0),
 			rate
 		)
 
@@ -767,6 +770,7 @@ func strip_bbcode(source:String) -> String:
 	return ret
 
 func update_textbox(dt:float, force = false):
+	blip_this_frame = false
 	if not packs and not created_packs:
 		packs = tokenize_text(text_to_print, true)
 		text_label.visible_characters = 0

@@ -267,6 +267,15 @@ texture={
 "detect_3d": false,
 "flags/anisotropic": true
 }
+wav={
+"edit/loop_mode": 1
+}
+ogg_vorbis={
+"loop": false
+}
+mp3={
+"loop": false
+}
 
 [input]
 
