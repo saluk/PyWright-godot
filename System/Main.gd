@@ -149,9 +149,7 @@ func _ready():
 		screens.rect_global_position = Vector2(0,0)
 	stack.mode = mode
 
-	stack.connect("script_added", self, "check_saving_enabled")
-	stack.connect("script_removed", self, "check_saving_enabled")
-
+	stack.connect("game_inited", self, "check_saving_enabled")
 func test_eval():
 	stack.variables.set_val("is_true", "true")
 	stack.variables.set_val("is_false", "false")
@@ -224,7 +222,7 @@ func top_script(screen=null):
 		for i in range(stack.scripts.size()):
 			if stack.scripts[-i].screen == screen:
 				return stack.scripts[-i]
-	if stack.scripts.size() > 0:
+	if stack and stack.scripts and stack.scripts.size() > 0:
 		return stack.scripts[-1]
 	return null
 
@@ -273,9 +271,9 @@ func is_saving_enabled():
 
 func check_saving_enabled():
 	if is_saving_enabled():
-		emit_signal("enable_saveload_buttons", true)
+		emit_signal("enable_saveload_buttons", true, true)
 	else:
-		emit_signal("enable_saveload_buttons", false)
+		emit_signal("enable_saveload_buttons", false, false)
 
 # OPTIONS
 
@@ -323,6 +321,7 @@ static func create_node(saved_data:Dictionary):
 	pass
 
 func load_node(tree, saved_data:Dictionary):
+	reset()
 	load_game(current_game)
 	timecounter.set_elapsed_time(saved_data["timecounter.elapsed"])
 	SaveState._load_node(tree, stack, saved_data["stack"])

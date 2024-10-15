@@ -49,6 +49,7 @@ signal line_executed   # emit when any script executes a line
 signal script_added
 signal script_removed
 signal update_debugger
+signal game_inited
 
 var macro_scripts_found = 0
 
@@ -118,6 +119,8 @@ func init_game(path, init_script="intro.txt"):
 	run_macro_set(run_macros_on_game_start)
 	if not macro_scripts_found:
 		print("MACRO ERROR")
+	emit_signal("game_inited")
+
 
 func add_script(script_text, root_path="res://"):
 	var new_script = WrightScript.new(main, self)
@@ -354,6 +357,7 @@ func after_load(tree, saved_data:Dictionary):
 		script.after_load(tree, script_data)
 	#show_in_debugger()
 	old_save_blocker_fix(tree, saved_data)
+	emit_signal("game_inited")
 
 # We used to save blockers a different way
 func old_save_blocker_fix(tree, saved_data:Dictionary):

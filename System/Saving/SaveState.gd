@@ -153,34 +153,19 @@ static func from_node_path(tree:SceneTree, path:String):
 
 # User facing save functions
 
-static func _get_save_path_name(main, root_folder=null):
-	var c_game = main.current_game
-	if not root_folder:
-		root_folder = main.top_script().root_path
-	var game_name
-	if "/" in c_game:
-		game_name = c_game.rsplit("/", true, 1)[1].replace("/","")
-	else:
-		game_name = "res://"
-	var script_path_name = root_folder.replace(c_game, "").replace("/","")
-	var save_path_name = ".".join([game_name, script_path_name])
-	if save_path_name.ends_with("."):
-		save_path_name = save_path_name.substr(0, save_path_name.length()-1)
-	return save_path_name
-
-static func load_selected_save_file(main, filename):
-	var save_path_name = _get_save_path_name(main)
+static func load_selected_save_file(main, root_path, filename):
+	var save_path_name = GamePath.new().from_path(root_path).get_save_path_name()
 	var full_save_path = "user://game_saves/"+"/".join([save_path_name, filename])
 	load_game(main.get_tree(), full_save_path)
 
 static func delete_selected_save_file(main, filename):
-	var save_path_name = _get_save_path_name(main)
+	var save_path_name = GamePath.new().from_main(main).get_save_path_name()
 	var full_save_path = "user://game_saves/"+"/".join([save_path_name, filename])
 	var d = Directory.new()
 	d.remove(full_save_path)
 
 static func save_new_file(main, new_filename):
-	var save_path_name = _get_save_path_name(main)
+	var save_path_name = GamePath.new().from_main(main).get_save_path_name()
 	var date = Time.get_datetime_dict_from_system()
 	if not new_filename:
 		new_filename = Time.get_datetime_string_from_datetime_dict(date, true)
@@ -188,8 +173,8 @@ static func save_new_file(main, new_filename):
 	var full_save_path = "user://game_saves/"+"/".join([save_path_name, new_filename+".save"])
 	save_game(main.get_tree(), full_save_path)
 
-static func get_saved_games_for_current(main, save_path_name=null):
-	save_path_name = _get_save_path_name(main, save_path_name)
+static func get_saved_games_for_current(gp):
+	var save_path_name = gp.get_save_path_name()
 	var d
 	var path = "user://game_saves"
 	Filesystem.make_if_not_exists_dir(path)

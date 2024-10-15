@@ -64,6 +64,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://System/UI/Fonts/Fonts.gd"
 }, {
+"base": "Reference",
+"class": "GamePath",
+"language": "GDScript",
+"path": "res://System/Saving/GamePath.gd"
+}, {
 "base": "Control",
 "class": "InputController",
 "language": "GDScript",
@@ -191,6 +196,7 @@ _global_script_class_icons={
 "FadeLib": "",
 "Filesystem": "",
 "Fonts": "",
+"GamePath": "",
 "InputController": "",
 "LeastUsedCache": "",
 "MainScene": "",

@@ -97,7 +97,7 @@ func _create_save():
 func _load_save():
 	for item_num in available_saves.get_selected_items():
 		var item = available_saves.get_item_text(item_num)
-		SaveState.load_selected_save_file(main, item+".save")
+		SaveState.load_selected_save_file(main, root_save_game, item+".save")
 		available_saves.clear()
 		_populate_load_games()
 		return
@@ -110,30 +110,35 @@ func _delete_save():
 		available_saves.select(item_num)
 		return
 
+var root_save_game = null
 func _populate_load_games(save_files=null):
 	if save_files==null:
-		save_files = SaveState.get_saved_games_for_current(main)
+		root_save_game = main.top_script().root_path
+		save_files = SaveState.get_saved_games_for_current(GamePath.new().from_main(main))
 	if save_files == last_save_files:
 		return
 	available_saves.clear()
 	last_save_files = save_files
-	for file in save_files:
+	for i in range(save_files.size()):
+		var file = save_files[save_files.size()-i-1]
 		available_saves.add_item(file[1].rsplit(".save",true,1)[0])
 
-func _enable_saveload_buttons(enabled=false):
-	if enabled:
-		new_save_button.disabled = false
+func _enable_saveload_buttons(load_enabled=false, save_enabled=false, save_files=null):
+	if load_enabled:
 		$"vbox/SaveLoad/HBoxContainer/Load Selected Save".disabled = false
 		$"vbox/SaveLoad/HBoxContainer/Delete Selected Save".disabled = false
-		_populate_load_games()
+		_populate_load_games(save_files)
 		$vbox/SaveLoad.visible = true
 		# TODO find all saves
 	else:
-		new_save_button.disabled = true
 		$"vbox/SaveLoad/HBoxContainer/Load Selected Save".disabled = true
 		$"vbox/SaveLoad/HBoxContainer/Delete Selected Save".disabled = true
-		_populate_load_games([])
+		#_populate_load_games([])
 		$vbox/SaveLoad.visible = false
+	if save_enabled:
+		new_save_button.disabled = false
+	else:
+		new_save_button.disabled = true
 
 func _select_available_save(item_index):
 	var selected_name = available_saves.get_item_text(item_index)

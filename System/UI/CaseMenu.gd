@@ -122,8 +122,14 @@ func connect_arrows():
 
 func connect_resume():
 	var main = get_tree().get_nodes_in_group("Main")[0]
-	var saves = SaveState.get_saved_games_for_current(main, wrightscript.root_path+current_case())
+	var saves = SaveState.get_saved_games_for_current(
+		GamePath.new().from_path(
+			wrightscript.root_path+current_case()
+	))
+	var optionsTab = get_tree().get_nodes_in_group("OptionsTab")[0]
+	optionsTab._enable_saveload_buttons(true, false, saves)
 	if saves:
+		optionsTab.root_save_game = wrightscript.root_path+current_case()
 		$Control/ScrollContainer2/VBoxContainer/ResumeButton.visible = true
 		$Control/ScrollContainer2/VBoxContainer/ResumeButton.connect("pressed", self, "launch_game", [null, saves[-1][1]])
 
@@ -170,8 +176,8 @@ func launch_game(path=null, save=null):
 		path+"/intro"
 	])
 	if save:
-		SaveState.load_selected_save_file(tree.get_nodes_in_group("Main")[0], save)
+		var main = tree.get_nodes_in_group("Main")[0]
+		SaveState.load_selected_save_file(main, main.top_script().root_path, save)
 	queue_free()
 	Commands.main.timecounter.reset()
 	emit_signal("CASE_SELECTED")
-
