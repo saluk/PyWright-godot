@@ -124,7 +124,7 @@ func connect_resume():
 	var main = get_tree().get_nodes_in_group("Main")[0]
 	var saves = SaveState.get_saved_games_for_current(
 		GamePath.new().from_path(
-			wrightscript.root_path+current_case()
+			wrightscript.root_path+"/"+current_case()
 	))
 	var optionsTab = get_tree().get_nodes_in_group("OptionsTab")[0]
 	optionsTab._enable_saveload_buttons(true, false, saves)
@@ -175,9 +175,10 @@ func launch_game(path=null, save=null):
 		wrightscript, [
 		path+"/intro"
 	])
+	var main = tree.get_nodes_in_group("Main")[0]
 	if save:
-		var main = tree.get_nodes_in_group("Main")[0]
 		SaveState.load_selected_save_file(main, main.top_script().root_path, save)
 	queue_free()
 	Commands.main.timecounter.reset()
 	emit_signal("CASE_SELECTED")
+	main.stack.emit_signal("game_inited")
