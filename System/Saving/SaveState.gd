@@ -113,9 +113,10 @@ static func load_properties(node, data):
 		for group in data["_groups_"]:
 			node.add_to_group(group)
 
-static func load_game(tree:SceneTree, filename:String):
+static func load_game(main, tree:SceneTree, filename:String):
 	GlobalErrors.log_info("Loading game: %s" % filename)
 	DirectoryCache.clear()
+	main.reset()
 
 	var file = File.new()
 	var err = file.open(filename, File.READ)
@@ -156,7 +157,7 @@ static func from_node_path(tree:SceneTree, path:String):
 static func load_selected_save_file(main, root_path, filename):
 	var save_path_name = GamePath.new().from_path(root_path).get_save_path_name()
 	var full_save_path = "user://game_saves/"+"/".join([save_path_name, filename])
-	load_game(main.get_tree(), full_save_path)
+	load_game(main, main.get_tree(), full_save_path)
 
 static func delete_selected_save_file(main, filename):
 	var save_path_name = GamePath.new().from_main(main).get_save_path_name()

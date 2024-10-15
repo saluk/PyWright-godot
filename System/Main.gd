@@ -57,12 +57,11 @@ func load_game_from_pack(path):
 		game = d.get_next()
 
 	if game:
-		load_game("res://games/"+game)
+		set_current_game("res://games/"+game)
 	else:
 		assert(false)
 
-func load_game(path):
-	reset()
+func set_current_game(path):
 	current_game = path
 	stack.init_game(path)
 	emit_signal("stack_initialized")
@@ -143,7 +142,7 @@ func _ready():
 	elif path.ends_with(".txt"):
 		load_script_from_path(path)
 	else:
-		load_game(path)
+		set_current_game(path)
 
 	if mode == "test":
 		screens.rect_global_position = Vector2(0,0)
@@ -321,8 +320,7 @@ static func create_node(saved_data:Dictionary):
 	pass
 
 func load_node(tree, saved_data:Dictionary):
-	reset()
-	load_game(current_game)
+	set_current_game(current_game)
 	timecounter.set_elapsed_time(saved_data["timecounter.elapsed"])
 	SaveState._load_node(tree, stack, saved_data["stack"])
 
