@@ -129,7 +129,7 @@ func connect_resume():
 	var optionsTab = get_tree().get_nodes_in_group("OptionsTab")[0]
 	optionsTab._enable_saveload_buttons(true, false, saves)
 	if saves:
-		optionsTab.root_save_game = wrightscript.root_path+current_case()
+		optionsTab.root_save_game = wrightscript.root_path+"/"+current_case()
 		$Control/ScrollContainer2/VBoxContainer/ResumeButton.visible = true
 		$Control/ScrollContainer2/VBoxContainer/ResumeButton.connect("pressed", self, "launch_game", [null, saves[-1][1]])
 
