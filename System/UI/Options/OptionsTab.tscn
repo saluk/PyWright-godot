@@ -108,7 +108,6 @@ margin_right = 188.0
 margin_bottom = 90.0
 rect_min_size = Vector2( 0, 50 )
 size_flags_stretch_ratio = 7.31
-items = [ "test1", null, false, "test 2", null, false ]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="vbox/SaveLoad"]
 margin_top = 94.0
