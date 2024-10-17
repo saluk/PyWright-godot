@@ -33,9 +33,9 @@ func sort_children():
 
 func clear(top=true, bottom=true):
 	for child in get_children():
-		if not bottom and child.global_position.y >= 192:
+		if not bottom and "global_position" in child and child.global_position.y >= 192:
 			continue
-		if not top and child.global_position.y < 192:
+		if not top and "global_position" in child and child.global_position.y < 192:
 			continue
 		# TODO probably unnecesary to remove the child AND free it
 		remove_child(child)

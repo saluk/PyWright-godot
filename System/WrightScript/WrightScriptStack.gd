@@ -16,11 +16,11 @@ var macros := {}
 var filesystem
 
 enum {
-	STACK_READY,
-	STACK_PROCESSING,
-	STACK_COMPLETE,
-	STACK_YIELD,
-	STACK_DEBUG
+	STACK_READY,		# ready for action
+	STACK_PROCESSING,	# currently exectuing the script
+	STACK_COMPLETE,		# This stack (game, case) has finished
+	STACK_YIELD,        # allow a frame to be endered
+	STACK_DEBUG			# set up debugger
 }
 var state = STACK_READY
 
@@ -187,37 +187,10 @@ func clean_scripts():
 func new_state(state):
 	self.state = state
 
-# TODO script blockers feel overengineered.
-
-func blocked(scr):
-	if scr.blockers:
-		return true
-
-func add_blocker(script, block_obj, next_line = true):
-	if block_obj in script.blockers:
-		return
-	script.blockers.append(block_obj)
-	var sig = "timeout"
-	if block_obj.get("wait_signal"):
-		sig = block_obj.get("wait_signal")
-	var original_id
-	if "name" in block_obj:
-		original_id = block_obj.name
-	else:
-		original_id = block_obj
-	block_obj.connect(sig, self, "remove_blocker", [sig, script, block_obj, original_id, next_line], CONNECT_ONESHOT)
-
-func remove_blocker(sig, script, block_obj, original_id, next_line):
-	if block_obj in script.blockers:
-		script.blockers.erase(block_obj)
-		if not script.blockers:
-			if next_line:
-				script.next_line()
-
 func force_clear_blockers():
 	for script in scripts:
 		for blocker in script.blockers:
-			remove_blocker(null, script, blocker, null, false)
+			script.remove_blocker(null, blocker, null, false)
 
 # TODO simplify process, we have more states than we need now that we almost never yield or return from the while loop
 func process():
@@ -253,7 +226,7 @@ func process():
 		clean_scripts()
 		if not scripts:
 			return new_state(STACK_YIELD)
-		if blocked(scripts[-1]):
+		if scripts[-1].check_blocked():
 			if variables.get_truth("render", true):
 				yield(main.get_tree(), "idle_frame")
 				continue
@@ -309,7 +282,7 @@ func process():
 				frame.scr.next_line()
 				#return new_state(STACK_YIELD)
 		elif frame.sig is SceneTreeTimer or (frame.sig and frame.sig.get("wait_signal") and frame.sig.get("wait") in [null, true]):
-			add_blocker(frame.scr, frame.sig, true)
+			frame.scr.add_blocker(frame.sig, true)
 		elif frame.sig is GDScriptFunctionState:
 			#show_in_debugger()
 			yields.append(frame)
@@ -375,4 +348,4 @@ func old_save_blocker_fix(tree, saved_data:Dictionary):
 			if blocker_data["type"] == "Node":
 				blocker = main.get_node(blocker_data["node_path"])
 			if blocker:
-				add_blocker(script, blocker, true)
+				script.add_blocker(blocker, true)

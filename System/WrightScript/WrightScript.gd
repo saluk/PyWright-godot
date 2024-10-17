@@ -416,6 +416,35 @@ func end():
 	line_num = len(lines)-1
 
 
+func check_blocked():
+	for obj in blockers:
+		if obj and is_instance_valid(obj):
+			return true
+	blockers = []
+
+func add_blocker(block_obj, next_line = true):
+	if block_obj in blockers:
+		return
+	blockers.append(block_obj)
+	var sig = "timeout"
+	if block_obj.get("wait_signal"):
+		sig = block_obj.get("wait_signal")
+	var original_id
+	if "name" in block_obj:
+		original_id = block_obj.name
+	else:
+		original_id = block_obj
+	block_obj.connect(sig, self, "remove_blocker", [sig, block_obj, original_id, next_line], CONNECT_ONESHOT)
+
+func remove_blocker(sig, block_obj, original_id, allow_next_line):
+	if block_obj in blockers:
+		blockers.erase(block_obj)
+		if not blockers:
+			if allow_next_line:
+				next_line()
+
+
+
 #Save/Load
 var save_properties = [
 	"root_path", "filename", "lines", "labels",
