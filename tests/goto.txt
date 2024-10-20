@@ -1,0 +1,32 @@
+goto start
+
+label t1
+"third"
+goto end
+
+label t2
+
+label none
+"not fourth"
+
+label t1
+
+label t2
+
+label start
+list x fail=none
+li t1
+li t2
+showlist
+
+label none
+"first"
+
+label t1
+"second"
+goto t1
+
+label t2
+
+label end
+"fourth"

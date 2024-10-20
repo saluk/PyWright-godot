@@ -111,7 +111,7 @@ func add_list_items():
 					"highlight": {"path": "art/general/talkchoice_high.png"}
 				},
 				"click_macro": "{click_list_item}",
-				"click_args": [result],
+				"click_args": [result, "fail="+fail],
 				"select_macro": "{select_list_item}",
 				"select_args": [result]
 			},
@@ -162,9 +162,7 @@ func ws_click_list_item(script, arguments):
 	Commands.call_command(
 		"goto",
 		stack.scripts[-1],
-		[
-			" ".join(arguments)
-		]
+		arguments
 	)
 	Commands.call_command("sound_list_menu_confirm", stack.scripts[0], [])
 	queue_free()

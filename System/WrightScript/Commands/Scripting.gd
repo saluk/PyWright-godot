@@ -40,7 +40,9 @@ func ws_step(script, arguments):
 
 func ws_goto(script, arguments):
 	var fail = Commands.keywords(arguments).get("fail", null)
-	return script.goto_label(arguments[0], fail)
+	if fail != null:
+		arguments.erase("fail="+fail)
+	return script.goto_label(PoolStringArray(arguments).join(" "), fail)
 
 func ws_top(script, arguments):
 	script.goto_line_number(0)

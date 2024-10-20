@@ -40,4 +40,4 @@ for item in items:
 with open("tests/intro.txt", "w") as f:
     f.write(intro)
 
-shutil.copytree("tests", sys.argv[1], dirs_exist_ok=True)
+shutil.copytree("tests", sys.argv[1].replace("\\","/"), dirs_exist_ok=True)

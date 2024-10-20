@@ -202,12 +202,7 @@ func next_line():
 # TODO add test for we can have multiple labels with the same name in a file, and we should go to the nearest one
 func goto_label(label, fail=null):
 	allow_next_line = false
-	var line_nums
-	if label in labels:
-		line_nums = labels[label]
-	elif fail in labels:
-		line_nums = labels[fail]
-	else:
+	if not label in labels and not fail in labels:
 		stack.variables.del_val("_lastline")
 		if allow_goto_parent_script:
 			end()
@@ -218,6 +213,13 @@ func goto_label(label, fail=null):
 		GlobalErrors.log_error("Tried to go somewhere non existent "+label, {"script": self})
 		allow_next_line = true
 		return
+
+	var line_nums = []
+	if label in labels:
+		line_nums.append_array(labels[label])
+	if fail in labels:
+		line_nums.append_array(labels[fail])
+	line_nums.sort()
 	stack.variables.set_val("_lastline", str(line_num+1))
 	StandardVar.CURRENTLABEL.store(label)
 	# Try to go to next line number

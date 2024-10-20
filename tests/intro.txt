@@ -54,72 +54,80 @@ showlist
 
 label pagelabel7
 list page7
+li goto
 li graphic_declarations
 li gui
-li in-text-pausing
 li pagelabel6
 li pagelabel8
 showlist
 
 label pagelabel8
 list page8
+li in-text-pausing
 li intro
 li labels
-li list
 li pagelabel7
 li pagelabel9
 showlist
 
 label pagelabel9
 list page9
+li list
 li macrogoto
 li music_fade
-li namespace
 li pagelabel8
 li pagelabel10
 showlist
 
 label pagelabel10
 list page10
+li namespace
 li nametags
 li object_factory
-li penalty
 li pagelabel9
 li pagelabel11
 showlist
 
 label pagelabel11
 list page11
+li penalty
 li predictive-text-wrapping-2
 li predictive-text-wrapping
-li randomize
 li pagelabel10
 li pagelabel12
 showlist
 
 label pagelabel12
 list page12
+li randomize
 li showrecord
 li sounds
-li stopmusic
 li pagelabel11
 li pagelabel13
 showlist
 
 label pagelabel13
 list page13
+li stopmusic
 li text
 li timers
-li top
 li pagelabel12
 li pagelabel14
 showlist
 
 label pagelabel14
 list page14
+li top
 li utf
 li vars
 li pagelabel13
+li pagelabel15
+showlist
+
+label pagelabel15
+list page15
+li warp
+li pagelabel14
 showlist
 label 3dexamine
 script 3dexamine
@@ -157,6 +165,8 @@ label fg
 script fg
 label filters
 script filters
+label goto
+script goto
 label graphic_declarations
 script graphic_declarations
 label gui
@@ -203,3 +213,5 @@ label utf
 script utf
 label vars
 script vars
+label warp
+script warp

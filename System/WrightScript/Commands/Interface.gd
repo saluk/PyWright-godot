@@ -122,6 +122,7 @@ func ws_list(script, arguments):
 	list_menu.tag = tag
 	list_menu.position = Vector2(0, 192)
 	list_menu.allow_back_button = true
+	list_menu.fail = Commands.keywords(arguments).get("fail", "none")
 	if noback or not main.stack.variables.get_truth("_list_back_button"):
 		list_menu.allow_back_button = false
 	list_menu.update()
