@@ -155,7 +155,10 @@ func preprocess_lines():
 			continue
 		elif segments and segments[0] == "include":
 			var include_scr = load("res://System/WrightScript/WrightScript.gd").new(main, self.stack)
-			include_scr.load_txt_file(root_path+segments[1]+".txt", false)
+			var include_filename = root_path+segments[1]
+			if not include_filename.ends_with(".txt"):
+				include_filename += '.txt'
+			include_scr.load_txt_file(include_filename, false)
 			var off = 1
 			lines.insert(i+off, "#i- " + line)
 			off += 1
