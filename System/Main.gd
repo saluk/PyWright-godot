@@ -210,6 +210,7 @@ func test_eval():
 func _process(_delta):
 	emit_signal("before_frame_drawn")
 	if stack:
+		# IF stack.state == stack.STATE_PROCESSING we are already running the process() function
 		if stack.state in [stack.STACK_READY, stack.STACK_YIELD]:
 			stack.process()
 	if stack:

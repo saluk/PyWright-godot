@@ -53,7 +53,7 @@ func has_script(scene_name) -> String:
 func fullpath() -> String:
 	return Filesystem.path_join(root_path, filename)
 
-func load_txt_file(path:String, load_macros=true):
+func load_txt_file(path:String, load_macros=true, preprocess_lines=true):
 	if load_macros:
 		print("load script macros")
 		stack.load_macros_from_path(path.rsplit("/", true, 1)[0])
@@ -69,7 +69,8 @@ func load_txt_file(path:String, load_macros=true):
 		buffer = buffer.replace("\r\n", "\n")
 		buffer = buffer.replace("\r", "\n")
 		lines = buffer.split("\n")
-		preprocess_lines()
+		if preprocess_lines:
+			preprocess_lines()
 	else:
 		print("Error loading wrightscript file ", path)
 
@@ -154,7 +155,7 @@ func preprocess_lines():
 			continue
 		elif segments and segments[0] == "include":
 			var include_scr = load("res://System/WrightScript/WrightScript.gd").new(main, self.stack)
-			include_scr.load_txt_file(root_path+segments[1]+".txt")
+			include_scr.load_txt_file(root_path+segments[1]+".txt", false)
 			var off = 1
 			lines.insert(i+off, "#i- " + line)
 			off += 1
@@ -178,7 +179,6 @@ func preprocess_lines():
 			else:
 				GlobalErrors.log_error("no macro found to include:"+command)
 		i += 1
-	print("SCRIPT STARTING:", to_string())
 
 func get_next_line(offset:int):
 	if line_num+offset >= lines.size():
@@ -470,6 +470,8 @@ static func create_node(saved_data:Dictionary):
 
 func load_node(tree, saved_data:Dictionary):
 	SaveState._load_node(tree, variables, saved_data["variables"])
+	if filename:
+		load_txt_file(Filesystem.path_join(root_path, filename))
 	screen = ScreenManager.get_or_create(saved_data.get("screen_name", "MainScreen"))
 
 func after_load(tree, saved_data:Dictionary):
@@ -480,4 +482,4 @@ func after_load(tree, saved_data:Dictionary):
 			elif blocker["type"] == "Node":
 				var n = main.get_tree().root.get_node(blocker["node_path"])
 				if n:
-					stack.add_blocker(self, n, true)
+					add_blocker(n, true)
