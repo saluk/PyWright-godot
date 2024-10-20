@@ -20,6 +20,9 @@ var select_with_keys:bool = true   #Whether this clickarea can be selected with 
 
 var debuglabel:Label
 
+var default_highlight_color = Color(1, 1, 1, 1)
+var default_click_color = Color(.67, .42, .27, 1)
+
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	if get_tree().debug_collisions_hint:
@@ -110,13 +113,13 @@ func set_highlight():
 		if parent.has_sprite("clicked"):
 			final_sprite = "clicked"
 		else:
-			final_color = Color(0,0,1,1)
-			final_amount = 0.5
+			final_color = default_click_color
+			final_amount = 0.25
 	if over and enabled:
 		if parent.has_sprite("highlight"):
 			final_sprite = "highlight"
 		else:
-			final_color = Color(1,1,1,1)
+			final_color = default_highlight_color
 			final_amount = 0.5
 	parent.set_sprite(final_sprite)
 	if parent.current_sprite:
