@@ -5,9 +5,10 @@ var stack: WrightScriptStack
 var timecounter: TimeCounter
 var current_game: String
 
-var tab_button:Button
-
 var screens
+onready var options_tab:Control = get_tree().get_nodes_in_group("SidePanel")[0]
+onready var tab_container:TabContainer = get_tree().get_nodes_in_group("TabContainer")[0]
+onready var tab_button:Button = get_tree().get_nodes_in_group("TabButton")[0]
 
 # A weird quirk of PyWright means that even if you clear a surface, the mesh sticks around
 # This ensures there is only one 3d examine mesh loaded
@@ -74,55 +75,17 @@ func load_script_from_path(path):
 	stack.init_game(current_game, path)
 	emit_signal("stack_initialized")
 
-func set_resolution(res:Vector2, scale_factor:float):
-	Engine.target_fps = 60
-	var h = res.y
-	var w = res.x
-	OS.set_window_size(Vector2(w*scale_factor, h*scale_factor))
-	var screen_size:Vector2 = OS.get_screen_size()
-	OS.window_position = Vector2(screen_size.x/2-w*scale_factor/2, screen_size.y/2-h*scale_factor/2)
-	#get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_2D, SceneTree.STRETCH_ASPECT_KEEP, Vector2(w, h), 1)
-
-func window_resize():
-	var v_size = get_viewport_rect().size
-	var lauthored_size = authored_size
-	if Configuration.builtin.screen_format == "horizontal" and $TabContainer.visible:
-		lauthored_size.x *= 2
-	var scalex = v_size.x/lauthored_size.x
-	var scaley = v_size.y/lauthored_size.y
-	var scale_factor = min(scalex, scaley)
-	scale = Vector2(scale_factor, scale_factor)
-	if Configuration.builtin.screen_format == "horizontal":
-		if not $TabContainer.visible:
-			screens.rect_position.x = v_size.x/2 / scale_factor - lauthored_size.x/2
-			tab_button.rect_position.x = screens.rect_position.x + screens.rect_size.x
-			$TabContainer.rect_position.x = tab_button.rect_position.x
-		else:
-			screens.rect_position.x = v_size.x/2  / scale_factor - lauthored_size.x/2
-			tab_button.rect_position.x = screens.rect_position.x + screens.rect_size.x
-			$TabContainer.rect_position.x = tab_button.rect_position.x
-
 func _ready():
 	ScreenManager._init_screens()
 	screens = get_tree().get_nodes_in_group("Screens")[0]
 	timecounter = TimeCounter.new()
 	add_child(timecounter)
 
-	tab_button = get_tree().get_nodes_in_group("TabButton")[0]
 	tab_button.connect("toggled", self, "_toggle_button")
 	if not Configuration.user.options_open:
 		hide_tabs()
 	else:
 		tab_button.pressed = true
-
-	get_tree().root.connect("size_changed", self, "window_resize")
-	if Configuration.builtin.screen_format == "vertical":
-		set_resolution(Vector2(256,384 + 32), 2.0)
-		screens.rect_position = Vector2(0, 16)
-		tab_button.rect_position = Vector2(0, 0)
-		$TabContainer.rect_position = Vector2(0, 16)
-	elif Configuration.builtin.screen_format == "horizontal":
-		set_resolution(Vector2(256 * 2,384), 2.0)
 
 	stack = WrightScriptStack.new(self)
 	stack.connect("stack_empty", self, "reload")
@@ -285,14 +248,16 @@ func _toggle_button(state):
 
 func show_tabs():
 	tab_button.pressed = true
-	$TabContainer.show()
-	window_resize()
+	tab_container.show()
+	#options_tab.rect_position.x = get_viewport().size.x-256*options_tab.rect_scale.x
+	options_tab.rect_min_size = Vector2(256*2,384*2)
 	Configuration.set_and_save("options_open", true)
 
 func hide_tabs():
 	tab_button.pressed = false
-	$TabContainer.hide()
-	window_resize()
+	tab_container.hide()
+	#options_tab.rect_position.x = get_viewport().size.x
+	options_tab.rect_min_size = Vector2(0,0)
 	Configuration.set_and_save("options_open", false)
 
 # TODO hacky way to handle orphans

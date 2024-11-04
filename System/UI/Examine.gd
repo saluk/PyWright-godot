@@ -258,13 +258,17 @@ func reload_scroll_regions():
 		ws_scroll_from_examine(null, [scroll_dir/abs(scroll_dir)])
 		update_x_offset()
 
+func _input(event):
+	if "position" in event:
+		if scrolling: return
+		if not mouse_active: return
+		if Input.get_mouse_button_mask() & BUTTON_LEFT:
+			var pos = event.position - position
+			set_crosshair_pos(pos.x, pos.y)
+			update()
+
 func _process(dt):
-	if scrolling: return
-	if not mouse_active: return
-	if Input.get_mouse_button_mask() & BUTTON_LEFT:
-		var pos = get_parent().get_local_mouse_position()-position
-		set_crosshair_pos(pos.x, pos.y)
-		update()
+	pass
 
 func _select():
 	for child in get_children():

@@ -258,10 +258,10 @@ gdscript/warnings/integer_division=false
 
 window/size/width=512
 window/size/height=384
-window/size/test_width=512
-window/size/test_height=384
+window/size/test_width=1024
+window/size/test_height=768
 window/handheld/orientation="portrait"
-window/stretch/aspect="keep_width"
+window/stretch/aspect="expand"
 
 [global]
 
