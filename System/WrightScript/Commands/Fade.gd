@@ -33,7 +33,7 @@ class Fader extends Node:
 		objects = get_screen().get_objects(null, true)
 	func set_fade():
 		for object in objects:
-			if is_instance_valid(object):
+			if is_instance_valid(object) and "modulate" in object:
 				object.modulate = Color(1, 1, 1, start/100.0)
 	func _process(dt):
 		if start < end:

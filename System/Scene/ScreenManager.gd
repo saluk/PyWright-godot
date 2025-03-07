@@ -4,9 +4,22 @@ var screens:Node
 var main_screen:Node2D setget , get_main_screen
 var _main_screen:Node2D
 
+var viewport_containers
+
 func _init_screens():
-	screens = get_tree().get_nodes_in_group("Screens")[0]
+	screens = get_tree().get_nodes_in_group("MainScreenViewport")[0]
 	_main_screen = screens.get_node("%MainScreen")
+
+	viewport_containers = get_tree().get_nodes_in_group("ViewportContainer")
+	var main_viewport
+	var mainworld
+	for container in viewport_containers:
+		if not mainworld:
+			main_viewport = container.get_child(0)
+			mainworld = container.get_child(0).world_2d
+		else:
+			container.get_child(0).world_2d = mainworld
+		container.main_viewport = main_viewport
 
 func _ready():
 	_init_screens()
