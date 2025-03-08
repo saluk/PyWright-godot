@@ -256,11 +256,8 @@ gdscript/warnings/integer_division=false
 
 [display]
 
-window/size/width=512
-window/size/height=384
-window/size/test_width=512
-window/size/test_height=384
 window/handheld/orientation="portrait"
+window/stretch/mode="viewport"
 window/stretch/aspect="keep_width"
 
 [global]

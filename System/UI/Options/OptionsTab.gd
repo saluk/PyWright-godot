@@ -18,6 +18,7 @@ func _ready():
 	$vbox/Quit.connect("button_up", self, "_quit")
 	$vbox/Debugger.connect("button_up", self, "_debugger")
 	$vbox/Framelog.connect("button_up", self, "_framelog")
+	$vbox/Rendering/Viewports.connect("toggled", self, "_toggle_viewports")
 	memory_leak.connect("button_up", self, "_memory_leak")
 	free_orphans.connect("button_up", self, "_free_orphans")
 	$"vbox/DirectoryCacheList Toggle".connect("button_up", self, "_dcl")
@@ -64,6 +65,9 @@ func enable_tab(n):
 func disable_tab(n):
 	n.get_parent().remove_child(n)
 	get_tree().get_nodes_in_group("DisabledTabs")[0].add_child(n)
+
+func _toggle_viewports(on):
+	Configuration.user.viewports_visible = on
 
 func _debugger():
 	if toggle_tab("ScriptDebugger") == "enabled":

@@ -14,10 +14,10 @@ func init_config():
 
 func save_config():
 	ResourceSaver.save("user://config.tres", user)
-	
+
 func set_and_save(key, value):
 	user.set(key, value)
 	save_config()
-	
+
 func _ready():
 	init_config()

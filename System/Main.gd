@@ -117,7 +117,7 @@ func _ready():
 
 	get_tree().root.connect("size_changed", self, "window_resize")
 	if Configuration.builtin.screen_format == "vertical":
-		set_resolution(Vector2(256,384 + 32), 2.0)
+		set_resolution(Vector2(256*2,384 + 32), 2.0)
 		screens.rect_position = Vector2(0, 16)
 		tab_button.rect_position = Vector2(0, 0)
 		$TabContainer.rect_position = Vector2(0, 16)
