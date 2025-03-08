@@ -335,6 +335,11 @@ script = ExtResource( 14 )
 [node name="ScreenViewport" type="Viewport" parent="Screens/ViewportContainers/ViewportContainer" groups=["MainScreenViewport"]]
 size = Vector2( 255, 192 )
 handle_input_locally = false
+fxaa = true
+debanding = true
+sharpen_intensity = 1.0
+hdr = false
+usage = 0
 render_target_update_mode = 3
 physics_object_picking = true
 gui_disable_input = true
@@ -377,6 +382,11 @@ script = ExtResource( 14 )
 [node name="ScreenViewport" type="Viewport" parent="Screens/ViewportContainers/ViewportContainer2"]
 size = Vector2( 253, 192 )
 handle_input_locally = false
+fxaa = true
+debanding = true
+sharpen_intensity = 1.0
+hdr = false
+usage = 0
 render_target_update_mode = 3
 physics_object_picking = true
 gui_disable_input = true
@@ -517,10 +527,10 @@ script = ExtResource( 11 )
 
 [node name="ColorPicker" type="ColorPicker" parent="."]
 visible = false
-margin_left = 16.0
-margin_top = 16.0
-margin_right = 324.0
-margin_bottom = 478.0
+margin_left = 20.0
+margin_top = 20.0
+margin_right = 328.0
+margin_bottom = 482.0
 color = Color( 0.666667, 0.427451, 0.270588, 1 )
 
 [connection signal="gui_input" from="Screens" to="." method="_on_Screens_gui_input"]
