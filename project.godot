@@ -39,6 +39,7 @@ StandardVar="*res://System/WrightScript/StandardVar.gd"
 gdscript/warnings/unused_variable=false
 gdscript/warnings/shadowed_variable=false
 gdscript/warnings/integer_division=false
+gdscript/warnings/native_method_override=0
 gdscript/warnings/unused_argument=false
 
 [display]
