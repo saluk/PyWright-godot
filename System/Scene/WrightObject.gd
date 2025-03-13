@@ -183,9 +183,9 @@ func load_sprites(template, sprite_key=null):
 	self.template = template
 	free_members()
 	init_sprite_root()
-	for sprite_key in template["sprites"]:
-		var sprite_options = template["sprites"][sprite_key]
-		add_sprite(sprite_key, sprite_options)
+	for local_sprite_key in template["sprites"]:
+		var sprite_options = template["sprites"][local_sprite_key]
+		add_sprite(local_sprite_key, sprite_options)
 
 	# (combined) files turn into talk and blink animations
 	process_combined()

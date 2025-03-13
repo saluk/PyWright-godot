@@ -12,3 +12,5 @@
 [ ] PoolStringArray.join -> "".join(PackedStringArray)
 [ ] Engine.target_fps
 [ ] Where I convert NodePath to Node (Look at how I fix in ScriptDebugger)
+[X] handle _init in ClickMesh
+[X] can't import WrightScript

@@ -48,10 +48,9 @@ func report_errors(err, filepath):
 		print("Unknown error with file ", filepath, " error code: ", err)
 
 func loadfile(filepath):
-	var file = File.new()
-	var err = file.open(filepath, File.READ)
-	if err != OK:
-		report_errors(err, filepath)
+	var file = FileAccess.open(filepath, FileAccess.READ)
+	if not file:
+		report_errors(FileAccess.get_open_error(), filepath)
 		file.close()
 		return AudioStreamWAV.new()
 
@@ -197,7 +196,7 @@ func convert_to_16bit(data: PackedByteArray, from: int) -> PackedByteArray:
 		var single_float: float
 		var value: int
 		for i in range(0, data.size(), 4):
-			spb.data_array = data.subarray(i, i+3)
+			spb.data_array = data.slice(i, i+3)
 			single_float = spb.get_float()
 			value = single_float * 32768
 			data[i/2] = value

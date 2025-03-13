@@ -13,7 +13,9 @@ func _init(original_mesh):
 	self.original_mesh.click_mesh = self
 	#self.material_override = ShaderMaterial.new()
 	#self.material_override.shader = click_uv
-	super._init()
+	# TODO may need this?
+	#super._init()
+
 func _process(dt):
 	transform = original_mesh.transform
 
