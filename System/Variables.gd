@@ -19,7 +19,7 @@ func reset():
 	self.store = {}
 
 func set_val(key, value, split_on=null):
-	# TODO this is implemented in variables and in namespaces?
+	# TODO this is implemented in variables and in VariableStores?
 	if split_on != null:
 		value = array_to_string(value, split_on)
 	if key in setters:

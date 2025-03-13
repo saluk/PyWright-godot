@@ -6,11 +6,20 @@
 [ ] font.set_spacing, FontFile.SPACING_SPACE -> font.set_extra_spacing
 [ ] OS.get_system_time_msecs()
 [X] array .remove -> remove_at
-[ ] Button.Align
-[ ] Missing NameSpaces - looks like "namespace" is a keyword now
+[ ] Button.Align, Label.ALIGNMENT_CENTER
+[X] Missing NameSpaces - looks like "namespace" is a keyword now
 [ ] Missing GDScriptFunctionState
 [ ] PoolStringArray.join -> "".join(PackedStringArray)
 [ ] Engine.target_fps messin up main.gd
 [X] Where I convert NodePath to Node (Look at how I fix in ScriptDebugger)
 [X] handle _init in ClickMesh
 [X] can't import WrightScript
+[ ] can't import Node3D
+[ ] Invalid argument for "get_signal_connection_list()" function: argument 1 should be "StringName" but is "Dictionary".
+[ ] update() not found in base
+[ ] Fade.gd control_all() missing arguments
+[ ] Gui.gd "join" in "array"
+[ ] Scripting.gd "." for attribute access
+[ ] Tweens
+[ ] get_system_time_msecs()
+[ ] not compiling

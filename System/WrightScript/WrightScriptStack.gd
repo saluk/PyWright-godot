@@ -4,8 +4,8 @@ class_name WrightScriptStack
 var main
 var scripts := []
 
-# Contains all namespaces except for scripts and objects
-var variables:NameSpaces
+# Contains all stores except for scripts and objects
+var variables:VariableStores
 var evidence_pages := {
 
 }
@@ -38,7 +38,7 @@ var testing
 func _init(main):
 	assert(main)
 	self.main = main
-	variables = NameSpaces.new()
+	variables = VariableStores.new()
 	variables.main = main
 	filesystem = load("res://System/Files/Filesystem.gd").new()
 	testing = Testing.new()

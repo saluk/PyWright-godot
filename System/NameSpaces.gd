@@ -1,11 +1,11 @@
-# Replaces main.variables with main.namespaces
+# Replaces main.variables with main.variablestores
 # Can ask for a variable like in Variables, will return out of the global namespace
 # Can ask for a variable from a given namespace, will access the variable from that variable set
 # Can pass a name the includes dots (.) and the namespace will handle the logic of finding
 #    or creating the given namespace
 
 extends RefCounted
-class_name NameSpaces
+class_name VariableStores
 
 var DEFAULTS := {
 	"ev_mode_bg_evidence": "general/evidence",
@@ -36,31 +36,31 @@ var DEFAULTS := {
 	"_list_back_button": "true"
 }
 
-var global_namespace:Variables
-# The default namespace like PyWright used for everything
-var game_namespace:Variables
-# A special namespace which saves it's variables to a file and loads them
+var global_store:Variables
+# The default store like PyWright used for everything
+var game_store:Variables
+# A special store which saves it's variables to a file and loads them
 # again when the game loads
 
-# Other namespaces:
-# each WrightObject has a namespace
-# each WrightScript has a namespace
+# Other stores:
+# each WrightObject has a store
+# each WrightScript has a store
 
 var main
 
 func _init():
-	global_namespace = Variables.new()
-	game_namespace = Variables.new()
+	global_store = Variables.new()
+	game_store = Variables.new()
 
 func reset():
-	global_namespace = Variables.new()
-	game_namespace = Variables.new()
+	global_store = Variables.new()
+	game_store = Variables.new()
 	for k in DEFAULTS.keys():
-		global_namespace.store[k] = DEFAULTS[k]
+		global_store.store[k] = DEFAULTS[k]
 
-func init_game_namespace(game_file):
+func init_game_store(game_file):
 	pass
-	# TODO load game file and populate the game_namespace
+	# TODO load game file and populate the game_store
 	# Attach a signal to save the file when variables are written to
 
 class NOT_FOUND:
@@ -68,13 +68,13 @@ class NOT_FOUND:
 
 class Accessor:
 	var key:String
-	var namespace:Variables
-	var namespaces:NameSpaces
+	var store:Variables
+	var stores:VariableStores
 	var access_item = null
-	func _init(key, namespace, namespaces):
+	func _init(key, store, stores):
 		self.key = key
-		self.namespace = namespace
-		self.namespaces = namespaces
+		self.store = store
+		self.stores = stores
 
 		var listpart = ""
 		if ":" in key:
@@ -82,7 +82,7 @@ class Accessor:
 			self.key = parts[0]
 			# further expansion
 			if parts[1].begins_with("$"):
-				parts[1] = namespaces.get_accessor(parts[1].substr(1)).get_val("string", "0")
+				parts[1] = stores.get_accessor(parts[1].substr(1)).get_val("string", "0")
 			if parts[1].is_valid_int():
 				access_item = int(parts[1])
 			elif parts[1] == "end":
@@ -92,15 +92,15 @@ class Accessor:
 			else:
 				print("invalid access item")
 				assert(false)
-	# make the namespace able to act as a list
+	# make the store able to act as a list
 	func list() -> Array:
-		if not key in namespace.store:
-			namespace.store[key] = []
-		if not namespace.store[key] is Array:
+		if not key in store.store:
+			store.store[key] = []
+		if not store.store[key] is Array:
 			return []
-		return namespace.store[key]
+		return store.store[key]
 	func get_val(type="string", default=null):
-		var val = namespace.get_val(key, NOT_FOUND.new())
+		var val = store.get_val(key, NOT_FOUND.new())
 		if access_item != null:
 			if not val is Array:
 				print("cant access from non-array")
@@ -152,9 +152,9 @@ class Accessor:
 			print("invalid access item")
 		else:
 			if value is Variables:
-				namespace.store[key] = value
+				store.store[key] = value
 			else:
-				namespace.set_val(key, value)
+				store.set_val(key, value)
 	func del_val():
 		if access_item is int:
 			if access_item < 0:
@@ -167,10 +167,10 @@ class Accessor:
 		elif access_item == "length":
 			pass
 		else:
-			namespace.del_val(key)
+			store.del_val(key)
 	func exists():
-		return namespace.store.has(key)
-	func is_namespace():
+		return store.store.has(key)
+	func is_store():
 		return get_val() is Variables
 
 # Lookup a variable
@@ -179,10 +179,10 @@ class Accessor:
 # game.y <- lookup in game
 # script.z <- lookup in current script or previous scripts
 # x <- lookup in global
-# [object_name].x.y <- create or access namespace in object_name called x, retrieve y
+# [object_name].x.y <- create or access store in object_name called x, retrieve y
 # something:2 <- make something an array, get item at index 2
 # set something.end <- add item to the end of array
-func get_accessor(variable:String, namespace:Variables=null, setting=false):
+func get_accessor(variable:String, store:Variables=null, setting=false):
 	var script = main.top_script()
 	var next = variable
 
@@ -197,42 +197,42 @@ func get_accessor(variable:String, namespace:Variables=null, setting=false):
 	if next.begins_with("$"):
 		next = get_accessor(next.substr(1), null, setting).get_val("string", "")
 
-	if not namespace and next and variable:
+	if not store and next and variable:
 		if next == "script":
 			if not script:
 				return get_accessor(variable, Variables.new(), setting)
 			return get_accessor(variable, script.variables, setting)
 		if next == "game":
-			return get_accessor(variable, game_namespace, setting)
+			return get_accessor(variable, game_store, setting)
 		# See if next is an object
 		for object in ScreenManager.get_objects(next):
 			return get_accessor(variable, object.variables, setting)
 
-	if not namespace:
-		namespace = global_namespace
+	if not store:
+		store = global_store
 
-	var accessor = Accessor.new(next, namespace, self)
+	var accessor = Accessor.new(next, store, self)
 
 	# We are at the end of the line, let caller figure out what to do with the address
 	if not variable:
 		return accessor
 
 	if accessor.exists():
-		if accessor.is_namespace():
+		if accessor.is_store():
 			return get_accessor(variable, accessor.get_val(), setting)
-		# We are trying to access values in an accessor that's not a namespace
-		print("Error, "+next+" has a value and is not a namespace")
+		# We are trying to access values in an accessor that's not a store
+		print("Error, "+next+" has a value and is not a variablestore")
 		print(accessor.get_val())
 	if setting:
-		print("creating new namespace "+accessor.key)
+		print("creating new store "+accessor.key)
 		accessor.set_val(Variables.new())
 	else:
-		print("creating temp namespace "+accessor.key)
-		accessor.namespace = Variables.new()
+		print("creating temp store "+accessor.key)
+		accessor.store = Variables.new()
 	return get_accessor(variable, accessor.get_val(), setting)
 
 
-# Passthrough functions to namespace
+# Passthrough functions to store
 
 func set_val(key, value, split_on=null):
 	var a = get_accessor(key, null, true)
@@ -271,15 +271,19 @@ func get_array(key, default="", split_on=","):
 var save_properties = [
 ]
 func save_node(data):
-	data["global_namespace"] = SaveState._save_node(global_namespace)
-	data["game_namespace"] = SaveState._save_node(game_namespace)
+	data["global_store"] = SaveState._save_node(global_store)
+	data["game_store"] = SaveState._save_node(game_store)
 
 static func create_node(saved_data:Dictionary):
 	pass # Not called
 
 func load_node(tree, saved_data:Dictionary):
-	SaveState._load_node(tree, global_namespace, saved_data["global_namespace"])
-	SaveState._load_node(tree, game_namespace, saved_data["game_namespace"])
+	if "global_namespace" in saved_data:
+		SaveState._load_node(tree, global_store, saved_data["global_namespace"])
+		SaveState._load_node(tree, game_store, saved_data["game_namespace"])
+	elif "global_store" in saved_data:
+		SaveState._load_node(tree, global_store, saved_data["global_store"])
+		SaveState._load_node(tree, game_store, saved_data["game_store"])
 
 func after_load(tree:SceneTree, saved_data:Dictionary):
 	pass # Not called
