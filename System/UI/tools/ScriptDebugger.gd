@@ -20,7 +20,7 @@ var slow_mode = false
 @export var watched_panel: NodePath
 @export var watched_textedit: NodePath
 
-var nodes:Dictionary[NodePath, Node]
+@onready var nodes := NodeUtil.create_node_dictionary(self)
 
 var stepping_over := -1
 
@@ -36,12 +36,6 @@ signal debug_state_off
 
 func _ready():
 	if step is NodePath:
-		# TODO - copy this pattern everywhere we want to use nodepaths
-		for field in get_property_list():
-			if field['type'] == TYPE_NODE_PATH:
-				var path = get(field['name'])
-				nodes[path] = get_node(path)
-		# END
 		script_tab = nodes[current_script]
 
 	nodes[node_scripts].remove_child(script_tab)

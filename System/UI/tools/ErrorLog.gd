@@ -1,7 +1,7 @@
 extends Control
 
 @export var textlog_path: NodePath
-@onready var textlog:TextEdit = get_node(textlog_path)
+@onready var nodes := NodeUtil.create_node_dictionary(self)
 
 # Context: {
 #   script_path, script_line: the path and line number of a script
@@ -21,20 +21,20 @@ func log_error(msg, context={}):
 	if "frame" in context:
 		var frame = context["frame"]
 		start = " > " + frame.scr.fullpath() + ":" + str(frame.line_num) + start
-	var t = textlog.text + "\n\n" + start + msg + end
-	textlog.text = t
+	var t = nodes[textlog_path].text + "\n\n" + start + msg + end
+	nodes[textlog_path].text = t
 	scroll()
 	print(" error logged: " + msg)
 
 func log_info(msg, context={}):
 	var start = " \n --- "
 	var end = ""
-	var t = textlog.text + "\n\n" + start + msg + end
-	textlog.text = t
+	var t = nodes[textlog_path].text + "\n\n" + start + msg + end
+	nodes[textlog_path].text = t
 	scroll()
 	print(" error logged: " + msg)
 
 func scroll():
-	textlog.set_caret_line(textlog.get_line_count())
-	textlog.set_caret_column(0)
-	textlog.center_viewport_to_caret()
+	nodes[textlog_path].set_caret_line(nodes[textlog_path].get_line_count())
+	nodes[textlog_path].set_caret_column(0)
+	nodes[textlog_path].center_viewport_to_caret()

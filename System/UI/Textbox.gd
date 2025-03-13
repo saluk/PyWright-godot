@@ -22,7 +22,10 @@ var NEW_TEXTBOX_WIDTH = 10
 
 @export var tb_timer: NodePath
 @export var text_label_path: NodePath
-@onready var text_label:RichTextLabel = get_node(text_label_path)
+@onready var nodes := NodeUtil.create_node_dictionary(self)
+
+
+@onready var text_label:RichTextLabel = nodes[text_label_path]
 var z:int
 
 # states while printing
@@ -482,8 +485,7 @@ func _ready():
 	if not will_there_be_text(text_to_print):
 		visible = false
 
-	tb_timer = get_node(tb_timer)
-	tb_timer.one_shot = true
+	nodes[tb_timer].one_shot = true
 
 	if main.stack.variables.get_truth("_textbox_skipupdate",false):
 		wait_signal = ""
@@ -626,14 +628,14 @@ func update_nametag_size():
 
 func stop_timer():
 	set_process(true)
-	tb_timer.disconnect("timeout", Callable(self, "stop_timer"))
+	nodes[tb_timer].disconnect("timeout", Callable(self, "stop_timer"))
 
 func pause(seconds, pack):
 	_set_speaking_animation("blink")
 	set_process(false)
-	tb_timer.wait_time = float(seconds)/60.0
-	tb_timer.connect("timeout", Callable(self, "stop_timer"))
-	tb_timer.start()
+	nodes[tb_timer].wait_time = float(seconds)/60.0
+	nodes[tb_timer].connect("timeout", Callable(self, "stop_timer"))
+	nodes[tb_timer].start()
 
 func _on_Area2D_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton and event.is_pressed():
