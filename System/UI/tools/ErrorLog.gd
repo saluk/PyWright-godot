@@ -38,5 +38,3 @@ func scroll():
 	textlog.set_caret_line(textlog.get_line_count())
 	textlog.set_caret_column(0)
 	textlog.center_viewport_to_caret()
-
-

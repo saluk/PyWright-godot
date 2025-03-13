@@ -1,83 +1,78 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=7 format=3 uid="uid://gg31r116hwvs"]
 
-[ext_resource path="res://System/UI/CaseMenu.gd" type="Script" id=1]
-[ext_resource path="res://art/general/arrow_right.png" type="Texture2D" id=2]
-[ext_resource path="res://art/general/selection_chapter.png" type="Texture2D" id=3]
-[ext_resource path="res://art/general/talkchoice.png" type="Texture2D" id=5]
-[ext_resource path="res://fonts/Vera.ttf" type="FontFile" id=6]
+[ext_resource type="Script" uid="uid://kg7diqa5rnqe" path="res://System/UI/CaseMenu.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://by00kikorcvws" path="res://art/general/arrow_right.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://ea3w5alnvp4" path="res://art/general/selection_chapter.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://u4updt55f081" path="res://art/general/talkchoice.png" id="5"]
+[ext_resource type="FontFile" uid="uid://c5571ssvbkpx2" path="res://fonts/Vera.ttf" id="6"]
 
-[sub_resource type="FontFile" id=2]
-size = 14
-outline_size = 1
-use_mipmaps = true
-use_filter = true
-font_data = ExtResource( 6 )
+[sub_resource type="FontFile" id="2"]
+fallbacks = Array[Font]([ExtResource("6")])
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
 
 [node name="CaseMenu" type="Node2D"]
-script = ExtResource( 1 )
+script = ExtResource("1")
 
 [node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
 offset_right = 256.0
 offset_bottom = 384.0
 
 [node name="GameTitle" type="Label" parent="Control"]
 visible = false
+layout_mode = 0
 offset_top = 7.0
 offset_right = 256.0
 offset_bottom = 49.0
-theme_override_colors/font_color = Color( 1, 1, 1, 1 )
-theme_override_colors/font_outline_color = Color( 0, 0, 0, 1 )
-theme_override_fonts/font = SubResource( 2 )
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = SubResource("2")
 text = "Game Title"
-align = 1
-autowrap = true
+horizontal_alignment = 1
 
 [node name="ScrollContainer2" type="ScrollContainer" parent="Control"]
+layout_mode = 0
 offset_left = 5.0
 offset_top = 242.0
 offset_right = 254.0
 offset_bottom = 377.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/ScrollContainer2"]
-offset_right = 249.0
-offset_bottom = 118.0
-grow_horizontal = 2
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="CaseBox" type="TextureRect" parent="Control/ScrollContainer2/VBoxContainer"]
-offset_left = 36.0
-offset_right = 212.0
-offset_bottom = 58.0
+layout_mode = 2
 size_flags_horizontal = 4
-texture = ExtResource( 3 )
+texture = ExtResource("3")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/ScrollContainer2/VBoxContainer/CaseBox"]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 alignment = 1
 
 [node name="CaseTitle" type="RichTextLabel" parent="Control/ScrollContainer2/VBoxContainer/CaseBox/VBoxContainer"]
 unique_name_in_owner = true
-offset_top = 21.0
-offset_right = 176.0
-offset_bottom = 36.0
-mouse_filter = 2
+layout_mode = 2
 size_flags_vertical = 4
-theme_override_colors/default_color = Color( 0.784314, 0.392157, 0.392157, 1 )
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.784314, 0.392157, 0.392157, 1)
 bbcode_enabled = true
-text = "[center][b]Turnabout Scapegoat[/b][/center]"
 text = "Turnabout Scapegoat"
-fit_content_height = true
 
 [node name="NewGameButton" type="TextureButton" parent="Control/ScrollContainer2/VBoxContainer"]
-offset_left = 13.0
-offset_top = 62.0
-offset_right = 236.0
-offset_bottom = 88.0
+layout_mode = 2
 size_flags_horizontal = 4
-texture_normal = ExtResource( 5 )
+texture_normal = ExtResource("5")
 
 [node name="NewGame" type="RichTextLabel" parent="Control/ScrollContainer2/VBoxContainer/NewGameButton"]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -86,23 +81,20 @@ offset_left = -109.0
 offset_top = -7.5
 offset_right = 109.0
 offset_bottom = 7.5
-mouse_filter = 2
 size_flags_horizontal = 3
-theme_override_colors/default_color = Color( 0.784314, 0.392157, 0.392157, 1 )
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.784314, 0.392157, 0.392157, 1)
 bbcode_enabled = true
-text = "[center][b]New Game[/b][/center]"
 text = "New Game"
 scroll_active = false
 
 [node name="ResumeButton" type="TextureButton" parent="Control/ScrollContainer2/VBoxContainer"]
-offset_left = 13.0
-offset_top = 92.0
-offset_right = 236.0
-offset_bottom = 118.0
+layout_mode = 2
 size_flags_horizontal = 4
-texture_normal = ExtResource( 5 )
+texture_normal = ExtResource("5")
 
 [node name="Resume" type="RichTextLabel" parent="Control/ScrollContainer2/VBoxContainer/ResumeButton"]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -111,27 +103,26 @@ offset_left = -111.5
 offset_top = -7.5
 offset_right = 111.5
 offset_bottom = 7.5
-mouse_filter = 2
 size_flags_horizontal = 3
-theme_override_colors/default_color = Color( 0.784314, 0.392157, 0.392157, 1 )
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.784314, 0.392157, 0.392157, 1)
 bbcode_enabled = true
-text = "[center][b]Resume Game[/b][/center]"
 text = "Resume Game"
 scroll_active = false
 
 [node name="ArrowLeft" type="TextureButton" parent="Control"]
+layout_mode = 0
 offset_left = 4.0
 offset_top = 258.0
 offset_right = 32.0
 offset_bottom = 284.0
-texture_normal = ExtResource( 2 )
-expand = true
+texture_normal = ExtResource("2")
 flip_h = true
 
 [node name="ArrowRight" type="TextureButton" parent="Control"]
+layout_mode = 0
 offset_left = 224.0
 offset_top = 261.0
 offset_right = 252.0
 offset_bottom = 287.0
-texture_normal = ExtResource( 2 )
-expand = true
+texture_normal = ExtResource("2")

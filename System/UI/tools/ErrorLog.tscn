@@ -1,18 +1,20 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://b010wlun5gqjl"]
 
-[ext_resource path="res://System/UI/tools/ErrorLog.gd" type="Script" id=2]
+[ext_resource type="Script" uid="uid://fytnla5nvt6p" path="res://System/UI/tools/ErrorLog.gd" id="2"]
 
 [node name="ErrorLog" type="Control" groups=["ErrorLog"]]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_right = -268.0
 offset_bottom = -40.0
-script = ExtResource( 2 )
+script = ExtResource("2")
 textlog_path = NodePath("TextLog")
 
 [node name="TextLog" type="TextEdit" parent="."]
+custom_minimum_size = Vector2(240, 340)
+layout_mode = 0
 offset_right = 240.0
 offset_bottom = 340.0
-custom_minimum_size = Vector2( 240, 340 )
 size_flags_stretch_ratio = 0.75
-wrap_enabled = true

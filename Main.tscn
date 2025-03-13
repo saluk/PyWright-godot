@@ -1,15 +1,15 @@
 [gd_scene load_steps=21 format=3 uid="uid://cn3gnbw2n8q1i"]
 
-[ext_resource type="PackedScene" path="res://System/UI/tools/ScriptDebugger.tscn" id="1"]
-[ext_resource type="PackedScene" path="res://System/UI/tools/FrameLog.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://lu1ruhbxx4en" path="res://System/UI/tools/ScriptDebugger.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://byos5h7heqbvd" path="res://System/UI/tools/FrameLog.tscn" id="2"]
 [ext_resource type="Script" uid="uid://dtlmfch0hclk" path="res://System/Main.gd" id="3"]
 [ext_resource type="Script" uid="uid://dpula24gblv7m" path="res://System/Scene/Screen.gd" id="4"]
 [ext_resource type="Theme" uid="uid://e6s1i1ugdnwb" path="res://System/UI/Themes/ScriptDebugger.tres" id="5"]
 [ext_resource type="Script" uid="uid://jsd84s7fokws" path="res://System/Testing/DebugLayer.gd" id="6"]
-[ext_resource type="PackedScene" path="res://System/UI/Options/OptionsTab.tscn" id="7"]
+[ext_resource type="PackedScene" uid="uid://cqlh0w52kxbqc" path="res://System/UI/Options/OptionsTab.tscn" id="7"]
 [ext_resource type="Texture2D" uid="uid://by00kikorcvws" path="res://art/general/arrow_right.png" id="8"]
-[ext_resource type="PackedScene" path="res://System/UI/tools/ErrorLog.tscn" id="9"]
-[ext_resource type="PackedScene" path="res://System/UI/tools/DirectoryCacheList.tscn" id="10"]
+[ext_resource type="PackedScene" uid="uid://b010wlun5gqjl" path="res://System/UI/tools/ErrorLog.tscn" id="9"]
+[ext_resource type="PackedScene" uid="uid://ckrdx3aloedn3" path="res://System/UI/tools/DirectoryCacheList.tscn" id="10"]
 [ext_resource type="Script" uid="uid://dfbrih6bjsry8" path="res://System/Input/InputController.gd" id="11"]
 [ext_resource type="Script" uid="uid://cedfxht2n4h7g" path="res://System/UI/GetScreenFocus.gd" id="12"]
 [ext_resource type="Script" uid="uid://b7bvvtpoi5a15" path="res://System/UI/tools/ModesFilter.gd" id="13"]
@@ -433,27 +433,29 @@ metadata/_tab_index = 1
 visible = false
 
 [node name="DirectoryCacheList" parent="DisabledTabs" instance=ExtResource("10")]
-layout_mode = 3
-anchors_preset = 15
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="ScriptDebugger" parent="DisabledTabs" instance=ExtResource("1")]
 unique_name_in_owner = true
 visible = false
-layout_mode = 3
-anchors_preset = 15
 offset_left = 266.0
 offset_top = 28.0
 offset_right = 258.0
 offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="FrameLog" parent="DisabledTabs" instance=ExtResource("2")]
 visible = false
-layout_mode = 3
-anchors_preset = 15
 offset_left = 266.0
 offset_top = 32.0
 offset_right = 266.0
 offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="TabButton" type="Button" parent="." groups=["TabButton"]]
 offset_left = 260.0

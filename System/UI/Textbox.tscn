@@ -1,15 +1,15 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=8 format=3 uid="uid://c0emenalebdjs"]
 
-[ext_resource path="res://art/general/textbox_2.png" type="Texture2D" id=1]
-[ext_resource path="res://art/general/nt_right.png" type="Texture2D" id=2]
-[ext_resource path="res://art/general/nt_middle.png" type="Texture2D" id=3]
-[ext_resource path="res://System/UI/Textbox.gd" type="Script" id=4]
-[ext_resource path="res://art/general/nt_left.png" type="Texture2D" id=5]
+[ext_resource type="Texture2D" uid="uid://cp3s075s3h8e2" path="res://art/general/textbox_2.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://fgi1lh8myp51" path="res://art/general/nt_right.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://864m8i2p4urq" path="res://art/general/nt_middle.png" id="3"]
+[ext_resource type="Script" uid="uid://b1y4go7lh8kue" path="res://System/UI/Textbox.gd" id="4"]
+[ext_resource type="Texture2D" uid="uid://obtblahvi5c1" path="res://art/general/nt_left.png" id="5"]
 
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 127, 31 )
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(254, 62)
 
-[sub_resource type="GDScript" id=2]
+[sub_resource type="GDScript" id="2"]
 script/source = "extends RichTextLabel
 
 
@@ -29,29 +29,30 @@ func _ready():
 "
 
 [node name="Textbox" type="Node2D" groups=["TEXTBOX_GROUP"]]
-script = ExtResource( 4 )
+script = ExtResource("4")
 tb_timer = NodePath("Timer")
 text_label_path = NodePath("Handle/Backdrop/TextLabel")
 
 [node name="Handle" type="Node2D" parent="."]
 unique_name_in_owner = true
-position = Vector2( 0, 129 )
+position = Vector2(0, 129)
 
 [node name="Backdrop" type="Node2D" parent="Handle"]
 unique_name_in_owner = true
 
 [node name="Textbox2" type="Sprite2D" parent="Handle/Backdrop"]
-texture = ExtResource( 1 )
+texture = ExtResource("1")
 centered = false
 
 [node name="Area2D" type="Area2D" parent="Handle/Backdrop/Textbox2"]
-position = Vector2( 128, 32 )
+position = Vector2(128, 32)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Handle/Backdrop/Textbox2/Area2D"]
-shape = SubResource( 1 )
+shape = SubResource("1")
 
 [node name="TextLabel" type="RichTextLabel" parent="Handle/Backdrop"]
 unique_name_in_owner = true
+anchors_preset = -1
 anchor_right = 10.0
 offset_left = 6.0
 offset_top = 2.0
@@ -60,33 +61,32 @@ offset_bottom = 65.0
 mouse_filter = 2
 bbcode_enabled = true
 text = "This{n}text{n}is vary &long but wont break on spaces:andshouldgoto4lineswhichmeansthatthereshouldactually&be3textboxeswhereyouclickoneanditmovesontothenextone."
-text = "This{n}text{n}is vary &long but wont break on spaces:andshouldgoto4lineswhichmeansthatthereshouldactually&be3textboxeswhereyouclickoneanditmovesontothenextone."
 scroll_active = false
 
 [node name="NametagImage" type="Node2D" parent="Handle"]
 unique_name_in_owner = true
-position = Vector2( 2, -15 )
+position = Vector2(2, -15)
 
 [node name="NametagBackdrop" type="Node2D" parent="Handle"]
 unique_name_in_owner = true
-position = Vector2( 0, -13 )
+position = Vector2(0, -13)
 
 [node name="NtLeft" type="Sprite2D" parent="Handle/NametagBackdrop"]
 visible = false
-texture = ExtResource( 5 )
+texture = ExtResource("5")
 centered = false
 
 [node name="NtMiddle" type="Sprite2D" parent="Handle/NametagBackdrop"]
 visible = false
-position = Vector2( 2, 0 )
-scale = Vector2( 70, 1 )
-texture = ExtResource( 3 )
+position = Vector2(2, 0)
+scale = Vector2(70, 1)
+texture = ExtResource("3")
 centered = false
 
 [node name="NtRight" type="Sprite2D" parent="Handle/NametagBackdrop"]
 visible = false
-position = Vector2( 72, 0 )
-texture = ExtResource( 2 )
+position = Vector2(72, 0)
+texture = ExtResource("2")
 centered = false
 
 [node name="NametagLabel" type="Label" parent="Handle/NametagBackdrop"]
@@ -104,7 +104,7 @@ offset_left = 6.0
 offset_top = 77.0
 offset_right = 250.0
 offset_bottom = 108.0
-theme_override_colors/default_color = Color( 0.352941, 0.898039, 0.92549, 1 )
-script = SubResource( 2 )
+theme_override_colors/default_color = Color(0.352941, 0.898039, 0.92549, 1)
+script = SubResource("2")
 
 [connection signal="input_event" from="Handle/Backdrop/Textbox2/Area2D" to="." method="_on_Area2D_input_event"]
