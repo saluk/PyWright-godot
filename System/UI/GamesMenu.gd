@@ -24,12 +24,12 @@ func add_test_button(path):
 	var b = Button.new()
 	b.text = "play>"
 	b.align = Button.ALIGN_LEFT
-	b.connect("pressed", self, "launch_game", [path, "play"])
+	b.connect("pressed", Callable(self, "launch_game").bind(path, "play"))
 	hbox.add_child(b)
 	b = Button.new()
 	b.text = "{test}"
 	b.align = Button.ALIGN_LEFT
-	b.connect("pressed", self, "launch_game", [path, "test"])
+	b.connect("pressed", Callable(self, "launch_game").bind(path, "test"))
 	hbox.add_child(b)
 	var l = Label.new()
 	l.text = path
@@ -45,10 +45,10 @@ func _clear_games():
 # types = "pack", "folder", "test"
 func _populate_games(folder, types):
 	assert(types in ["pack", "folder", "test"])
-	var listing = Directory.new()
-	if listing.open(folder) != OK:
+	var listing = DirAccess.open(folder)
+	if not listing:
 		return null
-	listing.list_dir_begin()
+	listing.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 	var next_file_name = listing.get_next()
 	while next_file_name != "":
 		if types == "pack" and next_file_name.ends_with(".pck"):
@@ -65,7 +65,7 @@ func _ready():
 	get_node("%MainLabel").text = "GodotWright version "+Configuration.builtin.version
 
 	choose_game_dir_dialog = $Control/ChooseGameDirDialog
-	choose_game_dir_dialog.connect("dir_selected", self, "_game_dir_selected")
+	choose_game_dir_dialog.connect("dir_selected", Callable(self, "_game_dir_selected"))
 
 	_clear_games()
 
@@ -76,11 +76,11 @@ func _ready():
 
 	_populate_games("res://tests/", "test")
 
-	$Control/HBoxContainer/ChooseGameDir.connect("pressed", self, "choose_game_dir")
-	$Control/HBoxContainer/BuiltinGames.connect("pressed", self, "choose_builtin_games")
-	$Control/ItemList.connect("item_selected", self, "item_selected")
-	$Control/ItemList.connect("item_activated", self, "item_activated")
-	$Control/PlayButton.connect("pressed", self, "play_item_selected")
+	$Control/HBoxContainer/ChooseGameDir.connect("pressed", Callable(self, "choose_game_dir"))
+	$Control/HBoxContainer/BuiltinGames.connect("pressed", Callable(self, "choose_builtin_games"))
+	$Control/ItemList.connect("item_selected", Callable(self, "item_selected"))
+	$Control/ItemList.connect("item_activated", Callable(self, "item_activated"))
+	$Control/PlayButton.connect("pressed", Callable(self, "play_item_selected"))
 
 func item_selected(index):
 	$Control/PlayButton.visible = true

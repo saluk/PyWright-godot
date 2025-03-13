@@ -15,7 +15,7 @@ var files_playing = {}
 class AudioStreamProgress extends AudioStreamPlayer:
 	var path:String
 
-class PlayingFile extends Reference:
+class PlayingFile extends RefCounted:
 	var key:String
 	var played_at:int
 	var player:AudioStreamProgress
@@ -55,13 +55,13 @@ func _load_audio_stream(path):
 		# Somewhere determine whether or not to loop the sound
 		var next_player:AudioStreamPlayer = get_free_player()
 		next_player.stream = stream
-		next_player.volume_db = linear2db(SOUND_VOLUME * Configuration.user.global_volume * cur_volume)
+		next_player.volume_db = linear_to_db(SOUND_VOLUME * Configuration.user.global_volume * cur_volume)
 		next_player.play(0)
-		if next_player.stream is AudioStreamSample:
-			next_player.stream.loop_mode = AudioStreamSample.LOOP_DISABLED
+		if next_player.stream is AudioStreamWAV:
+			next_player.stream.loop_mode = AudioStreamWAV.LOOP_DISABLED
 		elif next_player.stream is AudioStreamMP3:
 			(next_player.stream as AudioStreamMP3).loop = false
-		elif next_player.stream is AudioStreamOGGVorbis:
+		elif next_player.stream is AudioStreamOggVorbis:
 			next_player.stream.set_loop(false)
 		next_player.name = path
 		next_player.path = path
@@ -70,7 +70,7 @@ func _load_audio_stream(path):
 func alter_volume():
 	for player in players:
 		if player.playing:
-			player.volume_db = linear2db(SOUND_VOLUME * Configuration.user.global_volume * cur_volume)
+			player.volume_db = linear_to_db(SOUND_VOLUME * Configuration.user.global_volume * cur_volume)
 
 func get_free_player() -> AudioStreamPlayer:
 	for check_player in players:
@@ -100,7 +100,7 @@ func play_sound(path, current_path, volume=1.0, min_repeat=null):
 	var audio_stream = _load_audio_stream(found)
 	if audio_stream:
 		files_playing[key] = PlayingFile.new(key, Time.get_ticks_msec(), audio_stream, min_repeat)
-		audio_stream.connect("finished", self, "sound_finished", [key])
+		audio_stream.connect("finished", Callable(self, "sound_finished").bind(key))
 
 func sound_finished(key):
 	if key in files_playing:

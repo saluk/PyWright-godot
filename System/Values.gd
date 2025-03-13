@@ -1,11 +1,11 @@
-extends Reference
+extends RefCounted
 class_name Values
 
 static func to_num(v):
 	if v is float or v is int:
 		return v
 	if v is String:
-		if v.is_valid_integer():
+		if v.is_valid_int():
 			return int(v)
 		if v.is_valid_float():
 			return float(v)
@@ -19,7 +19,7 @@ static func to_str(v):
 static func to_int(v):
 	if v is int:
 		return v
-	if v!=null and v.is_valid_integer():
+	if v!=null and v.is_valid_int():
 		return int(v)
 	return null
 

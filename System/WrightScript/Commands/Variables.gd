@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 
 var main
 var rng
@@ -10,7 +10,7 @@ func _init(commands):
 
 func ws_set(script, arguments):
 	var key = arguments.pop_front()
-	var value = Commands.join(arguments)
+	var value = arguments.join(Commands)
 	main.stack.variables.set_val(key, value)
 
 func ws_setvar(script, arguments):
@@ -22,7 +22,7 @@ func ws_delvar(script, arguments):
 
 func ws_set_ex(script, arguments):
 	var variableName = arguments.pop_front()
-	var value = WSExpression.EVAL_STR(Commands.join(arguments))
+	var value = WSExpression.arguments.join(EVAL_STR(Commands))
 	main.stack.variables.set_val(variableName, value)
 
 func ws_setvar_ex(script, arguments):
@@ -30,7 +30,7 @@ func ws_setvar_ex(script, arguments):
 
 func ws_getvar(script, arguments):
 	var save_to = arguments.pop_front()
-	var get_from = Commands.join(arguments, "")
+	var get_from = arguments, "".join(Commands)
 	main.stack.variables.set_val(save_to, main.stack.variables.get_string(get_from))
 
 func ws_get(script, arguments):
@@ -73,7 +73,7 @@ func ws_random(script, arguments):
 
 func ws_joinvar(script, arguments):
 	var key = arguments.pop_front()
-	main.stack.variables.set_val(key, Commands.join(arguments, ""))
+	main.stack.variables.set_val(key, arguments, "".join(Commands))
 
 func ws_addvar(script, arguments):
 	var numa = main.stack.variables.get_num(arguments[0])
@@ -215,7 +215,7 @@ func ws_is(script, arguments):
 		label = "?"
 	else:
 		label = arguments.pop_back()
-	if WSExpression.EVAL_SIMPLE(Commands.join(arguments)):
+	if WSExpression.arguments.join(EVAL_SIMPLE(Commands)):
 		script.succeed(label)
 	else:
 		script.fail(label, fail)
@@ -231,7 +231,7 @@ func ws_isnot(script, arguments):
 		label = "?"
 	else:
 		label = arguments.pop_back()
-	if not WSExpression.EVAL_SIMPLE(Commands.join(arguments)):
+	if not WSExpression.arguments.join(EVAL_SIMPLE(Commands)):
 		script.succeed(label)
 	else:
 		script.fail(label, fail)
@@ -282,7 +282,7 @@ func ws_is_ex(script, arguments):
 	else:
 		label = arguments.pop_back()
 	var truth = WSExpression.EVAL_STR(
-		Commands.join(arguments, " ")
+		arguments, " ".join(Commands)
 	)
 	truth = WSExpression.string_to_bool(truth)
 	if truth:

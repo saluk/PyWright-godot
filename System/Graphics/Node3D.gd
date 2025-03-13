@@ -1,9 +1,9 @@
 extends WrightObject
 
-var view_container:ViewportContainer
-var view_viewport:Viewport
-var click_container:ViewportContainer
-var click_viewport:Viewport
+var view_container:SubViewportContainer
+var view_viewport:SubViewport
+var click_container:SubViewportContainer
+var click_viewport:SubViewport
 
 var screen_w
 var screen_h
@@ -24,7 +24,7 @@ func _ready():
 	view_viewport = get_node("%view_viewport")
 	click_container = get_node("%click_container")
 	click_viewport = get_node("%click_viewport")
-	click_container.connect("gui_input", self, "_gui_input")
+	click_container.connect("gui_input", Callable(self, "_gui_input"))
 	ready = true
 	set_size()
 
@@ -52,26 +52,26 @@ func set_size(size_args=[]):
 	if not ready:
 		return
 	if screen_w:
-		view_container.rect_size = Vector2(screen_w, screen_h)
-		click_container.rect_size = Vector2(screen_w, screen_h)
+		view_container.size = Vector2(screen_w, screen_h)
+		click_container.size = Vector2(screen_w, screen_h)
 		view_viewport.size = Vector2(render_w, render_h)
 		click_viewport.size = Vector2(render_w, render_h)
 
 func _gui_input(event):
-	if event is InputEventMouseButton and event.pressed == true and event.button_index == BUTTON_LEFT:
+	if event is InputEventMouseButton and event.button_pressed == true and event.button_index == MOUSE_BUTTON_LEFT:
 		var click_image = click_viewport.get_texture().get_data()
 		click_image.flip_y()
 		click_image.save_png("user://image_texture.png")
 		var mouse_position = click_container.get_local_mouse_position()
-		mouse_position.x /= click_container.rect_size.x/click_viewport.size.x
-		mouse_position.y /= click_container.rect_size.y/click_viewport.size.y
+		mouse_position.x /= click_container.size.x/click_viewport.size.x
+		mouse_position.y /= click_container.size.y/click_viewport.size.y
 		if mouse_position.x < 0 or mouse_position.x > click_viewport.size.x:
 			return false
 		if mouse_position.y < 0 or mouse_position.y > click_viewport.size.y:
 			return false
-		click_image.lock()
+		false # click_image.lock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
 		var clicked_color = click_image.get_pixelv(mouse_position)
-		click_image.unlock()
+		false # click_image.unlock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
 		print("clicked color:", clicked_color)
 		var u = clicked_color.r
 		var v = clicked_color.g
@@ -94,7 +94,7 @@ func _process(dt):
 		else:
 			copied_meshes.append(child.original_mesh)
 			click_meshes.append(child)
-			child.translation = child.original_mesh.translation
+			child.position = child.original_mesh.position
 			child.rotation_degrees = child.original_mesh.rotation_degrees
 	for child in get_node("%Meshes").get_children():
 		if not child in copied_meshes:

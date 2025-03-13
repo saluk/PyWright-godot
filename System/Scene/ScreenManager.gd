@@ -1,7 +1,7 @@
 extends Node
 
 var screens:Node
-var main_screen:Node2D setget , get_main_screen
+var main_screen:Node2D: get = get_main_screen
 var _main_screen:Node2D
 
 var viewport_containers
@@ -10,7 +10,7 @@ func _init_screens():
 	screens = get_tree().get_nodes_in_group("MainScreenViewport")[0]
 	_main_screen = screens.get_node("%MainScreen")
 
-	viewport_containers = get_tree().get_nodes_in_group("ViewportContainer")
+	viewport_containers = get_tree().get_nodes_in_group("SubViewportContainer")
 	var main_viewport
 	var mainworld
 	for container in viewport_containers:
@@ -23,7 +23,7 @@ func _init_screens():
 
 func _ready():
 	_init_screens()
-	get_tree().connect("tree_changed", self, "_on_tree_changed")
+	get_tree().connect("tree_changed", Callable(self, "_on_tree_changed"))
 
 func top_screen():
 	var children = screens.get_children()

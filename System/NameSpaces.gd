@@ -4,7 +4,7 @@
 # Can pass a name the includes dots (.) and the namespace will handle the logic of finding
 #    or creating the given namespace
 
-extends Reference
+extends RefCounted
 class_name NameSpaces
 
 var DEFAULTS := {
@@ -83,7 +83,7 @@ class Accessor:
 			# further expansion
 			if parts[1].begins_with("$"):
 				parts[1] = namespaces.get_accessor(parts[1].substr(1)).get_val("string", "0")
-			if parts[1].is_valid_integer():
+			if parts[1].is_valid_int():
 				access_item = int(parts[1])
 			elif parts[1] == "end":
 				access_item = list().size()

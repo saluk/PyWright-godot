@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 class_name Testing
 
 # Functions to be used to make a wrightscript file testable
@@ -86,11 +86,11 @@ func run(string, do_assert=false):
 	}))
 	script.reload()
 
-	var obj = Reference.new()
+	var obj = RefCounted.new()
 	obj.set_script(script)
 
 	var v = obj.command()
 	if v is GDScriptFunctionState:
-		v = yield(v, "completed")
+		v = await v.completed
 	if do_assert:
 		assert(v)

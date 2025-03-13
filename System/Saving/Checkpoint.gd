@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 class_name Checkpoint
 
 # Format
@@ -47,10 +47,11 @@ static func save_pywright_checkpoint(main, filename:String):
 		stack_index += 1
 		objects.append(script_ob)
 
-	var file = File.new()
-	if file.open(filename, File.WRITE) != OK:
+	var file = FileAccess.open(filename, FileAccess.WRITE)
+	if not file:
 		print("Couldn't open file for saving")
+		return
 	file.store_string(
-		to_json(objects)
+		JSON.new().stringify(objects)
 	)
 	file.close()

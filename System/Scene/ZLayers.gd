@@ -6,8 +6,7 @@ var pri_sort = {}
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var mode = null
-	var file = File.new()
-	file.open("res://System/sorting.txt", File.READ)
+	var file = FileAccess.open("res://System/sorting.txt", FileAccess.READ)
 	for line in file.get_as_text().split("\n"):
 		line = line.strip_edges()
 		if line.begins_with("#") or not line:

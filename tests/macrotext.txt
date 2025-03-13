@@ -1,0 +1,10 @@
+set player_name Patrick
+
+macro show_player_name
+# maybe we play a sound whenever the player name is shown
+sfx player_ding_sound
+set _return $player_name
+endmacro
+
+char prosecutor
+"Wow, little old me facing off against the great {show_player_name}!"

@@ -51,9 +51,9 @@ func load_game_from_pack(path):
 
 	# Find the game in the directory
 	var game
-	var d = Directory.new()
-	if d.open("res://games") == OK:
-		d.list_dir_begin()
+	var d = DirAccess.open("res://games")
+	if d:
+		d.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 		game = d.get_next()
 
 	if game:
@@ -78,9 +78,9 @@ func set_resolution(res:Vector2, scale_factor:float):
 	Engine.target_fps = 60
 	var h = res.y
 	var w = res.x
-	OS.set_window_size(Vector2(w*scale_factor, h*scale_factor))
-	var screen_size:Vector2 = OS.get_screen_size()
-	OS.window_position = Vector2(screen_size.x/2-w*scale_factor/2, screen_size.y/2-h*scale_factor/2)
+	get_window().set_size(Vector2(w*scale_factor, h*scale_factor))
+	var screen_size:Vector2 = DisplayServer.screen_get_size()
+	get_window().position = Vector2(screen_size.x/2-w*scale_factor/2, screen_size.y/2-h*scale_factor/2)
 	#get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_2D, SceneTree.STRETCH_ASPECT_KEEP, Vector2(w, h), 1)
 
 func window_resize():
@@ -94,13 +94,13 @@ func window_resize():
 	scale = Vector2(scale_factor, scale_factor)
 	if Configuration.builtin.screen_format == "horizontal":
 		if not $TabContainer.visible:
-			screens.rect_position.x = v_size.x/2 / scale_factor - lauthored_size.x/2
-			tab_button.rect_position.x = screens.rect_position.x + screens.rect_size.x
-			$TabContainer.rect_position.x = tab_button.rect_position.x
+			screens.position.x = v_size.x/2 / scale_factor - lauthored_size.x/2
+			tab_button.position.x = screens.position.x + screens.size.x
+			$TabContainer.position.x = tab_button.position.x
 		else:
-			screens.rect_position.x = v_size.x/2  / scale_factor - lauthored_size.x/2
-			tab_button.rect_position.x = screens.rect_position.x + screens.rect_size.x
-			$TabContainer.rect_position.x = tab_button.rect_position.x
+			screens.position.x = v_size.x/2  / scale_factor - lauthored_size.x/2
+			tab_button.position.x = screens.position.x + screens.size.x
+			$TabContainer.position.x = tab_button.position.x
 
 func _ready():
 	ScreenManager._init_screens()
@@ -109,32 +109,32 @@ func _ready():
 	add_child(timecounter)
 
 	tab_button = get_tree().get_nodes_in_group("TabButton")[0]
-	tab_button.connect("toggled", self, "_toggle_button")
+	tab_button.connect("toggled", Callable(self, "_toggle_button"))
 	if not Configuration.user.options_open:
 		hide_tabs()
 	else:
-		tab_button.pressed = true
+		tab_button.button_pressed = true
 
-	get_tree().root.connect("size_changed", self, "window_resize")
+	get_tree().root.connect("size_changed", Callable(self, "window_resize"))
 	if Configuration.builtin.screen_format == "vertical":
 		set_resolution(Vector2(256*2,384 + 32), 2.0)
-		screens.rect_position = Vector2(0, 16)
-		tab_button.rect_position = Vector2(0, 0)
-		$TabContainer.rect_position = Vector2(0, 16)
+		screens.position = Vector2(0, 16)
+		tab_button.position = Vector2(0, 0)
+		$TabContainer.position = Vector2(0, 16)
 	elif Configuration.builtin.screen_format == "horizontal":
 		set_resolution(Vector2(256 * 2,384), 2.0)
 
 	stack = WrightScriptStack.new(self)
-	stack.connect("stack_empty", self, "reload")
+	stack.connect("stack_empty", Callable(self, "reload"))
 	Commands.load_command_engine()
 
 	# TODO move tests for this elsewhere
 	test_eval()
 	stack.variables.reset()
 
-	var loader = load("res://System/UI/GamesMenu.tscn").instance()
+	var loader = load("res://System/UI/GamesMenu.tscn").instantiate()
 	ScreenManager.main_screen.add_child(loader)
-	var array = yield(loader, "game_loaded")
+	var array = await loader.game_loaded
 	var path = array[0]
 	var mode = array[1]
 	if path.ends_with(".pck"):
@@ -145,10 +145,10 @@ func _ready():
 		set_current_game(path)
 
 	if mode == "test":
-		screens.rect_global_position = Vector2(0,0)
+		screens.global_position = Vector2(0,0)
 	stack.mode = mode
 
-	stack.connect("game_inited", self, "check_saving_enabled")
+	stack.connect("game_inited", Callable(self, "check_saving_enabled"))
 func test_eval():
 	stack.variables.set_val("is_true", "true")
 	stack.variables.set_val("is_false", "false")
@@ -186,6 +186,9 @@ func test_eval():
 	stack.variables.set_val("door", "5")
 	assert(WSExpression.EVAL_STR("door >= 4") == "true")
 	assert(WSExpression.EVAL_STR("door >= 6") == "false")
+	assert(WSExpression.EVAL_STR("door <= 6") == "true")
+	assert(WSExpression.EVAL_STR("door <= 5") == "true")
+	assert(WSExpression.EVAL_STR("door <= 4") == "false")
 	assert(WSExpression.EVAL_STR("unset_variable == 6") == "false")
 	assert(WSExpression.EVAL_STR(
 		WSExpression.SIMPLE_TO_EXPR("$is_int == 1010")) == "true")
@@ -284,13 +287,13 @@ func _toggle_button(state):
 		hide_tabs()
 
 func show_tabs():
-	tab_button.pressed = true
+	tab_button.button_pressed = true
 	$TabContainer.show()
 	window_resize()
 	Configuration.set_and_save("options_open", true)
 
 func hide_tabs():
-	tab_button.pressed = false
+	tab_button.button_pressed = false
 	$TabContainer.hide()
 	window_resize()
 	Configuration.set_and_save("options_open", false)
@@ -300,12 +303,12 @@ signal freeing_orphans
 func free_orphans():
 	emit_signal("freeing_orphans")
 func connect_potential_orphan(obj):
-	connect("freeing_orphans", obj, "_free_orphan")
+	connect("freeing_orphans", Callable(obj, "_free_orphan"))
 
 # Input
 
 func _on_Screens_gui_input(event):
-	var owner = get_node("InputController").get_focus_owner()
+	var owner = get_node("InputController").get_viewport().gui_get_focus_owner()
 	if owner:
 		owner.release_focus()
 

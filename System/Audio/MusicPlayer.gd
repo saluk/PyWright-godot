@@ -11,16 +11,16 @@ func add_player():
 	if is_instance_valid(audio_player):
 		audio_player.queue_free()
 	audio_player = AudioStreamPlayer.new()
-	audio_player.connect("finished", self, "_player_finished")
+	audio_player.connect("finished", Callable(self, "_player_finished"))
 	add_child(audio_player)
 
 func _load_music_data(path):
 	if not path:
 		return null
-	var file = File.new()
+	var file = FileAccess.open(path, FileAccess.READ)
 	var buffer
-	if file.open(path, File.READ) == OK:
-		buffer = file.get_buffer(file.get_len())
+	if not file:
+		buffer = file.get_buffer(file.get_length())
 	file.close()
 	if buffer:
 		return buffer
@@ -32,7 +32,7 @@ func _load_audio_stream(path):
 	else:
 		var audio_data = _load_music_data(path)
 		if audio_data:
-			stream = AudioStreamOGGVorbis.new()
+			stream = AudioStreamOggVorbis.new()
 			stream.data = audio_data
 		if not stream and path!=null:
 			stream = ResourceLoader.load(path)
@@ -41,7 +41,7 @@ func _load_audio_stream(path):
 		add_player()
 		audio_player.stream = stream
 		music_volume = get_volume()
-		audio_player.volume_db = linear2db(music_volume * Configuration.user.global_volume)
+		audio_player.volume_db = linear_to_db(music_volume * Configuration.user.global_volume)
 		audio_player.play(0)
 
 func get_volume():
@@ -56,7 +56,7 @@ func alter_volume():
 		var pos = audio_player.get_playback_position()
 		playing = false
 		audio_player.stop()
-		audio_player.volume_db = linear2db(music_volume * Configuration.user.global_volume)
+		audio_player.volume_db = linear_to_db(music_volume * Configuration.user.global_volume)
 		audio_player.play(pos)
 		playing = true
 

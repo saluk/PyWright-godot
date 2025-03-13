@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 
 var main
 
@@ -15,7 +15,7 @@ func gui_button(script, arguments):
 			args.erase(single)
 	var graphic = kw.get("graphic", "")
 	var graphichigh = kw.get("graphichigh", "")
-	var text = Commands.join(args)
+	var text = args.join(Commands)
 	if text and not graphic:
 		arguments.append("button_text="+text)
 	var template = ObjectFactory.get_template("button")
@@ -39,8 +39,8 @@ class GuiWait:
 	var wait_signal = "DONE_WAITING"
 	signal DONE_WAITING
 	func _init(script):
-		script.connect("GOTO_RESULT", self, "finish")
-		Commands.connect("button_clicked", self, "button_finished")
+		script.connect("GOTO_RESULT", Callable(self, "finish"))
+		Commands.connect("button_clicked", Callable(self, "button_finished"))
 	func finish():
 		emit_signal("DONE_WAITING")
 	func button_finished(button):

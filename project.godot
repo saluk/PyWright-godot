@@ -6,221 +6,7 @@
 ;   [section] ; section goes between []
 ;   param=value ; assign values to parameters
 
-config_version=4
-
-_global_script_classes=[ {
-"base": "Reference",
-"class": "AudioLoader",
-"language": "GDScript",
-"path": "res://System/Files/GDScriptAudioImport.gd"
-}, {
-"base": "Resource",
-"class": "BuiltinConfig",
-"language": "GDScript",
-"path": "res://System/Config/BuiltinConfig.gd"
-}, {
-"base": "Reference",
-"class": "Checkpoint",
-"language": "GDScript",
-"path": "res://System/Saving/Checkpoint.gd"
-}, {
-"base": "Control",
-"class": "ClickArea",
-"language": "GDScript",
-"path": "res://System/UI/ClickArea.gd"
-}, {
-"base": "MeshInstance",
-"class": "ClickMesh",
-"language": "GDScript",
-"path": "res://System/Graphics/ClickMesh.gd"
-}, {
-"base": "Reference",
-"class": "Colors",
-"language": "GDScript",
-"path": "res://System/Colors.gd"
-}, {
-"base": "Reference",
-"class": "CrossExamination",
-"language": "GDScript",
-"path": "res://System/WrightScript/Commands/CrossExamination.gd"
-}, {
-"base": "VariableDef",
-"class": "EvDef",
-"language": "GDScript",
-"path": "res://System/WrightScript/EvDef.gd"
-}, {
-"base": "Reference",
-"class": "FadeLib",
-"language": "GDScript",
-"path": "res://System/WrightScript/Commands/Fade.gd"
-}, {
-"base": "Reference",
-"class": "Filesystem",
-"language": "GDScript",
-"path": "res://System/Files/Filesystem.gd"
-}, {
-"base": "Resource",
-"class": "Fonts",
-"language": "GDScript",
-"path": "res://System/UI/Fonts/Fonts.gd"
-}, {
-"base": "Reference",
-"class": "GamePath",
-"language": "GDScript",
-"path": "res://System/Saving/GamePath.gd"
-}, {
-"base": "Control",
-"class": "InputController",
-"language": "GDScript",
-"path": "res://System/Input/InputController.gd"
-}, {
-"base": "Node",
-"class": "LeastUsedCache",
-"language": "GDScript",
-"path": "res://System/LeastUsedCache.gd"
-}, {
-"base": "Node2D",
-"class": "MainScene",
-"language": "GDScript",
-"path": "res://System/Main.gd"
-}, {
-"base": "Reference",
-"class": "NameSpaces",
-"language": "GDScript",
-"path": "res://System/NameSpaces.gd"
-}, {
-"base": "Reference",
-"class": "ObjParse",
-"language": "GDScript",
-"path": "res://System/Graphics/ObjParse.gd"
-}, {
-"base": "MeshInstance",
-"class": "PWMesh",
-"language": "GDScript",
-"path": "res://System/Graphics/PWMesh.gd"
-}, {
-"base": "Node2D",
-"class": "PWSprite",
-"language": "GDScript",
-"path": "res://System/Graphics/PWSprite.gd"
-}, {
-"base": "Node",
-"class": "Pauseable",
-"language": "GDScript",
-"path": "res://System/Scene/Pauseable.gd"
-}, {
-"base": "WrightObject",
-"class": "Penalty",
-"language": "GDScript",
-"path": "res://System/UI/Penalty.gd"
-}, {
-"base": "Reference",
-"class": "SaveState",
-"language": "GDScript",
-"path": "res://System/Saving/SaveState.gd"
-}, {
-"base": "Node2D",
-"class": "Screen",
-"language": "GDScript",
-"path": "res://System/Scene/Screen.gd"
-}, {
-"base": "Reference",
-"class": "SignalUtils",
-"language": "GDScript",
-"path": "res://System/SignalUtils.gd"
-}, {
-"base": "Reference",
-"class": "Testing",
-"language": "GDScript",
-"path": "res://System/Testing/Testing.gd"
-}, {
-"base": "WrightObject",
-"class": "TextBlock",
-"language": "GDScript",
-"path": "res://System/Scene/TextBlock.gd"
-}, {
-"base": "Node",
-"class": "TimeCounter",
-"language": "GDScript",
-"path": "res://System/TimeCounter.gd"
-}, {
-"base": "Resource",
-"class": "UserConfig",
-"language": "GDScript",
-"path": "res://System/Config/UserConfig.gd"
-}, {
-"base": "Reference",
-"class": "Values",
-"language": "GDScript",
-"path": "res://System/Values.gd"
-}, {
-"base": "Reference",
-"class": "VariableDef",
-"language": "GDScript",
-"path": "res://System/WrightScript/VariableDef.gd"
-}, {
-"base": "Reference",
-"class": "Variables",
-"language": "GDScript",
-"path": "res://System/Variables.gd"
-}, {
-"base": "Reference",
-"class": "WarpLib",
-"language": "GDScript",
-"path": "res://System/WrightScript/Commands/Warp.gd"
-}, {
-"base": "Node2D",
-"class": "WrightObject",
-"language": "GDScript",
-"path": "res://System/Scene/WrightObject.gd"
-}, {
-"base": "Reference",
-"class": "WrightScript",
-"language": "GDScript",
-"path": "res://System/WrightScript/WrightScript.gd"
-}, {
-"base": "Reference",
-"class": "WrightScriptStack",
-"language": "GDScript",
-"path": "res://System/WrightScript/WrightScriptStack.gd"
-} ]
-_global_script_class_icons={
-"AudioLoader": "",
-"BuiltinConfig": "",
-"Checkpoint": "",
-"ClickArea": "",
-"ClickMesh": "",
-"Colors": "",
-"CrossExamination": "",
-"EvDef": "",
-"FadeLib": "",
-"Filesystem": "",
-"Fonts": "",
-"GamePath": "",
-"InputController": "",
-"LeastUsedCache": "",
-"MainScene": "",
-"NameSpaces": "",
-"ObjParse": "",
-"PWMesh": "",
-"PWSprite": "",
-"Pauseable": "",
-"Penalty": "",
-"SaveState": "",
-"Screen": "",
-"SignalUtils": "",
-"Testing": "",
-"TextBlock": "",
-"TimeCounter": "",
-"UserConfig": "",
-"Values": "",
-"VariableDef": "",
-"Variables": "",
-"WarpLib": "",
-"WrightObject": "",
-"WrightScript": "",
-"WrightScriptStack": ""
-}
+config_version=5
 
 [application]
 
@@ -228,6 +14,7 @@ config/name="GodotWright"
 run/main_scene="res://Main.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="GodotWright"
+config/features=PackedStringArray("4.4")
 config/icon="res://icon.png"
 
 [autoload]
@@ -251,14 +38,14 @@ StandardVar="*res://System/WrightScript/StandardVar.gd"
 
 gdscript/warnings/unused_variable=false
 gdscript/warnings/shadowed_variable=false
-gdscript/warnings/unused_argument=false
 gdscript/warnings/integer_division=false
+gdscript/warnings/unused_argument=false
 
 [display]
 
-window/handheld/orientation="portrait"
 window/stretch/mode="viewport"
 window/stretch/aspect="keep_width"
+window/handheld/orientation="portrait"
 
 [global]
 
@@ -284,74 +71,74 @@ mp3={
 
 button_press={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":90,"unicode":0,"echo":false,"script":null)
- ]
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":90,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
 }
 button_present={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":88,"unicode":0,"echo":false,"script":null)
- ]
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":88,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
 }
 button_courtrecord={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777218,"unicode":0,"echo":false,"script":null)
- ]
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194306,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
 }
 button_advance={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777221,"unicode":0,"echo":false,"script":null)
- ]
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194309,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
 }
 button_next_statement={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777233,"unicode":0,"echo":false,"script":null)
- ]
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194321,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
 }
 button_previous_statement={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777231,"unicode":0,"echo":false,"script":null)
- ]
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194319,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
 }
 button_back={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":32,"unicode":0,"echo":false,"script":null)
- ]
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":32,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
 }
 button_left={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777231,"unicode":0,"echo":false,"script":null)
- ]
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194319,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
 }
 button_right={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777233,"unicode":0,"echo":false,"script":null)
- ]
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194321,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
 }
 button_up={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777232,"unicode":0,"echo":false,"script":null)
- ]
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194320,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
 }
 button_down={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":16777234,"unicode":0,"echo":false,"script":null)
- ]
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194322,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
 }
 pointer_main_button={
 "deadzone": 0.5,
-"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":1,"canceled":false,"pressed":false,"doubleclick":false,"script":null)
- ]
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":1,"canceled":false,"pressed":false,"double_click":false,"script":null)
+]
 }
 pointer_second_button={
 "deadzone": 0.5,
-"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":2,"canceled":false,"pressed":false,"doubleclick":false,"script":null)
- ]
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":2,"canceled":false,"pressed":false,"double_click":false,"script":null)
+]
 }
 
 [network]
 
-limits/debugger_stdout/max_chars_per_second=404800
-limits/debugger_stdout/max_messages_per_frame=10000
+limits/debugger/max_chars_per_second=404800
+limits/debugger/max_queued_messages=10000
 
 [physics]
 
@@ -360,6 +147,8 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
+environment/defaults/default_clear_color=Color(0, 0, 0, 1)
+environment/defaults/default_environment="res://default_env.tres"
 2d/options/use_nvidia_rect_flicker_workaround=true
 quality/intended_usage/framebuffer_allocation=0
 quality/intended_usage/framebuffer_allocation.mobile=1
@@ -367,5 +156,3 @@ threads/thread_model=2
 misc/lossless_compression/force_png=true
 gles2/compatibility/disable_half_float=true
 batching/precision/uv_contract=true
-environment/default_clear_color=Color( 0, 0, 0, 1 )
-environment/default_environment="res://default_env.tres"

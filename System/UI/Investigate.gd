@@ -65,7 +65,7 @@ func add_option(option):
 		"click_macro": "{investigate_option}",
 		"click_args": [option],
 		"select_macro": "sound_investigate_menu_select",
-		"rect": PoolStringArray([226/2*rect_offset.x, 59/2*rect_offset.y, 226/2, 59/2])},
+		"rect": PackedStringArray([226/2*rect_offset.x, 59/2*rect_offset.y, 226/2, 59/2])},
 		["name="+option],
 		script_name
 	)
@@ -102,14 +102,14 @@ func ws_investigate_option(script, args):
 func save_node(data):
 	data["mirror"] = [mirror.x, mirror.y]
 	data["loader_class"] = "res://System/UI/Investigate.gd"
-	.save_node(data)
+	super.save_node(data)
 
 static func create_node(saved_data:Dictionary):
 	var ob = load("res://System/UI/Investigate.gd").new()
 	return ob
 
 func load_node(tree, saved_data:Dictionary):
-	.load_node(tree, saved_data)
+	super.load_node(tree, saved_data)
 
 func after_load(tree:SceneTree, saved_data:Dictionary):
-	.after_load(tree, saved_data)
+	super.after_load(tree, saved_data)

@@ -7,6 +7,9 @@
 .godot/shader_cache
 *.orig
 
+# New in godot 4
+.godot/editor/*
+
 # vscode
 .vscode
 

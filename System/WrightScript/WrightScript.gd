@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 class_name WrightScript
 
 var main:Node
@@ -60,10 +60,9 @@ func load_txt_file(path:String, load_macros=true, preprocess_lines=true):
 	lines = []
 	root_path = path.get_base_dir()+"/"
 	filename = path.get_file()
-	var f = File.new()
-	var err = f.open(path, File.READ)
+	var f = FileAccess.open(path, FileAccess.READ)
 	var buffer := ""
-	if err == OK:
+	if f:
 		buffer = f.get_as_text(false)
 		f.close()
 		buffer = buffer.replace("\r\n", "\n")
@@ -363,10 +362,10 @@ func get_frame(sig):
 func split_line(line):
 	var comment
 	if "#" in line and "//" in line:
-		if line.find_last("#") < line.find_last("//"):
-			line = line.substr(0, line.find_last("#"))
+		if line.rfind("#") < line.rfind("//"):
+			line = line.substr(0, line.rfind("#"))
 		else:
-			line =line.substr(0, line.find_last("//"))
+			line =line.substr(0, line.rfind("//"))
 	if "#" in line:
 		line = line.rsplit("#", true, 1)[0]
 	elif "//" in line:
@@ -439,7 +438,7 @@ func add_blocker(block_obj, next_line = true):
 		original_id = block_obj.name
 	else:
 		original_id = block_obj
-	block_obj.connect(sig, self, "remove_blocker", [sig, block_obj, original_id, next_line], CONNECT_ONESHOT)
+	block_obj.connect(sig, Callable(self, "remove_blocker").bind(sig, block_obj, original_id, next_line), CONNECT_ONE_SHOT)
 
 func remove_blocker(sig, block_obj, original_id, allow_next_line):
 	if block_obj in blockers:

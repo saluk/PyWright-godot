@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 class_name Variables
 
 var store := {}
@@ -7,9 +7,9 @@ var setters := ["_speaking", "_music_fade"]
 var getters := ["_version", "_engine"]
 
 func _init():
-	assert(string_to_array("", ",")==PoolStringArray([]))
-	assert(string_to_array(",", ",")==PoolStringArray([""]))
-	assert(string_to_array("ad,bwww,ceeeee,", ",")==PoolStringArray(["ad","bwww","ceeeee"]))
+	assert(string_to_array("", ",")==PackedStringArray([]))
+	assert(string_to_array(",", ",")==PackedStringArray([""]))
+	assert(string_to_array("ad,bwww,ceeeee,", ",")==PackedStringArray(["ad","bwww","ceeeee"]))
 	assert(array_to_string([], ",")=="")
 	assert(array_to_string([""], ",")==",")
 	assert(array_to_string(["ad","bwww","ceeeee"], ",")=="ad,bwww,ceeeee,")
@@ -60,7 +60,7 @@ func getter__engine():
 static func string_to_array(string, split_on):
 	assert(split_on.length()==1)
 	if not split_on in string:
-		return PoolStringArray([])
+		return PackedStringArray([])
 	var array = string.substr(0, string.length()-1).split(split_on, true)
 	return array
 
@@ -70,7 +70,7 @@ static func array_to_string(array, split_on):
 		return ""
 	if array.size() == 1:
 		return str(array[0])+split_on
-	return PoolStringArray(array).join(split_on)+split_on
+	return split_on.join(PackedStringArray(array))+split_on
 
 # Functions to access a namespace as a list
 

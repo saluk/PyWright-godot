@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 class_name WrightScriptStack
 
 var main
@@ -72,9 +72,9 @@ var run_macros_on_scene_change = [
 func load_macros_from_path(path):
 	var macro_scripts = []
 	print("SCANNING ", path)
-	var dir = Directory.new()
-	if dir.open(path) == OK:
-		dir.list_dir_begin()
+	var dir = DirAccess.open(path)
+	if dir:
+		dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 		while true:
 			var file_name = dir.get_next()
 			if file_name == "":
@@ -219,7 +219,7 @@ func process():
 			else:
 				frame = f
 				break
-		yield(main.get_tree(), "idle_frame")
+		await main.get_tree().idle_frame
 		continue
 	while scripts:
 		if state != STACK_PROCESSING:
@@ -229,7 +229,7 @@ func process():
 			return new_state(STACK_YIELD)
 		if scripts[-1].check_blocked():
 			if variables.get_truth("render", true):
-				yield(main.get_tree(), "idle_frame")
+				await main.get_tree().idle_frame
 				continue
 		# We may have a paused frame from before to keep processing
 		show_frame(null, true)

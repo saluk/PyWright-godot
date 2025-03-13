@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 
 var main
 
@@ -10,7 +10,7 @@ func _init(commands):
 func ws_ut_assert(script, arguments):
 	if not main.stack.mode == "test":
 		return
-	var unit_test_command = PoolStringArray(arguments).join(" ")
+	var unit_test_command = " ".join(PackedStringArray(arguments))
 	print(unit_test_command)
 	var testing = Testing.new()
 	testing.run(unit_test_command, true)
@@ -18,12 +18,12 @@ func ws_ut_assert(script, arguments):
 func ws_ut_do(script, arguments):
 	if not main.stack.mode == "test":
 		return
-	var unit_test_command = PoolStringArray(arguments).join(" ")
+	var unit_test_command = " ".join(PackedStringArray(arguments))
 	print(unit_test_command)
 	var testing = Testing.new()
 	testing.run(unit_test_command, false)
 
-class After extends Reference:
+class After extends RefCounted:
 	var times
 	var command
 	var waiters
@@ -57,7 +57,7 @@ func _ut_command(script, arguments, do_assert):
 	var mode_parts = mode.split("=")
 	mode = mode_parts[0]
 	var mode_config = mode_parts[1]
-	var unit_test_command = PoolStringArray(arguments).join(" ")
+	var unit_test_command = " ".join(PackedStringArray(arguments))
 	var after = After.new(1, unit_test_command, waiters, do_assert)
 	_add_waiter(mode, mode_config, after)
 
@@ -65,9 +65,9 @@ func _add_waiter(mode, mode_config, after):
 	waiters.append(after)
 	if mode == "lines":
 		after.times = int(mode_config)
-		main.connect("line_executed", after, "tick")
+		main.connect("line_executed", Callable(after, "tick"))
 	elif mode == "frames":
 		after.times = int(mode_config)
-		main.connect("frame_drawn", after, "tick")
+		main.connect("frame_drawn", Callable(after, "tick"))
 	elif mode == "signal":
-		main.connect(mode_config, after, "do")
+		main.connect(mode_config, Callable(after, "do"))

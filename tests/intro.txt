@@ -74,58 +74,59 @@ label pagelabel9
 list page9
 li list
 li macrogoto
-li music_fade
+li macrotext
 li pagelabel8
 li pagelabel10
 showlist
 
 label pagelabel10
 list page10
+li music_fade
 li namespace
 li nametags
-li object_factory
 li pagelabel9
 li pagelabel11
 showlist
 
 label pagelabel11
 list page11
+li object_factory
 li penalty
 li predictive-text-wrapping-2
-li predictive-text-wrapping
 li pagelabel10
 li pagelabel12
 showlist
 
 label pagelabel12
 list page12
+li predictive-text-wrapping
 li randomize
 li showrecord
-li sounds
 li pagelabel11
 li pagelabel13
 showlist
 
 label pagelabel13
 list page13
+li sounds
 li stopmusic
 li text
-li timers
 li pagelabel12
 li pagelabel14
 showlist
 
 label pagelabel14
 list page14
+li timers
 li top
 li utf
-li vars
 li pagelabel13
 li pagelabel15
 showlist
 
 label pagelabel15
 list page15
+li vars
 li warp
 li pagelabel14
 showlist
@@ -181,6 +182,8 @@ label list
 script list
 label macrogoto
 script macrogoto
+label macrotext
+script macrotext
 label music_fade
 script music_fade
 label namespace

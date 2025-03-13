@@ -84,7 +84,7 @@ func _process(dt):
 		threat_section.position = Vector2(100-threat_amount/2-(100-ivalue), 0)
 		threat_section.scale = Vector2(threat_amount, 1)
 		threat_timer += dt*8
-		threat_section.material.set_shader_param("to_color_amount", (1.0+(sin(threat_timer)*0.5))/2.0)
+		threat_section.material.set_shader_parameter("to_color_amount", (1.0+(sin(threat_timer)*0.5))/2.0)
 	if value != end_value:
 		if value < end_value:
 			value += min(60*dt, end_value-value)   # TODO - conver to pywright speed

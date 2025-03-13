@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 
 func _init(commands):
 	pass
@@ -30,7 +30,7 @@ class Scroller extends Node:
 	func set_process(enabled):
 		if tween:
 			tween.set_active(enabled)
-		.set_process(enabled)
+		super.set_process(enabled)
 	func make_tweens(start_positions=[]):
 		tween = Tween.new()
 		add_child(tween)
@@ -40,12 +40,12 @@ class Scroller extends Node:
 				if start_positions:
 					next_pos = start_positions.pop_front()
 				else:
-					next_pos = o.translation
+					next_pos = o.position
 				# TODO kind of hacky to invert and clamp the z movement
 				var end_pos = Vector3(next_pos.x+total.x, next_pos.y+total.y, clamp(next_pos.z-total.z, o.maxz, -o.minz))
 				tween.interpolate_property(
 					o,
-					"translation",
+					"position",
 					next_pos,
 					end_pos,
 					total_time,

@@ -37,7 +37,7 @@ func _init():
 	save_properties.append_array(["x_offset", "reloaded_scroll", "fail"])
 
 func _ready():
-	._ready()
+	super._ready()
 	setup_clickarea()
 	wait_signal = "tree_exited"
 	var use_objects = main.stack.variables.get_string("_examine_use", null)
@@ -65,8 +65,8 @@ func setup_clickarea():
 	var click_area:Control = Control.new()
 	click_area.set_size(Vector2(256, 192))
 	add_child(click_area)
-	click_area.connect("mouse_entered", self, "enter_examine_clickarea")
-	click_area.connect("mouse_exited", self, "exit_examine_clickarea")
+	click_area.connect("mouse_entered", Callable(self, "enter_examine_clickarea"))
+	click_area.connect("mouse_exited", Callable(self, "exit_examine_clickarea"))
 
 var mouse_active := false
 func enter_examine_clickarea():
@@ -234,7 +234,7 @@ func ws_scroll_from_examine(script, arguments):
 			if "scrollable" in ob and ob.scrollable:
 				ob.position.x -= scroll_button_direction * scroll_amt
 		if not arguments:
-			yield(get_tree(), "idle_frame")
+			await get_tree().idle_frame
 	update_x_offset()
 	scrolling = false
 	if not arguments:
@@ -261,7 +261,7 @@ func reload_scroll_regions():
 func _process(dt):
 	if scrolling: return
 	if not mouse_active: return
-	if Input.get_mouse_button_mask() & BUTTON_LEFT:
+	if Input.get_mouse_button_mask() & MOUSE_BUTTON_LEFT:
 		var pos = get_parent().get_local_mouse_position()-position
 		set_crosshair_pos(pos.x, pos.y)
 		update()
@@ -370,7 +370,7 @@ func update():
 		Commands.call_macro("show_court_record_button", wrightscript, [])
 		called_court_record_button = true
 	_select()
-	.update()
+	super.update()
 	crosshair.update()
 
 class Crosshair extends Node2D:
@@ -401,13 +401,13 @@ func save_node(data):
 	for child in get_children():
 		if child is Region:
 			data["regions"].append(SaveState._save_node(child))
-	.save_node(data)
+	super.save_node(data)
 	return false
 
 func after_load(tree:SceneTree, saved_data:Dictionary):
 	print(saved_data)
 	print(region_args)
-	.after_load(tree, saved_data)
+	super.after_load(tree, saved_data)
 	print(saved_data)
 	print(region_args)
 	print(reloaded_scroll)

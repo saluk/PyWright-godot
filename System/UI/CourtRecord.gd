@@ -23,11 +23,11 @@ var has_objects = false
 var blocks_action_advance := true
 
 func _init():
-	._init()
+	super._init()
 	save_properties.append("in_presentation_context")
 
 func _ready():
-	._ready()
+	super._ready()
 	Commands.call_macro("sound_court_record_display", wrightscript, [])
 	script_name = "evidence_menu"
 	wait_signal = "tree_exited"
@@ -82,7 +82,7 @@ func _process(dt):
 	# built into ObjectFactory template maybe?
 	var blocker = Control.new()
 	blocker.name = "BLOCKER"
-	blocker.rect_size = Vector2(bg.width, bg.height)
+	blocker.size = Vector2(bg.width, bg.height)
 	bg.add_child(blocker)
 
 	position = Vector2(0, 192)
@@ -91,7 +91,7 @@ func _process(dt):
 	name_label = Label.new()
 	Fonts.set_element_font(name_label, "itemname", main)
 	name_label.name = "Name Label"
-	name_label.rect_position = Vector2(
+	name_label.position = Vector2(
 		stack.variables.get_int("ev_currentname_x"),
 		stack.variables.get_int("ev_currentname_y")
 	)
@@ -100,7 +100,7 @@ func _process(dt):
 	page_label = Label.new()
 	Fonts.set_element_font(page_label, "itemset", main)
 	page_label.name = "Page Label"
-	page_label.rect_position = Vector2(
+	page_label.position = Vector2(
 		stack.variables.get_int("ev_mode_x"),
 		stack.variables.get_int("ev_mode_y")
 	)
@@ -178,7 +178,7 @@ func load_page_button():
 		b.modulate.a = 0.0
 	var l = Label.new()
 	Fonts.set_element_font(l, "itemset_big", main)
-	l.rect_position += Vector2(
+	l.position += Vector2(
 		stack.variables.get_int("ev_modebutton_x", 0),
 		stack.variables.get_int("ev_modebutton_y", 0)
 	) - b.position
@@ -269,18 +269,18 @@ func load_page_zoom():
 		# TODO make this a textblock after textblock is implemented
 		var desc:Label = Label.new()
 		Fonts.set_element_font(desc, "block", main)
-		desc.rect_position = Vector2(
+		desc.position = Vector2(
 			stack.variables.get_int("ev_z_textbox_x", 0),  # zero so we can ensure it loads the variable
 			stack.variables.get_int("ev_z_textbox_y", 0)
 		)
-		desc.rect_size = Vector2(
+		desc.size = Vector2(
 			stack.variables.get_int("ev_z_textbox_w", 0),  # zero so we can ensure it loads the variable
 			stack.variables.get_int("ev_z_textbox_h", 0)
 		)
-		desc.set("custom_constants/line_spacing",
+		desc.set("theme_override_constants/line_spacing",
 			stack.variables.get_int("textblock_line_height", 10)
 		)
-		desc.set("custom_colors/font_color", Colors.string_to_color(stack.variables.get_string("ev_z_text_col")))
+		desc.set("theme_override_colors/font_color", Colors.string_to_color(stack.variables.get_string("ev_z_text_col")))
 		desc.text = ev_data["desc"].replace("{n}","\n")
 		desc.clip_text = true
 		desc.autowrap = true
@@ -375,7 +375,7 @@ func load_page_overview():
 				stack.variables.get_int("ev_small_width"),
 				stack.variables.get_int("ev_small_height")
 			)
-		ev_button.click_area.connect("mouse_entered", self, "highlight_evidence", [ev_data])
+		ev_button.click_area.connect("mouse_entered", Callable(self, "highlight_evidence").bind(ev_data))
 
 		# Move to next spot
 		x += stack.variables.get_int("ev_spacing_x")
@@ -439,4 +439,4 @@ func check(evname, check_script):
 #SAVE/LOAD
 func load_node(tree:SceneTree, saved_data:Dictionary):
 	reset()
-	.load_node(tree, saved_data)
+	super.load_node(tree, saved_data)

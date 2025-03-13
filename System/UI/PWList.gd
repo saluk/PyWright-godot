@@ -51,7 +51,7 @@ func set_checked(label):
 	var checked = _get_checked_list()
 	if not label in checked:
 		checked.append(label)
-		main.stack.variables.set_val("_pwlist_checked_items_"+tag, checked.join(";;"))
+		main.stack.variables.set_val("_pwlist_checked_items_"+tag, ";;".join(checked))
 
 func build():
 	add_list_items()
@@ -95,7 +95,7 @@ func add_list_items():
 	# built into ObjectFactory template maybe?
 	var blocker = Control.new()
 	blocker.name = "BLOCKER"
-	blocker.rect_size = Vector2(bg.width, bg.height)
+	blocker.size = Vector2(bg.width, bg.height)
 	bg.add_child(blocker)
 
 	for item in _items:
@@ -124,11 +124,11 @@ func add_list_items():
 		# TODO we could probably bake this into button text
 		var button_label := Label.new()
 		Fonts.set_element_font(button_label, "list", main)
-		button_label.set("custom_colors/font_color", Colors.string_to_color(main.stack.variables.get_string("_list_text_color", "6e1414")))
-		button_label.align = Label.ALIGN_CENTER
+		button_label.set("theme_override_colors/font_color", Colors.string_to_color(main.stack.variables.get_string("_list_text_color", "6e1414")))
+		button_label.align = Label.ALIGNMENT_CENTER
 		button_label.valign = Label.VALIGN_CENTER
 		#button_label.rect_position = Vector2(button.width/2, button.height/2)
-		button_label.rect_size = Vector2(button.width, button.height)
+		button_label.size = Vector2(button.width, button.height)
 		button_label.text = text
 		button.add_child(button_label)
 		# TODO enable setting the text color, font, size of the option
@@ -189,5 +189,5 @@ func after_load(tree:SceneTree, saved_data:Dictionary):
 		if item.size()>2:
 			options = item[2]
 		add_item(text, result, options)
-	.after_load(tree, saved_data)
+	super.after_load(tree, saved_data)
 	build()

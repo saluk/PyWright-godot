@@ -59,7 +59,7 @@ func _shrink_cache():
 	for key in cache.keys():
 		var value = cache[key]
 		array.append([key, value])
-	array.sort_custom(self, "custom_array_sort")
+	array.sort_custom(Callable(self, "custom_array_sort"))
 	cache.clear()
 	for i in range(MAX_CACHE/2):
 		var row = array[i+MAX_CACHE/2]

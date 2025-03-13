@@ -3,36 +3,36 @@ extends Control
 var main
 var initialized = false
 
-onready var new_save_button:Button = get_node("%NewSave")
-onready var save_name:LineEdit = get_node("%SaveName")
-onready var available_saves:ItemList = get_node("%AvailableSaves")
-onready var memory_leak:Button = get_node("%MemoryLeak")
-onready var free_orphans:Button = get_node("%FreeOrphans")
+@onready var new_save_button:Button = get_node("%NewSave")
+@onready var save_name:LineEdit = get_node("%SaveName")
+@onready var available_saves:ItemList = get_node("%AvailableSaves")
+@onready var memory_leak:Button = get_node("%MemoryLeak")
+@onready var free_orphans:Button = get_node("%FreeOrphans")
 
 var saves_enabled = false
 var last_save_files = []
 
 func _ready():
 	main = get_tree().get_nodes_in_group("Main")[0]
-	$vbox/MainMenu.connect("button_up", self, "_main_menu")
-	$vbox/Quit.connect("button_up", self, "_quit")
-	$vbox/Debugger.connect("button_up", self, "_debugger")
-	$vbox/Framelog.connect("button_up", self, "_framelog")
-	$vbox/Rendering/Viewports.connect("toggled", self, "_toggle_viewports")
-	memory_leak.connect("button_up", self, "_memory_leak")
-	free_orphans.connect("button_up", self, "_free_orphans")
-	$"vbox/DirectoryCacheList Toggle".connect("button_up", self, "_dcl")
+	$vbox/MainMenu.connect("button_up", Callable(self, "_main_menu"))
+	$vbox/Quit.connect("button_up", Callable(self, "_quit"))
+	$vbox/Debugger.connect("button_up", Callable(self, "_debugger"))
+	$vbox/Framelog.connect("button_up", Callable(self, "_framelog"))
+	$vbox/Rendering/Viewports.connect("toggled", Callable(self, "_toggle_viewports"))
+	memory_leak.connect("button_up", Callable(self, "_memory_leak"))
+	free_orphans.connect("button_up", Callable(self, "_free_orphans"))
+	$"vbox/DirectoryCacheList Toggle".connect("button_up", Callable(self, "_dcl"))
 
 	$vbox/HBoxContainer/VolumeSlider.value = Configuration.user.global_volume * 100
-	$vbox/HBoxContainer/VolumeSlider.connect("value_changed", self, "_volume_changed")
+	$vbox/HBoxContainer/VolumeSlider.connect("value_changed", Callable(self, "_volume_changed"))
 
-	main.connect("enable_saveload_buttons", self, "_enable_saveload_buttons")
+	main.connect("enable_saveload_buttons", Callable(self, "_enable_saveload_buttons"))
 	main.check_saving_enabled()
-	new_save_button.connect("button_up", self, "_create_save")
-	$"vbox/SaveLoad/HBoxContainer/Load Selected Save".connect("button_up", self, "_load_save")
-	$"vbox/SaveLoad/HBoxContainer/Delete Selected Save".connect("button_up", self, "_delete_save")
-	available_saves.connect("item_selected", self, "_select_available_save")
-	save_name.connect("text_changed", self, "_change_save_name")
+	new_save_button.connect("button_up", Callable(self, "_create_save"))
+	$"vbox/SaveLoad/HBoxContainer/Load Selected Save".connect("button_up", Callable(self, "_load_save"))
+	$"vbox/SaveLoad/HBoxContainer/Delete Selected Save".connect("button_up", Callable(self, "_delete_save"))
+	available_saves.connect("item_selected", Callable(self, "_select_available_save"))
+	save_name.connect("text_changed", Callable(self, "_change_save_name"))
 
 func _process(delta):
 	if not initialized:
@@ -164,7 +164,7 @@ func _change_save_name(name:String):
 
 func _memory_leak():
 	print("stray nodes:")
-	print_stray_nodes()
+	print_orphan_nodes()
 	print("tree:")
 	main.print_tree_pretty()
 

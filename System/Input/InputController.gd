@@ -1,8 +1,8 @@
 extends Control
 class_name InputController
 
-onready var main = get_parent()
-onready var screens = main.screens
+@onready var main = get_parent()
+@onready var screens = main.screens
 
 # TODO this is pretty hacky
 func scan_objects(action, button_names=[]):
@@ -44,7 +44,7 @@ func add_delta(action, delta):
 
 func _process(delta):
 	# TODO - if the enter key is blocked, we should require you to repress the key again
-	if get_focus_owner() and get_focus_owner() != self:
+	if get_viewport().gui_get_focus_owner() and get_viewport().gui_get_focus_owner() != self:
 		return
 	if Input.is_action_pressed("button_advance"):
 		var just_started = add_delta("advance", delta)

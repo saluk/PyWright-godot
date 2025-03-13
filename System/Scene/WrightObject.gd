@@ -2,16 +2,16 @@ extends Node2D
 class_name WrightObject
 
 # Definitions
-export var root_path:String = "res://"
-export var base_path:String    # The base path ("edgeworth") before variants and sprites
-export var variant_path:String # The variant path ("normal") before sprites are loaded
-export var script_name:String  # How to identify the object
+@export var root_path:String = "res://"
+@export var base_path:String    # The base path ("edgeworth") before variants and sprites
+@export var variant_path:String # The variant path ("normal") before sprites are loaded
+@export var script_name:String  # How to identify the object
 var variables:Variables # Object local variables accessed via [script_name].x
 
 var char_name:String    # What this character is called for nametag purposes
 
 # Animation state
-export var sprite_key:String  # Current chosen sprite
+@export var sprite_key:String  # Current chosen sprite
 # Depending on the object, the sprite key can be important
 #   - default: a default key
 #   - talk: the talk animation of a portrait
@@ -27,8 +27,8 @@ var centery := false  # At y=0 put us centered vertically
 var mirror := Vector2(1,1)
 var _width_override = null
 var _height_override = null
-var width setget set_width_override, get_width
-var height setget set_height_override, get_height
+var width : get = get_width, set = set_width_override
+var height : get = get_height, set = set_height_override
 var click_area  # S
 var button # S
 
@@ -59,8 +59,8 @@ var stack
 var sprite_root
 
 # Classes
-onready var FilesystemS = load("res://System/Files/Filesystem.gd")
-onready var PWSpriteC = load("res://System/Graphics/PWSprite.gd")
+@onready var FilesystemS = load("res://System/Files/Filesystem.gd")
+@onready var PWSpriteC = load("res://System/Graphics/PWSprite.gd")
 
 # SetGets
 func set_width_override(width):
@@ -122,7 +122,7 @@ func _init():
 	variables = Variables.new()
 
 func _ready():
-	main.connect("freeing_orphans", self, "_free_orphan")
+	main.connect("freeing_orphans", Callable(self, "_free_orphan"))
 
 func init_sprite_root():
 	if not sprite_root:
@@ -163,7 +163,7 @@ func add_sprite(sprite_key, sprite_template):
 	var sprite = PWSpriteC.new()
 	sprite.name = "PWSprite:"+base_path+";"+variant_path
 	# TODO handle template rects better
-	if template["rect"] and not template["rect"] is Array and not template["rect"] is PoolStringArray:
+	if template["rect"] and not template["rect"] is Array and not template["rect"] is PackedStringArray:
 		if "(" in template["rect"]:
 			template["rect"] = template["rect"].replace("(","").replace(")","")
 		template["rect"] = template["rect"].split(",")
@@ -214,7 +214,7 @@ func load_sprites(template, sprite_key=null):
 		button = Button.new()
 		button.text = template["button_text"]
 		button.name = "Button:"+template["button_text"]
-		button.connect("button_up", click_area, "perform_action")
+		button.connect("button_up", Callable(click_area, "perform_action"))
 		add_child(button)
 
 	set_sprite(sprite_key)
@@ -269,9 +269,9 @@ func set_sprite(new_sprite_key):
 		sprite_root.add_child(current_sprite)
 		set_wait(wait)
 		emit_signal("started_playing")
-		current_sprite.connect("finished_playing", self, "sprite_finished_playing")
+		current_sprite.connect("finished_playing", Callable(self, "sprite_finished_playing"))
 		if click_area:
-			current_sprite.connect("size_changed", click_area, "sync_area")
+			current_sprite.connect("size_changed", Callable(click_area, "sync_area"))
 		# TODO center and mirror should be controlled by the sprite
 		if centered or centerx or centery:
 			var x = current_sprite.position.x
@@ -336,7 +336,7 @@ func get_texture():
 func get_display_rect():
 	if not current_sprite:
 		return null
-	var texture:Texture = get_texture()
+	var texture:Texture2D = get_texture()
 	var size = texture.get_size()
 	var pos = current_sprite.global_position
 	return Rect2(pos, size)
@@ -347,13 +347,13 @@ func visible_within(collide_rect:Rect2):
 	if collide_rect.encloses(display_rect):
 		return true
 	main.get_node("DebugLayer").draw(
-		"draw_rect", [collide_rect, Color.blueviolet, false, 2, true]
+		"draw_rect", [collide_rect, Color.BLUE_VIOLET, false, 2, true]
 	)
 	main.get_node("DebugLayer").draw(
-		"draw_rect", [display_rect, Color.red, false, 2, true]
+		"draw_rect", [display_rect, Color.RED, false, 2, true]
 	)
 	main.pause(true)
-	yield(get_tree(), "idle_frame")
+	await get_tree().idle_frame
 	main.pause(false)
 	return false
 
@@ -362,7 +362,7 @@ func set_sprite_material_param(k, v):
 	if not current_sprite:
 		return
 	for sprite in sprites.values():
-		sprite.material.set_shader_param(k, v)
+		sprite.material.set_shader_parameter(k, v)
 
 
 # SAVE/LOAD

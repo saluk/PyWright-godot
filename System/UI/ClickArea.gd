@@ -32,10 +32,10 @@ func _ready():
 
 func _enter_tree():
 	parent = get_parent()
-	parent.connect("sprite_changed", self, "sync_area")
-	connect("mouse_entered", self, "on_mouse_entered")
-	connect("mouse_exited", self, "on_mouse_exited")
-	connect("gui_input", self, "on_gui_input")
+	parent.connect("sprite_changed", Callable(self, "sync_area"))
+	connect("mouse_entered", Callable(self, "on_mouse_entered"))
+	connect("mouse_exited", Callable(self, "on_mouse_exited"))
+	connect("gui_input", Callable(self, "on_gui_input"))
 	sync_area()
 
 func set_debug_text():
@@ -45,13 +45,13 @@ func set_debug_text():
 func sync_area():
 	var current_sprite:PWSprite = parent.current_sprite
 	if current_sprite:
-		rect_position = current_sprite.position# + Vector2(-current_sprite.width/2, -current_sprite.height/2)
-		rect_size = Vector2(current_sprite.width, current_sprite.height)
+		position = current_sprite.position# + Vector2(-current_sprite.width/2, -current_sprite.height/2)
+		size = Vector2(current_sprite.width, current_sprite.height)
 		# TODO mirror property should be set by the sprite!
 		if parent.mirror.x < 0:
-			rect_position.x -= current_sprite.width
+			position.x -= current_sprite.width
 		if parent.mirror.y < 0:
-			rect_position.y -= current_sprite.height
+			position.y -= current_sprite.height
 		update()
 	# Force object to be in "over" state when it is newly created
 	if not over and get_global_rect().has_point(get_global_mouse_position()):
@@ -59,10 +59,10 @@ func sync_area():
 
 func _draw():
 	if get_tree().debug_collisions_hint:
-		draw_line(Vector2(0,0), Vector2(rect_size.x,0), Color.red, 2.0)
-		draw_line(Vector2(rect_size.x,0), Vector2(rect_size.x,rect_size.y), Color.red, 2.0)
-		draw_line(Vector2(rect_size.x,rect_size.y), Vector2(0,rect_size.y), Color.red, 2.0)
-		draw_line(Vector2(0,rect_size.y), Vector2(0,0), Color.red, 2.0)
+		draw_line(Vector2(0,0), Vector2(size.x,0), Color.RED, 2.0)
+		draw_line(Vector2(size.x,0), Vector2(size.x,size.y), Color.RED, 2.0)
+		draw_line(Vector2(size.x,size.y), Vector2(0,size.y), Color.RED, 2.0)
+		draw_line(Vector2(0,size.y), Vector2(0,0), Color.RED, 2.0)
 
 func on_mouse_entered():
 	if not over:
@@ -78,7 +78,7 @@ func on_mouse_exited():
 	set_debug_text()
 
 func on_gui_input(event):
-	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			clicked = true
 			set_highlight()

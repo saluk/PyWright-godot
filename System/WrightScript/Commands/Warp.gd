@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 class_name WarpLib
 
 func _init(commands):
@@ -49,7 +49,7 @@ class WarpAnim extends Node:
 				Tween.TRANS_LINEAR
 			)
 			tween.start()
-			tween.connect("tween_completed", self, "end_tween", [tween])
+			tween.connect("tween_completed", Callable(self, "end_tween").bind(tween))
 	func _process(dt):
 		for o in objects:
 			for k in keys:

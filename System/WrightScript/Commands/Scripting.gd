@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 
 var main
 
@@ -32,7 +32,7 @@ func ws_debug(script, arguments):
 	return Commands.DEBUG
 
 func ws_print(script, arguments):
-	print("OUTPUT: ", Commands.join(arguments))
+	print("OUTPUT: ", arguments.join(Commands))
 
 # No need to implement
 func ws_step(script, arguments):
@@ -42,7 +42,7 @@ func ws_goto(script, arguments):
 	var fail = Commands.keywords(arguments).get("fail", null)
 	if fail != null:
 		arguments.erase("fail="+fail)
-	return script.goto_label(PoolStringArray(arguments).join(" "), fail)
+	return script." ".join(goto_label(PackedStringArray(arguments)), fail)
 
 func ws_top(script, arguments):
 	script.goto_line_number(0)
@@ -119,7 +119,7 @@ func ws_script(script, arguments, script_text=null):
 		script.screen.clear()
 	else:
 		arguments.erase("noclear")
-	var path = Commands.join(arguments)
+	var path = arguments.join(Commands)
 	var scr
 	if script_text:
 		scr = main.stack.add_script(script_text, script.root_path)

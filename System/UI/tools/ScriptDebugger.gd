@@ -7,18 +7,18 @@ var script_tab
 var popup_menu
 
 var scripts:Array = []
-export(NodePath) var step
-export(NodePath) var allev
-export(NodePath) var pause
-export(NodePath) var speed
+@export var step: NodePath
+@export var allev: NodePath
+@export var pause: NodePath
+@export var speed: NodePath
 var slow_mode = false
-export(NodePath) var slow
-export(NodePath) var node_scripts
-export(NodePath) var current_script
+@export var slow: NodePath
+@export var node_scripts: NodePath
+@export var current_script: NodePath
 
-export(NodePath) var show_watched_panel
-export(NodePath) var watched_panel
-export(NodePath) var watched_textedit
+@export var show_watched_panel: NodePath
+@export var watched_panel: NodePath
+@export var watched_textedit: NodePath
 
 var stepping_over = -1
 
@@ -47,12 +47,12 @@ func _ready():
 
 	node_scripts.remove_child(script_tab)
 	# TODO conceal buttons if game is not playing to prevent error
-	step.connect("button_up", self, "step_over")
-	pause.connect("button_up", self, "start_debugger")
-	allev.connect("button_up", self, "all_ev")
-	speed.connect("button_up", self, "set_speed")
-	slow.connect("button_up", self, "toggle_slow")
-	show_watched_panel.connect("button_up", self, "_show_watched_panel")
+	step.connect("button_up", Callable(self, "step_over"))
+	pause.connect("button_up", Callable(self, "start_debugger"))
+	allev.connect("button_up", Callable(self, "all_ev"))
+	speed.connect("button_up", Callable(self, "set_velocity"))
+	slow.connect("button_up", Callable(self, "toggle_slow"))
+	show_watched_panel.connect("button_up", Callable(self, "_show_watched_panel"))
 
 	goto_line_button_template = get_node("GotoLineButton")
 	goto_line_button_template.get_parent().remove_child(goto_line_button_template)
@@ -62,13 +62,13 @@ func start_debugger(force=false):
 		if force == false:
 			in_debugger = false
 			pause.text = "Pause"
-			current_stack.disconnect("line_executed", self, "debug_line")
+			current_stack.disconnect("line_executed", Callable(self, "debug_line"))
 			current_stack.state = current_stack.STACK_READY
 			emit_signal("debug_state_off")
 	else:
 		in_debugger = true
 		pause.text = "Resume"
-		current_stack.connect("line_executed", self, "debug_line")
+		current_stack.connect("line_executed", Callable(self, "debug_line"))
 		current_stack.state = current_stack.STACK_DEBUG
 		emit_signal("debug_state_on")
 
@@ -95,8 +95,8 @@ func all_ev():
 		Commands.call_command("addev", current_stack.scripts[-1], [ev_tag])
 		found = true
 	var p = PopupPanel.new()
-	p.rect_scale = Vector2(4,4)
-	p.connect("popup_hide", p, "queue_free")
+	p.scale = Vector2(4,4)
+	p.connect("popup_hide", Callable(p, "queue_free"))
 	var l = Label.new()
 	if found:
 		l.text = "All known evidence added to court record"
@@ -123,9 +123,9 @@ func step_over():
 			stepping_over = node_scripts.current_tab+1
 			current_stack.state = current_stack.STACK_READY
 			while scripts.size() > 1:
-				yield(get_tree(), "idle_frame")
+				await get_tree().idle_frame
 
-func set_speed():
+func set_velocity():
 	if speed.text == ">>>":
 		Engine.time_scale = 100.0
 		speed.text = ">"
@@ -161,10 +161,10 @@ func add_new_script(script):
 	d["editor_container"].get_node("HBoxContainer/ScreenLabel").text = script.screen.name
 	d["editor_container"].get_node("HBoxContainer/FilenameLabel").text = script.filename
 	node_scripts.add_child(d["editor_container"])
-	d["editor"].text = PoolStringArray(d["script"].lines).join("\n")
-	d["editor"].connect("text_changed", self, "edit_script", [script])
-	d["editor"].connect("breakpoint_toggled", self, "goto_line", [script])
-	d["editor"].connect("info_clicked", self, "goto_line", [script])
+	d["editor"].text = PackedStringArray(d["script"]."\n".join(lines))
+	d["editor"].connect("text_changed", Callable(self, "edit_script").bind(script))
+	d["editor"].connect("breakpoint_toggled", Callable(self, "goto_line").bind(script))
+	d["editor"].connect("info_clicked", Callable(self, "goto_line").bind(script))
 	scripts.append(d)
 
 # TODO: don't rebuild just because a line has advanced
@@ -213,22 +213,22 @@ func update_current_stack():
 		return
 	if current_stack != main.stack:
 		current_stack = main.stack
-		current_stack.connect("enter_debugger", self, "start_debugger", [true])
-		current_stack.connect("update_debugger", self, "update_current_stack")
+		current_stack.connect("enter_debugger", Callable(self, "start_debugger").bind(true))
+		current_stack.connect("update_debugger", Callable(self, "update_current_stack"))
 	if not current_stack:
 		return
 	rebuild()
 	# Update each editor
 	for i in range(len(scripts)):
 		var to_line = scripts[i]["script"].line_num
-		var at_line = scripts[i]["editor"].cursor_get_line()
+		var at_line = scripts[i]["editor"].get_caret_line()
 		if to_line >= scripts[i]["editor"].get_line_count():
 			to_line = at_line
 		if scripts[i]["highlighted_line"] != to_line:
 			scripts[i]["highlighted_line"] = to_line
-			scripts[i]["editor"].cursor_set_line(to_line)
-			scripts[i]["editor"].cursor_set_column(0)
-			scripts[i]["editor"].center_viewport_to_cursor()
+			scripts[i]["editor"].set_caret_line(to_line)
+			scripts[i]["editor"].set_caret_column(0)
+			scripts[i]["editor"].center_viewport_to_caret()
 		if scripts[i]["bookmark_line"]!=null and scripts[i]["editor"].is_line_set_as_bookmark(scripts[i]["bookmark_line"]):
 			scripts[i]["editor"].set_line_as_bookmark(scripts[i]["bookmark_line"], false)
 		scripts[i]["editor"].set_line_as_bookmark(to_line, true)
@@ -242,7 +242,7 @@ func _input(evt:InputEvent):
 		if evt.button_index == 2:
 			var popup_menu = PopupMenu.new()
 			popup_menu.add_item("Copy", COPY)
-			popup_menu.connect("id_pressed", self, "menu_id_pressed")
+			popup_menu.connect("id_pressed", Callable(self, "menu_id_pressed"))
 
 func menu_id_pressed(id):
 	if id == COPY:

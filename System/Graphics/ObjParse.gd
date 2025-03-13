@@ -34,9 +34,8 @@ static func load_mtl_from_buffer(mtl_data:String,textures:Dictionary)->Dictionar
 #Get data from file path
 static func get_data(path:String)->String:
 	if path!="":
-		var file := File.new()
-		var err:=file.open(path, File.READ)
-		if err==OK:
+		var file := FileAccess.open(path, FileAccess.READ)
+		if not file:
 			var res:=file.get_as_text()
 			file.close()
 			return res
@@ -52,10 +51,9 @@ static func get_mtl_tex(mtl_path:String)->Dictionary:
 
 #Get textures paths from mtl path
 static func get_mtl_tex_paths(mtl_path:String)->Array:
-	var file := File.new()
-	var err:=file.open(mtl_path, File.READ)
+	var file := FileAccess.open(mtl_path, FileAccess.READ)
 	var paths := []
-	if err==OK:
+	if file:
 		var lines := file.get_as_text().split("\n", false)
 		file.close()
 		for line in lines:
@@ -68,10 +66,9 @@ static func get_mtl_tex_paths(mtl_path:String)->Array:
 #try to find mtl path from obj path
 static func search_mtl_path(obj_path:String):
 	var mtl_path=obj_path.get_base_dir().plus_file(obj_path.get_file().rsplit(".",false,1)[0]+".mtl")
-	var dir:Directory=Directory.new()
-	if !dir.file_exists(mtl_path):
+	if not FileAccess.file_exists(mtl_path):
 		mtl_path=obj_path.get_base_dir().plus_file(obj_path.get_file()+".mtl")
-	if !dir.file_exists(mtl_path):
+	if not FileAccess.file_exists(mtl_path):
 		return ""
 	return mtl_path
 
@@ -80,7 +77,7 @@ static func search_mtl_path(obj_path:String):
 
 static func _create_mtl(obj:String,textures:Dictionary)->Dictionary:
 	var mats := {}
-	var currentMat:SpatialMaterial = null
+	var currentMat:StandardMaterial3D = null
 
 	var lines = obj.split("\n", false)
 	for line in lines:
@@ -94,7 +91,7 @@ static func _create_mtl(obj:String,textures:Dictionary)->Dictionary:
 				# Create a new material
 				if debug:
 					print("Adding new material " + parts[1])
-				currentMat = SpatialMaterial.new()
+				currentMat = StandardMaterial3D.new()
 				mats[parts[1]] = currentMat
 			"Ka":
 				# Ambient color
@@ -130,7 +127,7 @@ static func _get_image(mtl_filepath:String, tex_filename:String)->Image:
 	img.load(texfilepath)
 	return img
 
-static func _create_texture(data:PoolByteArray):
+static func _create_texture(data:PackedByteArray):
 	var img:Image = Image.new()
 	var tex:ImageTexture = ImageTexture.new()
 	img.load_png_from_buffer(data)
@@ -150,9 +147,9 @@ static func _get_texture(mtl_filepath, tex_filename):
 static func _create_obj(obj:String,mats:Dictionary)->Mesh:
 	# Setup
 	var mesh := ArrayMesh.new()
-	var vertices := PoolVector3Array()
-	var normals := PoolVector3Array()
-	var uvs := PoolVector2Array()
+	var vertices := PackedVector3Array()
+	var normals := PackedVector3Array()
+	var uvs := PackedVector2Array()
 	var faces := {}
 	var fans := []
 
@@ -252,25 +249,25 @@ static func _create_obj(obj:String,mats:Dictionary)->Mesh:
 		var st = SurfaceTool.new()
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
 		if !mats.has(matgroup):
-			mats[matgroup]=SpatialMaterial.new()
+			mats[matgroup]=StandardMaterial3D.new()
 		st.set_material(mats[matgroup])
 		for face in faces[matgroup]:
 			if (face["v"].size() == 3):
 				# Vertices
-				var fan_v = PoolVector3Array()
+				var fan_v = PackedVector3Array()
 				fan_v.append(vertices[face["v"][0]])
 				fan_v.append(vertices[face["v"][2]])
 				fan_v.append(vertices[face["v"][1]])
 
 				# Normals
-				var fan_vn = PoolVector3Array()
+				var fan_vn = PackedVector3Array()
 				if face["vn"].size()>0:
 					fan_vn.append(normals[face["vn"][0]])
 					fan_vn.append(normals[face["vn"][2]])
 					fan_vn.append(normals[face["vn"][1]])
 
 				# Textures
-				var fan_vt = PoolVector2Array()
+				var fan_vt = PackedVector2Array()
 				if face["vt"].size()>0:
 					for k in [0,2,1]:
 						var f = face["vt"][k]
@@ -278,7 +275,7 @@ static func _create_obj(obj:String,mats:Dictionary)->Mesh:
 							var uv = uvs[f]
 							fan_vt.append(uv)
 
-				st.add_triangle_fan(fan_v, fan_vt, PoolColorArray(), PoolVector2Array(), fan_vn, [])
+				st.add_triangle_fan(fan_v, fan_vt, PackedColorArray(), PackedVector2Array(), fan_vn, [])
 		mesh = st.commit(mesh)
 	for k in mesh.get_surface_count():
 		var mat=mesh.surface_get_material(k)

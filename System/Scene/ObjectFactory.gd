@@ -2,7 +2,7 @@ extends Node
 
 var _main
 
-var main setget , get_main
+var main : get = get_main
 
 func get_main():
 	return get_tree().get_nodes_in_group("Main")[0]

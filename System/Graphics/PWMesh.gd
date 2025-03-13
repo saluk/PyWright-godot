@@ -1,9 +1,9 @@
 
-extends MeshInstance
+extends MeshInstance3D
 class_name PWMesh
 
 signal rotation_done
-export var mesh_path:String
+@export var mesh_path:String
 var node3d
 var click_mesh
 var regions = [

@@ -1,10 +1,10 @@
 extends Control
 var scale_factor = 2.0
 
-export var prop := "moving"
+@export var prop := "moving"
 
 func transform_rect():
-	var pixel_size = get_transform().xform(get_rect()).size * scale_factor
+	var pixel_size = get_transform() * (get_rect()).size * scale_factor
 	var gr = get_global_rect()
 	return Rect2(gr.position, pixel_size)
 

@@ -26,10 +26,10 @@ func _init(node):
 	node.add_child(self)
 
 func add_disable_signal(target, sig):
-	target.connect(sig, self, "_disable")
+	target.connect(sig, Callable(self, "_disable"))
 
 func add_enable_signal(target, sig):
-	target.connect(sig, self, "_enable")
+	target.connect(sig, Callable(self, "_enable"))
 
 func _disable():
 	get_parent().set_process(false)

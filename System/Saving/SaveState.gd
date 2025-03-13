@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 class_name SaveState
 
 ####### Save format #####
@@ -32,12 +32,13 @@ static func save_game(tree:SceneTree, filename:String):
 			objects.append(saved)
 		for child in node.get_children():
 			nodes.append(child)
-	var file = File.new()
 	print("saving:", objects)
-	if file.open(filename, File.WRITE) != OK:
+	var file = FileAccess.open(filename, FileAccess.WRITE)
+	if not file:
 		print("Couldn't open file for saving")
+		return
 	file.store_string(
-		to_json(objects)
+		JSON.new().stringify(objects)
 	)
 	file.close()
 
@@ -118,12 +119,13 @@ static func load_game(main, tree:SceneTree, filename:String):
 	DirectoryCache.clear()
 	main.reset()
 
-	var file = File.new()
-	var err = file.open(filename, File.READ)
-	if err != OK:
+	var file = FileAccess.open(filename, FileAccess.READ)
+	if not file:
 		return false
 	var json = file.get_as_text()
-	var data = parse_json(json)
+	var test_json_conv = JSON.new()
+	test_json_conv.parse(json)
+	var data = test_json_conv.get_data()
 	file.close()
 
 	ScreenManager.clear()
@@ -140,7 +142,7 @@ static func load_game(main, tree:SceneTree, filename:String):
 		else:
 			continue
 		_load_node(tree, ob, ob_data)
-		tree.connect("idle_frame", ob, "after_load", [tree, ob_data], tree.CONNECT_ONESHOT)
+		tree.connect("idle_frame", Callable(ob, "after_load").bind(tree, ob_data), tree.CONNECT_ONE_SHOT)
 	#for ob_data_arr in after_load:
 	#	ob_data_arr[0].after_load(tree, ob_data_arr[1])
 
@@ -162,8 +164,7 @@ static func load_selected_save_file(main, root_path, filename):
 static func delete_selected_save_file(main, filename):
 	var save_path_name = GamePath.new().from_main(main).get_save_path_name()
 	var full_save_path = "user://game_saves/"+"/".join([save_path_name, filename])
-	var d = Directory.new()
-	d.remove(full_save_path)
+	DirAccess.remove_absolute(full_save_path)
 
 static func save_new_file(main, new_filename):
 	var save_path_name = GamePath.new().from_main(main).get_save_path_name()
@@ -185,9 +186,9 @@ static func get_saved_games_for_current(gp):
 	Filesystem.make_if_not_exists_dir(path)
 
 	var save_files = []
-	d = Directory.new()
-	if d.open(path) == OK:
-		d.list_dir_begin()
+	d = DirAccess.open(path)
+	if d:
+		d.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 		var file_name = d.get_next()
 		while file_name != "":
 			if file_name.begins_with(".") or d.current_is_dir():
@@ -197,6 +198,5 @@ static func get_saved_games_for_current(gp):
 			file_name = d.get_next()
 	else:
 		print("An error occurred when trying to access the path %s." % path)
-	save_files.sort_custom(Filesystem, "sort_files_by_time")
+	save_files.sort_custom(Callable(Filesystem, "sort_files_by_time"))
 	return save_files
-

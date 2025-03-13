@@ -1,4 +1,4 @@
-extends ViewportContainer
+extends SubViewportContainer
 
 var main_viewport
 
@@ -9,7 +9,7 @@ var moving = false
 var scaling = false
 
 func transform_rect():
-	var pixel_size = get_transform().xform(get_rect()).size * scale_factor
+	var pixel_size = get_transform() * (get_rect()).size * scale_factor
 	var gr = get_global_rect()
 	return Rect2(gr.position, pixel_size)
 
@@ -34,7 +34,7 @@ func new_event(ev):
 		ev2.button_mask = ev.button_mask
 		ev2.factor = ev.factor
 		ev2.canceled = ev.canceled
-		ev2.pressed = ev.pressed
+		ev2.button_pressed = ev.pressed
 		ev2.doubleclick = ev.doubleclick
 	elif ev is InputEventMouseMotion:
 		ev2 = InputEventMouseMotion.new()
@@ -65,13 +65,13 @@ func _process(dt):
 func _input(ev):
 	cancel_move(ev)
 	if moving and ev is InputEventMouseMotion:
-		rect_position += ev.relative
-		get_tree().set_input_as_handled()
+		position += ev.relative
+		get_viewport().set_input_as_handled()
 		return
 	if scaling and ev is InputEventMouseMotion:
-		rect_scale += ev.relative * 0.01
-		rect_scale = Vector2(clamp(rect_scale.x, 0.1, 10), clamp(rect_scale.y, 0.1, 10))
-		get_tree().set_input_as_handled()
+		scale += ev.relative * 0.01
+		scale = Vector2(clamp(scale.x, 0.1, 10), clamp(scale.y, 0.1, 10))
+		get_viewport().set_input_as_handled()
 		return
 	if ev is InputEventMouseButton or ev is InputEventMouseMotion:
 		if event_is_mouseup(ev) or transform_rect().has_point(ev.position):

@@ -13,17 +13,16 @@ var case_chosen = 0
 var z = 2
 var game_data = {}
 
-onready var newgame = $Control/ScrollContainer2/VBoxContainer/NewGameButton/NewGame
-onready var resume = $Control/ScrollContainer2/VBoxContainer/ResumeButton/Resume
+@onready var newgame = $Control/ScrollContainer2/VBoxContainer/NewGameButton/NewGame
+@onready var resume = $Control/ScrollContainer2/VBoxContainer/ResumeButton/Resume
 
 func get_data():
 	var path = wrightscript.root_path + "data.txt"
 	var data = {
 		"title": wrightscript.root_path.rsplit("/", 1)[-1]
 	}
-	var f = File.new()
-	var err = f.open(path, File.READ)
-	if err == OK:
+	var f = FileAccess.open(path, FileAccess.READ)
+	if f:
 		while not f.eof_reached():
 			var line = f.get_line()
 			if not line.strip_edges():
@@ -62,22 +61,21 @@ func load_last_case():
 	var last_case = get_last_case_file()
 	if not last_case:
 		return
-	var f:File = File.new()
-	if f.file_exists(last_case):
-		f.open(last_case, File.READ)
+	var f:FileAccess
+	if FileAccess.file_exists(last_case):
+		f = FileAccess.open(last_case, FileAccess.READ)
 		var case_name = f.get_line()
 		f.close()
 		if case_name in cases:
 			while cases[case_chosen] != case_name:
 				_scroll(1)
-				yield(self, "SCROLL_FINISHED")
+				await self.SCROLL_FINISHED
 
 func save_last_case():
 	var last_case = get_last_case_file()
 	if not last_case:
 		return null
-	var f:File = File.new()
-	f.open(last_case, File.WRITE)
+	var f:FileAccess = FileAccess.open(last_case, FileAccess.WRITE)
 	f.store_line(cases[case_chosen])
 	f.close()
 
@@ -101,24 +99,24 @@ func build_scene():
 	SignalUtils.remove_all($Control/ArrowRight)
 	SignalUtils.remove_all($Control/ScrollContainer2/VBoxContainer/ResumeButton)
 	Fonts.set_element_font(get_node("%CaseTitle"), "gametitle", wrightscript.main)
-	get_node("%CaseTitle").bbcode_text = "[center][b]%s[/b][/center]"%current_case().replace("_"," ")
+	get_node("%CaseTitle").text = "[center][b]%s[/b][/center]"%current_case().replace("_"," ")
 	$Control/ArrowLeft.visible = false
 	$Control/ArrowRight.visible = false
-	$Control/ScrollContainer2/VBoxContainer/NewGameButton.connect("pressed", self, "launch_game")
+	$Control/ScrollContainer2/VBoxContainer/NewGameButton.connect("pressed", Callable(self, "launch_game"))
 	$Control/ScrollContainer2/VBoxContainer/ResumeButton.visible = false
 	Fonts.set_element_font(newgame, "new_resume", wrightscript.main)
 	Fonts.set_element_font(resume, "new_resume", wrightscript.main)
-	newgame.bbcode_text = "[center][b]%s[/b][/center]"%"New Game"
-	resume.bbcode_text = "[center][b]%s[/b][/center]"%"Resume"
+	newgame.text = "[center][b]%s[/b][/center]"%"New Game"
+	resume.text = "[center][b]%s[/b][/center]"%"Resume"
 	connect_resume()
 
 func connect_arrows():
 	if case_chosen < cases.size()-1:
 		$Control/ArrowRight.visible = true
-		$Control/ArrowRight.connect("pressed", self, "next_case")
+		$Control/ArrowRight.connect("pressed", Callable(self, "next_case"))
 	if case_chosen > 0:
 		$Control/ArrowLeft.visible = true
-		$Control/ArrowLeft.connect("pressed", self, "prev_case")
+		$Control/ArrowLeft.connect("pressed", Callable(self, "prev_case"))
 
 func connect_resume():
 	var main = get_tree().get_nodes_in_group("Main")[0]
@@ -131,7 +129,7 @@ func connect_resume():
 	if saves:
 		optionsTab.root_save_game = wrightscript.root_path+"/"+current_case()
 		$Control/ScrollContainer2/VBoxContainer/ResumeButton.visible = true
-		$Control/ScrollContainer2/VBoxContainer/ResumeButton.connect("pressed", self, "launch_game", [null, saves[-1][1]])
+		$Control/ScrollContainer2/VBoxContainer/ResumeButton.connect("pressed", Callable(self, "launch_game").bind(null, saves[-1][1]))
 
 func _scroll(direction):
 	SignalUtils.remove_all($Control/ArrowLeft)
@@ -139,21 +137,21 @@ func _scroll(direction):
 	case_chosen += direction
 	var tween = Tween.new()
 	add_child(tween)
-	var start_pos = $Control/ScrollContainer2.rect_position
-	tween.interpolate_property($Control/ScrollContainer2, "rect_position",
+	var start_pos = $Control/ScrollContainer2.position
+	tween.interpolate_property($Control/ScrollContainer2, "position",
 			start_pos,
 			start_pos - Vector2(256,0) * direction, 0.2,
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()
-	yield(tween,"tween_completed")
+	await tween.tween_completed
 	Commands.call_command("sound_case_menu_select", wrightscript, [])
 	build_scene()
-	tween.interpolate_property($Control/ScrollContainer2, "rect_position",
+	tween.interpolate_property($Control/ScrollContainer2, "position",
 			start_pos + Vector2(256, 0) * direction,
 			start_pos, 0.2,
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()
-	yield(tween,"tween_completed")
+	await tween.tween_completed
 	tween.queue_free()
 	connect_arrows()
 	emit_signal("SCROLL_FINISHED")

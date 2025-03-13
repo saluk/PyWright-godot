@@ -8,7 +8,7 @@ var text_color = "FFFFFF"
 var has_objects = false
 
 func _init():
-	._init()
+	super._init()
 	save_properties.append("text_contents")
 	save_properties.append("text_width")
 	save_properties.append("text_height")
@@ -28,15 +28,15 @@ func _process(dt):
 func load_text():
 	var desc:Label = Label.new()
 	Fonts.set_element_font(desc, "block", main)
-	desc.rect_position = Vector2(1,1)
-	desc.rect_size = Vector2(
+	desc.position = Vector2(1,1)
+	desc.size = Vector2(
 		text_width,
 		text_height
 	)
-	desc.set("custom_constants/line_spacing",
+	desc.set("theme_override_constants/line_spacing",
 		StandardVar.FONT_BLOCK_LINEHEIGHT.retrieve()
 	)
-	desc.set("custom_colors/font_color", Colors.string_to_color(text_color))
+	desc.set("theme_override_colors/font_color", Colors.string_to_color(text_color))
 	desc.text = text_contents.replace("{n}","\n")
 	desc.clip_text = true
 	desc.autowrap = true
@@ -45,4 +45,4 @@ func load_text():
 #SAVE/LOAD
 func load_node(tree:SceneTree, saved_data:Dictionary):
 	reset()
-	.load_node(tree, saved_data)
+	super.load_node(tree, saved_data)

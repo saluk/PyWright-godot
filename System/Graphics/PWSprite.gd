@@ -10,7 +10,7 @@ var info:Dictionary = {
 	'offsetx': '0',
 	'offsety': '0'
 }
-var animated_sprite:AnimatedSprite
+var animated_sprite:AnimatedSprite2D
 var sprite_path:String
 var script_name:String
 var z:int
@@ -101,9 +101,8 @@ func load_animation(search_path:String, root_path:String, sub_rect=null):
 
 func _load_info(path:String):
 	print("load info:", path)
-	var f = File.new()
-	var err = f.open(path, File.READ)
-	if err == OK:
+	var f = FileAccess.open(path, FileAccess.READ)
+	if f:
 		while not f.eof_reached():
 			var line = f.get_line()
 			if not line.strip_edges():
@@ -154,12 +153,12 @@ func _load_animation(path:String, sub_rect=null):
 		width = frames[0].region.size.x
 		height = frames[0].region.size.y
 		if width == 0 or height == 0:
-			GlobalErrors.log_error("Sprite frames has no size: %s" % path)
+			GlobalErrors.log_error("Sprite2D frames has no size: %s" % path)
 			return
 		loaded = true
 
 	# Build animated sprite
-	animated_sprite = AnimatedSprite.new()
+	animated_sprite = AnimatedSprite2D.new()
 	animated_sprite.name = path.replace(":", "|").replace("/",";")
 	animated_sprite.use_parent_material = true
 	animated_sprite.frames = SpriteFrames.new()
@@ -192,9 +191,9 @@ func _load_animation(path:String, sub_rect=null):
 	rescale(width, height)
 
 	material = ShaderMaterial.new()
-	material.shader = load("res://System/Graphics/image_filters.shader")
+	material.gdshader = load("res://System/Graphics/image_filters.gdshader")
 
-	animated_sprite.connect("animation_finished", self, "finish_playing")
+	animated_sprite.connect("animation_finished", Callable(self, "finish_playing"))
 	if "wbench" in sprite_path:
 		pass
 	Pauseable.new(self)
@@ -209,7 +208,7 @@ func set_process(enabled):
 			animated_sprite.playing = false
 		else:
 			animated_sprite.playing = lastplaying
-	.set_process(enabled)
+	super.set_process(enabled)
 
 func finish_playing():
 	if animation_finish_fired:
@@ -217,9 +216,9 @@ func finish_playing():
 	animation_finish_fired = true
 	if random_loop:
 		animated_sprite.frame = 0
-		var sec = rand_range(random_min / 60.0, random_max / 60.0)
+		var sec = randf_range(random_min / 60.0, random_max / 60.0)
 		var t = get_tree().create_timer(sec)
-		yield(t, "timeout")
+		await t.timeout
 		frame = 0
 		animated_sprite.frame = 0
 		animation_finish_fired = false
@@ -236,13 +235,13 @@ func finish_playing():
 func from_frame(frame):
 	width = frame.region.size.x
 	height = frame.region.size.y
-	animated_sprite = AnimatedSprite.new()
+	animated_sprite = AnimatedSprite2D.new()
 	animated_sprite.use_parent_material = true
 	add_child(animated_sprite)
 	animated_sprite.frames = SpriteFrames.new()
 	animated_sprite.frames.add_frame("default", frame)
 	material = ShaderMaterial.new()
-	material.shader = load("res://System/Graphics/image_filters.shader")
+	material.gdshader = load("res://System/Graphics/image_filters.gdshader")
 
 func rescale(size_x, size_y):
 	var sc_w = float(size_x)/float(max(1, width))
@@ -266,12 +265,12 @@ func rescale(size_x, size_y):
 
 func set_grey(value):
 	if material:
-		material.set_shader_param("greyscale_amt", float(value))
+		material.set_shader_parameter("greyscale_amt", float(value))
 
 func set_colorize(color, amount):
 	if material:
-		material.set_shader_param("to_color", color)
-		material.set_shader_param("to_color_amount", amount)
+		material.set_shader_parameter("to_color", color)
+		material.set_shader_parameter("to_color_amount", amount)
 
 func apply_blink_settings(template):
 	# TODO template could overwrite the settings
@@ -295,7 +294,7 @@ func apply_blink_settings(template):
 		if blinkspeed is String and blinkspeed != "default":
 			blinkspeed = blinkspeed.split(" ", 1)
 		random_loop = true
-		if blinkspeed is PoolStringArray or blinkspeed is Array:
+		if blinkspeed is PackedStringArray or blinkspeed is Array:
 			random_min = float(blinkspeed[0])
 			random_max = float(blinkspeed[1])
 		animated_sprite.frames.set_animation_loop("default", false)

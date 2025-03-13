@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 
 var main
 
@@ -136,7 +136,7 @@ func ws_li(script, arguments):
 	var result = Commands.keywords(arguments).get("result", null)
 	if result:
 		arguments.erase("result="+result)
-	var text = Commands.join(arguments)
+	var text = arguments.join(Commands)
 	if not result:
 		result = text
 	list_menu.add_item(text, result)
@@ -167,12 +167,12 @@ func ws_forgetlist(script, arguments):
 
 func ws_forgetlistitem(script, arguments):
 	var tag = arguments.pop_front()
-	var item = PoolStringArray(arguments).join(" ")
+	var item = " ".join(PackedStringArray(arguments))
 	var items = Array(main.stack.variables.get_string("_pwlist_checked_items_"+tag, "").split(";;"))
 	if items:
 		if item in items:
 			items.erase(item)
-		main.stack.variables.set_val("_pwlist_checked_items_"+tag, PoolStringArray(items).join(";;"))
+		main.stack.variables.set_val("_pwlist_checked_items_"+tag, ";;".join(PackedStringArray(items)))
 
 func ws_casemenu(script, arguments):
 	var cases = []
@@ -183,10 +183,10 @@ func ws_casemenu(script, arguments):
 		case_num += 1
 		case = main.stack.variables.get_string("_case_"+str(case_num), null)
 	if not cases:
-		var case_listing = Directory.new()
-		if case_listing.open(script.root_path) != OK:
+		var case_listing = DirAccess.open(script.root_path)
+		if not case_listing:
 			return null
-		case_listing.list_dir_begin()
+		case_listing.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 		var next_file_name = case_listing.get_next()
 		while next_file_name != "":
 			if next_file_name.begins_with("."):
@@ -199,7 +199,7 @@ func ws_casemenu(script, arguments):
 				cases.append(next_file_name)
 			next_file_name = case_listing.get_next()
 		cases.sort()
-	var casemenu = load("res://System/UI/CaseMenu.tscn").instance()
+	var casemenu = load("res://System/UI/CaseMenu.tscn").instantiate()
 	casemenu.cases = cases
 	casemenu.wrightscript = script
 	script.screen.clear()

@@ -7,7 +7,7 @@ var textboxScene = preload("res://System/UI/Textbox.tscn")
 
 var last_object
 
-export var PAUSE_MULTIPLIER = 1.0
+@export var PAUSE_MULTIPLIER = 1.0
 
 enum {
 	YIELD,              # Pause wrightscript for user input or animation
@@ -76,10 +76,10 @@ func keywords(arguments, remove=false):
 	return d
 
 func join(l, sep=" "):
-	return PoolStringArray(l).join(sep)
+	return sep.join(PackedStringArray(l))
 
 func create_textbox(script, line) -> Node:
-	var l = textboxScene.instance()
+	var l = textboxScene.instantiate()
 	l.main = main
 	l.in_statement = main.stack.variables.get_truth("_in_statement", false)
 	if l.in_statement:
@@ -134,13 +134,13 @@ func get_nametag():
 func generate_command_map(version=""):
 	# TODO implement versioning
 	var path = "res://System/WrightScript/Commands/"
-	var folder = Directory.new()
-	if folder.open(path) != OK:
+	var folder = DirAccess.open(path)
+	if not folder:
 		print("ERROR: NO COMMANDS FOUND")
 		assert(false)
 	var command_files = []
 	var file_name = "yes"
-	folder.list_dir_begin()
+	folder.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 	while file_name:
 		file_name = folder.get_next()
 		# Exported source files end in gdc
@@ -202,7 +202,7 @@ func is_macro(command):
 	return ""
 
 func get_processed_macro_lines(macro_name, arguments, line_num):
-	var input_str = PoolStringArray(main.stack.macros[macro_name]).join("\n")
+	var input_str = "\n".join(PackedStringArray(main.stack.macros[macro_name]))
 	input_str = input_str.replace("$0", str(line_num))
 	var i = 1
 	for arg in arguments:
@@ -224,7 +224,7 @@ func call_macro(macro_name, script, arguments):
 	if not command:
 		return
 	var script_lines = get_processed_macro_lines(macro_name, arguments, script.line_num)
-	var new_script = main.stack.add_script(PoolStringArray(script_lines).join("\n"), script.root_path)
+	var new_script = main.stack.add_script("\n".join(PackedStringArray(script_lines)), script.root_path)
 	new_script.filename = "{"+command+"}"
 	# TODO not sure if this is how to handle macros that try to goto
 	new_script.allow_goto_parent_script = true

@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 class_name Filesystem
 
 # Returns text that is safe to be in a filename
@@ -9,10 +9,8 @@ static func sanitize_text_for_path(text, remove_slashes=true):
 	return text
 
 static func make_if_not_exists_dir(path):
-	var d = Directory.new()
-	# Ensure save folder exists
-	if not d.dir_exists(path):
-		d.make_dir(path)
+	if not DirAccess.open(path):
+		DirAccess.make_dir_recursive_absolute(path)
 
 static func path_join(a, b):
 	if a.ends_with("/"):
@@ -85,7 +83,7 @@ static func _lookup_file(sub_path:String, current_path:String, exts=[], print_er
 
 static func load_resource(path:String):
 	if ResourceLoader.exists(path):
-		var resource = ResourceLoader.load(path, "", true)
+		var resource = ResourceLoader.load(path, "")
 		if resource:
 			return resource.get_data()
 	return null
@@ -94,9 +92,8 @@ static func load_image_from_path(path:String) -> Image:
 	var image:Image
 	image = load_resource(path)
 	if not image:
-		var f = File.new()
-		var err = f.open(path, File.READ)
-		if err != OK:
+		var f = FileAccess.open(path, FileAccess.READ)
+		if not f:
 			print("Error loading file: ", path)
 			return null
 		f.close()
@@ -112,7 +109,7 @@ static func load_image_from_path(path:String) -> Image:
 static func de_pink_image(img:Image):
 	if img.detect_alpha() == Image.ALPHA_NONE and img.get_size().length():
 		img.convert(Image.FORMAT_RGBA8)
-		img.lock()
+		false # img.lock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
 		for x in range(img.get_width()):
 			for y in range(img.get_height()):
 				var pixel = img.get_pixel(x, y)
@@ -122,19 +119,19 @@ static func de_pink_image(img:Image):
 					pixel.g = 0.0
 					pixel.b = 0.0
 					img.set_pixel(x, y, pixel)
-		img.unlock()
+		false # img.unlock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
 	return img
 
 static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -> Array:
 	print(path)
 	# Load image
-	var texture:Texture
+	var texture:Texture2D
 	var image = load_image_from_path(path)
-	if image is StreamTexture:
+	if image is CompressedTexture2D:
 		texture = image
 	elif image.get_size().length() > 0:
 		texture = ImageTexture.new()
-		texture.create_from_image(image, ImageTexture.FLAG_FILTER)
+		texture.create_from_image(image) #,ImageTexture.FLAG_FILTER
 
 	if not texture or not image.get_size().length() > 0:
 		return []
@@ -165,13 +162,13 @@ static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -
 static func load_atlas_specific(path:String, rect_list:Array) -> Array:
 	print(path)
 	# Load image
-	var texture:Texture
+	var texture:Texture2D
 	var image = load_image_from_path(path)
-	if image is StreamTexture:
+	if image is CompressedTexture2D:
 		texture = image
 	else:
 		texture = ImageTexture.new()
-		texture.create_from_image(image, 0)
+		texture.create_from_image(image) #,0
 
 	if not texture or not image:
 		return []
@@ -197,6 +194,5 @@ static func load_atlas_specific(path:String, rect_list:Array) -> Array:
 static func sort_files_by_time(file_a, file_b):
 	file_a = file_a[0]+"/"+file_a[1]
 	file_b = file_b[0]+"/"+file_b[1]
-	var file = File.new()
-	if file.get_modified_time(file_a) < file.get_modified_time(file_b):
+	if FileAccess.get_modified_time(file_a) < FileAccess.get_modified_time(file_b):
 		return true

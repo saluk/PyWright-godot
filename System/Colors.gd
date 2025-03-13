@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 class_name Colors
 
 static func string_to_color(text):

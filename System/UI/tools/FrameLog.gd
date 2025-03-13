@@ -4,7 +4,7 @@ var MAX_LENGTH = 10102
 var enabled = false
 
 func _ready():
-	$EnableButton.connect("button_down", self, "enable_disable")
+	$EnableButton.connect("button_down", Callable(self, "enable_disable"))
 
 func enable_disable():
 	enabled = not enabled

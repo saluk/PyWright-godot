@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 
 var main
 
@@ -7,7 +7,7 @@ func _init(commands):
 
 func ws_textbox(script, arguments):
 	script.screen.delete_objects(null, null, Commands.TEXTBOX_GROUP)
-	var text = Commands.join(arguments)
+	var text = arguments.join(Commands)
 	var quote_char = text.substr(0,1)
 	text = text.substr(1,text.length())
 	# Allow lines that don't terminate the quote
@@ -19,7 +19,7 @@ func ws_text(script, arguments):
 	return ws_textbox(script, arguments)
 
 func ws_nt(script, arguments):
-	var nametag = Commands.join(arguments)
+	var nametag = arguments.join(Commands)
 	main.stack.variables.set_val("_speaking", "")    		  # Set no character as speaking
 	main.stack.variables.set_val("_speaking_name", nametag)   # Next character will have this name
 

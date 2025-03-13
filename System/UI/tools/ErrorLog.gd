@@ -1,7 +1,7 @@
 extends Control
 
-export var textlog_path: NodePath
-onready var textlog:TextEdit = get_node(textlog_path)
+@export var textlog_path: NodePath
+@onready var textlog:TextEdit = get_node(textlog_path)
 
 # Context: {
 #   script_path, script_line: the path and line number of a script
@@ -35,8 +35,8 @@ func log_info(msg, context={}):
 	print(" error logged: " + msg)
 
 func scroll():
-	textlog.cursor_set_line(textlog.get_line_count())
-	textlog.cursor_set_column(0)
-	textlog.center_viewport_to_cursor()
+	textlog.set_caret_line(textlog.get_line_count())
+	textlog.set_caret_column(0)
+	textlog.center_viewport_to_caret()
 
 

@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 
 var main
 
@@ -235,7 +235,7 @@ func ws_penalty(script, arguments):
 		return penalty
 
 func ws_surf3d(script, arguments):
-	var surf3d = load("res://System/Graphics/Node3D.tscn").instance()
+	var surf3d = load("res://System/Graphics/Node3D.tscn").instantiate()
 	surf3d.main = main
 	surf3d.wrightscript = script
 	surf3d.add_to_group(Commands.SPRITE_GROUP)

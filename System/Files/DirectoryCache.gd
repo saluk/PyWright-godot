@@ -28,13 +28,14 @@ func init_game(game_path):
 
 # When loading a game, we can cache load its file index from a file, or create the file index
 func load_game_file_index(game_path):
-	var game_file_index = File.new()
 	var file_path = Filesystem.path_join(game_path, "files.index")
-	if not game_file_index.file_exists(file_path):
+	var game_file_index = FileAccess.open(file_path, FileAccess.READ)
+	if not game_file_index:
 		print("CANNOT LOAD INDEX: ", file_path)
 		return false
-	game_file_index.open(file_path, File.READ)
-	indexes[game_path] = parse_json(game_file_index.get_line())
+	var test_json_conv = JSON.new()
+	test_json_conv.parse(game_file_index.get_line())
+	indexes[game_path] = test_json_conv.get_data()
 	game_file_index.close()
 	return true
 	
@@ -44,11 +45,11 @@ func create_game_cache(game_path, paths=[]):
 		paths = [game_path]
 	while paths:
 		var path = paths.pop_front()
-		var dir = Directory.new()
-		if dir.open(path) != OK:
+		var dir = DirAccess.open(path)
+		if not dir:
 			print("ERROR OPENING ",path)
 			continue
-		dir.list_dir_begin()
+		dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 		while true:
 			var file_name = dir.get_next()
 			if file_name == "":
@@ -71,10 +72,10 @@ func create_game_cache(game_path, paths=[]):
 	indexes[game_path] = index
 	
 func save_game_file_index(game_path):
-	var game_file_index = File.new()
-	if game_file_index.open(Filesystem.path_join(game_path,"files.index"), File.WRITE) != OK:
+	var game_file_index = FileAccess.open(Filesystem.path_join(game_path,"files.index"), FileAccess.WRITE)
+	if game_file_index != OK:
 		return "no index can be saved"
-	game_file_index.store_line(to_json(indexes[game_path]))
+	game_file_index.store_line(JSON.stringify(indexes[game_path]))
 	game_file_index.close()
 
 func has_file(file:String):

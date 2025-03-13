@@ -53,12 +53,12 @@ func loadfile(filepath):
 	if err != OK:
 		report_errors(err, filepath)
 		file.close()
-		return AudioStreamSample.new()
+		return AudioStreamWAV.new()
 
-	var bytes = file.get_buffer(file.get_len())
+	var bytes = file.get_buffer(file.get_length())
 	# if File is wav
 	if filepath.ends_with(".wav"):
-		var newstream = AudioStreamSample.new()
+		var newstream = AudioStreamWAV.new()
 
 		#---------------------------
 		#parrrrseeeeee!!! :D
@@ -137,7 +137,7 @@ func loadfile(filepath):
 				elif bits_per_sample == 8:
 					#newstream.data = convert_to_16bit(data, bits_per_sample)
 					newstream.data = data
-					newstream.format = AudioStreamSample.FORMAT_8_BITS
+					newstream.format = AudioStreamWAV.FORMAT_8_BITS
 					#newstream.mix_rate = newstream.mix_rate * 2
 				else:
 					newstream.data = data
@@ -152,7 +152,7 @@ func loadfile(filepath):
 
 	#if file is ogg
 	elif filepath.ends_with(".ogg") or filepath.ends_with(".oggi"):
-		var newstream = AudioStreamOGGVorbis.new()
+		var newstream = AudioStreamOggVorbis.new()
 		#newstream.loop = true #set to false or delete this line if you don't want to loop
 		newstream.data = bytes
 		return newstream
@@ -178,9 +178,9 @@ func loadfile(filepath):
 # And the 32bit case abour 50% slower
 # I don't wanna risk it always being slower on other files
 # And really, the solution would be to handle it in a low-level language
-func convert_to_16bit(data: PoolByteArray, from: int) -> PoolByteArray:
+func convert_to_16bit(data: PackedByteArray, from: int) -> PackedByteArray:
 	print("converting to 16-bit from %d" % from)
-	var time = OS.get_ticks_msec()
+	var time = Time.get_ticks_msec()
 	# 24 bit .wav's are typically stored as integers
 	# so we just grab the 2 most significant bytes and ignore the other
 	if from == 24:
@@ -210,7 +210,7 @@ func convert_to_16bit(data: PoolByteArray, from: int) -> PoolByteArray:
 			new_data.append(0)
 			new_data.append(data[i])
 		data = new_data
-	print("Took %f seconds for slow conversion" % ((OS.get_ticks_msec() - time) / 1000.0))
+	print("Took %f seconds for slow conversion" % ((Time.get_ticks_msec() - time) / 1000.0))
 	return data
 
 

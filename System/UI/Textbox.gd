@@ -20,9 +20,9 @@ var in_statement:bool    # statement tag we are in
 var next_packs := []
 var NEW_TEXTBOX_WIDTH = 10
 
-export(NodePath) var tb_timer
-export(NodePath) var text_label_path
-onready var text_label:RichTextLabel = get_node(text_label_path)
+@export var tb_timer: NodePath
+@export var text_label_path: NodePath
+@onready var text_label:RichTextLabel = get_node(text_label_path)
 var z:int
 
 # states while printing
@@ -74,7 +74,7 @@ class TextPack:
 		self.text = text
 		self.textbox = textbox
 		if connect_signals:
-			self.connect("text_printed", self.textbox, "_on_text_printed")
+			self.connect("text_printed", Callable(self.textbox, "_on_text_printed"))
 
 	func _run(force = false):
 		has_run = true
@@ -86,7 +86,7 @@ class TextPack:
 		print("BUILDING TEXT FOR PACK", text)
 		var rich_text_label = textbox.text_label
 		if leftover == null:
-			rich_text_label.bbcode_text += self.text
+			rich_text_label.text += self.text
 			#textbox.printed += self.text
 			leftover =  self.textbox.strip_bbcode(self.text).length()
 
@@ -142,7 +142,7 @@ class TextPack:
 			run_return = self._run(force)
 		if run_return:
 			if run_return is GDScriptFunctionState:
-				run_return = yield(run_return, "completed")
+				run_return = await run_return.completed
 			self.text = run_return + self.text
 		_print_text(dt, force)
 		if not leftover or leftover <= 0: self.delete = true
@@ -166,7 +166,8 @@ class CommandPack extends TextPack:
 	var args = []
 	var matched_text = false
 
-	func _init(line, textbox, connect_signals=false).(line, textbox, connect_signals):
+	func _init(line, textbox, connect_signals=false):
+		super(line, textbox, connect_signals)
 		self.command_args = line
 		self.textbox = textbox
 		self.parse_command()
@@ -354,7 +355,7 @@ func queue_next_textbox():
 		if not " " in next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1):
 			break_on_spaces = false
 		var while_loops = 0
-		while (get_number_of_lines_for(PoolStringArray(printed_lines).join("\n")) > 3 or last_char != " ") and while_loops < MAX_WHILE:
+		while "\n".join((get_number_of_lines_for(PackedStringArray(printed_lines))) > 3 or last_char != " ") and while_loops < MAX_WHILE:
 			while_loops += 1
 			last_char = " "
 			if printed_lines[-1].length() > 0:
@@ -419,7 +420,7 @@ func play_sound(path=null, rate=null):
 		SoundPlayer.play_sound(
 			Filesystem.path_join("sfx", path),
 			main.top_script().root_path,
-			rand_range(0.6, 1.0),
+			randf_range(0.6, 1.0),
 			rate
 		)
 
@@ -456,7 +457,7 @@ func will_there_be_text(text):
 	print("WILL THERE BE TEXT")
 	var next_token:String = "{"
 	var block:String
-	var parts:PoolStringArray
+	var parts:PackedStringArray
 	while text:
 		parts = text.split(next_token, true, 1)
 		print(parts)
@@ -465,7 +466,7 @@ func will_there_be_text(text):
 			text = parts[1]
 		else:
 			text = ""
-		if next_token == "{" and not block.empty():
+		if next_token == "{" and not block.is_empty():
 			return true
 		if next_token == "{":
 			next_token = "}"
@@ -492,15 +493,15 @@ func _ready():
 	#connect("tree_exited", Commands, "hide_arrows", [main.stack.scripts[-1]])
 
 	get_node("%NametagLabel").text = ""
-	get_node("%TextLabel").bbcode_text = ""
+	get_node("%TextLabel").text = ""
 	var tb_lines_var = StandardVar.TEXTBOX_LINES.retrieve()
 	if tb_lines_var == "auto":
 		tb_lines = text_to_print.count("{n}")
 	else:
 		tb_lines = int(tb_lines_var)
 	if tb_lines < 3:
-		get_node("%TextLabel").margin_top = 8
-		get_node("%TextLabel").set("custom_constants/line_separation", 8)
+		get_node("%TextLabel").offset_top = 8
+		get_node("%TextLabel").set("theme_override_constants/line_separation", 8)
 
 	Fonts.set_element_font(get_node("%TextLabel"), "tb", main)
 	Fonts.set_element_font($WidthChecker, "tb", main)
@@ -529,9 +530,9 @@ func _ready():
 	var alter_nt_text_x = StandardVar.NT_TEXT_X.retrieve()
 	var alter_nt_text_y = StandardVar.NT_TEXT_Y.retrieve()
 	if alter_nt_text_x != null:
-		get_node("%NametagLabel").rect_position.x += alter_nt_text_x
+		get_node("%NametagLabel").position.x += alter_nt_text_x
 	if alter_nt_text_y != null:
-		get_node("%NametagLabel").rect_position.y += alter_nt_text_y
+		get_node("%NametagLabel").position.y += alter_nt_text_y
 
 	update_nametag()
 
@@ -625,13 +626,13 @@ func update_nametag_size():
 
 func stop_timer():
 	set_process(true)
-	tb_timer.disconnect("timeout", self, "stop_timer")
+	tb_timer.disconnect("timeout", Callable(self, "stop_timer"))
 
 func pause(seconds, pack):
 	_set_speaking_animation("blink")
 	set_process(false)
 	tb_timer.wait_time = float(seconds)/60.0
-	tb_timer.connect("timeout", self, "stop_timer")
+	tb_timer.connect("timeout", Callable(self, "stop_timer"))
 	tb_timer.start()
 
 func _on_Area2D_input_event(viewport, event, shape_idx):
@@ -683,7 +684,7 @@ func click_continue(immediate_skip=false):
 			#text_label.queue_free()
 			#new_text_label.visible_characters = 0
 			#text_label = new_text_label
-			text_label.bbcode_text = ""
+			text_label.text = ""
 			text_label.visible_characters = 0
 			printed = ""
 			printed_lines = []
@@ -855,7 +856,7 @@ func _process(dt):
 	# If something is blocking the scripts, it will unblock itself in the same frame
 	# in which it is deleted, allowing the screen to be drawn with the item removed
 	if is_deleting:
-		.queue_free()
+		super.queue_free()
 		return
 	update_nametag()
 	update_textbox(dt)
@@ -875,7 +876,7 @@ func save_node(data):
 	data["loader_class"] = "res://System/UI/Textbox.gd"
 
 static func create_node(saved_data:Dictionary):
-	var ob = load("res://System/UI/Textbox.tscn").instance()
+	var ob = load("res://System/UI/Textbox.tscn").instantiate()
 	ob.text_to_print = saved_data["text_to_print"]
 	return ob
 

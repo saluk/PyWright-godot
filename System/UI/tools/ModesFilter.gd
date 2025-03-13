@@ -1,8 +1,8 @@
 extends Node2D
 
-onready var debugger = get_parent().get_node("%ScriptDebugger")
-onready var debugging = get_node("Debugging")
-onready var fastforward = get_node("FastForward")
+@onready var debugger = get_parent().get_node("%ScriptDebugger")
+@onready var debugging = get_node("Debugging")
+@onready var fastforward = get_node("FastForward")
 
 func _ready():
 	pass

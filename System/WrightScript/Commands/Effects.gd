@@ -1,4 +1,4 @@
-extends Reference
+extends RefCounted
 
 var main
 
@@ -113,8 +113,8 @@ class Shaker extends Node:
 		self.offset = offset
 		self.z = ZLayers.z_sort["shake"]
 	func _process(dt):
-		screen.position.x = rand_range(-offset, offset)
-		screen.position.y = rand_range(-offset, offset)
+		screen.position.x = randf_range(-offset, offset)
+		screen.position.y = randf_range(-offset, offset)
 		ttl -= dt
 		if ttl < 0:
 			screen.position = Vector2(0,0)
@@ -130,9 +130,9 @@ func ws_shake(script, arguments:Array):
 	if "both" in arguments:
 		both = true
 		arguments.erase("both")
-	if arguments.size() > 0 and arguments[0].is_valid_integer():
+	if arguments.size() > 0 and arguments[0].is_valid_int():
 		ttl = int(arguments[0])
-	if arguments.size() > 1 and arguments[1].is_valid_integer():
+	if arguments.size() > 1 and arguments[1].is_valid_int():
 		offset = int(arguments[1])
 	randomize()
 	var shaker = Shaker.new(script.screen, ttl/60.0, offset)
@@ -170,7 +170,7 @@ func ws_flash(script, arguments):
 		flash_sound = main.stack.variables.get_string("_flash_sound", null)
 	if flash_sound:
 		Commands.call_command("sfx", script, [flash_sound])
-	yield(main.get_tree().create_timer(delay), "timeout")
+	await main.get_tree().create_timer(delay).timeout
 	if flash and is_instance_valid(flash):
 		flash.queue_free()
 

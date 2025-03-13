@@ -23,16 +23,16 @@ shader_param/alpha = 1.0
 [node name="Node3D" type="Node2D"]
 script = ExtResource( 1 )
 
-[node name="view_container" type="ViewportContainer" parent="."]
+[node name="view_container" type="SubViewportContainer" parent="."]
 unique_name_in_owner = true
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = 256.0
-margin_bottom = 192.0
+offset_right = 256.0
+offset_bottom = 192.0
 mouse_default_cursor_shape = 13
 stretch = true
 
-[node name="view_viewport" type="Viewport" parent="view_container"]
+[node name="view_viewport" type="SubViewport" parent="view_container"]
 unique_name_in_owner = true
 size = Vector2( 256, 192 )
 own_world = true
@@ -43,29 +43,29 @@ fxaa = true
 render_target_update_mode = 3
 physics_object_picking = true
 
-[node name="SpatialRoot" type="Spatial" parent="view_container/view_viewport"]
+[node name="SpatialRoot" type="Node3D" parent="view_container/view_viewport"]
 unique_name_in_owner = true
 
-[node name="Camera" type="Camera" parent="view_container/view_viewport/SpatialRoot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100 )
+[node name="Camera3D" type="Camera3D" parent="view_container/view_viewport/SpatialRoot"]
+transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100 )
 keep_aspect = 0
 environment = SubResource( 18 )
 current = true
 fov = 60.0
 far = 1000.0
 
-[node name="Meshes" type="Spatial" parent="view_container/view_viewport/SpatialRoot"]
+[node name="Meshes" type="Node3D" parent="view_container/view_viewport/SpatialRoot"]
 unique_name_in_owner = true
 
-[node name="click_container" type="ViewportContainer" parent="."]
+[node name="click_container" type="SubViewportContainer" parent="."]
 unique_name_in_owner = true
 modulate = Color( 1, 1, 1, 0 )
 material = SubResource( 17 )
-margin_right = 256.0
-margin_bottom = 192.0
+offset_right = 256.0
+offset_bottom = 192.0
 stretch = true
 
-[node name="click_viewport" type="Viewport" parent="click_container"]
+[node name="click_viewport" type="SubViewport" parent="click_container"]
 unique_name_in_owner = true
 size = Vector2( 256, 192 )
 own_world = true
@@ -77,16 +77,16 @@ debug_draw = 1
 render_target_update_mode = 3
 physics_object_picking = true
 
-[node name="SpatialRoot2" type="Spatial" parent="click_container/click_viewport"]
+[node name="SpatialRoot2" type="Node3D" parent="click_container/click_viewport"]
 unique_name_in_owner = true
 
-[node name="Camera" type="Camera" parent="click_container/click_viewport/SpatialRoot2"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100 )
+[node name="Camera3D" type="Camera3D" parent="click_container/click_viewport/SpatialRoot2"]
+transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100 )
 keep_aspect = 0
 environment = SubResource( 19 )
 current = true
 fov = 60.0
 far = 1000.0
 
-[node name="ClickMeshes" type="Spatial" parent="click_container/click_viewport/SpatialRoot2"]
+[node name="ClickMeshes" type="Node3D" parent="click_container/click_viewport/SpatialRoot2"]
 unique_name_in_owner = true

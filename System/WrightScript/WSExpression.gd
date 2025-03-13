@@ -36,12 +36,12 @@ func EVAL(code:String):
 			return NUM(current_value) >= NUM(check_value)
 
 func GV(v:String):
-	if v[0].is_valid_integer():
+	if v[0].is_valid_int():
 		return NUM(v)
 	if v.begins_with("'") and v.ends_with("'"):
 		return v.substr(1, v.length()-2)
 	var val = Commands.main.stack.variables.get_string(v)
-	if val and val[0].is_valid_integer():
+	if val and val[0].is_valid_int():
 		return NUM(val)
 	return val
 
@@ -139,7 +139,7 @@ func EXPR(line:String, level=0):
 				paren.append(word)
 				if word.ends_with(")"):
 					print("END PAREN:",paren)
-					var statement = PoolStringArray(paren).join(" ")
+					var statement = " ".join(PackedStringArray(paren))
 					print(statement)
 					statement = statement.substr(1, statement.length()-2)
 					print(statement)
@@ -148,7 +148,7 @@ func EXPR(line:String, level=0):
 			elif quote.size()!=0:
 				quote.append(word)
 				if word.ends_with("'"):
-					var quote_j = PoolStringArray(quote).join(" ")
+					var quote_j = " ".join(PackedStringArray(quote))
 					statements.append(quote_j)
 					quote = []
 			elif word.begins_with("(") and word.ends_with(")"):
@@ -202,7 +202,7 @@ func EVAL_EXPR(expr):
 	# Not sure what this is doing, but it's a kind of error handling
 	if not ops:
 		return String(expr[0])
-	ops.sort_custom(OpsSorter, "sorter")
+	ops.sort_custom(Callable(OpsSorter, "sorter"))
 	var op = ops[0]
 	var left = expr[op[0]-1]
 	var right = expr[op[0]+1]
@@ -244,8 +244,8 @@ func SIMPLE_TO_EXPR(s:String):
 			expr.append('==')
 		elif word in ["<=", ">=", "==", "!=", ">", "<"]:
 			expr.append(word)
-		elif word.length()>0 and word[0].is_valid_integer():
+		elif word.length()>0 and word[0].is_valid_int():
 			expr.append(word)
 		else:
 			expr.append("'"+word+"'")
-	return PoolStringArray(expr).join(" ")
+	return " ".join(PackedStringArray(expr))

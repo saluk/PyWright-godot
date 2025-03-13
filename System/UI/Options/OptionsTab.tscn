@@ -7,8 +7,8 @@
 [node name="Options Tab" type="Control" groups=["OptionsTab"]]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = -262.0
-margin_bottom = -46.0
+offset_right = -262.0
+offset_bottom = -46.0
 focus_mode = 1
 mouse_filter = 1
 theme = ExtResource( 1 )
@@ -18,169 +18,169 @@ script = ExtResource( 2 )
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -91.0
-margin_right = 91.0
+offset_left = -91.0
+offset_right = 91.0
 
 [node name="Main options" type="Label" parent="vbox"]
-margin_right = 188.0
-margin_bottom = 11.0
+offset_right = 188.0
+offset_bottom = 11.0
 text = "Main Options"
 
 [node name="MainMenu" type="Button" parent="vbox"]
-margin_top = 15.0
-margin_right = 188.0
-margin_bottom = 32.0
+offset_top = 15.0
+offset_right = 188.0
+offset_bottom = 32.0
 text = "Main Menu (abandon current game)"
 
 [node name="Quit" type="Button" parent="vbox"]
-margin_top = 36.0
-margin_right = 188.0
-margin_bottom = 53.0
+offset_top = 36.0
+offset_right = 188.0
+offset_bottom = 53.0
 text = "Quit"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="vbox"]
-margin_top = 57.0
-margin_right = 188.0
-margin_bottom = 73.0
+offset_top = 57.0
+offset_right = 188.0
+offset_bottom = 73.0
 
 [node name="Label" type="Label" parent="vbox/HBoxContainer"]
-margin_top = 2.0
-margin_right = 34.0
-margin_bottom = 13.0
+offset_top = 2.0
+offset_right = 34.0
+offset_bottom = 13.0
 text = "Volume:"
 
 [node name="VolumeSlider" type="HSlider" parent="vbox/HBoxContainer"]
-margin_left = 38.0
-margin_right = 188.0
-margin_bottom = 16.0
-rect_min_size = Vector2( 150, 0 )
+offset_left = 38.0
+offset_right = 188.0
+offset_bottom = 16.0
+custom_minimum_size = Vector2( 150, 0 )
 
 [node name="MarginContainer" type="MarginContainer" parent="vbox"]
-margin_top = 77.0
-margin_right = 188.0
-margin_bottom = 87.0
-rect_min_size = Vector2( 0, 10 )
+offset_top = 77.0
+offset_right = 188.0
+offset_bottom = 87.0
+custom_minimum_size = Vector2( 0, 10 )
 
 [node name="Rendering" type="HBoxContainer" parent="vbox"]
-margin_top = 91.0
-margin_right = 188.0
-margin_bottom = 115.0
+offset_top = 91.0
+offset_right = 188.0
+offset_bottom = 115.0
 
 [node name="FPS" type="Label" parent="vbox/Rendering"]
-margin_top = 6.0
-margin_right = 21.0
-margin_bottom = 17.0
+offset_top = 6.0
+offset_right = 21.0
+offset_bottom = 17.0
 text = "FPS:"
 script = ExtResource( 3 )
 
 [node name="Viewports" type="CheckBox" parent="vbox/Rendering"]
-margin_left = 25.0
-margin_right = 94.0
-margin_bottom = 24.0
+offset_left = 25.0
+offset_right = 94.0
+offset_bottom = 24.0
 text = "EditViews"
 
 [node name="SaveLoad" type="VBoxContainer" parent="vbox"]
-margin_top = 119.0
-margin_right = 188.0
-margin_bottom = 230.0
+offset_top = 119.0
+offset_right = 188.0
+offset_bottom = 230.0
 alignment = 1
 
 [node name="Saves" type="Label" parent="vbox/SaveLoad"]
-margin_right = 188.0
-margin_bottom = 11.0
+offset_right = 188.0
+offset_bottom = 11.0
 text = "Saved Games"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="vbox/SaveLoad"]
-margin_top = 15.0
-margin_right = 188.0
-margin_bottom = 36.0
+offset_top = 15.0
+offset_right = 188.0
+offset_bottom = 36.0
 alignment = 1
 
 [node name="SaveName" type="LineEdit" parent="vbox/SaveLoad/HBoxContainer2"]
 unique_name_in_owner = true
-margin_left = 3.0
-margin_right = 103.0
-margin_bottom = 21.0
-rect_min_size = Vector2( 100, 0 )
+offset_left = 3.0
+offset_right = 103.0
+offset_bottom = 21.0
+custom_minimum_size = Vector2( 100, 0 )
 placeholder_text = "(date)"
 
 [node name="NewSave" type="Button" parent="vbox/SaveLoad/HBoxContainer2"]
 unique_name_in_owner = true
-margin_left = 107.0
-margin_right = 185.0
-margin_bottom = 21.0
+offset_left = 107.0
+offset_right = 185.0
+offset_bottom = 21.0
 disabled = true
 text = "Save New State"
 
 [node name="AvailableSaves" type="ItemList" parent="vbox/SaveLoad"]
 unique_name_in_owner = true
-margin_top = 40.0
-margin_right = 188.0
-margin_bottom = 90.0
-rect_min_size = Vector2( 0, 50 )
+offset_top = 40.0
+offset_right = 188.0
+offset_bottom = 90.0
+custom_minimum_size = Vector2( 0, 50 )
 size_flags_stretch_ratio = 7.31
 
 [node name="HBoxContainer" type="HBoxContainer" parent="vbox/SaveLoad"]
-margin_top = 94.0
-margin_right = 188.0
-margin_bottom = 111.0
+offset_top = 94.0
+offset_right = 188.0
+offset_bottom = 111.0
 
 [node name="Load Selected Save" type="Button" parent="vbox/SaveLoad/HBoxContainer"]
-margin_right = 93.0
-margin_bottom = 17.0
+offset_right = 93.0
+offset_bottom = 17.0
 disabled = true
 text = "Load Selected Save"
 
 [node name="Delete Selected Save" type="Button" parent="vbox/SaveLoad/HBoxContainer"]
-margin_left = 97.0
-margin_right = 136.0
-margin_bottom = 17.0
+offset_left = 97.0
+offset_right = 136.0
+offset_bottom = 17.0
 text = "Delete"
 
 [node name="MarginContainer2" type="MarginContainer" parent="vbox"]
-margin_top = 234.0
-margin_right = 188.0
-margin_bottom = 244.0
-rect_min_size = Vector2( 0, 10 )
+offset_top = 234.0
+offset_right = 188.0
+offset_bottom = 244.0
+custom_minimum_size = Vector2( 0, 10 )
 
 [node name="Tools" type="Label" parent="vbox"]
-margin_top = 248.0
-margin_right = 188.0
-margin_bottom = 259.0
+offset_top = 248.0
+offset_right = 188.0
+offset_bottom = 259.0
 text = "Tools"
 
 [node name="Debugger" type="Button" parent="vbox"]
-margin_top = 263.0
-margin_right = 188.0
-margin_bottom = 280.0
+offset_top = 263.0
+offset_right = 188.0
+offset_bottom = 280.0
 text = "Enable Debugger"
 
 [node name="Framelog" type="Button" parent="vbox"]
-margin_top = 284.0
-margin_right = 188.0
-margin_bottom = 301.0
+offset_top = 284.0
+offset_right = 188.0
+offset_bottom = 301.0
 text = "Enable Framelog"
 
 [node name="DirectoryCacheList Toggle" type="Button" parent="vbox"]
-margin_top = 305.0
-margin_right = 188.0
-margin_bottom = 322.0
+offset_top = 305.0
+offset_right = 188.0
+offset_bottom = 322.0
 text = "Enable DirectoryCacheList"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="vbox"]
-margin_top = 326.0
-margin_right = 188.0
-margin_bottom = 343.0
+offset_top = 326.0
+offset_right = 188.0
+offset_bottom = 343.0
 
 [node name="MemoryLeak" type="Button" parent="vbox/HBoxContainer2"]
 unique_name_in_owner = true
-margin_right = 66.0
-margin_bottom = 17.0
+offset_right = 66.0
+offset_bottom = 17.0
 text = "MemoryLeak"
 
 [node name="FreeOrphans" type="Button" parent="vbox/HBoxContainer2"]
 unique_name_in_owner = true
-margin_left = 70.0
-margin_right = 136.0
-margin_bottom = 17.0
+offset_left = 70.0
+offset_right = 136.0
+offset_bottom = 17.0
 text = "FreeOrphans"

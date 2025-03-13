@@ -1,0 +1,14 @@
+[X] File, Dir -> FileAccess, DirAccess
+[ ] Eliminate warnings
+[ ] set_process
+[ ] resave all scenes
+[ ] String.plus_file -> String.path_join
+[ ] font.set_spacing, FontFile.SPACING_SPACE -> font.set_extra_spacing
+[ ] OS.get_system_time_msecs()
+[ ] overrides
+[ ] array .remove
+[ ] Button.Align
+[ ] Missing NameSpaces
+[ ] Missing GDScriptFunctionState
+[ ] PoolStringArray.join -> "".join(PackedStringArray)
+[ ] Engine.target_fps

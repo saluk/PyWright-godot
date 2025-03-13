@@ -15,7 +15,7 @@ static func get_font_for_type(type, main):
 static func get_font(type, main):
 	var stack = main.stack
 	var font_data = get_font_for_type(type, main)
-	var font = DynamicFont.new()
+	var font := FontFile.new()
 	var font_path = Filesystem.lookup_file("fonts/"+font_data["font_path"], stack.scripts[-1].root_path)
 	if not font_path:
 		GlobalErrors.log_error("Error setting font for type "+str(font_data))
@@ -29,13 +29,13 @@ static func get_font(type, main):
 	font.size = font_data["font_size"]
 	font.use_filter = true
 	font.use_mipmaps = true
-	font.set_spacing(DynamicFont.SPACING_SPACE, font_data["font_spacing"])
+	font.set_spacing(FontFile.SPACING_SPACE, font_data["font_spacing"])
 	return font
 
 static func set_element_font(el, type, main):
 	var font = get_font(type, main)
 	if font:
-		el.set("custom_fonts/font", font)
-		el.set("custom_fonts/normal_font", font)
-		el.set("custom_fonts/bold_font", font)
-		el.set("custom_fonts/italics_font", font)
+		el.set("theme_override_fonts/font", font)
+		el.set("theme_override_fonts/normal_font", font)
+		el.set("theme_override_fonts/bold_font", font)
+		el.set("theme_override_fonts/italics_font", font)
