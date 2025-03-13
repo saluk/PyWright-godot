@@ -65,9 +65,9 @@ static func get_mtl_tex_paths(mtl_path:String)->Array:
 
 #try to find mtl path from obj path
 static func search_mtl_path(obj_path:String):
-	var mtl_path=obj_path.get_base_dir().plus_file(obj_path.get_file().rsplit(".",false,1)[0]+".mtl")
+	var mtl_path=obj_path.get_base_dir().path_join(obj_path.get_file().rsplit(".",false,1)[0]+".mtl")
 	if not FileAccess.file_exists(mtl_path):
-		mtl_path=obj_path.get_base_dir().plus_file(obj_path.get_file()+".mtl")
+		mtl_path=obj_path.get_base_dir().path_join(obj_path.get_file()+".mtl")
 	if not FileAccess.file_exists(mtl_path):
 		return ""
 	return mtl_path
@@ -117,8 +117,8 @@ static func _get_image(mtl_filepath:String, tex_filename:String)->Image:
 	if debug:
 		print("    Debug: Mapping texture file " + tex_filename)
 	var texfilepath := tex_filename
-	if tex_filename.is_rel_path():
-		texfilepath = mtl_filepath.get_base_dir().plus_file(tex_filename)
+	if tex_filename.is_relative_path():
+		texfilepath = mtl_filepath.get_base_dir().path_join(tex_filename)
 	var filetype := texfilepath.get_extension()
 	if debug:
 		print("    Debug: texture file path: " + texfilepath + " of type " + filetype)

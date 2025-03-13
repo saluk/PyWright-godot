@@ -2,7 +2,7 @@
 [ ] Eliminate warnings
 [X] set_process warning (was just warning about shadowing a function, which I use on my own and I turned off the warning)
 [ ] resave all scenes
-[ ] String.plus_file -> String.path_join
+[X] String.plus_file -> String.path_join /String.is_rel_path
 [ ] font.set_spacing, FontFile.SPACING_SPACE -> font.set_extra_spacing
 [ ] OS.get_system_time_msecs()
 [ ] overrides
