@@ -13,7 +13,7 @@ func getz(o):
 	return 0
 # TODO using a manual, slow sorting algorithm here because godot's sort_custom uses heapsort which is not stable
 func sort_children():
-	var children = get_children()
+	var children:Array = get_children()
 	for i in range(children.size()):
 		if i == 0:
 			continue
@@ -27,7 +27,7 @@ func sort_children():
 			nexti -= 1
 		if seti != i:
 			children.insert(seti, child)
-			children.remove(i+1)
+			children.remove_at(i+1)
 	for i in range(children.size()):
 		move_child(children[i], i)
 

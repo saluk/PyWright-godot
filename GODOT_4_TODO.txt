@@ -6,9 +6,10 @@
 [ ] font.set_spacing, FontFile.SPACING_SPACE -> font.set_extra_spacing
 [ ] OS.get_system_time_msecs()
 [ ] overrides
-[ ] array .remove
+[X] array .remove -> remove_at
 [ ] Button.Align
-[ ] Missing NameSpaces
+[ ] Missing NameSpaces - looks like "namespace" is a keyword now
 [ ] Missing GDScriptFunctionState
 [ ] PoolStringArray.join -> "".join(PackedStringArray)
 [ ] Engine.target_fps
+[ ] Where I convert NodePath to Node (Look at how I fix in ScriptDebugger)

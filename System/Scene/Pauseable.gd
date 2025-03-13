@@ -9,7 +9,7 @@ class_name Pauseable
 # group - a group of objects to look for
 # sig_enable - the signal on that group which will cause us to enable
 # sig_disable - the signal on that group which will cause us to disable-
-var signals = [
+var signals := [
 	["ScriptDebugger", "debug_state_off", "debug_state_on"]
 ]
 
@@ -17,7 +17,7 @@ var signals = [
 # [group, property]
 # group - a group of objects to look for
 # property - if this property equals the value, upon initialization the pauseable will be disabled
-var properties = [
+var properties := [
 	["ScriptDebugger", "in_debugger", true]
 ]
 
@@ -50,7 +50,7 @@ func _process(dt):
 		for ob in obs:
 			add_enable_signal(ob, sig_enable)
 			add_disable_signal(ob, sig_disable)
-		signals.remove(i)
+		signals.remove_at(i)
 	for i in range(properties.size()-1, -1, -1):
 		var set = properties[i]
 		var group = set[0]
@@ -62,6 +62,6 @@ func _process(dt):
 		for ob in obs:
 			if ob.get(property) == value:
 				_disable()
-		properties.remove(i)
+		properties.remove_at(i)
 	if not signals and not properties:
 		set_process(false)

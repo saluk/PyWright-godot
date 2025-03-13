@@ -164,7 +164,7 @@ func preprocess_lines():
 			for include_line in include_scr.lines:
 				lines.insert(i+off, include_line)
 				off += 1
-			lines.remove(i)
+			lines.remove_at(i)
 			continue
 		elif segments and segments[0] and segments[0][0] == "{":
 			segments[0] = segments[0].substr(1)

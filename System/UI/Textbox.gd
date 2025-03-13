@@ -783,7 +783,7 @@ func update_textbox(dt:float, force = false):
 			refresh_arrows_on_next_pack = false
 		packs[0].consume(dt, force)
 		if packs and packs[0].delete:
-			packs.remove(0)
+			packs.remove_at(0)
 	else:
 		trigger_text_end_events()
 

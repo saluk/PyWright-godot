@@ -210,8 +210,8 @@ func EVAL_EXPR(expr):
 	var right_val = EVAL_EXPR(right)
 #	print("OP:", op, ", ", left_val, ", ", right_val)
 	var result = call(op[1], [left_val, right_val])
-	expr.remove(op[0]-1)
-	expr.remove(op[0]-1)
+	expr.remove_at(op[0]-1)
+	expr.remove_at(op[0]-1)
 	expr[op[0]-1] = result
 #	print("NEWEXPR:", expr)
 	return EVAL_EXPR(expr)

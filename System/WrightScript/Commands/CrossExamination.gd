@@ -8,8 +8,8 @@ static func add_statement(main, line_num, tag):
 	var cur_statement_labels = StandardVar.STATEMENT_LABELS.retrieve()
 	while tag in cur_statement_labels:
 		var i = cur_statement_labels.find(tag)
-		cur_statements.remove(i)
-		cur_statement_labels.remove(i)
+		cur_statements.remove_at(i)
+		cur_statement_labels.remove_at(i)
 	if not str(line_num) in cur_statements:
 		cur_statements.append(str(line_num))
 		cur_statement_labels.append(tag)
@@ -19,8 +19,8 @@ static func add_statement(main, line_num, tag):
 static func pop_rightmost_statement(main):
 	var cur_statements = StandardVar.STATEMENTS.retrieve()
 	var cur_statement_labels = StandardVar.STATEMENT_LABELS.retrieve()
-	cur_statements.remove(cur_statements.size()-1)
-	cur_statement_labels.remove(cur_statement_labels.size()-1)
+	cur_statements.remove_at(cur_statements.size()-1)
+	cur_statement_labels.remove_at(cur_statement_labels.size()-1)
 	StandardVar.STATEMENTS.store(cur_statements)
 	StandardVar.STATEMENT_LABELS.store(cur_statement_labels)
 

@@ -20,9 +20,11 @@ var slow_mode = false
 @export var watched_panel: NodePath
 @export var watched_textedit: NodePath
 
-var stepping_over = -1
+var nodes:Dictionary[NodePath, Node]
 
-var in_debugger = false
+var stepping_over := -1
+
+var in_debugger := false
 var debug_last_state = null
 
 var goto_line_button_template:Button
@@ -34,25 +36,22 @@ signal debug_state_off
 
 func _ready():
 	if step is NodePath:
-		script_tab = get_node(current_script)
-		step = get_node(step)
-		allev = get_node(allev)
-		pause = get_node(pause)
-		speed = get_node(speed)
-		slow = get_node(slow)
-		show_watched_panel = get_node(show_watched_panel)
-		watched_panel = get_node(watched_panel)
-		watched_textedit = get_node(watched_textedit)
-		node_scripts = get_node(node_scripts)
+		# TODO - copy this pattern everywhere we want to use nodepaths
+		for field in get_property_list():
+			if field['type'] == TYPE_NODE_PATH:
+				var path = get(field['name'])
+				nodes[path] = get_node(path)
+		# END
+		script_tab = nodes[current_script]
 
-	node_scripts.remove_child(script_tab)
+	nodes[node_scripts].remove_child(script_tab)
 	# TODO conceal buttons if game is not playing to prevent error
-	step.connect("button_up", Callable(self, "step_over"))
-	pause.connect("button_up", Callable(self, "start_debugger"))
-	allev.connect("button_up", Callable(self, "all_ev"))
-	speed.connect("button_up", Callable(self, "set_velocity"))
-	slow.connect("button_up", Callable(self, "toggle_slow"))
-	show_watched_panel.connect("button_up", Callable(self, "_show_watched_panel"))
+	nodes[step].connect("button_up", Callable(self, "step_over"))
+	nodes[pause].connect("button_up", Callable(self, "start_debugger"))
+	nodes[allev].connect("button_up", Callable(self, "all_ev"))
+	nodes[speed].connect("button_up", Callable(self, "set_velocity"))
+	nodes[slow].connect("button_up", Callable(self, "toggle_slow"))
+	nodes[show_watched_panel].connect("button_up", Callable(self, "_show_watched_panel"))
 
 	goto_line_button_template = get_node("GotoLineButton")
 	goto_line_button_template.get_parent().remove_child(goto_line_button_template)
@@ -61,13 +60,13 @@ func start_debugger(force=false):
 	if in_debugger:
 		if force == false:
 			in_debugger = false
-			pause.text = "Pause"
+			nodes[pause].text = "Pause"
 			current_stack.disconnect("line_executed", Callable(self, "debug_line"))
 			current_stack.state = current_stack.STACK_READY
 			emit_signal("debug_state_off")
 	else:
 		in_debugger = true
-		pause.text = "Resume"
+		nodes[pause].text = "Resume"
 		current_stack.connect("line_executed", Callable(self, "debug_line"))
 		current_stack.state = current_stack.STACK_DEBUG
 		emit_signal("debug_state_on")
@@ -120,27 +119,27 @@ func debug_line(line):
 func step_over():
 	if in_debugger:
 		if stepping_over == -1:
-			stepping_over = node_scripts.current_tab+1
+			stepping_over = nodes[node_scripts].current_tab+1
 			current_stack.state = current_stack.STACK_READY
 			while scripts.size() > 1:
 				await get_tree().idle_frame
 
 func set_velocity():
-	if speed.text == ">>>":
+	if nodes[speed].text == ">>>":
 		Engine.time_scale = 100.0
-		speed.text = ">"
+		nodes[speed].text = ">"
 	else:
 		Engine.time_scale = 1.0
-		speed.text = ">>>"
+		nodes[speed].text = ">>>"
 
 func toggle_slow():
 	if slow_mode:
 		slow_mode = false
-		slow.text = "slow"
+		nodes[slow].text = "slow"
 		Engine.time_scale = 1.0
 	else:
 		slow_mode = true
-		slow.text = "(slow)"
+		nodes[slow].text = "(slow)"
 		Engine.time_scale = 0.05
 
 func _process(delta):
@@ -160,8 +159,8 @@ func add_new_script(script):
 	d["editor_container"].name = "x"
 	d["editor_container"].get_node("HBoxContainer/ScreenLabel").text = script.screen.name
 	d["editor_container"].get_node("HBoxContainer/FilenameLabel").text = script.filename
-	node_scripts.add_child(d["editor_container"])
-	d["editor"].text = PackedStringArray(d["script"]."\n".join(lines))
+	nodes[node_scripts].add_child(d["editor_container"])
+	d["editor"].text = "\n".join(PackedStringArray(d["script"].lines))
 	d["editor"].connect("text_changed", Callable(self, "edit_script").bind(script))
 	d["editor"].connect("breakpoint_toggled", Callable(self, "goto_line").bind(script))
 	d["editor"].connect("info_clicked", Callable(self, "goto_line").bind(script))
@@ -175,10 +174,10 @@ func rebuild():
 	var change = false
 	for i in range(scripts.size()-1, 0, -1):
 		if not scripts[i]["script"] in current_stack.scripts:
-			scripts.remove(i)
-			var node_at = node_scripts.get_child(i)
+			scripts.remove_at(i)
+			var node_at = nodes[node_scripts].get_child(i)
 			node_at.queue_free()
-			node_scripts.remove_child(node_at)
+			nodes[node_scripts].remove_child(node_at)
 			change = true
 	# STEP 2 - add scripts in the current stack that aren't in our scripts
 	var has_scripts = []
@@ -199,10 +198,10 @@ func rebuild():
 			if other_script["script"] == script:
 				scripts.erase(other_script)
 				scripts.insert(i, other_script)
-				node_scripts.move_child(other_script["editor_container"], i)
+				nodes[node_scripts].move_child(other_script["editor_container"], i)
 				break
 	if scripts and change:
-		node_scripts.current_tab = scripts.size()-1
+		nodes[node_scripts].current_tab = scripts.size()-1
 	return
 
 
@@ -250,11 +249,11 @@ func menu_id_pressed(id):
 
 
 func _show_watched_panel():
-	watched_panel.visible = true
+	nodes[watched_panel].visible = true
 func _hide_watched_pane():
-	watched_panel.visible = false
+	nodes[watched_panel].visible = false
 func _on_TextEdit_text_changed():
 	var main = get_tree().get_nodes_in_group("Main")[0]
 	main.stack.watched_commands = []
-	for line in watched_textedit.text.split("\n", false):
+	for line in nodes[watched_textedit].text.split("\n", false):
 		main.stack.watched_commands.append(line)

@@ -56,8 +56,8 @@ func toggle_tab(tab_node_name):
 		return "disabled"
 
 func enable_tab(n):
-	var parent = n.get_parent()
-	var tabcontainer = get_tree().get_nodes_in_group("TabContainer")[0]
+	var parent:Node = n.get_parent()
+	var tabcontainer:Node = get_tree().get_nodes_in_group("TabContainer")[0]
 	n.set_owner(tabcontainer)
 	parent.remove_child(n)
 	tabcontainer.add_child(n)

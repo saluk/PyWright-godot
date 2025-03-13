@@ -93,7 +93,7 @@ class Accessor:
 				print("invalid access item")
 				assert(false)
 	# make the namespace able to act as a list
-	func list():
+	func list() -> Array:
 		if not key in namespace.store:
 			namespace.store[key] = []
 		if not namespace.store[key] is Array:
@@ -163,7 +163,7 @@ class Accessor:
 			elif access_item >= list().size():
 				print("can't access > size")
 				return
-			list().remove(access_item)
+			list().remove_at(access_item)
 		elif access_item == "length":
 			pass
 		else:
