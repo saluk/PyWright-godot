@@ -10,7 +10,7 @@
 [ ] Missing NameSpaces - looks like "namespace" is a keyword now
 [ ] Missing GDScriptFunctionState
 [ ] PoolStringArray.join -> "".join(PackedStringArray)
-[ ] Engine.target_fps
+[ ] Engine.target_fps messin up main.gd
 [ ] Where I convert NodePath to Node (Look at how I fix in ScriptDebugger)
 [X] handle _init in ClickMesh
 [X] can't import WrightScript
