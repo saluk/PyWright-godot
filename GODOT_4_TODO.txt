@@ -1,6 +1,6 @@
 [ ] Eliminate warnings
 [X] font.set_spacing, FontFile.SPACING_SPACE -> font.set_extra_spacing
-[ ] OS.get_system_time_msecs()
+[X] OS.get_system_time_msecs()
 [ ] Button.Align, Label.ALIGNMENT_CENTER
 [X] Missing GDScriptFunctionState (commented out)
 [X] PoolStringArray.join -> "".join(PackedStringArray)

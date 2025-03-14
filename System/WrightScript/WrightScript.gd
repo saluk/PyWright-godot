@@ -37,7 +37,7 @@ func _init(main, stack, screen:Screen=null):
 		self.screen = screen
 	else:
 		self.screen = ScreenManager.top_screen()
-	u_id = OS.get_system_time_msecs()
+	u_id = Time.get_ticks_msec()
 	variables = Variables.new()
 
 func has_script(scene_name) -> String:
