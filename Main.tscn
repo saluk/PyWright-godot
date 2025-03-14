@@ -281,7 +281,6 @@ offset_right = 256.0
 offset_bottom = 384.0
 focus_mode = 2
 mouse_filter = 2
-mouse_default_cursor_shape = 5
 script = ExtResource("12")
 
 [node name="ViewportContainers" type="Control" parent="Screens"]
@@ -291,40 +290,28 @@ offset_right = 256.0
 offset_bottom = 384.0
 mouse_filter = 2
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="Screens/ViewportContainers" groups=["SubViewportContainer"]]
-layout_mode = 0
-offset_top = 3.0
-offset_right = 256.0
-offset_bottom = 195.0
-mouse_filter = 2
-stretch = true
-script = ExtResource("14")
+[node name="SubViewportContainer" type="Node2D" parent="Screens/ViewportContainers" groups=["SubViewportContainer"]]
 
-[node name="ScreenViewport" type="SubViewport" parent="Screens/ViewportContainers/SubViewportContainer" groups=["MainScreenViewport"]]
-handle_input_locally = false
-physics_object_picking = true
-size = Vector2i(256, 192)
-render_target_update_mode = 4
+[node name="ScreenViewport" type="Node2D" parent="Screens/ViewportContainers/SubViewportContainer" groups=["MainScreenViewport"]]
 
 [node name="MainScreen" type="Node2D" parent="Screens/ViewportContainers/SubViewportContainer/ScreenViewport" groups=["MainScreen"]]
 unique_name_in_owner = true
 script = ExtResource("4")
 
 [node name="Camera2D" type="Camera2D" parent="Screens/ViewportContainers/SubViewportContainer/ScreenViewport"]
-position = Vector2(128, 96)
+position = Vector2(128, 192)
 
 [node name="Position" type="ColorRect" parent="Screens/ViewportContainers/SubViewportContainer"]
-layout_mode = 2
 mouse_filter = 1
 script = ExtResource("15")
 
 [node name="Scale" type="ColorRect" parent="Screens/ViewportContainers/SubViewportContainer"]
-layout_mode = 2
 mouse_filter = 1
 script = ExtResource("15")
 prop = "scaling"
 
 [node name="ViewportContainer2" type="SubViewportContainer" parent="Screens/ViewportContainers" groups=["SubViewportContainer"]]
+visible = false
 material = SubResource("6")
 clip_contents = true
 layout_mode = 0
@@ -341,7 +328,7 @@ script = ExtResource("14")
 handle_input_locally = false
 physics_object_picking = true
 size = Vector2i(253, 192)
-render_target_update_mode = 4
+render_target_update_mode = 0
 
 [node name="Camera2D" type="Camera2D" parent="Screens/ViewportContainers/ViewportContainer2/ScreenViewport"]
 position = Vector2(128, 288)

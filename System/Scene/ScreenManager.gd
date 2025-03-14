@@ -10,17 +10,17 @@ func _init_screens():
 	screens = get_tree().get_nodes_in_group("MainScreenViewport")[0]
 	_main_screen = screens.get_node("%MainScreen")
 
-	viewport_containers = get_tree().get_nodes_in_group("SubViewportContainer")
-	var main_viewport
-	var mainworld
-	for container in viewport_containers:
-		if not mainworld:
-			main_viewport = container.get_child(0)
-			mainworld = container.get_child(0).world_2d
-		else:
-			container.get_child(0).world_2d = mainworld
-		container.main_viewport = main_viewport
-
+	# TODO 4.4 re-enable	
+	# viewport_containers = get_tree().get_nodes_in_group("SubViewportContainer")
+	# var main_viewport
+	# var mainworld
+	# for container in viewport_containers:
+	# 	if not mainworld:
+	# 		main_viewport = container.get_child(0)
+	# 		mainworld = container.get_child(0).world_2d
+	# 	else:
+	# 		container.get_child(0).world_2d = mainworld
+	# 	container.main_viewport = main_viewport
 func _ready():
 	_init_screens()
 	get_tree().connect("tree_changed", Callable(self, "_on_tree_changed"))

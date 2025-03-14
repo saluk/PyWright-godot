@@ -60,10 +60,12 @@ func cancel_move(ev=null):
 		moving = false
 		scaling = false
 
-func _process(dt):
+# TODO 4.4 cleanup re-enable
+func x__process(dt):
 	if Input.is_action_just_released("pointer_main_button"):
 		cancel_move()
 
+# TODO 4.4 cleanup re-enable
 func x_input(ev):
 	cancel_move(ev)
 	if moving and ev is InputEventMouseMotion:

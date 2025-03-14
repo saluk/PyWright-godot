@@ -47,9 +47,11 @@ func _load_audio_stream(path):
 		if not stream:
 			# Uses an extension to load more audio types
 			# TODO not really needed if we are converting everything
-			var loader = AudioLoader.new()
+			#var loader = AudioLoader.new()
 			print(" -- LOADING SOUND FILE --")
-			stream = loader.loadfile(path)
+			#stream = loader.loadfile(path)
+			# TODO 4.4 cleanup
+			stream = load(path)
 		SoundFileCache.set_get_cached([path], stream)
 	if stream:
 		# Somewhere determine whether or not to loop the sound

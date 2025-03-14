@@ -1,6 +1,7 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://e6s1i1ugdnwb"]
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://e6s1i1ugdnwb"]
 
 [ext_resource type="FontFile" uid="uid://dmbyrqoli4god" path="res://fonts/arial.ttf" id="1"]
+[ext_resource type="FontFile" uid="uid://dndafvjxtfkm4" path="res://System/UI/Fonts/ProFontWindows.ttf" id="1_a7645"]
 
 [sub_resource type="FontFile" id="2"]
 cache/0/16/0/ascent = 0.0
@@ -21,6 +22,36 @@ cache/0/20/0/descent = 0.0
 cache/0/20/0/underline_position = 0.0
 cache/0/20/0/underline_thickness = 0.0
 cache/0/20/0/scale = 1.0
+cache/0/15/0/ascent = 0.0
+cache/0/15/0/descent = 0.0
+cache/0/15/0/underline_position = 0.0
+cache/0/15/0/underline_thickness = 0.0
+cache/0/15/0/scale = 1.0
+cache/0/14/0/ascent = 0.0
+cache/0/14/0/descent = 0.0
+cache/0/14/0/underline_position = 0.0
+cache/0/14/0/underline_thickness = 0.0
+cache/0/14/0/scale = 1.0
+cache/0/13/0/ascent = 0.0
+cache/0/13/0/descent = 0.0
+cache/0/13/0/underline_position = 0.0
+cache/0/13/0/underline_thickness = 0.0
+cache/0/13/0/scale = 1.0
+cache/0/12/0/ascent = 0.0
+cache/0/12/0/descent = 0.0
+cache/0/12/0/underline_position = 0.0
+cache/0/12/0/underline_thickness = 0.0
+cache/0/12/0/scale = 1.0
+cache/0/11/0/ascent = 0.0
+cache/0/11/0/descent = 0.0
+cache/0/11/0/underline_position = 0.0
+cache/0/11/0/underline_thickness = 0.0
+cache/0/11/0/scale = 1.0
+cache/0/10/0/ascent = 0.0
+cache/0/10/0/descent = 0.0
+cache/0/10/0/underline_position = 0.0
+cache/0/10/0/underline_thickness = 0.0
+cache/0/10/0/scale = 1.0
 
 [sub_resource type="FontFile" id="3"]
 cache/0/16/0/ascent = 0.0
@@ -31,9 +62,19 @@ cache/0/16/0/scale = 1.0
 
 [resource]
 default_font = SubResource("1")
+Button/font_sizes/font_size = 10
+Button/fonts/font = ExtResource("1_a7645")
+Label/font_sizes/font_size = 10
+Label/fonts/font = ExtResource("1_a7645")
+PopupMenu/font_sizes/font_separator_size = 10
+PopupMenu/font_sizes/font_size = 10
+PopupMenu/font_sizes/title_font_size = 10
 PopupMenu/fonts/font = SubResource("2")
 TabContainer/constants/side_margin = 0
+TabContainer/font_sizes/font_size = 10
 TabContainer/fonts/font = SubResource("1")
 TextEdit/colors/line_number_color = Color(0.984314, 0.560784, 0.560784, 1)
+TextEdit/font_sizes/font_size = 10
 TextEdit/fonts/font = SubResource("1")
+Window/font_sizes/title_font_size = 10
 Window/fonts/title_font = SubResource("3")
