@@ -23,12 +23,12 @@ func add_test_button(path):
 	var hbox = HBoxContainer.new()
 	var b = Button.new()
 	b.text = "play>"
-	b.align = Button.ALIGN_LEFT
+	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	b.connect("pressed", Callable(self, "launch_game").bind(path, "play"))
 	hbox.add_child(b)
 	b = Button.new()
 	b.text = "{test}"
-	b.align = Button.ALIGN_LEFT
+	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	b.connect("pressed", Callable(self, "launch_game").bind(path, "test"))
 	hbox.add_child(b)
 	var l = Label.new()

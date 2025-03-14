@@ -5,7 +5,7 @@
 [X] update->queue_redraw
 [X] font.set_spacing, FontFile.SPACING_SPACE -> font.set_extra_spacing
 [X] OS.get_system_time_msecs()
-[ ] Button.Align, Label.ALIGNMENT_CENTER
+[X] Button.Align, Label.ALIGNMENT_CENTER
 [X] Missing GDScriptFunctionState (commented out)
 [X] PoolStringArray.join -> "".join(PackedStringArray)
 [ ] can't import Node3D

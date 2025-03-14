@@ -34,8 +34,8 @@ func new_event(ev):
 		ev2.button_mask = ev.button_mask
 		ev2.factor = ev.factor
 		ev2.canceled = ev.canceled
-		ev2.button_pressed = ev.pressed
-		ev2.doubleclick = ev.doubleclick
+		ev2.pressed = ev.pressed
+		#ev2.doubleclick = ev.doubleclick
 	elif ev is InputEventMouseMotion:
 		ev2 = InputEventMouseMotion.new()
 		ev2.position = ev.position
@@ -44,10 +44,12 @@ func new_event(ev):
 		ev2.pressure = ev.pressure
 		ev2.pen_inverted = ev.pen_inverted
 		ev2.relative = ev.relative
-		ev2.speed = ev.speed
+		#ev2.speed = ev.speed
 	return ev2
 
-func event_is_mouseup(ev:InputEventMouseButton):
+func event_is_mouseup(ev):
+	if not ev is InputEventMouseButton:
+		return false
 	if not ev:
 		return false
 	if ev and not ev.pressed:
@@ -62,7 +64,7 @@ func _process(dt):
 	if Input.is_action_just_released("pointer_main_button"):
 		cancel_move()
 
-func _input(ev):
+func x_input(ev):
 	cancel_move(ev)
 	if moving and ev is InputEventMouseMotion:
 		position += ev.relative
@@ -78,7 +80,5 @@ func _input(ev):
 			cancel_move(ev)
 			var ev2 = new_event(ev)
 			ev2.position = translate_pos(ev.position)
-			main_viewport.input(ev2)
-
-
-
+			#main_viewport.input(ev2)
+			Input.parse_input_event(ev2)
