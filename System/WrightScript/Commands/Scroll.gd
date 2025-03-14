@@ -33,7 +33,8 @@ class Scroller extends Node:
 		super.set_process(enabled)
 	func make_tweens(start_positions=[]):
 		tween = Tween.new()
-		add_child(tween)
+		# TODO 4.4 maybe we just don't add it manually
+		#add_child(tween)
 		for o in objects:
 			if o is PWMesh:
 				var next_pos

@@ -136,7 +136,8 @@ func _scroll(direction):
 	SignalUtils.remove_all($Control/ArrowRight)
 	case_chosen += direction
 	var tween = Tween.new()
-	add_child(tween)
+	# TODO 4.4 check if we need changes here
+	#add_child(tween)
 	var start_pos = $Control/ScrollContainer2.position
 	tween.interpolate_property($Control/ScrollContainer2, "position",
 			start_pos,

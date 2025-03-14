@@ -39,7 +39,8 @@ class WarpAnim extends Node:
 		for k in keys:
 			var tween = Tween.new()
 			tweens.append(tween)
-			add_child(tween)
+			# TODO 4.4 check if we need changes here
+			#add_child(tween)
 			tween.interpolate_property(
 				self,
 				k,
