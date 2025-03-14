@@ -12,7 +12,7 @@ func ws_mus(script, arguments):
 		MusicPlayer.stop_music()
 		main.stack.variables.del_val("_music_loop")
 	else:
-		var song = arguments.join(Commands)
+		var song = Commands.join(arguments)
 		main.stack.variables.set_val("_music_loop", song)
 		MusicPlayer.play_music(
 			Filesystem.path_join("music",song),
@@ -29,7 +29,7 @@ func ws_sfx(script, arguments):
 	if "volume" in kw:
 		volume = float(kw["volume"])/100.0
 	SoundPlayer.play_sound(
-		Filesystem.path_join("sfx", arguments.join(Commands)),
+		Filesystem.path_join("sfx", Commands.join(arguments)),
 		script.root_path,
 		volume
 	)

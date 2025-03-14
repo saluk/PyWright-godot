@@ -15,7 +15,7 @@ func gui_button(script, arguments):
 			args.erase(single)
 	var graphic = kw.get("graphic", "")
 	var graphichigh = kw.get("graphichigh", "")
-	var text = args.join(Commands)
+	var text = Commands.join(args)
 	if text and not graphic:
 		arguments.append("button_text="+text)
 	var template = ObjectFactory.get_template("button")

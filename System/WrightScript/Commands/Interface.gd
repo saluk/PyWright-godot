@@ -136,7 +136,7 @@ func ws_li(script, arguments):
 	var result = Commands.keywords(arguments).get("result", null)
 	if result:
 		arguments.erase("result="+result)
-	var text = arguments.join(Commands)
+	var text = Commands.join(arguments)
 	if not result:
 		result = text
 	list_menu.add_item(text, result)

@@ -32,7 +32,7 @@ func ws_debug(script, arguments):
 	return Commands.DEBUG
 
 func ws_print(script, arguments):
-	print("OUTPUT: ", arguments.join(Commands))
+	print("OUTPUT: ", Commands.join(arguments))
 
 # No need to implement
 func ws_step(script, arguments):
@@ -119,7 +119,7 @@ func ws_script(script, arguments, script_text=null):
 		script.screen.clear()
 	else:
 		arguments.erase("noclear")
-	var path = arguments.join(Commands)
+	var path = Commands.join(arguments)
 	var scr
 	if script_text:
 		scr = main.stack.add_script(script_text, script.root_path)
