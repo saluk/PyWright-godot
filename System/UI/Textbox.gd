@@ -144,8 +144,9 @@ class TextPack:
 		if not has_run:
 			run_return = self._run(force)
 		if run_return:
-			if run_return is GDScriptFunctionState:
-				run_return = await run_return.completed
+			# TODO - cleanup: don't think this can ever return a coroutine anyway
+			#if run_return is GDScriptFunctionState:
+			#	run_return = await run_return.completed
 			self.text = run_return + self.text
 		_print_text(dt, force)
 		if not leftover or leftover <= 0: self.delete = true

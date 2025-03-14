@@ -89,8 +89,6 @@ func run(string, do_assert=false):
 	var obj = RefCounted.new()
 	obj.set_script(script)
 
-	var v = obj.command()
-	if v is GDScriptFunctionState:
-		v = await v.completed
+	var v = await obj.command()
 	if do_assert:
 		assert(v)

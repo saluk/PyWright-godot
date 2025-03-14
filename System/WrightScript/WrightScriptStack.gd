@@ -213,7 +213,8 @@ func process():
 		#show_in_debugger()
 		var new_yields = []
 		for f in yields:
-			if f.sig is GDScriptFunctionState and f.sig.is_valid():
+			# TODO - 4.4 issue with yields
+			if 0:#f.sig is GDScriptFunctionState and f.sig.is_valid():
 				f.sig.resume()
 				new_yields.append(f)
 			else:
@@ -284,9 +285,10 @@ func process():
 				#return new_state(STACK_YIELD)
 		elif frame.sig is SceneTreeTimer or (frame.sig and frame.sig.get("wait_signal") and frame.sig.get("wait") in [null, true]):
 			frame.scr.add_blocker(frame.sig, true)
-		elif frame.sig is GDScriptFunctionState:
+		# TODO 4.4: need 
+		#elif frame.sig is GDScriptFunctionState:
 			#show_in_debugger()
-			yields.append(frame)
+		#	yields.append(frame)
 			#return new_state(STACK_YIELD)
 		else:
 			frame.scr.next_line()
