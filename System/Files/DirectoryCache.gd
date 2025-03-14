@@ -73,7 +73,7 @@ func create_game_cache(game_path, paths=[]):
 	
 func save_game_file_index(game_path):
 	var game_file_index = FileAccess.open(Filesystem.path_join(game_path,"files.index"), FileAccess.WRITE)
-	if game_file_index != OK:
+	if not game_file_index:
 		return "no index can be saved"
 	game_file_index.store_line(JSON.stringify(indexes[game_path]))
 	game_file_index.close()

@@ -75,5 +75,5 @@ static func ws_fade(script, arguments):
 	elif last:
 		fader.control_last()
 	else:
-		fader.control_all()
+		fader.control_all(script.screen)
 	return fader
