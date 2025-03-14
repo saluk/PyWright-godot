@@ -52,7 +52,7 @@ func sync_area():
 			position.x -= current_sprite.width
 		if parent.mirror.y < 0:
 			position.y -= current_sprite.height
-		update()
+		queue_redraw()
 	# Force object to be in "over" state when it is newly created
 	if not over and get_global_rect().has_point(get_global_mouse_position()):
 		on_mouse_entered()

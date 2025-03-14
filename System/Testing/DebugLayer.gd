@@ -15,11 +15,11 @@ var commands := []
 
 func clear():
 	commands.clear()
-	update()
+	queue_redraw()
 	
 func draw(command, args):
 	commands.append(DrawCommand.new(self, command, args))
-	update()
+	queue_redraw()
 	
 func _draw():
 	for draw_command in commands:

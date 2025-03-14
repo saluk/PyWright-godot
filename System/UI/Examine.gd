@@ -108,7 +108,7 @@ func set_crosshair_pos(x, y):
 		return
 	#print("CROSS X Y ",x," ",y)
 	crosshair.crosshair_position = Vector2(int(x), int(y))
-	update()
+	queue_redraw()
 
 class Region extends Area2D:
 	var label
@@ -242,7 +242,7 @@ func ws_scroll_from_examine(script, arguments):
 			"_xscroll_"+script_name,
 			str(x_offset)
 		)
-		update()
+		queue_redraw()
 
 func reload_scroll_regions():
 	if reloaded_scroll:
@@ -264,7 +264,7 @@ func _process(dt):
 	if Input.get_mouse_button_mask() & MOUSE_BUTTON_LEFT:
 		var pos = get_parent().get_local_mouse_position()-position
 		set_crosshair_pos(pos.x, pos.y)
-		update()
+		queue_redraw()
 
 func _select():
 	for child in get_children():
@@ -277,7 +277,7 @@ func _select():
 			#print("SET CURRENT REGION")
 			return
 
-func update():
+func queue_redraw():
 	update_x_offset()
 	build_regions()
 	if scrolling: return
@@ -370,8 +370,8 @@ func update():
 		Commands.call_macro("show_court_record_button", wrightscript, [])
 		called_court_record_button = true
 	_select()
-	super.update()
-	crosshair.update()
+	super.queue_redraw()
+	crosshair.queue_redraw()
 
 class Crosshair extends Node2D:
 	var crosshair_position := Vector2(int(256/2), int(192/2))
@@ -416,4 +416,4 @@ func after_load(tree:SceneTree, saved_data:Dictionary):
 		var r = Region.new(0,0,0,0)
 		SaveState._load_node(get_tree(), r, region)
 		add_child(r)
-	update()
+	queue_redraw()

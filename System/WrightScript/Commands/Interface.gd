@@ -88,7 +88,7 @@ func ws_showexamine(script, arguments):
 		examine_menu.allow_back_button = false
 		# TODO probably need a backwards compatible way to disable the backbutton while still showing regions
 	examine_menu.fail = next_examine["fail"]
-	examine_menu.update()
+	examine_menu.queue_redraw()
 	next_examine = {}
 	return examine_menu
 
@@ -125,7 +125,7 @@ func ws_list(script, arguments):
 	list_menu.fail = Commands.keywords(arguments).get("fail", "none")
 	if noback or not main.stack.variables.get_truth("_list_back_button"):
 		list_menu.allow_back_button = false
-	list_menu.update()
+	list_menu.queue_redraw()
 
 func ws_li(script, arguments):
 	var list_menu = main.get_tree().get_nodes_in_group(Commands.LIST_GROUP)
