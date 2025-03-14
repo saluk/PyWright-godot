@@ -306,7 +306,7 @@ class CommandPack extends TextPack:
 				# TODO macros in text is still very broken
 				#textbox.set_process(false)
 				#while self.textbox.main.top_script() != old_script:
-				#	yield(self.textbox.get_tree(), "idle_frame")
+				#	yield(self.textbox.get_tree(), "process_frame")
 				#textbox.set_process(true)
 				#run_return = self.textbox.main.stack.variables.get_string("_return", "")
 				#self.textbox.main.stack.variables.del_val("_return")

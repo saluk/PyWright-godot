@@ -142,7 +142,7 @@ static func load_game(main, tree:SceneTree, filename:String):
 		else:
 			continue
 		_load_node(tree, ob, ob_data)
-		tree.connect("idle_frame", Callable(ob, "after_load").bind(tree, ob_data), tree.CONNECT_ONE_SHOT)
+		tree.connect("process_frame", Callable(ob, "after_load").bind(tree, ob_data), tree.CONNECT_ONE_SHOT)
 	#for ob_data_arr in after_load:
 	#	ob_data_arr[0].after_load(tree, ob_data_arr[1])
 

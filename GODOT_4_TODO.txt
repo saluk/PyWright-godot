@@ -1,5 +1,6 @@
 [ ] Eliminate warnings
 [ ] shader compile issues
+[ ] idle_frame -> process_frame
 [X] material.gdshader -> material.shader
 [X] animation.playing
 [X] EVAL_EXPR can't return String() - do we need to make a converter? turns out you just use str()

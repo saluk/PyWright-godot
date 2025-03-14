@@ -234,7 +234,7 @@ func ws_scroll_from_examine(script, arguments):
 			if "scrollable" in ob and ob.scrollable:
 				ob.position.x -= scroll_button_direction * scroll_amt
 		if not arguments:
-			await get_tree().idle_frame
+			await get_tree().process_frame
 	update_x_offset()
 	scrolling = false
 	if not arguments:

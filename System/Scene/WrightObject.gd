@@ -353,7 +353,7 @@ func visible_within(collide_rect:Rect2):
 		"draw_rect", [display_rect, Color.RED, false, 2, true]
 	)
 	main.pause(true)
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	main.pause(false)
 	return false
 

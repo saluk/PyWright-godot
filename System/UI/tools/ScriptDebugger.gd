@@ -116,7 +116,7 @@ func step_over():
 			stepping_over = nodes[node_scripts].current_tab+1
 			current_stack.state = current_stack.STACK_READY
 			while scripts.size() > 1:
-				await get_tree().idle_frame
+				await get_tree().process_frame
 
 func set_velocity():
 	if nodes[speed].text == ">>>":

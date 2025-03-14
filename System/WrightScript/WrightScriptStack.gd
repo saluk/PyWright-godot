@@ -220,7 +220,7 @@ func process():
 			else:
 				frame = f
 				break
-		await main.get_tree().idle_frame
+		await main.get_tree().process_frame
 		continue
 	while scripts:
 		if state != STACK_PROCESSING:
@@ -230,7 +230,7 @@ func process():
 			return new_state(STACK_YIELD)
 		if scripts[-1].check_blocked():
 			if variables.get_truth("render", true):
-				await main.get_tree().idle_frame
+				await main.get_tree().process_frame
 				continue
 		# We may have a paused frame from before to keep processing
 		show_frame(null, true)
@@ -254,7 +254,7 @@ func process():
 		if frame.sig is int:
 			# TODO might not need this yield
 			if frame.sig == Commands.YIELD:
-				#yield(main.get_tree(), "idle_frame")
+				#yield(main.get_tree(), "process_frame")
 				frame.scr.next_line()
 				#return new_state(STACK_YIELD)
 			elif frame.sig == Commands.UNDEFINED:
