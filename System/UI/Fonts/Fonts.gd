@@ -29,7 +29,7 @@ static func get_font(type, main):
 	font.size = font_data["font_size"]
 	font.use_filter = true
 	font.use_mipmaps = true
-	font.set_spacing(FontFile.SPACING_SPACE, font_data["font_spacing"])
+	font.set_extra_spacing(0, TextServer.SPACING_SPACE, font_data["font_spacing"])
 	return font
 
 static func set_element_font(el, type, main):
