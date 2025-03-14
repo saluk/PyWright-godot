@@ -85,7 +85,7 @@ static func load_resource(path:String):
 	if ResourceLoader.exists(path):
 		var resource = ResourceLoader.load(path, "")
 		if resource:
-			return resource.get_data()
+			return resource.get_image()
 	return null
 
 static func load_image_from_path(path:String) -> Image:

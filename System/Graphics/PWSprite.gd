@@ -52,11 +52,11 @@ func on_predelete() -> void:
 	free_members()
 
 func can_wait():
-	return animated_sprite.frames.get_frame_count("default") > 1 and not animated_sprite.frames.get_animation_loop("default")
+	return animated_sprite.sprite_frames.get_frame_count("default") > 1 and not animated_sprite.sprite_frames.get_animation_loop("default")
 
 func set_wait(b):
-	print(animated_sprite.frames.get_frame_count("default"))
-	print(animated_sprite.frames.get_animation_loop("default"))
+	print(animated_sprite.sprite_frames.get_frame_count("default"))
+	print(animated_sprite.sprite_frames.get_animation_loop("default"))
 	if can_wait():
 		wait = b
 		return
@@ -161,7 +161,7 @@ func _load_animation(path:String, sub_rect=null):
 	animated_sprite = AnimatedSprite2D.new()
 	animated_sprite.name = path.replace(":", "|").replace("/",";")
 	animated_sprite.use_parent_material = true
-	animated_sprite.frames = SpriteFrames.new()
+	animated_sprite.sprite_frames = SpriteFrames.new()
 	#animated_sprite.connect("frame_changed", self, "_frame_changed")
 	# TODO this is a hack, we are adding frames to slow the animation down when we should use an animationplayer to interpolate instead
 	# Also, avoid doing this if there is only one frame. it's not an animation at that point
@@ -170,23 +170,23 @@ func _load_animation(path:String, sub_rect=null):
 		for frame in frames:
 			# TODO get default frame delay
 			for delay in info["delays"].get(frame_i, float(info['globaldelay'])):
-				animated_sprite.frames.add_frame("default", frame)
+				animated_sprite.sprite_frames.add_frame("default", frame)
 				break
 			frame_i += 1
 	elif frames:
-		animated_sprite.frames.add_frame("default", frames[0])
+		animated_sprite.sprite_frames.add_frame("default", frames[0])
 	else:
 		return
-	animated_sprite.frames.set_animation_speed("default", 60.0)
+	animated_sprite.sprite_frames.set_animation_speed("default", 60.0)
 	animated_sprite.play("default")
-	animated_sprite.playing = false
+	animated_sprite.stop()
 	print("good")
 	if info.get('loops') != "1" and info.get('loops') != "yes" and info.get('loops') != "true":
-		animated_sprite.frames.set_animation_loop("default", false)
+		animated_sprite.sprite_frames.set_animation_loop("default", false)
 		if int(info.get('loops', 0)) > 1:
 			times_to_play = int(info.get('loops'))
 	else:
-		animated_sprite.frames.set_animation_loop("default", true)
+		animated_sprite.sprite_frames.set_animation_loop("default", true)
 
 	rescale(width, height)
 
@@ -204,10 +204,10 @@ var lastplaying
 func set_process(enabled):
 	if animated_sprite:
 		if enabled == false:
-			lastplaying = animated_sprite.playing
-			animated_sprite.playing = false
-		else:
-			animated_sprite.playing = lastplaying
+			lastplaying = animated_sprite.is_playing()
+			animated_sprite.stop()
+		elif lastplaying:
+			animated_sprite.play()
 	super.set_process(enabled)
 
 func finish_playing():
@@ -238,8 +238,8 @@ func from_frame(frame):
 	animated_sprite = AnimatedSprite2D.new()
 	animated_sprite.use_parent_material = true
 	add_child(animated_sprite)
-	animated_sprite.frames = SpriteFrames.new()
-	animated_sprite.frames.add_frame("default", frame)
+	animated_sprite.sprite_frames = SpriteFrames.new()
+	animated_sprite.sprite_frames.add_frame("default", frame)
 	material = ShaderMaterial.new()
 	material.gdshader = load("res://System/Graphics/image_filters.gdshader")
 
@@ -278,10 +278,10 @@ func apply_blink_settings(template):
 
 	if blinkmode == "loop":
 		times_to_play = 0
-		animated_sprite.frames.set_animation_loop("default", true)
+		animated_sprite.sprite_frames.set_animation_loop("default", true)
 	elif blinkmode == "stop":
 		times_to_play = 1
-		animated_sprite.frames.set_animation_loop("default", false)
+		animated_sprite.sprite_frames.set_animation_loop("default", false)
 	else:
 		var blinkspeed = StandardVar.BLINKSPEED_NEXT.retrieve()
 		if blinkspeed:
@@ -297,14 +297,14 @@ func apply_blink_settings(template):
 		if blinkspeed is PackedStringArray or blinkspeed is Array:
 			random_min = float(blinkspeed[0])
 			random_max = float(blinkspeed[1])
-		animated_sprite.frames.set_animation_loop("default", false)
+		animated_sprite.sprite_frames.set_animation_loop("default", false)
 
 
 # mostly used for tests
 func get_animation_progress():
 	if not animated_sprite:
 		return 0
-	var count = animated_sprite.frames.get_frame_count(animated_sprite.animation)
+	var count = animated_sprite.sprite_frames.get_frame_count(animated_sprite.animation)
 	return float(animated_sprite.frame/count)
 
 func _frame_changed():
@@ -325,13 +325,13 @@ func _process(dt):
 # but just setting the frame individually
 func next_frame():
 	frame += 1
-	if frame >= animated_sprite.frames.get_frame_count("default"):
-		if animated_sprite.frames.get_animation_loop("default"):
+	if frame >= animated_sprite.sprite_frames.get_frame_count("default"):
+		if animated_sprite.sprite_frames.get_animation_loop("default"):
 			animated_sprite.emit_signal("animation_finished")
 			frame = 0
 			_frame_changed()
 		else:
-			frame = animated_sprite.frames.get_frame_count("default")
+			frame = animated_sprite.sprite_frames.get_frame_count("default")
 			_frame_changed()
 			animated_sprite.emit_signal("animation_finished")
 			return
