@@ -173,7 +173,7 @@ class OpsSorter:
 
 func EVAL_EXPR(expr):
 	if not expr is Array:
-		return String(expr)
+		return str(expr)
 	if expr.size() == 1:
 		return EVAL_EXPR(expr[0])
 #	print("EVAL_EXPR:", expr)
@@ -201,7 +201,7 @@ func EVAL_EXPR(expr):
 			ops.append([i, expr[i]])
 	# Not sure what this is doing, but it's a kind of error handling
 	if not ops:
-		return String(expr[0])
+		return str(expr[0])
 	ops.sort_custom(Callable(OpsSorter, "sorter"))
 	var op = ops[0]
 	var left = expr[op[0]-1]
