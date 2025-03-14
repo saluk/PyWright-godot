@@ -1,4 +1,5 @@
 [ ] Eliminate warnings
+[ ] shader issues
 [X] EVAL_EXPR can't return String() - do we need to make a converter? turns out you just use str()
 [X] args.join(Commands) -> Commands.join(args) 4.4 rewrote them even though I have my own join function
 [X] update->queue_redraw
@@ -8,7 +9,7 @@
 [X] Missing GDScriptFunctionState (commented out)
 [X] PoolStringArray.join -> "".join(PackedStringArray)
 [ ] can't import Node3D
-[ ] Invalid argument for "get_signal_connection_list()" function: argument 1 should be "StringName" but is "Dictionary".
+[X] Invalid argument for "get_signal_connection_list()" function: argument 1 should be "StringName" but is "Dictionary". (gd4 complains if you change type of an object)
 [X] Fade.gd control_all() missing arguments (this was actually a bug in my code!)
 [ ] Gui.gd "join" in "array"
 [X] Tweens - skipping add_child for now
