@@ -26,9 +26,10 @@ static func get_font(type, main):
 		loaded_font = load(font_path)
 		stack.main.font_cache.set_cached(font_path, loaded_font)
 	font.font_data = loaded_font
-	font.size = font_data["font_size"]
-	font.use_filter = true
-	font.use_mipmaps = true
+	# TODO 4.4 move the size to the theme for whatever is rendering the font
+	#font.size = font_data["font_size"]
+	#font.use_filter = true
+	#font.use_mipmaps = true
 	font.set_extra_spacing(0, TextServer.SPACING_SPACE, font_data["font_spacing"])
 	return font
 
