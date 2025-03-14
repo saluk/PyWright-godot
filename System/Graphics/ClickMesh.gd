@@ -28,7 +28,7 @@ func make_click_mesh():
 			if mat.albedo_texture and not mat.albedo_texture in textures:
 				textures.append(mat.albedo_texture)
 			shader_mat = ShaderMaterial.new()
-			shader_mat.gdshader = click_uv
+			shader_mat.shader = click_uv
 			shader_mat.set_shader_parameter("albedo_texture", mat.albedo_texture)
 			shader_mat.set_shader_parameter("texture_width", mat.albedo_texture.get_width())
 			shader_mat.set_shader_parameter("texture_height", mat.albedo_texture.get_height())

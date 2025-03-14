@@ -191,7 +191,7 @@ func _load_animation(path:String, sub_rect=null):
 	rescale(width, height)
 
 	material = ShaderMaterial.new()
-	material.gdshader = load("res://System/Graphics/image_filters.gdshader")
+	material.shader = load("res://System/Graphics/image_filters.gdshader")
 
 	animated_sprite.connect("animation_finished", Callable(self, "finish_playing"))
 	if "wbench" in sprite_path:
@@ -241,7 +241,7 @@ func from_frame(frame):
 	animated_sprite.sprite_frames = SpriteFrames.new()
 	animated_sprite.sprite_frames.add_frame("default", frame)
 	material = ShaderMaterial.new()
-	material.gdshader = load("res://System/Graphics/image_filters.gdshader")
+	material.shader = load("res://System/Graphics/image_filters.gdshader")
 
 func rescale(size_x, size_y):
 	var sc_w = float(size_x)/float(max(1, width))

@@ -1,5 +1,6 @@
 [ ] Eliminate warnings
-[ ] shader issues
+[ ] shader compile issues
+[X] material.gdshader -> material.shader
 [X] animation.playing
 [X] EVAL_EXPR can't return String() - do we need to make a converter? turns out you just use str()
 [X] args.join(Commands) -> Commands.join(args) 4.4 rewrote them even though I have my own join function
