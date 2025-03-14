@@ -42,7 +42,7 @@ func ws_goto(script, arguments):
 	var fail = Commands.keywords(arguments).get("fail", null)
 	if fail != null:
 		arguments.erase("fail="+fail)
-	return script." ".join(goto_label(PackedStringArray(arguments)), fail)
+	return script.goto_label(" ".join(PackedStringArray(arguments)), fail)
 
 func ws_top(script, arguments):
 	script.goto_line_number(0)

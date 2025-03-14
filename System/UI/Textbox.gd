@@ -358,7 +358,7 @@ func queue_next_textbox():
 		if not " " in next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1):
 			break_on_spaces = false
 		var while_loops = 0
-		while "\n".join((get_number_of_lines_for(PackedStringArray(printed_lines))) > 3 or last_char != " ") and while_loops < MAX_WHILE:
+		while (get_number_of_lines_for("\n".join(PackedStringArray(printed_lines))) > 3 or last_char != " ") and while_loops < MAX_WHILE:
 			while_loops += 1
 			last_char = " "
 			if printed_lines[-1].length() > 0:
