@@ -583,7 +583,7 @@ func update_nametag():
 
 func update_nametag_size():
 	var label = get_node("%NametagLabel")
-	var size = label.get_font("font").get_string_size(label.text)
+	var size = label.get("theme_override_fonts/font").get_string_size(label.text)
 	size.x += 10
 	if not nt_left_sprite:
 		nt_left_sprite = ObjectFactory.create_from_template(

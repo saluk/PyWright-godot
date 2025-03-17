@@ -24,7 +24,12 @@ static func get_font(type, main):
 	var loaded_font = stack.main.font_cache.get_cached(font_path, null)
 	if not loaded_font:
 		loaded_font = load(font_path)
-		stack.main.font_cache.set_cached(font_path, loaded_font)
+		# TODO 4.4 see about dynamic load of pwinternational.ttf from COAA
+		# let's fall back to a generic font if we can't load it
+		if loaded_font:
+			stack.main.font_cache.set_cached(font_path, loaded_font)
+		else:
+			loaded_font = load("res://fonts/VeraSe.ttf")
 	font.font_data = loaded_font
 	# TODO 4.4 move the size to the theme for whatever is rendering the font
 	#font.size = font_data["font_size"]

@@ -1,5 +1,20 @@
+[ ] Dynamic ttf file not loading
+[ ] label.get_font -> label.theme.get_font
 [ ] Eliminate warnings
 [ ] shader compile issues
+[ ] can't import Node3D
+[ ] Gui.gd "join" in "array"
+[ ] Tweens (check)
+[ ] not compiling
+[ ] Reenable scriptdebugger
+[ ] frames -> sprite_frames
+[ ] figure out how to handle yield frames in WrightScriptStack.gd
+		I think it's something like:
+		1. return an object that calls the waiting function (object.next)
+		2. replace yield with await
+		3. replace resume with object.next()
+[ ] make sure font size is corrected for
+
 [X] idle_frame -> process_frame
 [X] material.gdshader -> material.shader
 [X] animation.playing
@@ -11,24 +26,11 @@
 [X] Button.Align, Label.ALIGNMENT_CENTER
 [X] Missing GDScriptFunctionState (commented out)
 [X] PoolStringArray.join -> "".join(PackedStringArray)
-[ ] can't import Node3D
 [X] Invalid argument for "get_signal_connection_list()" function: argument 1 should be "StringName" but is "Dictionary". (gd4 complains if you change type of an object)
 [X] Fade.gd control_all() missing arguments (this was actually a bug in my code!)
-[ ] Gui.gd "join" in "array"
 [X] Tweens - skipping add_child for now
-[ ] Tweens (check)
 [X] get_system_time_msecs()
-[ ] not compiling
-[ ] Reenable scriptdebugger
-[ ] frames -> sprite_frames
-[ ] figure out how to handle yield frames in WrightScriptStack.gd
-		I think it's something like:
-		1. return an object that calls the waiting function (object.next)
-		2. replace yield with await
-		3. replace resume with object.next()
 [X] stubbed out some font related stuff
-[ ] make sure font size is corrected for
-
 [X] Engine.target_fps messin up main.gd
 [X] File, Dir -> FileAccess, DirAccess
 [X] set_process warning (was just warning about shadowing a function, which I use on my own and I turned off the warning)
