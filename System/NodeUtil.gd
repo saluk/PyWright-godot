@@ -5,7 +5,8 @@ static func assign_node_dictionary(object:Object, nodes:Dictionary[NodePath, Nod
 	for field in object.get_property_list():
 		if field['type'] == TYPE_NODE_PATH:
 			var path = object.get(field['name'])
-			nodes[path] = object.get_node(path)
+			if path:
+				nodes[path] = object.get_node(path)
 
 static func create_node_dictionary(object:Object) -> Dictionary[NodePath, Node]:
 	var nodes:Dictionary[NodePath, Node] = {}
