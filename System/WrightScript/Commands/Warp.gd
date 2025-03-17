@@ -37,28 +37,25 @@ class WarpAnim extends Node:
 		return get_parent()
 	func make_tweens():
 		for k in keys:
-			var tween = Tween.new()
+			var tween = create_tween()
 			tweens.append(tween)
 			# TODO 4.4 check if we need changes here
 			#add_child(tween)
-			tween.interpolate_property(
+			tween.tween_property(
 				self,
 				k,
-				get(k),
 				end_tweaks[k],
 				total_time/60.0,
-				Tween.TRANS_LINEAR
 			)
-			tween.start()
-			tween.connect("tween_completed", Callable(self, "end_tween").bind(tween))
+			tween.set_trans(Tween.TRANS_LINEAR)
+			tween.play()
+			tween.connect("finished", Callable(self, "end_tween").bind(tween))
 	func _process(dt):
 		for o in objects:
 			for k in keys:
 				print(k, get(k))
 				o.set_sprite_material_param(k, get(k))
 	func end_tween(object, nodepath, tween):
-		if tween in get_children():
-			tween.queue_free()
 		if tween in tweens:
 			tweens.erase(tween)
 		if not tweens:

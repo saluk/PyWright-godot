@@ -135,25 +135,24 @@ func _scroll(direction):
 	SignalUtils.remove_all($Control/ArrowLeft)
 	SignalUtils.remove_all($Control/ArrowRight)
 	case_chosen += direction
-	var tween = Tween.new()
-	# TODO 4.4 check if we need changes here
-	#add_child(tween)
+	var tween:Tween = create_tween()
 	var start_pos = $Control/ScrollContainer2.position
-	tween.interpolate_property($Control/ScrollContainer2, "position",
-			start_pos,
-			start_pos - Vector2(256,0) * direction, 0.2,
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
-	tween.start()
-	await tween.tween_completed
+	# scroll old buttons off the screen
+	tween.tween_property($Control/ScrollContainer2, "position",
+			start_pos - Vector2(256,0) * direction, 0.2)
+	tween.set_ease(Tween.EASE_IN_OUT)
+	tween.play()
+	await tween.finished
 	Commands.call_command("sound_case_menu_select", wrightscript, [])
 	build_scene()
-	tween.interpolate_property($Control/ScrollContainer2, "position",
-			start_pos + Vector2(256, 0) * direction,
-			start_pos, 0.2,
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
-	tween.start()
-	await tween.tween_completed
-	tween.queue_free()
+	tween = create_tween()
+	# scroll new buttons on the screen
+	$Control/ScrollContainer2.position = start_pos + Vector2(256, 0) * direction
+	tween.tween_property($Control/ScrollContainer2, "position",
+			start_pos, 0.2)
+	tween.set_ease(Tween.EASE_IN_OUT)
+	tween.play()
+	await tween.finished
 	connect_arrows()
 	emit_signal("SCROLL_FINISHED")
 

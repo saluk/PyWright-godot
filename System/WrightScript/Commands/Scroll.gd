@@ -28,13 +28,10 @@ class Scroller extends Node:
 	func get_screen():
 		return get_parent()
 	func set_process(enabled):
-		if tween:
-			tween.set_active(enabled)
+		tween.set_active(enabled)
 		super.set_process(enabled)
 	func make_tweens(start_positions=[]):
-		tween = Tween.new()
-		# TODO 4.4 maybe we just don't add it manually
-		#add_child(tween)
+		tween = create_tween()
 		for o in objects:
 			if o is PWMesh:
 				var next_pos
@@ -44,14 +41,13 @@ class Scroller extends Node:
 					next_pos = o.position
 				# TODO kind of hacky to invert and clamp the z movement
 				var end_pos = Vector3(next_pos.x+total.x, next_pos.y+total.y, clamp(next_pos.z-total.z, o.maxz, -o.minz))
-				tween.interpolate_property(
+				o.position = next_pos
+				tween.parallel().tween_property(
 					o,
 					"position",
-					next_pos,
 					end_pos,
-					total_time,
-					Tween.TRANS_LINEAR
-				)
+					total_time
+				).set_trans(Tween.TRANS_LINEAR)
 				print(o.name)
 				print(next_pos)
 				print(total)
@@ -65,17 +61,15 @@ class Scroller extends Node:
 				else:
 					next_pos = o.position
 				var end_pos = Vector2(next_pos.x+total.x, next_pos.y+total.y)
-				tween.interpolate_property(
+				o.position = next_pos
+				tween.parallel().tween_property(
 					o,
 					"position",
-					next_pos,
 					end_pos,
-					total_time,
-					Tween.TRANS_LINEAR
-				)
+					total_time
+				).set_trans(Tween.TRANS_LINEAR)
 				save_start_positions.append(next_pos)
-
-		tween.start()
+		tween.play()
 	func getscrollable(objects):
 		var return_list = []
 		for o in objects:
@@ -117,7 +111,7 @@ class Scroller extends Node:
 	func save_node(data):
 		data["loader_class"] = "res://System/WrightScript/Commands/Scroll.gd"
 		if tween:
-			data["time_elapsed"] = tween.tell()
+			data["time_elapsed"] = tween.get_total_elapsed_time
 		data["save_start_positions"] = []
 		for pos in save_start_positions:
 			data["save_start_positions"].append([pos.x, pos.y])

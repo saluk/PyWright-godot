@@ -5,6 +5,14 @@
 [ ] can't import Node3D
 [ ] Gui.gd "join" in "array"
 [ ] Tweens (check)
+	[ ] Check scrolls
+	[ ] Scroll saving
+	[ ] Check warp
+	[X] Tween.new -> node.add_tween
+	[X] Tween.start -> Tween.play
+	[X] Tween.tween_completed -> Tween.finished
+	[X] tween.interpolate_property -> tween.tween_property
+	[X] tell -> get_total_elapsed_time
 [ ] not compiling
 [ ] Reenable scriptdebugger
 [ ] frames -> sprite_frames
