@@ -431,8 +431,6 @@ offset_left = 266.0
 offset_top = 28.0
 offset_right = 258.0
 offset_bottom = -2.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="FrameLog" parent="DisabledTabs" instance=ExtResource("2")]
 visible = false

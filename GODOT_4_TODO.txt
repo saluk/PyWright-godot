@@ -25,6 +25,7 @@
 		3. replace resume with object.next()
 [ ] make sure font size is corrected for
 [ ] mouse dragging in examine
+[X] SignalUtils removing some important signals that are needed for remove_child() to work
 
 [X] idle_frame -> process_frame
 [X] material.gdshader -> material.shader

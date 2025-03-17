@@ -100,6 +100,7 @@ func play_sound(path, current_path, volume=1.0, min_repeat=null):
 		return
 	playing_path = path
 	var audio_stream = _load_audio_stream(found)
+	SignalUtils.remove_all(audio_stream)
 	if audio_stream:
 		files_playing[key] = PlayingFile.new(key, Time.get_ticks_msec(), audio_stream, min_repeat)
 		audio_stream.connect("finished", Callable(self, "sound_finished").bind(key))
