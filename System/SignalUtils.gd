@@ -5,7 +5,12 @@ class_name SignalUtils
 # TODO maybe there's a way we can ensure the "builtin" signals are kept
 #    - if the signal name is defined in the user script
 #	 - if the signal connection is a callable that points to a user script
-const safe_signals = ["child_order_changed"]
+const safe_signals = [
+	"child_order_changed",
+	"item_rect_changed",
+	"size_flags_changed",
+	"minimum_size_changed",
+	"visibility_changed"]
 
 static func remove_all(object:Object):
 	if not is_instance_valid(object):
