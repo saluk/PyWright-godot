@@ -229,20 +229,20 @@ func has_sprite(sprite_key):
 # Frames into a separate talk sprite and blink sprite
 func process_combined():
 	if has_sprite("combined"):
-		var count = sprites["combined"].animated_sprite.frames.get_frame_count("default")
+		var count = sprites["combined"].animated_sprite.sprite_frames.get_frame_count("default")
 		var blinksplit = int(sprites["combined"].info.get("blinksplit", count/2))
 		if not "talk" in sprites:
 			add_sprite("talk", template["sprites"]["combined"])
 			# Remove blink frames
 			if count > 1:
-				while sprites["talk"].animated_sprite.frames.get_frame_count("default") > blinksplit:
-					sprites["talk"].animated_sprite.frames.remove_frame("default", blinksplit)
+				while sprites["talk"].animated_sprite.sprite_frames.get_frame_count("default") > blinksplit:
+					sprites["talk"].animated_sprite.sprite_frames.remove_frame("default", blinksplit)
 		if not "blink" in sprites:
 			add_sprite("blink", template["sprites"]["combined"])
 			# Remove talk frames
 			if count > 1:
-				while sprites["blink"].animated_sprite.frames.get_frame_count("default") > count-blinksplit:
-					sprites["blink"].animated_sprite.frames.remove_frame("default", 0)
+				while sprites["blink"].animated_sprite.sprite_frames.get_frame_count("default") > count-blinksplit:
+					sprites["blink"].animated_sprite.sprite_frames.remove_frame("default", 0)
 
 
 func process_missing():
@@ -329,7 +329,7 @@ func get_texture():
 	if not current_sprite:
 		return null
 	var sprite = current_sprite.animated_sprite
-	var frames = sprite.frames
+	var frames = sprite.sprite_frames
 	var texture = frames.get_frame(sprite.animation, sprite.frame)
 	return texture
 
