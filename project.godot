@@ -40,6 +40,7 @@ gdscript/warnings/unused_variable=false
 gdscript/warnings/shadowed_variable=false
 gdscript/warnings/integer_division=false
 gdscript/warnings/native_method_override=0
+shader_language/warnings/treat_warnings_as_errors=true
 gdscript/warnings/unused_argument=false
 
 [display]

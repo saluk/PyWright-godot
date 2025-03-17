@@ -4,6 +4,8 @@
 [ ] shader compile issues
 [ ] can't import Node3D
 [ ] Gui.gd "join" in "array"
+[ ] Image loading issues
+	[X] create_from_img turned into static
 [ ] Tweens (check)
 	[ ] Check scrolls
 	[ ] Scroll saving
