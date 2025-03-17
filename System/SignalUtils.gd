@@ -2,6 +2,9 @@ extends RefCounted
 class_name SignalUtils
 
 # weird things can happen if we remove these builtin signals
+# TODO maybe there's a way we can ensure the "builtin" signals are kept
+#    - if the signal name is defined in the user script
+#	 - if the signal connection is a callable that points to a user script
 const safe_signals = ["child_order_changed"]
 
 static func remove_all(object:Object):
