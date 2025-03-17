@@ -185,7 +185,7 @@ static func load_atlas_specific(path:String, rect_list:Array) -> Array:
 			rw = image.get_height()
 		if rh == "h":
 			rh = image.get_height()
-		var r = Rect2(rx, ry, rw, rh)
+		var r = Rect2(rx, ry, int(rw), int(rh))
 		atlas.region = r
 		frames.append(atlas)
 	return frames
