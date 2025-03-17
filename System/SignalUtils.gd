@@ -8,6 +8,6 @@ static func remove_all(object:Object):
 	for signal_dict in object.get_signal_list():
 		var signal_name = signal_dict["name"]
 		for connection in object.get_signal_connection_list(signal_name):
-			if object.is_connected(connection["signal"], Callable(connection["target"], connection["method"])):
+			if object.is_connected((connection["signal"] as Signal).get_name(), connection["callable"]):
 				print("disconnect:", connection)
-				object.disconnect(connection["signal"], Callable(connection["target"], connection["method"]))
+				object.disconnect(connection["signal"].get_name(), connection["callable"])
