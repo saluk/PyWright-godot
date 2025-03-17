@@ -170,9 +170,9 @@ func ws_flash(script, arguments):
 		flash_sound = main.stack.variables.get_string("_flash_sound", null)
 	if flash_sound:
 		Commands.call_command("sfx", script, [flash_sound])
-	await main.get_tree().create_timer(delay).timeout
-	if flash and is_instance_valid(flash):
-		flash.queue_free()
+	var timer:SceneTreeTimer = main.get_tree().create_timer(delay)
+	timer.connect("timeout", Callable(flash, "queue_free"))
+	# TODO 4.4 - return an object with a wait_signal that waits for the timer to be finished
 
 # FIXME IMPLEMENT
 #@category([KEYWORD("mag","How many times to magnify","1 (will magnify 1 time, which is 2x magnification)"),

@@ -19,10 +19,8 @@
 [ ] Reenable scriptdebugger
 [X] frames -> sprite_frames
 [ ] figure out how to handle yield frames in WrightScriptStack.gd
-		I think it's something like:
-		1. return an object that calls the waiting function (object.next)
-		2. replace yield with await
-		3. replace resume with object.next()
+	[X] make flash not use await - we can't return await during script execution
+	[ ] look for other cases where we return an awaitable function
 [ ] make sure font size is corrected for
 [ ] mouse dragging in examine
 [X] SignalUtils removing some important signals that are needed for remove_child() to work
