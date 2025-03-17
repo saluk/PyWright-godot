@@ -438,8 +438,8 @@ func create_from_template(
 	var y=int(consume_keyword(arguments, "y", template["position"][1]))
 	object.position = Vector2(x, y)
 	object.centered = template["centered"]
-	object.centerx = consume_keyword(arguments, "centerx", false)
-	object.centery = consume_keyword(arguments, "centery", false)
+	object.centerx = Values.to_truth(consume_keyword(arguments, "centerx", "false"))
+	object.centery = Values.to_truth(consume_keyword(arguments, "centery", "false"))
 	if arguments:
 		object.base_path = arguments[0]
 	object.variant_path = consume_keyword(arguments, "e", template["default_variant"])
