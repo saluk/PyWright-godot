@@ -136,8 +136,7 @@ static func _create_texture(data:PackedByteArray):
 	return tex
 
 static func _get_texture(mtl_filepath, tex_filename):
-	var tex = ImageTexture.new()
-	tex.create_from_image(_get_image(mtl_filepath, tex_filename))
+	var tex = ImageTexture.create_from_image(_get_image(mtl_filepath, tex_filename))
 	if debug:
 		print("    Debug: texture is " + str(tex))
 	return tex
