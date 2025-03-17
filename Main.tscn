@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://cn3gnbw2n8q1i"]
+[gd_scene load_steps=18 format=3 uid="uid://cn3gnbw2n8q1i"]
 
 [ext_resource type="PackedScene" uid="uid://lu1ruhbxx4en" path="res://System/UI/tools/ScriptDebugger.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://byos5h7heqbvd" path="res://System/UI/tools/FrameLog.tscn" id="2"]
@@ -13,10 +13,6 @@
 [ext_resource type="Script" uid="uid://dfbrih6bjsry8" path="res://System/Input/InputController.gd" id="11"]
 [ext_resource type="Script" uid="uid://cedfxht2n4h7g" path="res://System/UI/GetScreenFocus.gd" id="12"]
 [ext_resource type="Script" uid="uid://b7bvvtpoi5a15" path="res://System/UI/tools/ModesFilter.gd" id="13"]
-[ext_resource type="Script" uid="uid://cocif31ls56wh" path="res://System/Scene/ViewportInput.gd" id="14"]
-[ext_resource type="Script" uid="uid://dy7ia00yjwe0l" path="res://System/Scene/ViewportController.gd" id="15"]
-
-[sub_resource type="ShaderMaterial" id="6"]
 
 [sub_resource type="Shader" id="1"]
 code = "/*
@@ -283,66 +279,12 @@ focus_mode = 2
 mouse_filter = 2
 script = ExtResource("12")
 
-[node name="ViewportContainers" type="Control" parent="Screens"]
-clip_contents = true
-anchors_preset = 0
-offset_right = 256.0
-offset_bottom = 384.0
-mouse_filter = 2
-
-[node name="SubViewportContainer" type="Node2D" parent="Screens/ViewportContainers" groups=["SubViewportContainer"]]
-
-[node name="ScreenViewport" type="Node2D" parent="Screens/ViewportContainers/SubViewportContainer" groups=["MainScreenViewport"]]
-
-[node name="MainScreen" type="Node2D" parent="Screens/ViewportContainers/SubViewportContainer/ScreenViewport" groups=["MainScreen"]]
+[node name="MainScreen" type="Node2D" parent="Screens" groups=["MainScreen"]]
 unique_name_in_owner = true
 script = ExtResource("4")
 
-[node name="Camera2D" type="Camera2D" parent="Screens/ViewportContainers/SubViewportContainer/ScreenViewport"]
+[node name="Camera2D" type="Camera2D" parent="Screens"]
 position = Vector2(128, 192)
-
-[node name="Position" type="ColorRect" parent="Screens/ViewportContainers/SubViewportContainer"]
-mouse_filter = 1
-script = ExtResource("15")
-
-[node name="Scale" type="ColorRect" parent="Screens/ViewportContainers/SubViewportContainer"]
-mouse_filter = 1
-script = ExtResource("15")
-prop = "scaling"
-
-[node name="ViewportContainer2" type="SubViewportContainer" parent="Screens/ViewportContainers" groups=["SubViewportContainer"]]
-visible = false
-material = SubResource("6")
-clip_contents = true
-layout_mode = 0
-offset_left = 121.0
-offset_top = 287.0
-offset_right = 374.0
-offset_bottom = 479.0
-scale = Vector2(0.5, 0.5)
-mouse_filter = 2
-stretch = true
-script = ExtResource("14")
-
-[node name="ScreenViewport" type="SubViewport" parent="Screens/ViewportContainers/ViewportContainer2"]
-handle_input_locally = false
-physics_object_picking = true
-size = Vector2i(253, 192)
-render_target_update_mode = 0
-
-[node name="Camera2D" type="Camera2D" parent="Screens/ViewportContainers/ViewportContainer2/ScreenViewport"]
-position = Vector2(128, 288)
-
-[node name="Position" type="ColorRect" parent="Screens/ViewportContainers/ViewportContainer2"]
-layout_mode = 2
-mouse_filter = 1
-script = ExtResource("15")
-
-[node name="Scale" type="ColorRect" parent="Screens/ViewportContainers/ViewportContainer2"]
-layout_mode = 2
-mouse_filter = 1
-script = ExtResource("15")
-prop = "scaling"
 
 [node name="CRTFilter" type="ColorRect" parent="Screens"]
 visible = false

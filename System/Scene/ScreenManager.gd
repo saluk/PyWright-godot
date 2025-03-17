@@ -7,7 +7,7 @@ var _main_screen:Node2D
 var viewport_containers
 
 func _init_screens():
-	screens = get_tree().get_nodes_in_group("MainScreenViewport")[0]
+	screens = get_tree().get_nodes_in_group("Screens")[0]
 	_main_screen = screens.get_node("%MainScreen")
 
 	# TODO 4.4 re-enable	
