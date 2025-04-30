@@ -43,7 +43,7 @@ func _ready():
 		game_name = game_name.rstrip("/")
 		game_name = game_name.split("/")[-1]
 	$Control/GameTitle.text = game_name
-	Fonts.set_element_font($Control/GameTitle, "gametitle", wrightscript.main)
+	#Fonts.set_element_font($Control/GameTitle, "gametitle", wrightscript.main)
 	build_scene()
 	connect_arrows()
 	load_last_case()

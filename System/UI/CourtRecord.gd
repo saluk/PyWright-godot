@@ -277,13 +277,13 @@ func load_page_zoom():
 			stack.variables.get_int("ev_z_textbox_w", 0),  # zero so we can ensure it loads the variable
 			stack.variables.get_int("ev_z_textbox_h", 0)
 		)
-		desc.set("theme_override_constants/line_spacing",
+		desc.add_theme_constant_override("line_spacing",
 			stack.variables.get_int("textblock_line_height", 10)
 		)
-		desc.set("theme_override_colors/font_color", Colors.string_to_color(stack.variables.get_string("ev_z_text_col")))
+		desc.add_theme_color_override("font_color", Colors.string_to_color(stack.variables.get_string("ev_z_text_col")))
 		desc.text = ev_data["desc"].replace("{n}","\n")
 		desc.clip_text = true
-		desc.autowrap = true
+		desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		add_child(desc)
 
 		if can_present() and ev_data["presentable"]:

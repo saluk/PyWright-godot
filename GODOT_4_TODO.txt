@@ -1,7 +1,9 @@
 [ ] Font issues
-	[ ] Dynamic ttf file not loading
+	[X] Dynamic ttf file not loading
 	[X] make sure font size is corrected for
 	[ ] label.get_font -> label.theme.get_font
+	[X] switch from get()/set() for theme_override to get_theme_override and add_theme_override functions
+	[X] label.autowrap -> autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 [ ] Eliminate warnings
 [ ] shader compile issues
 [ ] can't import Node3D

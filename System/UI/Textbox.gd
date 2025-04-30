@@ -502,9 +502,11 @@ func _ready():
 		tb_lines = text_to_print.count("{n}")
 	else:
 		tb_lines = int(tb_lines_var)
-	if tb_lines < 3:
-		get_node("%TextLabel").offset_top = 8
-		get_node("%TextLabel").set("theme_override_constants/line_separation", 8)
+	# TODO Godot 4.4 - calculate auto line separation after text is formatted
+	#if tb_lines < 3:
+	#	get_node("%TextLabel").offset_top = 8
+	#	get_node("%TextLabel").add_theme_constant_override("line_separation", 8)
+	#	get_node("%TextLabel").set("theme_override_constants/line_separation", 8)
 
 	Fonts.set_element_font(get_node("%TextLabel"), "tb", main)
 	Fonts.set_element_font($WidthChecker, "tb", main)
@@ -582,8 +584,8 @@ func update_nametag():
 		update_nametag_size()
 
 func update_nametag_size():
-	var label = get_node("%NametagLabel")
-	var size = label.get("theme_override_fonts/font").get_string_size(label.text)
+	var label:Control = get_node("%NametagLabel")
+	var size = label.get_theme_default_font().get_string_size(label.text)
 	size.x += 10
 	if not nt_left_sprite:
 		nt_left_sprite = ObjectFactory.create_from_template(

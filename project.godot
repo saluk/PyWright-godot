@@ -45,6 +45,8 @@ gdscript/warnings/unused_argument=false
 
 [display]
 
+window/size/viewport_width=1024
+window/size/viewport_height=768
 window/stretch/mode="viewport"
 window/stretch/aspect="keep_width"
 window/handheld/orientation="portrait"
@@ -67,6 +69,9 @@ ogg_vorbis={
 }
 mp3={
 "loop": false
+}
+font_data_dynamic={
+&"generate_mipmaps": true
 }
 
 [input]

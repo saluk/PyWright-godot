@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://c0emenalebdjs"]
+[gd_scene load_steps=9 format=3 uid="uid://c0emenalebdjs"]
 
 [ext_resource type="Texture2D" uid="uid://cp3s075s3h8e2" path="res://art/general/textbox_2.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://fgi1lh8myp51" path="res://art/general/nt_right.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://864m8i2p4urq" path="res://art/general/nt_middle.png" id="3"]
+[ext_resource type="FontFile" uid="uid://waskblryuup6" path="res://fonts/pwinternational.ttf" id="3_8l7vf"]
 [ext_resource type="Script" uid="uid://b1y4go7lh8kue" path="res://System/UI/Textbox.gd" id="4"]
 [ext_resource type="Texture2D" uid="uid://obtblahvi5c1" path="res://art/general/nt_left.png" id="5"]
 
@@ -59,6 +60,8 @@ offset_top = 2.0
 offset_right = 250.0
 offset_bottom = 65.0
 mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("3_8l7vf")
+theme_override_font_sizes/normal_font_size = 10
 bbcode_enabled = true
 text = "This{n}text{n}is vary &long but wont break on spaces:andshouldgoto4lineswhichmeansthatthereshouldactually&be3textboxeswhereyouclickoneanditmovesontothenextone."
 scroll_active = false
@@ -105,6 +108,9 @@ offset_top = 77.0
 offset_right = 250.0
 offset_bottom = 108.0
 theme_override_colors/default_color = Color(0.352941, 0.898039, 0.92549, 1)
+theme_override_fonts/normal_font = ExtResource("3_8l7vf")
+theme_override_font_sizes/normal_font_size = 10
+text = "test"
 script = SubResource("2")
 
 [connection signal="input_event" from="Handle/Backdrop/Textbox2/Area2D" to="." method="_on_Area2D_input_event"]

@@ -33,13 +33,13 @@ func load_text():
 		text_width,
 		text_height
 	)
-	desc.set("theme_override_constants/line_spacing",
+	desc.add_theme_constant_override("line_spacing",
 		StandardVar.FONT_BLOCK_LINEHEIGHT.retrieve()
 	)
-	desc.set("theme_override_colors/font_color", Colors.string_to_color(text_color))
+	desc.add_theme_color_override("font_color", Colors.string_to_color(text_color))
 	desc.text = text_contents.replace("{n}","\n")
 	desc.clip_text = true
-	desc.autowrap = true
+	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(desc)
 
 #SAVE/LOAD

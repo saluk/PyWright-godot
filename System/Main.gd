@@ -75,6 +75,8 @@ func load_script_from_path(path):
 	emit_signal("stack_initialized")
 
 func set_resolution(res:Vector2, scale_factor:float):
+	# TODO godot 4.4 resolution stuff
+	return
 	Engine.max_fps = 60
 	var h = res.y
 	var w = res.x
@@ -84,6 +86,8 @@ func set_resolution(res:Vector2, scale_factor:float):
 	#get_tree().set_screen_stretch(SceneTree.STRETCH_MODE_2D, SceneTree.STRETCH_ASPECT_KEEP, Vector2(w, h), 1)
 
 func window_resize():
+	# TODO godot 4.4 resolution stuff
+	return
 	var v_size = get_viewport_rect().size
 	var lauthored_size = authored_size
 	if Configuration.builtin.screen_format == "horizontal" and $TabContainer.visible:

@@ -24,7 +24,6 @@ offset_right = 256.0
 offset_bottom = 384.0
 
 [node name="GameTitle" type="Label" parent="Control"]
-visible = false
 layout_mode = 0
 offset_top = 7.0
 offset_right = 256.0
@@ -68,6 +67,7 @@ mouse_filter = 2
 theme_override_colors/default_color = Color(0.784314, 0.392157, 0.392157, 1)
 bbcode_enabled = true
 text = "Turnabout Scapegoat"
+fit_content = true
 
 [node name="NewGameButton" type="TextureButton" parent="Control/ScrollContainer2/VBoxContainer"]
 layout_mode = 2

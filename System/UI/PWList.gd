@@ -124,7 +124,7 @@ func add_list_items():
 		# TODO we could probably bake this into button text
 		var button_label := Label.new()
 		Fonts.set_element_font(button_label, "list", main)
-		button_label.set("theme_override_colors/font_color", Colors.string_to_color(main.stack.variables.get_string("_list_text_color", "6e1414")))
+		button_label.add_theme_color_override("font_color", Colors.string_to_color(main.stack.variables.get_string("_list_text_color", "6e1414")))
 		button_label.align = HORIZONTAL_ALIGNMENT_CENTER
 		button_label.valign = VERTICAL_ALIGNMENT_CENTER
 		#button_label.rect_position = Vector2(button.width/2, button.height/2)
