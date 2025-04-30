@@ -8,6 +8,7 @@
 [ ] Gui.gd "join" in "array"
 [ ] Image loading issues
 	[X] create_from_img turned into static
+	[ ] Investigation menu (loading specific rects from graphics?)
 [ ] Tweens (check)
 	[ ] Check scrolls
 	[ ] Scroll saving
@@ -24,6 +25,7 @@
 	[X] make flash not use await - we can't return await during script execution
 	[ ] look for other cases where we return an awaitable function
 [ ] mouse dragging in examine
+[ ] Node3D
 [X] SignalUtils removing some important signals that are needed for remove_child() to work
 
 [X] idle_frame -> process_frame

@@ -35,8 +35,10 @@ signal debug_state_off
 # {"script": WrightScript, "editor": TextEdit, "highlighted_line":int, "bookmark_line": int}
 
 func _ready():
-	if step is NodePath:
-		script_tab = nodes[current_script]
+	script_tab = nodes.get(current_script, null)
+	
+	#if not script_tab:
+	#	return
 
 	nodes[node_scripts].remove_child(script_tab)
 	# TODO conceal buttons if game is not playing to prevent error

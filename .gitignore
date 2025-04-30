@@ -8,7 +8,7 @@
 *.orig
 
 # New in godot 4
-.godot/editor/*
+.godot/
 
 # vscode
 .vscode

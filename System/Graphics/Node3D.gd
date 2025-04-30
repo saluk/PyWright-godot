@@ -12,7 +12,7 @@ var render_h
 
 var meshes = []
 
-var ready = false
+var is_ready = false
 
 func _init():
 	script_name = "surf3d"
@@ -25,7 +25,7 @@ func _ready():
 	click_container = get_node("%click_container")
 	click_viewport = get_node("%click_viewport")
 	click_container.connect("gui_input", Callable(self, "_gui_input"))
-	ready = true
+	is_ready = true
 	set_size()
 
 func add_mesh(mesh_ob):

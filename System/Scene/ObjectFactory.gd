@@ -430,7 +430,7 @@ func create_from_template(
 	object.main = get_main()
 	object.wrightscript = script
 	object.stack = get_main().stack
-
+	
 	parent.add_child(object)
 	object.owner = parent
 
