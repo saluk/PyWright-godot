@@ -314,6 +314,7 @@ script = ExtResource("4")
 
 [node name="Camera2D" type="Camera2D" parent="Screens"]
 position = Vector2(128, 192)
+offset = Vector2(256, 0)
 
 [node name="CRTFilter" type="ColorRect" parent="Screens"]
 visible = false

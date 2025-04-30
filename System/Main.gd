@@ -119,14 +119,15 @@ func _ready():
 	else:
 		tab_button.button_pressed = true
 
-	get_tree().root.connect("size_changed", Callable(self, "window_resize"))
-	if Configuration.builtin.screen_format == "vertical":
-		set_resolution(Vector2(256*2,384 + 32), 2.0)
-		screens.position = Vector2(0, 16)
-		tab_button.position = Vector2(0, 0)
-		$TabContainer.position = Vector2(0, 16)
-	elif Configuration.builtin.screen_format == "horizontal":
-		set_resolution(Vector2(256 * 2,384), 2.0)
+	# TODO Godot4.4 screen layout
+	#get_tree().root.connect("size_changed", Callable(self, "window_resize"))
+	#if Configuration.builtin.screen_format == "vertical":
+		#set_resolution(Vector2(256*2,384 + 32), 2.0)
+		#screens.position = Vector2(0, 16)
+		#tab_button.position = Vector2(0, 0)
+		#$TabContainer.position = Vector2(0, 16)
+	#elif Configuration.builtin.screen_format == "horizontal":
+		#set_resolution(Vector2(256 * 2,384), 2.0)
 
 	stack = WrightScriptStack.new(self)
 	stack.connect("stack_empty", Callable(self, "reload"))
