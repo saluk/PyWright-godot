@@ -2,7 +2,7 @@ extends Resource
 class_name Fonts
 
 # TODO this should use StandardVar
-static func get_font_for_type(type, main):
+static func _get_font_for_type(type, main):
 	var spacing = 0
 	if type == "tb":
 		spacing = -2
@@ -12,9 +12,9 @@ static func get_font_for_type(type, main):
 		"font_spacing": main.stack.variables.get_int("_font_"+type+"_spacing", spacing)
 	}
 
-static func get_font(type, main):
+static func _get_font(type, main):
 	var stack = main.stack
-	var font_data = get_font_for_type(type, main)
+	var font_data = _get_font_for_type(type, main)
 	var font := FontFile.new()
 	var font_path = Filesystem.lookup_file("fonts/"+font_data["font_path"], stack.scripts[-1].root_path)
 	if not font_path:
@@ -39,9 +39,9 @@ static func get_font(type, main):
 	return font
 
 static func set_element_font(el, type, main):
-	var font = get_font(type, main)
+	var font_data = _get_font_for_type(type, main)
+	var font = _get_font(type, main)
 	if font:
-		el.set("theme_override_fonts/font", font)
-		el.set("theme_override_fonts/normal_font", font)
-		el.set("theme_override_fonts/bold_font", font)
-		el.set("theme_override_fonts/italics_font", font)
+		for font_mode in ["", "normal_", "mono_", "italics_", "bold_italics_", "bold_"]:
+			el.set("theme_override_fonts/" + "font", font)
+			el.set("theme_override_fonts/" + "font_size", font_data["font_size"])

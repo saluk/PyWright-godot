@@ -1,5 +1,7 @@
-[ ] Dynamic ttf file not loading
-[ ] label.get_font -> label.theme.get_font
+[ ] Font issues
+	[ ] Dynamic ttf file not loading
+	[X] make sure font size is corrected for
+	[ ] label.get_font -> label.theme.get_font
 [ ] Eliminate warnings
 [ ] shader compile issues
 [ ] can't import Node3D
@@ -21,7 +23,6 @@
 [ ] figure out how to handle yield frames in WrightScriptStack.gd
 	[X] make flash not use await - we can't return await during script execution
 	[ ] look for other cases where we return an awaitable function
-[ ] make sure font size is corrected for
 [ ] mouse dragging in examine
 [X] SignalUtils removing some important signals that are needed for remove_child() to work
 
