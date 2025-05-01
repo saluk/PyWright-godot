@@ -8,7 +8,7 @@ func _init(commands):
 	rng = RandomNumberGenerator.new()
 	rng.randomize()
 
-func ws_set(script, arguments):
+func ws_set(_script, arguments):
 	var key = arguments.pop_front()
 	var value = Commands.join(arguments)
 	main.stack.variables.set_val(key, value)
@@ -17,10 +17,10 @@ func ws_setvar(script, arguments):
 	return ws_set(script, arguments)
 
 # NEW
-func ws_delvar(script, arguments):
+func ws_delvar(_script, arguments):
 	main.stack.variables.del_val(arguments[0])
 
-func ws_set_ex(script, arguments):
+func ws_set_ex(_script, arguments):
 	var variableName = arguments.pop_front()
 	var value = WSExpression.EVAL_STR(Commands.join(arguments))
 	main.stack.variables.set_val(variableName, value)
@@ -28,7 +28,7 @@ func ws_set_ex(script, arguments):
 func ws_setvar_ex(script, arguments):
 	return ws_set_ex(script, arguments)
 
-func ws_getvar(script, arguments):
+func ws_getvar(_script, arguments):
 	var save_to = arguments.pop_front()
 	var get_from = Commands.join(arguments, "")
 	main.stack.variables.set_val(save_to, main.stack.variables.get_string(get_from))
@@ -36,7 +36,7 @@ func ws_getvar(script, arguments):
 func ws_get(script, arguments):
 	return ws_getvar(script, arguments)
 
-func ws_getprop(script, arguments):
+func ws_getprop(_script, arguments):
 	var variable = arguments.pop_front()
 	var kw = Commands.keywords(arguments)
 	for object in ScreenManager.get_objects(kw["name"]):
@@ -49,7 +49,7 @@ func ws_getprop(script, arguments):
 			value = object.current_sprite.animated_sprite.frame
 		main.stack.variables.set_val(variable, value)
 
-func ws_setprop(script, arguments):
+func ws_setprop(_script, arguments):
 	var variable = arguments.pop_front()
 	var kw = Commands.keywords(arguments)
 	var value
@@ -64,14 +64,14 @@ func ws_setprop(script, arguments):
 			value = main.stack.variables.get_int(variable)
 			object.current_sprite.animated_sprite.frame = value
 
-func ws_random(script, arguments):
+func ws_random(_script, arguments):
 	var key = arguments.pop_front()
 	var minimum = Values.to_num(arguments.pop_front())
 	var maximum = Values.to_num(arguments.pop_front())
 	var random_integer = rng.randi() % (maximum - minimum  + 1) + minimum
 	main.stack.variables.set_val(key, random_integer)
 
-func ws_joinvar(script, arguments):
+func ws_joinvar(_script, arguments):
 	var key = arguments.pop_front()
 	main.stack.variables.set_val(key, Commands.join(arguments, ""))
 
@@ -131,10 +131,10 @@ func ws_absvar(script, arguments):
 #        f = open(assets.game+"/"+filename,"w")
 #        f.write(repr(d))
 #        f.close()
-func ws_exportvars(script, arguments):
+func ws_exportvars(_script, _arguments):
 	pass
 
-func ws_filewrite(script, arguments):
+func ws_filewrite(_script, _arguments):
 	return Commands.NOTIMPLEMENTED
 
 # FIXME IMPLEMENT
@@ -153,7 +153,7 @@ func ws_filewrite(script, arguments):
 #        if txt.strip():
 #            d = eval(txt)
 #            assets.variables.update(d)
-func ws_importvars(script, arguments):
+func ws_importvars(_script, _arguments):
 	pass
 
 func ws_flag(script, arguments:Array, return_true=true):
@@ -187,10 +187,10 @@ func ws_flag(script, arguments:Array, return_true=true):
 		return
 	script.fail(label, fail)
 
-func ws_setflag(script, arguments):
+func ws_setflag(_script, arguments):
 	main.stack.variables.set_val(arguments[0], "true")
 
-func ws_delflag(script, arguments):
+func ws_delflag(_script, arguments):
 	if main.stack.variables.get_string(arguments[0], null) != null:
 		main.stack.variables.del_val(arguments[0])
 
@@ -305,5 +305,5 @@ func ws_is_ex(script, arguments):
 #        if value.isdigit():
 #            return self.succeed(label)
 #        return self.fail(label)
-func ws_is_number(script, arguments):
+func ws_is_number(_script, _arguments):
 	pass

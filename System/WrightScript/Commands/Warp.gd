@@ -1,7 +1,7 @@
 extends RefCounted
 class_name WarpLib
 
-func _init(commands):
+func _init(_commands):
 	pass
 
 class WarpAnim extends Node:
@@ -50,12 +50,12 @@ class WarpAnim extends Node:
 			tween.set_trans(Tween.TRANS_LINEAR)
 			tween.play()
 			tween.connect("finished", Callable(self, "end_tween").bind(tween))
-	func _process(dt):
+	func _process(_dt):
 		for o in objects:
 			for k in keys:
 				print(k, get(k))
 				o.set_sprite_material_param(k, get(k))
-	func end_tween(object, nodepath, tween):
+	func end_tween(tween):
 		if tween in tweens:
 			tweens.erase(tween)
 		if not tweens:

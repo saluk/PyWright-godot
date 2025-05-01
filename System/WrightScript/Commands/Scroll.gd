@@ -1,6 +1,6 @@
 extends RefCounted
 
-func _init(commands):
+func _init(_commands):
 	pass
 
 class Scroller extends Node:
@@ -16,7 +16,7 @@ class Scroller extends Node:
 	var save_start_positions := []
 
 	var controlled  # for saving
-	func _init(x, y, z, speed, wait, filter):
+	func _init(x, y, z, speed, wait):
 		name = "scroll"
 		total = Vector3(float(x), float(y), float(z))
 		if (speed/0.02) > 0:
@@ -116,7 +116,7 @@ class Scroller extends Node:
 		for pos in save_start_positions:
 			data["save_start_positions"].append([pos.x, pos.y])
 
-	func load_node(tree, saved_data:Dictionary):
+	func load_node(_tree, saved_data:Dictionary):
 		# TODO we should be added to correct scene. save load doesn't handle screens yet
 		ScreenManager.main_screen.add_child(self)
 		for pos in saved_data["save_start_positions"]:
@@ -135,8 +135,8 @@ class Scroller extends Node:
 		if "time_elapsed" in saved_data:
 			tween.seek(saved_data["time_elapsed"])
 
-static func create_node(saved_data:Dictionary):
-	var ob = Scroller.new(20,0,0,1,0,"")
+static func create_node(_saved_data:Dictionary):
+	var ob = Scroller.new(20,0,0,1,0)
 	return ob
 
 static func ws_scroll(script, arguments):
@@ -151,7 +151,7 @@ static func ws_scroll(script, arguments):
 	var filter = kw.get("filter", "top")
 	#filter is top or bottom - when no name, only scroll objects on this screen.
 	#if its not top or bottom, it has no effect
-	var scroller = Scroller.new(x, y, z, speed, wait, filter)
+	var scroller = Scroller.new(x, y, z, speed, wait)
 	script.screen.add_child(scroller)
 	if script_name:
 		scroller.control(script_name)

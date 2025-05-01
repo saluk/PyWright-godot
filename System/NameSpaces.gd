@@ -58,7 +58,7 @@ func reset():
 	for k in DEFAULTS.keys():
 		global_store.store[k] = DEFAULTS[k]
 
-func init_game_store(game_file):
+func init_game_store(_game_file):
 	pass
 	# TODO load game file and populate the game_store
 	# Attach a signal to save the file when variables are written to
@@ -274,7 +274,7 @@ func save_node(data):
 	data["global_store"] = SaveState._save_node(global_store)
 	data["game_store"] = SaveState._save_node(game_store)
 
-static func create_node(saved_data:Dictionary):
+static func create_node(_saved_data:Dictionary):
 	pass # Not called
 
 func load_node(tree, saved_data:Dictionary):
@@ -285,5 +285,5 @@ func load_node(tree, saved_data:Dictionary):
 		SaveState._load_node(tree, global_store, saved_data["global_store"])
 		SaveState._load_node(tree, game_store, saved_data["game_store"])
 
-func after_load(tree:SceneTree, saved_data:Dictionary):
+func after_load(_tree:SceneTree, _saved_data:Dictionary):
 	pass # Not called

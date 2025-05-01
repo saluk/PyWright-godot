@@ -90,4 +90,4 @@ func ws_gui_back_clicked(script, arguments):
 			return
 
 func click_option(option):
-	Commands.macro_or_label(option, main.stack.scripts[-1], [])
+	Commands.macro_or_label(option, main.stack.scripts[-1])

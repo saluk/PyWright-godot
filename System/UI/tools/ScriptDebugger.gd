@@ -138,7 +138,7 @@ func toggle_slow():
 		nodes[slow].text = "(slow)"
 		Engine.time_scale = 0.05
 
-func _process(delta):
+func _process(_delta):
 	if not current_stack:
 		update_current_stack()
 	if slow_mode:

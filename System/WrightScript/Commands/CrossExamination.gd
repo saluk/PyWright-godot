@@ -3,7 +3,7 @@ class_name CrossExamination
 
 var main
 
-static func add_statement(main, line_num, tag):
+static func add_statement(line_num, tag):
 	var cur_statements = StandardVar.STATEMENTS.retrieve()
 	var cur_statement_labels = StandardVar.STATEMENT_LABELS.retrieve()
 	while tag in cur_statement_labels:
@@ -16,7 +16,7 @@ static func add_statement(main, line_num, tag):
 		StandardVar.STATEMENTS.store(cur_statements)
 		StandardVar.STATEMENT_LABELS.store(cur_statement_labels)
 
-static func pop_rightmost_statement(main):
+static func pop_rightmost_statement():
 	var cur_statements = StandardVar.STATEMENTS.retrieve()
 	var cur_statement_labels = StandardVar.STATEMENT_LABELS.retrieve()
 	cur_statements.remove_at(cur_statements.size()-1)
@@ -38,18 +38,18 @@ func ws_cross(script, arguments):
 	else:
 		StandardVar.COURT_FAIL_LABEL.delete()
 
-func ws_endcross(script, arguments):
+func ws_endcross(_script, _arguments):
 	main.stack.variables.set_val("_statement", "")
 	main.stack.variables.del_val("_in_statement")
 	main.stack.variables.del_val("_cross_resume_line")
 
 # TODO Maybe deprecate this command
-func ws_cross_restart(script, arguments):
+func ws_cross_restart(script, _arguments):
 	var li = main.stack.variables.get_int("currentcross", null)
 	if li != null:
 		script.goto_line_number(li)
 
-func ws_clearcross(script, arguments):
+func ws_clearcross(_script, _arguments):
 	main.stack.variables.del_val("_statement")
 	main.stack.variables.del_val("_in_statement")
 	main.stack.variables.del_val("currentcross")
@@ -58,14 +58,14 @@ func ws_clearcross(script, arguments):
 	main.stack.variables.del_val("_cross_resume_line")
 
 # TODO test these
-func ws_next_statement(script, arguments):
+func ws_next_statement(script, _arguments):
 	var cross = main.cross_exam_script()
 	if cross:
 		cross.next_statement()
 	script.screen.delete_objects(null, null, Commands.TEXTBOX_GROUP)
 	main.stack.variables.set_val("_in_statement", "true")
 
-func ws_prev_statement(script, arguments):
+func ws_prev_statement(script, _arguments):
 	var cross = main.cross_exam_script()
 	if cross:
 		cross.prev_statement()
@@ -80,10 +80,10 @@ func ws_statement(script, arguments):
 	# These values should be applied to the next textbox that is created
 	main.stack.variables.set_val("_statement", arguments[0])
 	main.stack.variables.set_val("_in_statement", "true")
-	add_statement(script.main, script.line_num, arguments[0])
+	add_statement(script.line_num, arguments[0])
 
 # Press the current statement
-func ws_callpress(script, arguments):
+func ws_callpress(script, _arguments):
 	script.screen.delete_objects(null, null, Commands.TEXTBOX_GROUP)
 	var cross_script = main.cross_exam_script()
 	if cross_script:
@@ -95,9 +95,8 @@ func ws_callpress(script, arguments):
 
 # Return to the last line we jumped from, or the last statement
 # if there is a `currentcross`
-func ws_resume(script, arguments):
+func ws_resume(script, _arguments):
 	script.resume()
-	return
 
 # Show the court record to allow an evidence to be selected to present
 # Also used internally to trigger creating the court record ui

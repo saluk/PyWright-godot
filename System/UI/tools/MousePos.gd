@@ -12,7 +12,7 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	var mp = get_viewport().get_mouse_position()
 	mp = [int(mp[0]), int(mp[1])]
 	text = str(mp)

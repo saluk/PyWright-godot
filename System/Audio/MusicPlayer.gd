@@ -99,10 +99,10 @@ func save_node(data):
 	if playing and is_instance_valid(audio_player):
 		data["song_position"] = audio_player.get_playback_position()
 
-func load_node(tree, saved_data:Dictionary):
+func load_node(_tree, _saved_data:Dictionary):
 	pass
 
-func after_load(tree, saved_data:Dictionary):
+func after_load(_tree, saved_data:Dictionary):
 	if playing:
 		_load_audio_stream(playing_path)
 		if "song_position" in saved_data:

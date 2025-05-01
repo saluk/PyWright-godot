@@ -79,14 +79,14 @@ static func array_to_string(array, split_on):
 var save_properties = [
 	"store", "setters"
 ]
-func save_node(data):
+func save_node(_data):
 	pass
 
-static func create_node(saved_data:Dictionary):
+static func create_node(_saved_data:Dictionary):
 	pass # Not called
 
-func load_node(tree, saved_data:Dictionary):
+func load_node(_tree, _saved_data:Dictionary):
 	pass
 
-func after_load(tree:SceneTree, saved_data:Dictionary):
+func after_load(_tree:SceneTree, _saved_data:Dictionary):
 	pass # Not called

@@ -311,7 +311,7 @@ func get_prev_statement():
 func prev_statement():
 	var si = get_prev_statement()
 	if si != null:
-		CrossExamination.pop_rightmost_statement(main)
+		CrossExamination.pop_rightmost_statement()
 		return goto_line_number(si)
 
 func read_macro():

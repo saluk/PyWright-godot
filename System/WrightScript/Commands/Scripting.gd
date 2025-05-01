@@ -154,15 +154,15 @@ func ws_exit(script, arguments):
 
 # FIXME IMPLEMENT
 # we should detect any click anywhere or the enter key
-func ws_waitenter(script, arguments):
+func ws_waitenter(_script, _arguments):
 	pass
 
 # FIXME implement - not hard
-func ws_savegame(script, arguments):
+func ws_savegame(_script, _arguments):
 	return Commands.NOTIMPLEMENTED
 
-func ws_loadgame(script, arguments):
+func ws_loadgame(_script, _arguments):
 	return Commands.NOTIMPLEMENTED
 
-func ws_screenshot(script, arguments):
+func ws_screenshot(_script, _arguments):
 	return Commands.NOTIMPLEMENTED

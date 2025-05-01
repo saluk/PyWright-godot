@@ -3,7 +3,6 @@ class_name EvDef
 
 func _init(name, default_type="string", default_value=null, split_on=null):
 	super(name, default_type, default_value, split_on)
-	pass
 
 var ev_db := {}
 

@@ -33,6 +33,7 @@ var MESH_GROUP = "Meshes"  # Used for anything that is 3d
 
 var external_commands = {}
 
+@warning_ignore('unused_signal')
 signal button_clicked
 
 # Helper functions
@@ -131,7 +132,7 @@ func get_nametag():
 
 # Call interface
 
-func generate_command_map(version=""):
+func generate_command_map(_version=""):
 	# TODO implement versioning
 	var path = "res://System/WrightScript/Commands/"
 	var folder = DirAccess.open(path)
@@ -230,7 +231,7 @@ func call_macro(macro_name, script, arguments):
 	new_script.allow_goto_parent_script = true
 	return YIELD
 
-func macro_or_label(key, script, arguments):
+func macro_or_label(key, script):
 	var is_macro = is_macro(key)
 	if is_macro:
 		return call_macro(is_macro, script, [])
@@ -238,15 +239,15 @@ func macro_or_label(key, script, arguments):
 
 # Script commands
 
-func ws_draw_off(script, arguments):
+func ws_draw_off(_script, _arguments):
 	pass # No op, old pywright needed the user to determine when to pause to load many graphics
 
-func ws_draw_on(script, arguments):
+func ws_draw_on(_script, _arguments):
 	pass
 
 # Godot specific control commands
 
-func ws_godotdebug(script, arguments):
+func ws_godotdebug(_script, _arguments):
 	# You can use this command to enter the godot debugger
 	pass
 
@@ -255,10 +256,10 @@ func save_node(data):
 	print(last_object)
 	data["last_object"] = SaveState.to_node_path(last_object)
 
-func load_node(tree, saved_data:Dictionary):
+func load_node(_tree, _saved_data:Dictionary):
 	pass
 
 func after_load(tree, saved_data:Dictionary):
 	if saved_data["last_object"]:
-		if get_tree().root.has_node(saved_data["last_object"]):
+		if tree.root.has_node(saved_data["last_object"]):
 			last_object = get_tree().root.get_node(saved_data["last_object"])

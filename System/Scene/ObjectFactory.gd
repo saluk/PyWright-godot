@@ -1,7 +1,5 @@
 extends Node
 
-var _main
-
 var main : get = get_main
 
 func get_main():

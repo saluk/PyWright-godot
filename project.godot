@@ -38,6 +38,7 @@ StandardVar="*res://System/WrightScript/StandardVar.gd"
 
 gdscript/warnings/unused_variable=false
 gdscript/warnings/shadowed_variable=false
+gdscript/warnings/shadowed_variable_base_class=0
 gdscript/warnings/integer_division=false
 gdscript/warnings/native_method_override=0
 shader_language/warnings/treat_warnings_as_errors=true

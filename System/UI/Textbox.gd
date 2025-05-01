@@ -54,7 +54,6 @@ var nt_right_sprite = null
 var nt_sprite = null
 
 var MAX_WHILE = 400
-signal run_returned
 signal textbox_deleting
 
 var _screen
@@ -79,7 +78,7 @@ class TextPack:
 		if connect_signals:
 			self.connect("text_printed", Callable(self.textbox, "_on_text_printed"))
 
-	func _run(force = false):
+	func _run(_force = false):
 		has_run = true
 		return null
 
@@ -297,7 +296,7 @@ class CommandPack extends TextPack:
 				Commands.call_command("shake", self.textbox.main.top_script(), args)
 			"p":
 				if not force:
-					self.textbox.pause(float(args[0]) / textbox.characters_per_update, self)
+					self.textbox.pause(float(args[0]) / textbox.characters_per_update)
 			_:
 				#self.textbox.refresh_arrows_on_next_pack = true
 				var old_script = self.textbox.main.top_script()
@@ -633,14 +632,14 @@ func stop_timer():
 	set_process(true)
 	nodes[tb_timer].disconnect("timeout", Callable(self, "stop_timer"))
 
-func pause(seconds, pack):
+func pause(seconds):
 	_set_speaking_animation("blink")
 	set_process(false)
 	nodes[tb_timer].wait_time = float(seconds)/60.0
 	nodes[tb_timer].connect("timeout", Callable(self, "stop_timer"))
 	nodes[tb_timer].start()
 
-func _on_Area2D_input_event(viewport, event, shape_idx):
+func _on_Area2D_input_event(_viewport, event, _shape_idx):
 	if event is InputEventMouseButton and event.is_pressed():
 		click_continue()
 
@@ -885,10 +884,10 @@ static func create_node(saved_data:Dictionary):
 	ob.text_to_print = saved_data["text_to_print"]
 	return ob
 
-func load_node(tree, saved_data:Dictionary):
+func load_node(tree, _saved_data:Dictionary):
 	main = tree.get_nodes_in_group("Main")[0]
 	# TODO eliminate top_screen()
 	ScreenManager.top_screen().add_child(self)
 
-func after_load(tree:SceneTree, saved_data:Dictionary):
+func after_load(_tree:SceneTree, _saved_data:Dictionary):
 	pass
