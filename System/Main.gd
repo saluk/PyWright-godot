@@ -31,7 +31,10 @@ char phoenix
 signal stack_initialized
 signal before_frame_drawn
 signal frame_drawn
+# TODO do we need line_executed in wrightscriptstack AND in main?
+@warning_ignore('unused_signal')
 signal line_executed
+@warning_ignore('unused_signal')
 signal text_finished
 signal enable_saveload_buttons
 
@@ -77,6 +80,7 @@ func load_script_from_path(path):
 func set_resolution(res:Vector2, scale_factor:float):
 	# TODO godot 4.4 resolution stuff
 	return
+	@warning_ignore('unreachable_code')
 	Engine.max_fps = 60
 	var h = res.y
 	var w = res.x
@@ -88,6 +92,7 @@ func set_resolution(res:Vector2, scale_factor:float):
 func window_resize():
 	# TODO godot 4.4 resolution stuff
 	return
+	@warning_ignore('unreachable_code')
 	var v_size = get_viewport_rect().size
 	var lauthored_size = authored_size
 	if Configuration.builtin.screen_format == "horizontal" and $TabContainer.visible:
@@ -312,7 +317,7 @@ func connect_potential_orphan(obj):
 
 # Input
 
-func _on_Screens_gui_input(event):
+func _on_Screens_gui_input(_event):
 	var owner = get_node("InputController").get_viewport().gui_get_focus_owner()
 	if owner:
 		owner.release_focus()
@@ -325,7 +330,7 @@ func save_node(data):
 	data["timecounter.elapsed"] = timecounter.get_current_elapsed_time()
 	data["stack"] = SaveState._save_node(stack)
 
-static func create_node(saved_data:Dictionary):
+static func create_node(_saved_data:Dictionary):
 	pass
 
 func load_node(tree, saved_data:Dictionary):

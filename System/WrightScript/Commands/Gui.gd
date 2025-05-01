@@ -43,10 +43,10 @@ class GuiWait:
 		Commands.connect("button_clicked", Callable(self, "button_finished"))
 	func finish():
 		emit_signal("DONE_WAITING")
-	func button_finished(button):
+	func button_finished():
 		finish()
 # TODO make macro script that executes while waiting
-func gui_wait(script, arguments):
+func gui_wait(script, _arguments):
 	return GuiWait.new(script)
 
 func gui_back(script, arguments):
@@ -70,7 +70,7 @@ func gui_back(script, arguments):
 	return button
 
 # FIXME IMPLEMENT
-func gui_input(script, arguments):
+func gui_input(_script, _arguments):
 	pass
 
 func ws_gui(script, arguments):

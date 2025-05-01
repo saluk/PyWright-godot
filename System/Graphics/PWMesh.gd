@@ -43,7 +43,7 @@ func add_to_node3d(node3d=null):
 		return
 	node3d.add_mesh(self)
 
-func do_rotate(axis="z", degrees=0, speed=1, nowait=false):
+func do_rotate(axis="z", degrees=0, _speed=1, nowait=false):
 	if not nowait:
 		wait_signal = "rotation_done"
 	if axis == "x":

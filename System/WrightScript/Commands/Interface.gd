@@ -57,7 +57,7 @@ func ws_lmenu(script, arguments):
 #  - For backwards compatibility:
 #      - showexamine will be added to scripts when preprocessing in the appropriate place
 #      - future wrightscript versions may require showexamine to be in the script
-func ws_examine(script, arguments):
+func ws_examine(_script, arguments):
 	next_examine = {
 		"hidden": false,
 		"regions": [],
@@ -66,7 +66,7 @@ func ws_examine(script, arguments):
 	next_examine["hidden"] = "hide" in arguments
 	next_examine["fail"] = Commands.keywords(arguments).get("fail", "none")
 
-func ws_region(script, arguments):
+func ws_region(_script, arguments):
 	next_examine["regions"].append(arguments)
 
 # NEW
@@ -94,10 +94,10 @@ func ws_showexamine(script, arguments):
 
 # TODO probably not the best way to do this
 var regions_to_add = []
-func ws_region3d(script, arguments):
+func ws_region3d(_script, arguments):
 	regions_to_add.append([arguments[4], Plane(arguments[0], arguments[1], arguments[2], arguments[3])])
 
-func ws_examine3d(script, arguments):
+func ws_examine3d(script, _arguments):
 	if regions_to_add:
 		for obj in script.screen.get_objects(null):
 			if obj is PWMesh:
@@ -152,7 +152,7 @@ func ws_lo(script, arguments):
 		return
 	list_menu[0].set_list_item_options(kw)
 
-func ws_showlist(script, arguments):
+func ws_showlist(script, _arguments):
 	var list_menu = main.get_tree().get_nodes_in_group(Commands.LIST_GROUP)
 	if not list_menu:
 		GlobalErrors.log_error("Couldn't find list menu to show", {"script": script})
@@ -160,12 +160,12 @@ func ws_showlist(script, arguments):
 	list_menu[0].build()
 	return list_menu[0]
 
-func ws_forgetlist(script, arguments):
+func ws_forgetlist(_script, arguments):
 	var tag = arguments.pop_front()
 	if main.stack.variables.get_string("_pwlist_checked_items_"+tag, ""):
 		main.stack.variables.del_val("_pwlist_checked_items_"+tag)
 
-func ws_forgetlistitem(script, arguments):
+func ws_forgetlistitem(_script, arguments):
 	var tag = arguments.pop_front()
 	var item = " ".join(PackedStringArray(arguments))
 	var items = Array(main.stack.variables.get_string("_pwlist_checked_items_"+tag, "").split(";;"))
@@ -174,7 +174,7 @@ func ws_forgetlistitem(script, arguments):
 			items.erase(item)
 		main.stack.variables.set_val("_pwlist_checked_items_"+tag, ";;".join(PackedStringArray(items)))
 
-func ws_casemenu(script, arguments):
+func ws_casemenu(script, _arguments):
 	var cases = []
 	var case_num = 1
 	var case = main.stack.variables.get_string("_case_"+str(case_num), null)
@@ -220,5 +220,5 @@ func ws_casemenu(script, arguments):
 #        self.add_object(cm,True)
 #        self._gui("gui","Wait")
 #        return True
-func ws_gamemenu(script, arguments):
+func ws_gamemenu(_script, _arguments):
 	pass

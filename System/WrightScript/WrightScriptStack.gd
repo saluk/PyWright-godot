@@ -45,6 +45,7 @@ func _init(main):
 
 signal stack_empty
 signal enter_debugger
+@warning_ignore('unused_signal')
 signal line_executed   # emit when any script executes a line
 signal script_added
 signal script_removed
@@ -191,7 +192,7 @@ func new_state(state):
 func force_clear_blockers():
 	for script in scripts:
 		for blocker in script.blockers:
-			script.remove_blocker(null, blocker, null, false)
+			script.remove_blocker(blocker, false)
 
 # TODO simplify process, we have more states than we need now that we almost never yield or return from the while loop
 func process():
@@ -317,7 +318,7 @@ func save_node(data):
 	data["scripts"] = saved_scripts
 	data["variables"] = SaveState._save_node(variables)
 
-static func create_node(saved_data:Dictionary):
+static func create_node(_saved_data:Dictionary):
 	pass
 
 func load_node(tree, saved_data:Dictionary):
@@ -336,7 +337,7 @@ func after_load(tree, saved_data:Dictionary):
 	emit_signal("game_inited")
 
 # We used to save blockers a different way
-func old_save_blocker_fix(tree, saved_data:Dictionary):
+func old_save_blocker_fix(_tree, saved_data:Dictionary):
 	if "blocked_scripts" in saved_data and "blockers" in saved_data:
 		var uid_script = {}
 		for script in scripts:

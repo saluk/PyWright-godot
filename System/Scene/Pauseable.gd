@@ -38,7 +38,7 @@ func _enable():
 	get_parent().set_process(true)
 
 # Try to connect to signals until they are all hooked up
-func _process(dt):
+func _process(_dt):
 	for i in range(signals.size()-1, -1, -1):
 		var set = signals[i]
 		var group = set[0]

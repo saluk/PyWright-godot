@@ -52,6 +52,6 @@ static func save_pywright_checkpoint(main, filename:String):
 		print("Couldn't open file for saving")
 		return
 	file.store_string(
-		JSON.new().stringify(objects)
+		JSON.stringify(objects)
 	)
 	file.close()

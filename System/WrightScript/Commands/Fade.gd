@@ -1,7 +1,7 @@
 extends RefCounted
 class_name FadeLib
 
-func _init(commands):
+func _init(_commands):
 	pass
 
 class Fader extends Node:
@@ -30,7 +30,7 @@ class Fader extends Node:
 		if objects:
 			objects = [objects[-1]]
 	func control_all(screen):
-		objects = get_screen().get_objects(null, true)
+		objects = screen.get_objects(null, true)
 	func set_fade():
 		for object in objects:
 			if is_instance_valid(object) and "modulate" in object:

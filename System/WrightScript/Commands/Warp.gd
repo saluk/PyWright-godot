@@ -68,16 +68,16 @@ class WarpAnim extends Node:
 	func save_node(data):
 		data["loader_class"] = "res://System/WrightScript/Commands/Warp.gd"
 
-	func load_node(tree, saved_data:Dictionary):
+	func load_node(_tree, _saved_data:Dictionary):
 		# TODO we should be added to correct scene. save load doesn't handle screens yet
 		ScreenManager.main_screen.add_child(self)
 
-	func after_load(tree, saved_data:Dictionary):
+	func after_load(_tree, saved_data:Dictionary):
 		var control_method = saved_data["controlled"][0]
 		var control_arg = saved_data["controlled"][1]
 		make_tweens()
 
-static func create_node(saved_data:Dictionary):
+static func create_node(_saved_data:Dictionary):
 	var ob = WarpAnim.new([], 0.0, {}, false)
 	return ob
 

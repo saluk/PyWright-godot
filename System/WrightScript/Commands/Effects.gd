@@ -58,7 +58,7 @@ func ws_rotate(script, arguments):
 #        self.add_object(tintanim(obs=self.obs,**kwargs))
 #        if kwargs['wait']:
 #            return True
-func ws_tint(script, arguments):
+func ws_tint(_script, _arguments):
 	pass
 
 # FIXME IMPLEMENT
@@ -71,7 +71,7 @@ func ws_tint(script, arguments):
 #        kwargs["start"] = 1-kwargs["value"]
 #        kwargs["end"] = kwargs["value"]
 #        self.add_object(invertanim(obs=self.obs,**kwargs))
-func ws_invert(script, arguments):
+func ws_invert(_script, _arguments):
 	pass
 
 # FIXME IMPLEMENT ALL ARGUMENTS
@@ -213,7 +213,7 @@ func ws_flash(script, arguments):
 #        self.add_object(zzzooom)
 #        if wait:
 #            return True
-func ws_zoom(script, arguments):
+func ws_zoom(_script, _arguments):
 	pass
 
 # FIXME IMPLEMENT
@@ -244,7 +244,7 @@ func ws_zoom(script, arguments):
 #                any = True
 #        if name and not any and vtrue(assets.variables.get("_debug","false")):
 #            raise missing_object("globaldelay: No valid objects found by key name "+name)
-func ws_globaldelay(script, arguments):
+func ws_globaldelay(_script, _arguments):
 	pass
 
 # FIXME IMPLEMENT
@@ -327,5 +327,5 @@ func ws_globaldelay(script, arguments):
 #                        del o.last_end
 #        if name and not any and vtrue(assets.variables.get("_debug","false")):
 #            raise missing_object("controlanim: No valid objects found by key name "+name)
-func controlanim(script, arguments):
+func controlanim(_script, _arguments):
 	pass

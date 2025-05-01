@@ -34,7 +34,7 @@ func _ready():
 	available_saves.connect("item_selected", Callable(self, "_select_available_save"))
 	save_name.connect("text_changed", Callable(self, "_change_save_name"))
 
-func _process(delta):
+func _process(_delta):
 	if not initialized:
 		initialized = true
 		if Configuration.user.debugger_enabled:

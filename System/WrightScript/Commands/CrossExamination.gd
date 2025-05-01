@@ -152,7 +152,7 @@ func ws_showrecord(script, arguments):
 # lookup selected evidence from court record via [_selected]
 # goto the label '[_statement] maya' if we are in a statement
 # goto the label 'maya' if we are not in a statement
-func ws_callpresent(script, arguments):
+func ws_callpresent(script, _arguments):
 	script.screen.delete_objects(null, null, Commands.TEXTBOX_GROUP)
 	var ev = main.stack.variables.get_string("_selected")
 	var statement = main.stack.variables.get_string("_statement")

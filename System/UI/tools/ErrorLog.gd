@@ -26,7 +26,7 @@ func log_error(msg, context={}):
 	scroll()
 	print(" error logged: " + msg)
 
-func log_info(msg, context={}):
+func log_info(msg, _context={}):
 	var start = " \n --- "
 	var end = ""
 	var t = nodes[textlog_path].text + "\n\n" + start + msg + end

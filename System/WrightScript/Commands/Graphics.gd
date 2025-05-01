@@ -174,7 +174,7 @@ func ws_ev(script, arguments):
 	)
 	return apply_fader(script, ev, arguments)
 
-func ws_addev(script, arguments):
+func ws_addev(_script, arguments):
 	#tag, [page]
 	#if tag ends with $ page = profiles
 	#otherwise page defaults to evidence
@@ -190,7 +190,7 @@ func ws_addev(script, arguments):
 		page_arr.append(tag)
 		main.stack.evidence_pages[page] = page_arr
 
-func ws_delev(script, arguments):
+func ws_delev(_script, arguments):
 	for page in main.stack.evidence_pages:
 		var page_array = main.stack.evidence_pages[page]
 		if arguments[0] in page_array:
@@ -264,7 +264,7 @@ func ws_mesh(script, arguments):
 		mesh.scale = Vector3(float(scale), float(scale), float(scale))
 
 # NEW
-func ws_clearmeshes(script, arguments):
+func ws_clearmeshes(_script, _arguments):
 	for mesh in main.examine_meshes:
 		mesh.queue_free()
 	main.examine_meshes = []

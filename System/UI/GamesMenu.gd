@@ -82,10 +82,10 @@ func _ready():
 	$Control/ItemList.connect("item_activated", Callable(self, "item_activated"))
 	$Control/PlayButton.connect("pressed", Callable(self, "play_item_selected"))
 
-func item_selected(index):
+func item_selected(_index):
 	$Control/PlayButton.visible = true
 
-func item_activated(index):
+func item_activated(_index):
 	play_item_selected()
 
 func play_item_selected():

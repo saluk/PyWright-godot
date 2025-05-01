@@ -438,9 +438,9 @@ func add_blocker(block_obj, next_line = true):
 		original_id = block_obj.name
 	else:
 		original_id = block_obj
-	block_obj.connect(sig, Callable(self, "remove_blocker").bind(sig, block_obj, original_id, next_line), CONNECT_ONE_SHOT)
+	block_obj.connect(sig, Callable(self, "remove_blocker").bind(block_obj, next_line), CONNECT_ONE_SHOT)
 
-func remove_blocker(sig, block_obj, original_id, allow_next_line):
+func remove_blocker(block_obj, allow_next_line):
 	if block_obj in blockers:
 		blockers.erase(block_obj)
 		if not blockers:
@@ -469,7 +469,7 @@ func save_node(data):
 			if blocker.has_method("get_path"):
 				data["blockers"].append({"type": "Node", "node_path": blocker.get_path()})
 
-static func create_node(saved_data:Dictionary):
+static func create_node(_saved_data:Dictionary):
 	pass
 
 func load_node(tree, saved_data:Dictionary):
@@ -478,7 +478,7 @@ func load_node(tree, saved_data:Dictionary):
 		load_txt_file(Filesystem.path_join(root_path, filename))
 	screen = ScreenManager.get_or_create(saved_data.get("screen_name", "MainScreen"))
 
-func after_load(tree, saved_data:Dictionary):
+func after_load(_tree, saved_data:Dictionary):
 	if "blockers" in saved_data:
 		for blocker in saved_data["blockers"]:
 			if blocker["type"] == "SceneTreeTimer":

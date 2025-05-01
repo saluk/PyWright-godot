@@ -205,6 +205,7 @@ func rebuild():
 func update_current_stack():
 	# TODO 4.4 
 	return
+	@warning_ignore('unreachable_code')
 	var main = get_tree().get_nodes_in_group("Main")[0]
 	if not Configuration.user.debugger_enabled:
 		return

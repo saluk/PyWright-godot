@@ -13,7 +13,7 @@ func _init(commands):
 #            assets.variables["_debug"] = "on"
 #        else:
 #            assets.variables["_debug"] = "off"
-func ws_debug(script, arguments):
+func ws_debug(_script, _arguments):
 	print(" OBJECT LIST ")
 	for object in ScreenManager.get_objects():
 		var script_name = ""
@@ -31,11 +31,11 @@ func ws_debug(script, arguments):
 	print(" END OBJECT LIST ")
 	return Commands.DEBUG
 
-func ws_print(script, arguments):
+func ws_print(_script, arguments):
 	print("OUTPUT: ", Commands.join(arguments))
 
 # No need to implement
-func ws_step(script, arguments):
+func ws_step(_script, _arguments):
 	return Commands.NOTIMPLEMENTED
 
 func ws_goto(script, arguments):
@@ -44,7 +44,7 @@ func ws_goto(script, arguments):
 		arguments.erase("fail="+fail)
 	return script.goto_label(" ".join(PackedStringArray(arguments)), fail)
 
-func ws_top(script, arguments):
+func ws_top(script, _arguments):
 	script.goto_line_number(0)
 
 func ws_label(script, arguments):
@@ -142,10 +142,10 @@ func ws_script(script, arguments, script_text=null):
 # TODO IMPLEMENT
 #    @category([VALUE("game","Path to game. Should be from the root, i.e. games/mygame or games/mygame/mycase"),
 #                    VALUE("script","Script to look for in the game folder to run first","intro")],type="gameflow")
-func ws_game(script, arguments):
+func ws_game(_script, _arguments):
 	pass
 
-func ws_endscript(script, arguments):
+func ws_endscript(script, _arguments):
 	script.end()
 	return Commands.NEXTLINE
 
