@@ -4,7 +4,7 @@ class_name Screen
 func _ready():
 	position = Vector2(0,0)
 
-func _process(dt):
+func _process(_dt):
 	sort_children()
 
 func getz(o):

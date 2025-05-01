@@ -130,10 +130,10 @@ func save_node(data):
 			save_players.append(d)
 	data["audio_players"] = save_players
 
-func load_node(tree, saved_data:Dictionary):
+func load_node(_tree, _saved_data:Dictionary):
 	pass
 
-func after_load(tree, saved_data:Dictionary):
+func after_load(_tree, saved_data:Dictionary):
 	var load_number = NUM_PLAYERS
 	for player in saved_data["audio_players"]:
 		if player["path"]:

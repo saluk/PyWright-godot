@@ -67,26 +67,27 @@ func _on_tree_changed():
 	if not is_instance_valid(_main_screen):
 		_init_screens()
 
-func add_screen(name="Screen"):
+func add_screen(screen_name="Screen"):
 	var screen = Screen.new()
-	screen.name = name
+	screen.name = screen_name
 	screens.add_child(screen)
 	return screen
 
-func get_screen(name):
+func get_screen(screen_name):
 	for screen in get_screens():
-		if screen.name == name:
-			if name == "MainScreen":
+		if screen.name == screen_name:
+			if screen_name == "MainScreen":
 				pass
 			return screen
+		# TODO godot4.4: not sure this is still the case in
 		# for save/load - when a node wasn't named correctly it gets @ added in its name
 		# you can't add a node explicitly with @ in the nane. so do fuzzy matching here
 		if screen.name.replace("@","") == name.replace("@",""):
 			return screen
 	return null
 
-func has_screen(name):
-	if get_screen(name) != null:
+func has_screen(screen_name):
+	if get_screen(screen_name) != null:
 		return true
 	return false
 
