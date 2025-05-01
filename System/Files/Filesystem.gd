@@ -77,7 +77,7 @@ static func _lookup_file(sub_path:String, current_path:String, exts=[], print_er
 			continue
 
 		elif state == "res":
-			if 1:#print_errors:
+			if print_errors:
 				GlobalErrors.log_error("File Error Root: Unable to find or load file, searched [%s]" % [",".join(searched_paths)])
 			break
 
@@ -109,7 +109,6 @@ static func load_image_from_path(path:String) -> Image:
 static func de_pink_image(img:Image):
 	if img.detect_alpha() == Image.ALPHA_NONE and img.get_size().length():
 		img.convert(Image.FORMAT_RGBA8)
-		false # img.lock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
 		for x in range(img.get_width()):
 			for y in range(img.get_height()):
 				var pixel = img.get_pixel(x, y)
@@ -119,7 +118,6 @@ static func de_pink_image(img:Image):
 					pixel.g = 0.0
 					pixel.b = 0.0
 					img.set_pixel(x, y, pixel)
-		false # img.unlock() # TODOConverter3To4, Image no longer requires locking, `false` helps to not break one line if/else, so it can freely be removed
 	return img
 
 static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -> Array:
