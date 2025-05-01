@@ -28,6 +28,7 @@
 	[ ] look for other cases where we return an awaitable function
 [ ] mouse dragging in examine
 [ ] Node3D
+[ ] Fixing themes for games menu ui and options tab ui
 [X] SignalUtils removing some important signals that are needed for remove_child() to work
 
 [X] idle_frame -> process_frame

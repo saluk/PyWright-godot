@@ -71,7 +71,12 @@ mp3={
 "loop": false
 }
 font_data_dynamic={
-&"generate_mipmaps": true
+&"antialiasing": 2,
+&"compress": false,
+&"force_autohinter": true,
+&"generate_mipmaps": true,
+&"hinting": 2,
+&"multichannel_signed_distance_field": true
 }
 
 [input]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://dllnt4p2sw6dv"]
 
 [ext_resource type="Script" uid="uid://v38mf82tps6m" path="res://System/UI/GamesMenu.gd" id="1"]
-[ext_resource type="Theme" path="res://System/UI/Themes/GamesMenu.tres" id="2"]
+[ext_resource type="Theme" uid="uid://b4se71ijmu4y2" path="res://System/UI/Themes/GamesMenu.tres" id="2"]
 [ext_resource type="Theme" uid="uid://e6s1i1ugdnwb" path="res://System/UI/Themes/ScriptDebugger.tres" id="3"]
 
 [sub_resource type="Gradient" id="1"]

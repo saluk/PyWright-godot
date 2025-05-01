@@ -306,6 +306,7 @@ offset_right = 256.0
 offset_bottom = 384.0
 focus_mode = 2
 mouse_filter = 2
+theme = ExtResource("5")
 script = ExtResource("12")
 
 [node name="MainScreen" type="Node2D" parent="Screens" groups=["MainScreen"]]
@@ -414,6 +415,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="TabButton" type="Button" parent="." groups=["TabButton"]]
+visible = false
 offset_left = 260.0
 offset_top = 2.0
 offset_right = 286.0
