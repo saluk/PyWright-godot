@@ -105,5 +105,5 @@ func load_node(_tree, _saved_data:Dictionary):
 func after_load(_tree, saved_data:Dictionary):
 	if playing:
 		_load_audio_stream(playing_path)
-		if "song_position" in saved_data:
+		if "song_position" in saved_data and audio_player:
 			audio_player.seek(saved_data["song_position"])

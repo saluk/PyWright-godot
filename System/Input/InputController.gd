@@ -52,4 +52,3 @@ func _process(delta):
 			scan_objects("advance", "_main_button_fg")
 			if not just_started:
 				stop_hold("advance")
-
