@@ -335,6 +335,9 @@ static func create_node(_saved_data:Dictionary):
 
 func load_node(tree, saved_data:Dictionary):
 	set_current_game(current_game)
+	# Loading the game's intro.txt adds a casemenu back in
+	# we DON'T want to actually run that script
+	stack.scripts[0].line_num = stack.scripts[0].lines.size()
 	timecounter.set_elapsed_time(saved_data["timecounter.elapsed"])
 	SaveState._load_node(tree, stack, saved_data["stack"])
 

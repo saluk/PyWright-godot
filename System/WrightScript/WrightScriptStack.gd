@@ -105,7 +105,7 @@ func run_macro_set(l):
 			Commands.call_macro(macro, scripts[-1], [])
 
 func init_game(path, init_script="intro.txt"):
-	printt("INITING GAME ", path, " ", init_script)
+	print("INITING GAME ", path, " ", init_script)
 	DirectoryCache.init_game(path)
 	# Used to load a game and then a case inside the game
 	filesystem = load("res://System/Files/Filesystem.gd").new()

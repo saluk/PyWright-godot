@@ -30,6 +30,9 @@
 [ ] Node3D
 [ ] Fixing themes for games menu ui and options tab ui
 [X] SignalUtils removing some important signals that are needed for remove_child() to work
+[ ] Change game folder not working
+[X] Load saved game not removing the case menu
+[ ] Some print statements say "refcounted"
 
 [X] idle_frame -> process_frame
 [X] material.gdshader -> material.shader

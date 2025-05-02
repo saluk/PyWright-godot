@@ -415,7 +415,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="TabButton" type="Button" parent="." groups=["TabButton"]]
-visible = false
 offset_left = 260.0
 offset_top = 2.0
 offset_right = 286.0
