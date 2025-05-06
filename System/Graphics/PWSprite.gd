@@ -136,18 +136,13 @@ func _load_animation(path:String, sub_rect=null):
 		frames = AnimationFramesCache.get_cached([path, sub_rect])
 	else:
 		# TODO - sub_rect only works with single frame animations!
-		if sub_rect:
-			frames = Filesystem.load_atlas_specific(
-				path,
-				[sub_rect]
-			)
-		else:
-			frames = Filesystem.load_atlas_frames(
-				path,
-				int(info['horizontal']),
-				int(info['vertical']),
-				int(info['length'])
-			)
+		frames = Filesystem.load_atlas_frames(
+			path,
+			int(info['horizontal']),
+			int(info['vertical']),
+			int(info['length']),
+			sub_rect
+		)
 		AnimationFramesCache.set_get_cached([path, sub_rect], frames)
 	if frames:
 		width = frames[0].region.size.x
@@ -272,7 +267,7 @@ func set_colorize(color, amount):
 		material.set_shader_parameter("to_color", color)
 		material.set_shader_parameter("to_color_amount", amount)
 
-func apply_blink_settings(template):
+func apply_blink_settings(_template):
 	# TODO template could overwrite the settings
 	var blinkmode = info.get("blinkmode", "blink")
 

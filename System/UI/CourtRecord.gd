@@ -61,7 +61,7 @@ func reset():
 	for child in get_children():
 		child.queue_free()
 
-func _process(dt):
+func _process(_dt):
 	if has_objects:
 		return
 	has_objects = true
@@ -136,7 +136,7 @@ func load_back_button():
 		192-back_button.height
 	)
 
-func ws_click_back_from_court_record(script, arguments):
+func ws_click_back_from_court_record(script, _arguments):
 	Commands.call_command("sound_court_record_cancel", script, [])
 	if zoom:
 		zoom = false
@@ -206,7 +206,7 @@ func load_arrow(direction):
 	b.cannot_save = true
 	b.position = pos
 
-func ws_record_click_direction(script, arguments):
+func ws_record_click_direction(_script, arguments):
 	var direction = {"L":-1, "R":1}[arguments[0]]
 	set_offset(offset + direction*{true:1, false:PAGE_SIZE}[zoom])
 	reset()
@@ -399,10 +399,10 @@ func ws_record_zoom_evidence(script, arguments):
 	set_offset(stack.evidence_pages.get(page, []).find(evname))
 	reset()
 
-func ws_record_click_present(script, arguments):
+func ws_record_click_present(_script, arguments):
 	present(arguments[0])
 
-func ws_record_click_check(script, arguments):
+func ws_record_click_check(_script, arguments):
 	check(arguments[0], arguments[1])
 
 func ws_click_page_from_court_record(script, arguments):

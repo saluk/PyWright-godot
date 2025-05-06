@@ -8,9 +8,10 @@
 [ ] shader compile issues
 [ ] can't import Node3D
 [ ] Gui.gd "join" in "array"
-[ ] Image loading issues
+[X] Image loading issues
 	[X] create_from_img turned into static
-	[ ] Investigation menu (loading specific rects from graphics?)
+	[X] Investigation menu (loading specific rects from graphics?)
+	[X] cross exam buttons
 [ ] Tweens (check)
 	[ ] Check scrolls
 	[ ] Scroll saving

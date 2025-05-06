@@ -120,7 +120,21 @@ static func de_pink_image(img:Image):
 					img.set_pixel(x, y, pixel)
 	return img
 
-static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -> Array:
+# Rect_list contains lists of strings, [x, y, width, hright]
+# use "w" or "h" for width and height to expand
+static func parse_rect(rect, max_size) -> Rect2:
+	var rx = int(rect[0].strip_edges())
+	var ry = int(rect[1].strip_edges())
+	var rw = rect[2].strip_edges()
+	var rh = rect[3].strip_edges()
+	if rw == "w":
+		rw = max_size[0]
+	if rh == "h":
+		rh = max_size[1]
+	var r = Rect2(Vector2(rx, ry), Vector2(int(rw), int(rh)))
+	return r
+
+static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1, sub_rect=null) -> Array:
 	print(path)
 	# Load image
 	var texture:Texture2D
@@ -144,6 +158,13 @@ static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -
 		var atlas := AtlasTexture.new()
 		atlas.atlas = texture
 		atlas.region = Rect2(Vector2(x, y), Vector2(width, height))
+		if sub_rect:
+			sub_rect = parse_rect(sub_rect, [width, height])
+			atlas.region = Rect2(
+				Vector2(atlas.region.position.x+sub_rect.position.x,
+					atlas.region.position.y+sub_rect.position.y),
+				sub_rect.size
+			)
 		print(atlas.region)
 		frames.append(atlas)
 		x += width
@@ -152,40 +173,6 @@ static func load_atlas_frames(path:String, horizontal=1, vertical=1, length=1) -
 			if y >= image.get_height():
 				break
 			x = 0
-	return frames
-
-# Rect_list contains lists of strings, [x, y, width, hright]
-# use "w" or "h" for width and height to expand
-static func load_atlas_specific(path:String, rect_list:Array) -> Array:
-	print(path)
-	# Load image
-	var texture:Texture2D
-	var image = load_image_from_path(path)
-	if image is CompressedTexture2D:
-		texture = image
-	else:
-		texture = ImageTexture.new()
-		texture.create_from_image(image) #,0
-
-	if not texture or not image:
-		return []
-
-	# Build frames
-	var frames = []
-	for i in range(rect_list.size()):
-		var atlas := AtlasTexture.new()
-		atlas.atlas = texture
-		var rx = int(rect_list[i][0].strip_edges())
-		var ry = int(rect_list[i][1].strip_edges())
-		var rw = rect_list[i][2].strip_edges()
-		var rh = rect_list[i][3].strip_edges()
-		if rw == "w":
-			rw = image.get_height()
-		if rh == "h":
-			rh = image.get_height()
-		var r = Rect2(rx, ry, int(rw), int(rh))
-		atlas.region = r
-		frames.append(atlas)
 	return frames
 
 static func sort_files_by_time(file_a, file_b):

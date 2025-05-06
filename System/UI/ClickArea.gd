@@ -125,5 +125,5 @@ func set_highlight():
 	if parent.current_sprite:
 		parent.current_sprite.set_colorize(final_color, final_amount)
 
-func _process(dt):
+func _process(_dt):
 	set_highlight()

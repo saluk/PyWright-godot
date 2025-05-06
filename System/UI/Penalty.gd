@@ -21,11 +21,12 @@ signal animation_done
 func _ready():
 	wait_signal = "animation_done"
 	script_name = "penalty"
-	var atlas = Filesystem.load_atlas_specific(
-		"art/general/healthbar.png",
-		[["0","0","3","14"],["82","0","2","14"],
-		["3","0","1","14"],["68","0","1","14"]]
-	)
+	var atlas = []
+	for rect in [["0","0","3","14"],["82","0","2","14"],
+		["3","0","1","14"],["68","0","1","14"]]:
+		atlas.append(Filesystem.load_atlas_frames(
+			"art/general/healthbar.png", 1, 1, 1, rect
+		)[0])
 	if not atlas:
 		queue_free()
 		return
@@ -101,8 +102,8 @@ func _process(dt):
 			queue_free()
 
 # TODO enable saving of penalty
-func save_node(data):
+func save_node(_data):
 	return "nosave"
-func load_node(tree, data):
+func load_node(_tree, _data):
 	queue_free()
 	return
