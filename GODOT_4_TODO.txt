@@ -31,7 +31,7 @@
 [ ] Node3D
 [ ] Fixing themes for games menu ui and options tab ui
 [X] SignalUtils removing some important signals that are needed for remove_child() to work
-[ ] Change game folder not working
+[X] Change game folder not working - needed to set file_mode of dialog to FileDialog.FILE_MODE_OPEN_DIR
 [X] Load saved game not removing the case menu
 [ ] Some print statements say "refcounted"
 

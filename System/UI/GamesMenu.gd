@@ -65,6 +65,7 @@ func _ready():
 	get_node("%MainLabel").text = "GodotWright version "+Configuration.builtin.version
 
 	choose_game_dir_dialog = $Control/ChooseGameDirDialog
+	choose_game_dir_dialog.file_mode = FileDialog.FILE_MODE_OPEN_DIR
 	choose_game_dir_dialog.connect("dir_selected", Callable(self, "_game_dir_selected"))
 
 	_clear_games()
