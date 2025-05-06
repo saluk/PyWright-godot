@@ -85,7 +85,7 @@ class TextPack:
 	# add all text to label, then increase visible characters each frame
 	# if characters per frame is INF, will print text immediately
 	func _print_text(dt:float, force):
-		print("BUILDING TEXT FOR PACK", text)
+		#print("BUILDING TEXT FOR PACK", text)
 		var rich_text_label = textbox.text_label
 		if leftover == null:
 			rich_text_label.text += self.text
@@ -343,13 +343,13 @@ func queue_next_textbox():
 		next_packs.append(pack.duplicate())
 	# TODO even bigger hack on determining size of text
 	if printed_lines.size() < 4:
-		print("leftover start:", next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1))
+		#print("leftover start:", next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1))
 		var last_char = ""
 		if printed_lines[-1].length() > 0:
 			last_char = printed_lines[-1][-1]
 		else:
 			return
-		print("last_char:", last_char)
+		#print("last_char:", last_char)
 		var offset = 0
 		# Don't know why this here
 		next_packs[0].leftover -= 1
@@ -368,9 +368,9 @@ func queue_next_textbox():
 			if not break_on_spaces:
 				last_char = " "
 			printed_lines[-1] = printed_lines[-1].substr(0, printed_lines[-1].length()-1)
-			print("break_on_spaces", break_on_spaces, " last_char:", last_char, " printed_lines[-1]", printed_lines[-1])
+			#print("break_on_spaces", break_on_spaces, " last_char:", last_char, " printed_lines[-1]", printed_lines[-1])
 			next_packs[0].leftover += 1
-			print("leftover:", next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1))
+			#print("leftover:", next_packs[0].text.substr(next_packs[0].text.length()-next_packs[0].leftover, -1))
 		if while_loops >= MAX_WHILE:
 			GlobalErrors.log_error("Line is too long")
 	#next_lines = [carryover]
@@ -383,7 +383,7 @@ func queue_next_textbox():
 var lc = null
 var blip_this_frame = false
 func process_text_character(c):
-	print("CHAR:",c)
+	#print("CHAR:",c)
 	var punctuation = main.stack.variables.get_string("_punctuation")
 	var next_ticks = 1.0
 	if c and not in_paren:
@@ -457,13 +457,13 @@ func get_char_sound():
 # and don't show the textbox unless text has been added to it.
 # If there will be text, show the textbox immediately
 func will_there_be_text(text):
-	print("WILL THERE BE TEXT")
+	#print("WILL THERE BE TEXT")
 	var next_token:String = "{"
 	var block:String
 	var parts:PackedStringArray
 	while text:
 		parts = text.split(next_token, true, 1)
-		print(parts)
+		#print(parts)
 		block = parts[0]
 		if parts.size() > 1:
 			text = parts[1]
