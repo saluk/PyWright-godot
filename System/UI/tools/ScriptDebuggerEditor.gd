@@ -1,0 +1,2 @@
+extends TextEdit
+class_name ScriptDebuggerEditor

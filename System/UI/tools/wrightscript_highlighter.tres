@@ -1,0 +1,13 @@
+[gd_resource type="SyntaxHighlighter" script_class="ScriptDebuggerHighlighter" load_steps=2 format=3 uid="uid://b0er7jtc037qx"]
+
+[ext_resource type="Script" uid="uid://db0ohqcdp1bw5" path="res://System/UI/tools/ScriptDebuggerHighlighter.gd" id="1_cahr0"]
+
+[resource]
+resource_local_to_scene = true
+script = ExtResource("1_cahr0")
+text_color = Color(1, 1, 1, 1)
+textbox_color = Color(0.511108, 0.753422, 0.644352, 1)
+comment_color = Color(0.556953, 0.556953, 0.556953, 1)
+macro_color = Color(0.91, 0.424667, 0.182, 1)
+keyword_color = Color(0.523675, 0.624365, 1, 1)
+metadata/_custom_type_script = "uid://db0ohqcdp1bw5"

@@ -1,11 +1,18 @@
-[gd_scene load_steps=7 format=3 uid="uid://lu1ruhbxx4en"]
+[gd_scene load_steps=11 format=3 uid="uid://lu1ruhbxx4en"]
 
 [ext_resource type="Theme" uid="uid://e6s1i1ugdnwb" path="res://System/UI/Themes/ScriptDebugger.tres" id="1"]
 [ext_resource type="Script" uid="uid://btgrvunabsk0m" path="res://System/UI/tools/ScriptDebugger.gd" id="2"]
 [ext_resource type="Script" uid="uid://cgspdbgvv3nl" path="res://System/UI/tools/MousePos.gd" id="3"]
 [ext_resource type="Texture2D" uid="uid://by00kikorcvws" path="res://art/general/arrow_right.png" id="3_u2561"]
 [ext_resource type="Script" uid="uid://j7ixx1x5on05" path="res://System/UI/tools/TimeDisplay.gd" id="4"]
+[ext_resource type="SyntaxHighlighter" uid="uid://b0er7jtc037qx" path="res://System/UI/tools/wrightscript_highlighter.tres" id="4_7ja58"]
+[ext_resource type="Script" uid="uid://bpo76fvmvprnp" path="res://System/UI/tools/ScriptDebuggerEditor.gd" id="4_fku33"]
 [ext_resource type="Script" uid="uid://b8s3kp3i1lao7" path="res://System/UI/tools/FPSDisplay.gd" id="5"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fku33"]
+bg_color = Color(0.3021, 0.423647, 0.53, 1)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_7ja58"]
 
 [node name="ScriptDebugger" type="Control" groups=["ScriptDebugger"]]
 layout_mode = 3
@@ -62,22 +69,44 @@ layout_mode = 0
 offset_right = 248.0
 offset_bottom = 297.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="vbox/Control/Scripts/CurrentScript/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="vbox/Control/Scripts/CurrentScript/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fku33")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="vbox/Control/Scripts/CurrentScript/VBoxContainer/PanelContainer"]
+material = SubResource("CanvasItemMaterial_7ja58")
 layout_mode = 2
 
-[node name="FilenameLabel" type="Label" parent="vbox/Control/Scripts/CurrentScript/VBoxContainer/HBoxContainer"]
+[node name="FilenameLabel" type="Label" parent="vbox/Control/Scripts/CurrentScript/VBoxContainer/PanelContainer/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 10
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 14
 text = "Script:"
+horizontal_alignment = 1
 
-[node name="ScreenLabel" type="Label" parent="vbox/Control/Scripts/CurrentScript/VBoxContainer/HBoxContainer"]
+[node name="VSeparator" type="VSeparator" parent="vbox/Control/Scripts/CurrentScript/VBoxContainer/PanelContainer/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ScreenLabel" type="Label" parent="vbox/Control/Scripts/CurrentScript/VBoxContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 2
+theme_override_constants/outline_size = 2
 text = "Screen:"
 
 [node name="CurrentScriptEditor" type="TextEdit" parent="vbox/Control/Scripts/CurrentScript/VBoxContainer"]
+layout_direction = 2
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.75
-text = "line 1 this is a really long line that may wrap an arbitrary number of 
+text = "\"text\" # comment
+char phoenix e=great x=5 y=10
+{macro}
+\"text {s01} and stuff\"
+numbers: 1, 2, 3, 4
+line 1 this is a really long line that may wrap an arbitrary number of 
 line 2
 line 3
 line 1 this is a really long line that may wrap an arbitrary number of 
@@ -103,7 +132,12 @@ line 2
 line 3"
 caret_blink = true
 caret_blink_interval = 0.5
+caret_multiple = false
+syntax_highlighter = ExtResource("4_7ja58")
 highlight_current_line = true
+text_direction = 1
+script = ExtResource("4_fku33")
+metadata/_custom_type_script = "uid://bpo76fvmvprnp"
 
 [node name="buttons" type="HBoxContainer" parent="vbox"]
 layout_mode = 2
@@ -150,15 +184,6 @@ script = ExtResource("3")
 layout_mode = 2
 text = "Timer:"
 script = ExtResource("4")
-
-[node name="GotoLineButton" type="Button" parent="."]
-modulate = Color(1, 1, 1, 0.592157)
-layout_mode = 0
-offset_left = -1.0
-offset_top = 31.0
-offset_right = 15.0
-offset_bottom = 45.0
-text = ">"
 
 [node name="WatchedPanel" type="Panel" parent="."]
 visible = false

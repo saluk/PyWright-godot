@@ -29,12 +29,10 @@ var stepping_over := -1
 var in_debugger := false
 var debug_last_state = null
 
-var goto_line_button_template:Button
-
 signal debug_state_on
 signal debug_state_off
 
-# {"script": WrightScript, "editor": TextEdit, "highlighted_line":int, "bookmark_line": int}
+# {"script": WrightScript, "editor": ScriptDebuggerEditor, "highlighted_line":int, "bookmark_line": int}
 
 func _ready():
 	script_tab = nodes.get(current_script, null)
@@ -50,9 +48,6 @@ func _ready():
 	nodes[speed].connect("button_up", Callable(self, "set_velocity"))
 	nodes[slow].connect("button_up", Callable(self, "toggle_slow"))
 	nodes[show_watched_panel].connect("button_up", Callable(self, "_show_watched_panel"))
-
-	goto_line_button_template = get_node("GotoLineButton")
-	goto_line_button_template.get_parent().remove_child(goto_line_button_template)
 
 func start_debugger(force=false):
 	if in_debugger:
@@ -144,20 +139,23 @@ func _process(_delta):
 		update_current_stack()
 	if slow_mode:
 		OS.delay_msec(200)
+		
+
 
 func add_new_script(script):
 	var editor_container:Control = script_tab.duplicate()
-	var editor:TextEdit = editor_container.get_node("VBoxContainer/CurrentScriptEditor")
+	var editor:ScriptDebuggerEditor = editor_container.get_node("VBoxContainer/CurrentScriptEditor")
 	editor.gutter_clicked.connect(
 		func(line, gutter):
-			goto_line(line, script)
+			if gutter == 0:
+				goto_line(line, script)
 	)
 	editor.add_gutter()
-	editor.set_gutter_type(0,TextEdit.GUTTER_TYPE_ICON)
+	editor.set_gutter_type(0,ScriptDebuggerEditor.GUTTER_TYPE_ICON)
 	editor.set_gutter_width(0, 10)
 	editor.set_gutter_clickable(0, true)
 	editor.add_gutter()
-	editor.set_gutter_type(1, TextEdit.GUTTER_TYPE_STRING)
+	editor.set_gutter_type(1, ScriptDebuggerEditor.GUTTER_TYPE_STRING)
 	var d = {
 		"script": script,
 		"editor_container": editor_container,
@@ -165,8 +163,8 @@ func add_new_script(script):
 		"highlighted_line": null,
 		"bookmark_line": null}
 	d["editor_container"].name = "x"
-	d["editor_container"].get_node("VBoxContainer/HBoxContainer/ScreenLabel").text = script.screen.name
-	d["editor_container"].get_node("VBoxContainer/HBoxContainer/FilenameLabel").text = script.filename
+	d["editor_container"].get_node("VBoxContainer/PanelContainer/HBoxContainer/ScreenLabel").text = script.screen.name
+	d["editor_container"].get_node("VBoxContainer/PanelContainer/HBoxContainer/FilenameLabel").text = script.filename
 	nodes[node_scripts].add_child(d["editor_container"])
 	d["editor"].text = "\n".join(PackedStringArray(d["script"].lines))
 	d["editor"].connect("text_changed", Callable(self, "edit_script").bind(script))
@@ -228,7 +226,7 @@ func update_current_stack():
 	rebuild()
 	# Update each editor
 	for i in range(len(scripts)):
-		var editor:TextEdit = scripts[i]["editor"]
+		var editor:ScriptDebuggerEditor = scripts[i]["editor"]
 		
 		# Update line numbers and gutter icons
 		for si in range(scripts[i]["editor"].get_line_count()):
@@ -268,7 +266,7 @@ func _show_watched_panel():
 	nodes[watched_panel].visible = true
 func _hide_watched_pane():
 	nodes[watched_panel].visible = false
-func _on_TextEdit_text_changed():
+func _on_ScriptDebuggerEditor_text_changed():
 	var main = get_tree().get_nodes_in_group("Main")[0]
 	main.stack.watched_commands = []
 	for line in nodes[watched_textedit].text.split("\n", false):
