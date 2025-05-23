@@ -20,6 +20,8 @@ var slow_mode = false
 @export var watched_panel: NodePath
 @export var watched_textedit: NodePath
 
+@export var at_line_icon:Texture2D
+
 @onready var nodes := NodeUtil.create_node_dictionary(self)
 
 var stepping_over := -1
@@ -82,7 +84,6 @@ func goto_line(row, script):
 	if current_stack.scripts:
 		script.goto_line_number(row)
 		current_stack.force_clear_blockers()
-	get_script_data(script)["editor"].set_line_as_breakpoint(row, false)
 
 func all_ev():
 	var found = false
@@ -145,21 +146,33 @@ func _process(_delta):
 		OS.delay_msec(200)
 
 func add_new_script(script):
-	var editor_container = script_tab.duplicate()
+	var editor_container:Control = script_tab.duplicate()
+	var editor:TextEdit = editor_container.get_node("VBoxContainer/CurrentScriptEditor")
+	editor.gutter_clicked.connect(
+		func(line, gutter):
+			goto_line(line, script)
+	)
+	editor.add_gutter()
+	editor.set_gutter_type(0,TextEdit.GUTTER_TYPE_ICON)
+	editor.set_gutter_width(0, 10)
+	editor.set_gutter_clickable(0, true)
+	editor.add_gutter()
+	editor.set_gutter_type(1, TextEdit.GUTTER_TYPE_STRING)
 	var d = {
 		"script": script,
 		"editor_container": editor_container,
-		"editor": editor_container.get_node("CurrentScriptEditor"),
+		"editor": editor,
 		"highlighted_line": null,
 		"bookmark_line": null}
 	d["editor_container"].name = "x"
-	d["editor_container"].get_node("HBoxContainer/ScreenLabel").text = script.screen.name
-	d["editor_container"].get_node("HBoxContainer/FilenameLabel").text = script.filename
+	d["editor_container"].get_node("VBoxContainer/HBoxContainer/ScreenLabel").text = script.screen.name
+	d["editor_container"].get_node("VBoxContainer/HBoxContainer/FilenameLabel").text = script.filename
 	nodes[node_scripts].add_child(d["editor_container"])
 	d["editor"].text = "\n".join(PackedStringArray(d["script"].lines))
 	d["editor"].connect("text_changed", Callable(self, "edit_script").bind(script))
-	d["editor"].connect("breakpoint_toggled", Callable(self, "goto_line").bind(script))
-	d["editor"].connect("info_clicked", Callable(self, "goto_line").bind(script))
+	# Godot 4.0 - moved these to gutter
+	#d["editor"].connect("breakpoint_toggled", Callable(self, "goto_line").bind(script))
+	#d["editor"].connect("info_clicked", Callable(self, "goto_line").bind(script))
 	scripts.append(d)
 
 # TODO: don't rebuild just because a line has advanced
@@ -203,9 +216,6 @@ func rebuild():
 
 
 func update_current_stack():
-	# TODO 4.4 
-	return
-	@warning_ignore('unreachable_code')
 	var main = get_tree().get_nodes_in_group("Main")[0]
 	if not Configuration.user.debugger_enabled:
 		return
@@ -218,18 +228,25 @@ func update_current_stack():
 	rebuild()
 	# Update each editor
 	for i in range(len(scripts)):
+		var editor:TextEdit = scripts[i]["editor"]
+		
+		# Update line numbers and gutter icons
+		for si in range(scripts[i]["editor"].get_line_count()):
+			editor.set_line_gutter_text(si, 1, str(si))
+			editor.set_line_background_color(si, Color(0,0,0,0))
+			editor.set_line_gutter_icon(si, 0, null)
+
 		var to_line = scripts[i]["script"].line_num
 		var at_line = scripts[i]["editor"].get_caret_line()
 		if to_line >= scripts[i]["editor"].get_line_count():
 			to_line = at_line
 		if scripts[i]["highlighted_line"] != to_line:
 			scripts[i]["highlighted_line"] = to_line
-			scripts[i]["editor"].set_caret_line(to_line)
-			scripts[i]["editor"].set_caret_column(0)
-			scripts[i]["editor"].center_viewport_to_caret()
-		if scripts[i]["bookmark_line"]!=null and scripts[i]["editor"].is_line_set_as_bookmark(scripts[i]["bookmark_line"]):
-			scripts[i]["editor"].set_line_as_bookmark(scripts[i]["bookmark_line"], false)
-		scripts[i]["editor"].set_line_as_bookmark(to_line, true)
+			editor.set_caret_line(to_line)
+			editor.set_caret_column(0)
+			editor.center_viewport_to_caret()
+		editor.set_line_background_color(to_line, Color.DARK_OLIVE_GREEN)
+		editor.set_line_gutter_icon(to_line, 0, at_line_icon)
 		scripts[i]["bookmark_line"] = to_line
 		scripts[i]["editor_container"].name = str(i)
 

@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://lu1ruhbxx4en"]
+[gd_scene load_steps=7 format=3 uid="uid://lu1ruhbxx4en"]
 
 [ext_resource type="Theme" uid="uid://e6s1i1ugdnwb" path="res://System/UI/Themes/ScriptDebugger.tres" id="1"]
 [ext_resource type="Script" uid="uid://btgrvunabsk0m" path="res://System/UI/tools/ScriptDebugger.gd" id="2"]
 [ext_resource type="Script" uid="uid://cgspdbgvv3nl" path="res://System/UI/tools/MousePos.gd" id="3"]
+[ext_resource type="Texture2D" uid="uid://by00kikorcvws" path="res://art/general/arrow_right.png" id="3_u2561"]
 [ext_resource type="Script" uid="uid://j7ixx1x5on05" path="res://System/UI/tools/TimeDisplay.gd" id="4"]
 [ext_resource type="Script" uid="uid://b8s3kp3i1lao7" path="res://System/UI/tools/FPSDisplay.gd" id="5"]
 
@@ -11,8 +12,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -262.0
-offset_bottom = -46.0
+offset_right = -768.0
+offset_bottom = -384.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1")
@@ -27,56 +28,82 @@ current_script = NodePath("vbox/Control/Scripts/CurrentScript")
 show_watched_panel = NodePath("vbox/buttons/Watch")
 watched_panel = NodePath("WatchedPanel")
 watched_textedit = NodePath("WatchedPanel/VFlowContainer/Panel/TextEdit")
+at_line_icon = ExtResource("3_u2561")
 
 [node name="vbox" type="VBoxContainer" parent="."]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 0.88
-offset_bottom = 0.0799866
+offset_right = 15.0
+offset_bottom = 35.64
 
 [node name="Control" type="Control" parent="vbox"]
-custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="Scripts" type="TabContainer" parent="vbox/Control"]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 0.0390015
+offset_right = -15.0
+offset_bottom = 84.0
+grow_horizontal = 2
+grow_vertical = 2
 current_tab = 0
 
 [node name="CurrentScript" type="Control" parent="vbox/Control/Scripts"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="CurrentScriptEditor" type="TextEdit" parent="vbox/Control/Scripts/CurrentScript"]
+[node name="VBoxContainer" type="VBoxContainer" parent="vbox/Control/Scripts/CurrentScript"]
 layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-size_flags_stretch_ratio = 0.75
-text = "line 1 this is a really long line that may wrap an arbitrary number of 
-line 2
-line 3"
-context_menu_enabled = false
-caret_blink = true
-caret_blink_interval = 0.5
-highlight_current_line = true
-draw_tabs = true
-draw_spaces = true
+offset_right = 248.0
+offset_bottom = 297.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="vbox/Control/Scripts/CurrentScript"]
-layout_mode = 0
-offset_top = -13.0
-offset_right = 242.0
-offset_bottom = -2.0
+[node name="HBoxContainer" type="HBoxContainer" parent="vbox/Control/Scripts/CurrentScript/VBoxContainer"]
+layout_mode = 2
 
-[node name="FilenameLabel" type="Label" parent="vbox/Control/Scripts/CurrentScript/HBoxContainer"]
+[node name="FilenameLabel" type="Label" parent="vbox/Control/Scripts/CurrentScript/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 text = "Script:"
 
-[node name="ScreenLabel" type="Label" parent="vbox/Control/Scripts/CurrentScript/HBoxContainer"]
+[node name="ScreenLabel" type="Label" parent="vbox/Control/Scripts/CurrentScript/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 text = "Screen:"
+
+[node name="CurrentScriptEditor" type="TextEdit" parent="vbox/Control/Scripts/CurrentScript/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.75
+text = "line 1 this is a really long line that may wrap an arbitrary number of 
+line 2
+line 3
+line 1 this is a really long line that may wrap an arbitrary number of 
+line 2
+line 3
+line 1 this is a really long line that may wrap an arbitrary number of 
+line 2
+line 3
+line 1 this is a really long line that may wrap an arbitrary number of 
+line 2
+line 3
+line 1 this is a really long line that may wrap an arbitrary number of 
+line 2
+line 3
+line 1 this is a really long line that may wrap an arbitrary number of 
+line 2
+line 3
+line 1 this is a really long line that may wrap an arbitrary number of 
+line 2
+line 3
+line 1 this is a really long line that may wrap an arbitrary number of 
+line 2
+line 3"
+caret_blink = true
+caret_blink_interval = 0.5
+highlight_current_line = true
 
 [node name="buttons" type="HBoxContainer" parent="vbox"]
 layout_mode = 2

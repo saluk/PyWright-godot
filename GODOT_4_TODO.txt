@@ -22,7 +22,15 @@
 	[X] tween.interpolate_property -> tween.tween_property
 	[X] tell -> get_total_elapsed_time
 [ ] not compiling
-[ ] Reenable scriptdebugger
+[X] Reenable scriptdebugger
+	[X] set_owner call when copying the node out of the scene needed to be moved
+	[X] We used to use "bookmark" feature of TextEdit to keep track of current frame's line even if you scroll around:
+		need to switch this to using the fancier godot 4 "gutters" concept
+	[X] enable line numbers (filling them into the gutter)
+	[X] highlight the current line number by changing its background color
+	[ ] highlight lines that have been executed? 
+	[X] click on any gutter to jump to the line
+	[ ] Actually, we need to switch from TextEdit to CodeEdit, but that's a bigger change
 [X] frames -> sprite_frames
 [ ] figure out how to handle yield frames in WrightScriptStack.gd
 	[X] make flash not use await - we can't return await during script execution
