@@ -258,14 +258,14 @@ func reload():
 
 func pause(paused=true, toggle=false):
 	if toggle:
-		paused = not is_processing()
+		paused = is_processing()
 	else:
 		paused = paused
 	var nodes = [self]
 	var node:Node
 	while nodes:
 		node = nodes.pop_front()
-		node.set_process(paused)
+		node.set_process(not paused)
 		for child in node.get_children():
 			nodes.append(child)
 

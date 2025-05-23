@@ -34,6 +34,14 @@
 [X] Change game folder not working - needed to set file_mode of dialog to FileDialog.FILE_MODE_OPEN_DIR
 [X] Load saved game not removing the case menu
 [ ] Some print statements say "refcounted"
+[ ] object_factory.txt test mode not working, some issues with ut functions
+	[X] RefCounted testing script wasn't sticking around to run code after the await process_frame
+	[X] visible_within isn't working
+	[X] timing differences in object_factory.txt
+	[ ] examine test has error - can't find examine menu
+	[ ] allow speed mode to work with ut (adjust frame counters when running fast? use something other than frame counters?)
+[ ] get_shader_param -> get_shader_parameter
+[ ] set _debug true not making text print quick
 
 [X] idle_frame -> process_frame
 [X] material.gdshader -> material.shader

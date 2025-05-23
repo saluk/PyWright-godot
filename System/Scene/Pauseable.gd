@@ -21,9 +21,11 @@ var properties := [
 	["ScriptDebugger", "in_debugger", true]
 ]
 
-func _init(node):
+func _init(node=null):
 	name = "Pauseable"
-	node.add_child(self)
+	# If pauseable's parent is duplicated, we need to duplicate with empty _init
+	if node:
+		node.add_child(self)
 
 func add_disable_signal(target, sig):
 	target.connect(sig, Callable(self, "_disable"))

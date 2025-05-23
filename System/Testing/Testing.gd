@@ -1,5 +1,8 @@
-extends RefCounted
+extends Object
 class_name Testing
+
+var script_object
+var parent
 
 # Functions to be used to make a wrightscript file testable
 
@@ -15,6 +18,9 @@ extends Testing
 static func command():
 	return {command}
 """
+
+func _init():
+	script_object = Object.new()
 
 static func objects(name=null):
 	return ScreenManager.get_objects(name)
@@ -86,9 +92,13 @@ func run(string, do_assert=false):
 	}))
 	script.reload()
 
-	var obj = RefCounted.new()
-	obj.set_script(script)
+	script_object.set_script(script)
 
-	var v = await obj.command()
+	var v = script_object.command()
+	script_object.free()
 	if do_assert:
+		#Commands.main.pause(true)
+		#await Commands.main.get_tree().process_frame
+		#Commands.main.pause(false)
 		assert(v)
+	call_deferred('free')

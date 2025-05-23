@@ -33,15 +33,12 @@ var watched_commands = []  #Any commands that should enter the debugger
 
 var repeated = {"line":null, "line_num": -1, "amount": 0}
 
-var testing
-
 func _init(main):
 	assert(main)
 	self.main = main
 	variables = VariableStores.new()
 	variables.main = main
 	filesystem = load("res://System/Files/Filesystem.gd").new()
-	testing = Testing.new()
 
 signal stack_empty
 signal enter_debugger

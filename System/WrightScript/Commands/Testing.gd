@@ -2,17 +2,21 @@ extends RefCounted
 
 var main
 
-var waiters = []
+var waiters := []
 
 func _init(commands):
 	main = commands.main
+	
+func new_script():
+	var t = Testing.new()
+	return t
 
 func ws_ut_assert(_script, arguments):
 	if not main.stack.mode == "test":
 		return
 	var unit_test_command = " ".join(PackedStringArray(arguments))
 	print(unit_test_command)
-	var testing = Testing.new()
+	var testing = new_script()
 	testing.run(unit_test_command, true)
 
 func ws_ut_do(_script, arguments):
@@ -20,7 +24,7 @@ func ws_ut_do(_script, arguments):
 		return
 	var unit_test_command = " ".join(PackedStringArray(arguments))
 	print(unit_test_command)
-	var testing = Testing.new()
+	var testing = new_script()
 	testing.run(unit_test_command, false)
 
 class After extends RefCounted:
@@ -28,7 +32,9 @@ class After extends RefCounted:
 	var command
 	var waiters
 	var do_assert = false
-	func _init(times, command, waiters, do_assert):
+	var t
+	func _init(t, times, command, waiters, do_assert):
+		self.t = t
 		self.times = int(times)
 		self.command = command
 		self.waiters = waiters
@@ -38,8 +44,7 @@ class After extends RefCounted:
 		if times <= 0:
 			do()
 	func do():
-		var testing = Testing.new()
-		testing.run(command, do_assert)
+		t.run(command, do_assert)
 		waiters.erase(self)
 
 func ws_ut_assert_after(script, arguments):
@@ -58,7 +63,7 @@ func _ut_command(_script, arguments, do_assert):
 	mode = mode_parts[0]
 	var mode_config = mode_parts[1]
 	var unit_test_command = " ".join(PackedStringArray(arguments))
-	var after = After.new(1, unit_test_command, waiters, do_assert)
+	var after = After.new(new_script(), 1, unit_test_command, waiters, do_assert)
 	_add_waiter(mode, mode_config, after)
 
 func _add_waiter(mode, mode_config, after):

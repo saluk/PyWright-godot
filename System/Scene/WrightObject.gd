@@ -328,9 +328,9 @@ func set_grey(value):
 func get_texture():
 	if not current_sprite:
 		return null
-	var sprite = current_sprite.animated_sprite
-	var frames = sprite.sprite_frames
-	var texture = frames.get_frame(sprite.animation, sprite.frame)
+	var sprite:AnimatedSprite2D = current_sprite.animated_sprite
+	var frames:SpriteFrames = sprite.sprite_frames
+	var texture = frames.get_frame_texture(sprite.animation, sprite.frame)
 	return texture
 
 func get_display_rect():
@@ -338,7 +338,7 @@ func get_display_rect():
 		return null
 	var texture:Texture2D = get_texture()
 	var size = texture.get_size()
-	var pos = current_sprite.global_position
+	var pos = current_sprite.position
 	return Rect2(pos, size)
 
 # true of the object can be found within the given rectangle
@@ -352,9 +352,6 @@ func visible_within(collide_rect:Rect2):
 	main.get_node("DebugLayer").draw(
 		"draw_rect", [display_rect, Color.RED, false, 2, true]
 	)
-	main.pause(true)
-	await get_tree().process_frame
-	main.pause(false)
 	return false
 
 # For tweens

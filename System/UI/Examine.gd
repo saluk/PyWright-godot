@@ -281,10 +281,11 @@ func queue_redraw():
 	update_x_offset()
 	build_regions()
 	if scrolling: return
-	if not script_name:
-		script_name = "examine_menu"
-		if bg_obs_original:
-			script_name += "+"+bg_obs_original[0].script_name
+	var n = "examine_menu"
+	for ob in bg_obs_original:
+		n += "+" + ob.script_name
+	if script_name != n:
+		script_name = n
 	reload_scroll_regions()
 	name = script_name
 	if main.stack.variables.get_truth("_examine_showbars", true) and not bars_bg:
