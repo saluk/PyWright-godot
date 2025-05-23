@@ -34,25 +34,7 @@ func _ready():
 		players.append(audio_player)
 
 func _load_audio_stream(path):
-	var stream
-	if SoundFileCache.has_cached([path]):
-		stream = SoundFileCache.get_cached([path])
-	else:
-		#if path!=null:
-		#	stream = ResourceLoader.load(path)
-		#	pass
-		if not stream:
-			if ResourceLoader.exists(path):
-				stream = load(path)
-		if not stream:
-			# Uses an extension to load more audio types
-			# TODO not really needed if we are converting everything
-			#var loader = AudioLoader.new()
-			print(" -- LOADING SOUND FILE --")
-			#stream = loader.loadfile(path)
-			# TODO 4.4 cleanup
-			stream = load(path)
-		SoundFileCache.set_get_cached([path], stream)
+	var stream = AudioFile.load(path)
 	if stream:
 		# Somewhere determine whether or not to loop the sound
 		var next_player:AudioStreamPlayer = get_free_player()

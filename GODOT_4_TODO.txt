@@ -1,3 +1,4 @@
+[X] Music and Sound can't be load() directly from filesystem. iterate through audiostream classes to load from file
 [ ] Font issues
 	[X] Dynamic ttf file not loading
 	[X] make sure font size is corrected for
