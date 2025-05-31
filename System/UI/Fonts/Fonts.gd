@@ -39,6 +39,9 @@ static func set_element_font(el:Control, type, main):
 	var font_data = _get_font_for_type(type, main)
 	var font = _get_font(type, main)
 	if font:
-		for font_mode in ["normal_", "mono_", "italics_", "bold_italics_", "bold_"]:
+		var font_modes = [""]
+		if el is RichTextLabel:
+			font_modes = ["normal_", "mono_", "italics_", "bold_italics_", "bold_"]
+		for font_mode in font_modes:
 			el.add_theme_font_override(font_mode+"font", font)
-			el.add_theme_font_size_override(font_mode+"font", font_data["font_size"])
+			el.add_theme_font_size_override(font_mode+"font_size", font_data["font_size"])

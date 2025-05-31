@@ -331,7 +331,7 @@ func _on_text_printed():
 			queue_next_textbox()
 
 func get_number_of_lines_for(text):
-	var width_checker = get_node("WidthChecker")
+	var width_checker:RichTextLabel = get_node("WidthChecker")
 	width_checker.text = text
 	return int(width_checker.get_content_height()/15)
 
@@ -584,8 +584,9 @@ func update_nametag():
 
 func update_nametag_size():
 	var label:Control = get_node("%NametagLabel")
-	var size = label.get_theme_default_font().get_string_size(label.text)
-	size.x += 10
+	#var font = Fonts._get_font("nt", main)
+	var size = label.get_theme_font("normal", "Label").get_string_size(label.text)
+	#size.x += 10
 	if not nt_left_sprite:
 		nt_left_sprite = ObjectFactory.create_from_template(
 			main.top_script(),
