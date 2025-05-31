@@ -108,7 +108,7 @@ func set_crosshair_pos(x, y):
 		return
 	#print("CROSS X Y ",x," ",y)
 	crosshair.crosshair_position = Vector2(int(x), int(y))
-	queue_redraw()
+	self.queue_redraw()
 
 class Region extends Area2D:
 	var label
@@ -123,9 +123,9 @@ class Region extends Area2D:
 			point.y >= position.y and point.y <= position.y+size.y):
 			return true
 		return false
-	func load_node(tree, saved_data:Dictionary):
+	func load_node(_tree, _saved_data:Dictionary):
 		pass
-	func save_node(data):
+	func save_node(_data):
 		pass
 
 func update_x_offset():
@@ -195,7 +195,7 @@ func build_regions():
 		add_child(region)
 	built_regions = true
 
-func ws_check_from_examine(script, arguments):
+func ws_check_from_examine(_script, _arguments):
 	queue_free()
 	var label = ""
 	if current_region:
@@ -211,11 +211,14 @@ func ws_check_from_examine(script, arguments):
 	)
 	Commands.call_command("sound_examine_check", stack.scripts[0], [])
 
-func ws_back_from_examine(script, arguments):
+func ws_back_from_examine(script, _arguments):
 	queue_free()
 	Commands.call_command("sound_examine_menu_cancel", script, [])
 
-func ws_scroll_from_examine(script, arguments):
+func ws_scroll_from_examine(_script, arguments):
+	async_scroll_from_examine.call_deferred(_script, arguments)
+	
+func async_scroll_from_examine(_script, arguments):
 	scrolling = true
 	if arguments:
 		scroll_button_direction = arguments[0]
@@ -242,7 +245,7 @@ func ws_scroll_from_examine(script, arguments):
 			"_xscroll_"+script_name,
 			str(x_offset)
 		)
-		queue_redraw()
+		self.queue_redraw()
 
 func reload_scroll_regions():
 	if reloaded_scroll:
@@ -255,16 +258,17 @@ func reload_scroll_regions():
 	while x_offset != saved_scroll:
 		print(x_offset,",",saved_scroll)
 		var scroll_dir = -(x_offset-saved_scroll)
-		ws_scroll_from_examine(null, [scroll_dir/abs(scroll_dir)])
+		await async_scroll_from_examine(null, [scroll_dir/abs(scroll_dir)])
 		update_x_offset()
+	self.queue_redraw()
 
-func _process(dt):
+func _process(_dt):
 	if scrolling: return
 	if not mouse_active: return
-	if Input.get_mouse_button_mask() & MOUSE_BUTTON_LEFT:
+	if Input.get_mouse_button_mask() & MOUSE_BUTTON_MASK_LEFT:
 		var pos = get_parent().get_local_mouse_position()-position
 		set_crosshair_pos(pos.x, pos.y)
-		queue_redraw()
+		#self.queue_redraw() - triggered automatically by set_crosshair_pos
 
 func _select():
 	for child in get_children():
@@ -417,4 +421,4 @@ func after_load(tree:SceneTree, saved_data:Dictionary):
 		var r = Region.new(0,0,0,0)
 		SaveState._load_node(get_tree(), r, region)
 		add_child(r)
-	queue_redraw()
+	self.queue_redraw()

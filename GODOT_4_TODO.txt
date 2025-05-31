@@ -2,9 +2,13 @@
 [ ] Font issues
 	[X] Dynamic ttf file not loading
 	[X] make sure font size is corrected for
-	[ ] label.get_font -> label.theme.get_font
 	[X] switch from get()/set() for theme_override to get_theme_override and add_theme_override functions
 	[X] label.autowrap -> autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	[X] nametag fonts are too big and off center - wasn't setting the size override right
+	[X] list fonts are too big - wasn't setting the size override right
+	[ ] nametag fonts are too small
+	[ ] nametag background is too long
+[ ] default background isn't black
 [ ] Eliminate warnings
 [ ] shader compile issues
 [ ] can't import Node3D
@@ -36,7 +40,12 @@
 [ ] figure out how to handle yield frames in WrightScriptStack.gd
 	[X] make flash not use await - we can't return await during script execution
 	[ ] look for other cases where we return an awaitable function
-[ ] mouse dragging in examine
+[X] examine
+	[X] mouse dragging
+	[X] scroll Button - needed to use call_deferred because ws_scroll is async and functions don't await
+	[X] scroll button recall - because we used call_deferred, the recall while loop needed to await the actual function
+	[X] self.queue_redraw to call non-overridden function
+[ ] find overridden non-virtual functions (reenable error for "native method override")
 [ ] Node3D
 [ ] Fixing themes for games menu ui and options tab ui
 [X] SignalUtils removing some important signals that are needed for remove_child() to work
