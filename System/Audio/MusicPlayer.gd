@@ -61,6 +61,7 @@ func play_music(path, root_path, force=false):
 	if not found_path:
 		GlobalErrors.log_error("Couldn't find music file %s" % path)
 		stop_music()
+		return
 	if playing and playing_path == found_path and not force:
 		print("already playing this song")
 		return
