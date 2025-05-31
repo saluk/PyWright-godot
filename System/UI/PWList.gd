@@ -153,11 +153,11 @@ func add_list_items():
 func set_list_item_options(options):
 	_items[-1][2] = options
 
-func ws_click_back_from_list(script, arguments):
+func ws_click_back_from_list(script, _arguments):
 	queue_free()
 	Commands.call_command("sound_list_menu_cancel", script, [])
 
-func ws_click_list_item(script, arguments):
+func ws_click_list_item(_script, arguments):
 	set_checked(" ".join(arguments))
 	Commands.call_command(
 		"goto",
@@ -167,7 +167,7 @@ func ws_click_list_item(script, arguments):
 	Commands.call_command("sound_list_menu_confirm", stack.scripts[0], [])
 	queue_free()
 
-func ws_select_list_item(script, arguments):
+func ws_select_list_item(_script, arguments):
 	var result = arguments[0]
 	for item in _items:
 		if result == item[1]:
